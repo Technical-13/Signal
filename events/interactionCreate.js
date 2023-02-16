@@ -41,7 +41,7 @@ module.exports = {
 
 		timestamps.set( interaction.user.id, Date.now() ); // Put the user on cooldown
 
-		if ( command ) return command.run( interaction, client, db ) // Run the command's function
+		if ( command ) return command.run( interaction, client ); // Run the command's function
 
 		// Also check out the ready event, or head to the ping.js file in the commands folder.
 	}

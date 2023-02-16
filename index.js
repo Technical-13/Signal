@@ -11,7 +11,7 @@ const Discord = require( "discord.js" ); // Import Discord.js for use in the pro
 const fs = require( "fs" ); // Import FS to read event files
 
 // Specify intents needed by the bot, in this case, just get guild events
-const client = new Discord.Client( { intents: [ Discord.Intents.FLAGS.GUILDS ] } );
+const client = new Discord.Client( { intents: [Discord.Intents.FLAGS.GUILDS] } );
 
 // Create an object-like data structure to store all our commands
 client.commands = new Discord.Collection();
@@ -41,7 +41,7 @@ for ( const file of eventFiles ) { // For each file in the events folder do:
 
 // To start setting up commands, next read interactionCreate.js in the events folder
 
-client.login( process.env.TOKEN ) // Your bot token must be secured, read these steps to set one up:
+client.login( process.env.token ); // Your bot token must be secured, read these steps to set one up:
 
 
 /*
