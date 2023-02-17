@@ -1,13 +1,28 @@
 module.exports = {
-	name: "badgebar", // Command name
-	description: "Show P-GC badgebar for user", // Set the description
-	cooldown: 3000, // Set a cooldown of 3 seconds
-	async run( interaction, client ) { // Function to run on call
+	name: "badgebar",
+	description: "Show P-GC badgebar for user",
+	cooldown: 3000,
+	async run( interaction, client ) {
 
     // Figure what username to use
-    const strAuthorNick = interaction.guild.members.cache.get( interaction.user.id ).nickname;
-    const strInputName = interaction.options.getString( 'user' );
-    const useName = encodeURI( strInputName ?? strAuthorNick ).replace( '&', '%26' );
+    const objGuildMembers = interaction.guild.members.cache;
+    
+    const strAuthorName = interaction.user.username;    
+    const strAuthorNick = objGuildMembers.get( interaction.user.id ).nickname;
+    const useAuthorName = ( strAuthorNick ?? strAuthorName );
+    
+    const objInputUser = ( interaction.options.getUser( 'discord-user' ) ?? null );
+    var useUserName;
+    
+    if ( objInputUser != null ) {
+      const strUserName = objInputUser.username;
+      const strUserNick = interaction.guild.members.cache.get( objInputUser.id ).nickname;
+      useUserName = ( strUserNick ?? strUserName );
+    }
+    
+    const strInputName = ( interaction.options.getString( 'gc-name' ) || null );
+    
+    const useName = encodeURI( strInputName ?? ( useUserName ?? useAuthorName ) ).replace( '&', '%26' );
 
     // Send result
 		interaction.reply( { content: 'https://cdn2.project-gc.com/BadgeBar/' + useName + '.png' } );

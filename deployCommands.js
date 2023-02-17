@@ -10,18 +10,21 @@ const commands = [
     .setName( 'badgebar' )
     .setDescription( 'Show P-GC badgebar.' )
     .addStringOption( option =>
-      option.setName( 'user' )
-      .setDescription( 'The case-sensitive Geocaching.com username' ) ),
+      option.setName( 'gc-name' )
+        .setDescription( 'The case-sensitive Geocaching.com username' ) )
+    .addUserOption( option =>
+      option.setName( 'discord-user' )
+        .setDescription( 'Discord member (requires nickname to be set if different from GC name)' ) ),
 	new SlashCommandBuilder()
     .setName( 'lmgt' )
     .setDescription( 'Let Me Google That for you...' )
     .addStringOption( option =>
       option.setName( 'query' )
-      .setDescription( 'What you want to search for.' )
-      .setRequired( true ) )
+        .setDescription( 'What you want to search for.' )
+        .setRequired( true ) )
     .addUserOption( option =>
       option.setName( 'target' )
-      .setDescription( 'Tag someone in response' ) ),
+       .setDescription( 'Tag someone in response' ) ),
 	new SlashCommandBuilder()
     .setName( 'ping' )
     .setDescription( 'Replies with the bot\'s ping!' ),
@@ -30,22 +33,25 @@ const commands = [
     .setDescription( 'Dice Roller' )
     .addIntegerOption( option =>
       option.setName( 'dice' )
-      .setDescription( 'How many dice? (default: 1)' ) )
+       .setDescription( 'How many dice? (default: 1)' ) )
     .addIntegerOption( option =>
       option.setName( 'sides' )
-      .setDescription( 'How many sides per die? (default: 6)' ) )
+       .setDescription( 'How many sides per die? (default: 6)' ) )
     .addIntegerOption( option =>
       option.setName( 'sets' )
-      .setDescription( 'How many sets of dice? (default: 1)' ) )
+        .setDescription( 'How many sets of dice? (default: 1)' ) )
     .addIntegerOption( option =>
       option.setName( 'modifier' )
-      .setDescription( '± to final roll for each die? (default: 0)' ) ),
+       .setDescription( '± to final roll for each die? (default: 0)' ) ),
 	new SlashCommandBuilder()
     .setName( 'statbar' )
     .setDescription( 'Show P-GC statbar.' )
     .addStringOption( option =>
-      option.setName( 'user' )
-      .setDescription( 'The case-sensitive Geocaching.com username' ) )
+      option.setName( 'gc-name' )
+        .setDescription( 'The case-sensitive Geocaching.com username' ) )
+    .addUserOption( option =>
+      option.setName( 'discord-user' )
+        .setDescription( 'Discord member (requires nickname to be set if different from GC name)' ) )
 ].map( command => command.toJSON() );
 
 const rest = new REST( { version: '9' } ).setToken( process.env.token );
