@@ -28,6 +28,17 @@ const commands = [
 	new SlashCommandBuilder()
     .setName( 'ping' )
     .setDescription( 'Replies with the bot\'s ping!' ),
+  new SlashCommandBuilder()
+    .setName( 'reply' )
+    .setDescription( 'Make bot respond to message.' )
+    .addStringOption( option =>
+      option.setName( 'message-id' )
+        .setDescription( 'Paste message ID here' )
+        .setRequired( true ) )
+    .addStringOption( option =>
+      option.setName( 'response' )
+        .setDescription( 'What do you want me to say in response?' )
+        .setRequired( true ) ),
 	new SlashCommandBuilder()
     .setName( 'roll' )
     .setDescription( 'Dice Roller' )
@@ -43,6 +54,16 @@ const commands = [
     .addIntegerOption( option =>
       option.setName( 'modifier' )
        .setDescription( '± to final roll for each die? (default: 0)' ) ),
+  new SlashCommandBuilder()
+    .setName( 'say' )
+    .setDescription( 'Make bot speak.' )
+    .addStringOption( option =>
+      option.setName( 'saying' )
+        .setDescription( 'What do you want me to say?' )
+        .setRequired( true ) )
+    .addChannelOption( option =>
+      option.setName( 'channel' )
+        .setDescription( 'Where do you want me to say it? (default: current channel)' ) ),
 	new SlashCommandBuilder()
     .setName( 'statbar' )
     .setDescription( 'Show P-GC statbar.' )

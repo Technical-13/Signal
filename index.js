@@ -1,14 +1,5 @@
-/*
-This is a template for use with Discord.js v14, you can use this to make a Discord bot.
-You can use this as a start point for your bot, no credit required, all the steps have comments.
-The template will have event handlers to move events into seperate files, cooldowns on commands, and
-slash commands. These are enough to start building your bot empire.
-I have been using Discord.js since 2017, so I am looking to help people out with their projects, 
-since I own a verified bot on Discord that supports nearly 50,000 members.
-*/
-
-const Discord = require( "discord.js" ); // Import Discord.js for use in the project
-const fs = require( "fs" ); // Import FS to read event files
+const Discord = require( 'discord.js' );
+const fs = require( 'fs' );
 const keepAlive = require( './functions/server' );
 const objTimeString = require( './time.json' );
 var strNow = () => { return ( new Date() ).toLocaleDateString( 'en-us', objTimeString ) };
