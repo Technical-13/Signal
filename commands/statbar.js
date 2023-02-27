@@ -31,6 +31,6 @@ module.exports = {
     const useName = encodeURI( strInputName ?? ( useUserName ?? useAuthorName ) ).replace( '&', '%26' );
 
     // Send result
-		interaction.reply( { content: 'https://cdn2.project-gc.com/statbar.php?includeLabcaches&quote=https://discord.me/Geocaching%20-%20' + intYear + '-' + intMonth + '-' + intDay + '&user=' + useName } );
+		interaction.reply( { content: 'StatBar for : ' + useName + '\nhttps://cdn2.project-gc.com/statbar.php?includeLabcaches&quote=https://discord.me/Geocaching%20-%20' + intYear + '-' + intMonth + '-' + intDay + '&user=' + useName } );
 	}
 }

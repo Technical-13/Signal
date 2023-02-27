@@ -16,6 +16,15 @@ const commands = [
       option.setName( 'discord-user' )
         .setDescription( 'Discord member (requires nickname to be set if different from GC name)' ) ),
 	new SlashCommandBuilder()
+    .setName( 'ftf' )
+    .setDescription( 'Tell someone how to get their FTF (First To Find) noticed on Project-GC' )
+    .addStringOption( option =>
+      option.setName( 'message-id' )
+        .setDescription( 'Paste message ID here' ) )
+    .addUserOption( option =>
+      option.setName( 'target' )
+       .setDescription( 'Tag someone in response' ) ),
+	new SlashCommandBuilder()
     .setName( 'lmgt' )
     .setDescription( 'Let Me Google That for you...' )
     .addStringOption( option =>

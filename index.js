@@ -5,7 +5,11 @@ const objTimeString = require( './time.json' );
 var strNow = () => { return ( new Date() ).toLocaleDateString( 'en-us', objTimeString ) };
 
 // Specify intents needed by the bot, in this case, just get guild events
-const client = new Discord.Client( { intents: [Discord.Intents.FLAGS.GUILDS] } );
+// https://discord.com/developers/docs/topics/gateway#list-of-intents
+const client = new Discord.Client( { intents: [
+  Discord.Intents.FLAGS.GUILDS,
+//  Discord.Intents.FLAGS.GUILD_MEMBERS // Don't need this just yet.
+] } );
 
 // Create an object-like data structure to store all our commands
 client.commands = new Discord.Collection();
