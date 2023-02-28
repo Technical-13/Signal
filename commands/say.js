@@ -7,11 +7,14 @@ module.exports = {
     const speakChannel = interaction.options.getChannel( 'channel' ) || interaction.channel;
     const mySaying = interaction.options.getString( 'saying' );
     const strAuthorTag = interaction.user.tag;
+    const objGuildMembers = interaction.guild.members.cache;
+    const objGuildOwner = objGuildMembers.get( interaction.guild.ownerId );
 
     if ( mySaying ) {      
       return speakChannel.send( mySaying ).then( spoke => {
         interaction.editReply( { content: 'Said the thing!' } );
-        console.log( '%o requested me to speak in `%o`#%o:\n\t%o',
+        objGuildOwner.send( '<@' + interaction.user.id + '> requested me to speak in ' + spoke.guild.name + '<#' + spoke.channel.id + '>:\n```\n' + mySaying + '\n```' );
+        console.log( '%o requested me to speak in %o#%o:\n\t%o',
           strAuthorTag, spoke.guild.name, spoke.channel.name, mySaying
         );
       } ).catch( muted => {
