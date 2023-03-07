@@ -22,9 +22,10 @@ module.exports = {
     
     const strInputName = ( interaction.options.getString( 'gc-name' ) || null );
     
-    const useName = encodeURI( strInputName ?? ( useUserName ?? useAuthorName ) ).replace( '&', '%26' );
+    const useName = ( strInputName ?? ( useUserName ?? useAuthorName ) );
+    const encName = encodeURI( useName ).replace( '&', '%26' );
 
     // Send result
-		interaction.reply( { content: 'BadgeBar for : ' + useName + '\nhttps://cdn2.project-gc.com/BadgeBar/' + useName + '.png' } );
+		interaction.reply( { content: 'BadgeBar for : ' + useName + '\nhttps://cdn2.project-gc.com/BadgeBar/' + encName + '.png' } );
 	}
 }

@@ -11,17 +11,18 @@ module.exports = {
     const objGuildOwner = objGuildMembers.get( interaction.guild.ownerId );
 
     if ( mySaying ) {      
-      return speakChannel.send( mySaying ).then( spoke => {
-        interaction.editReply( { content: 'Said the thing!' } );
-        objGuildOwner.send( '<@' + interaction.user.id + '> requested me to speak in ' + spoke.guild.name + '<#' + spoke.channel.id + '>:\n```\n' + mySaying + '\n```' );
+      return speakChannel.send( mySaying ).then( async spoke => {
+        await interaction.editReply( { content: 'Said the thing!' } );
+        await objGuildOwner.send( '<@' + interaction.user.id + '> requested me to speak in `' + spoke.guild.name + '`<#' + spoke.channel.id + '>:\n```\n' + mySaying + '\n```' );
         console.log( '%o requested me to speak in %o#%o:\n\t%o',
           strAuthorTag, spoke.guild.name, spoke.channel.name, mySaying
         );
-      } ).catch( muted => {
+      } ).catch( async muted => {
         switch ( muted.code ) {
           case 50001 :
             let noChan = '<#' + speakChannel + '>';
-            interaction.editReply( {
+            await objGuildOwner.send( 'Please give me permission to send to ' + noChan );
+            await interaction.editReply( {
               content: 'I do not have permission to send messages in ' + noChan
             } );
             break;

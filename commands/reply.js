@@ -12,15 +12,16 @@ module.exports = {
     const objGuildOwner = objGuildMembers.get( interaction.guild.ownerId );
 
     channel.messages.fetch( msgID ).then( async message => {
-      await message.reply( myResponse ).then( responded => {
-        interaction.editReply( { content: 'Responded!' } );
-        objGuildOwner.send( '<@' + interaction.user.id + '> requested me to reply to <@' + message.author.id + '> in ' + message.guild.name + '<#' + message.channel.id + '>:\n```\n' + myResponse + '\n```' );
+      await message.reply( myResponse ).then( async responded => {
+        await interaction.editReply( { content: 'Responded!' } );
+        await objGuildOwner.send( '<@' + interaction.user.id + '> requested me to reply to <@' + message.author.id + '> in `' + message.guild.name + '`<#' + message.channel.id + '>:\n```\n' + myResponse + '\n```' );
         console.log( '%o requested me to reply to %o in %o#%o:\n\t%o',
           strAuthorTag, message.author.tag, message.guild.name, message.channel.name, myResponse
         );
       } );
-    } ).catch( noMessage => {
-      interaction.editReply( { content: 'Unable to find message to repyly to.' } );
+    } ).catch( async noMessage => {
+      await interaction.editReply( { content: 'Unable to find message to repyly to.' } );
+      await objGuildOwner.send( '<@' + interaction.user.id + '> requested me to reply to a message I couldn\'t find (#' + msgID + '):\n```\n' + myResponse + '\n```' );
       console.log( '%o requested me to reply to a message I couldn\'t find (#%o):\n\t%o',
         strAuthorTag, msgID, myResponse
       );

@@ -28,9 +28,10 @@ module.exports = {
     
     const strInputName = ( interaction.options.getString( 'gc-name' ) || null );
     
-    const useName = encodeURI( strInputName ?? ( useUserName ?? useAuthorName ) ).replace( '&', '%26' );
+    const useName = ( strInputName ?? ( useUserName ?? useAuthorName ) );
+    const encName = encodeURI( useName ).replace( '&', '%26' );
 
     // Send result
-		interaction.reply( { content: 'StatBar for : ' + useName + '\nhttps://cdn2.project-gc.com/statbar.php?includeLabcaches&quote=https://discord.me/Geocaching%20-%20' + intYear + '-' + intMonth + '-' + intDay + '&user=' + useName } );
+		interaction.reply( { content: 'StatBar for : ' + useName + '\nhttps://cdn2.project-gc.com/statbar.php?includeLabcaches&quote=https://discord.me/Geocaching%20-%20' + intYear + '-' + intMonth + '-' + intDay + '&user=' + encName } );
 	}
 }
