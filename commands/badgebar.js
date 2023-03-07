@@ -26,6 +26,6 @@ module.exports = {
     const encName = encodeURI( useName ).replace( '&', '%26' );
 
     // Send result
-		interaction.reply( { content: 'BadgeBar for : ' + useName + '\nhttps://cdn2.project-gc.com/BadgeBar/' + encName + '.png' } );
+		interaction.reply( { content: 'BadgeBar for: ' + ( objInputUser == null ? useName : '<@' +  objInputUser + '>' ) + '\nhttps://cdn2.project-gc.com/BadgeBar/' + encName + '.png' } );
 	}
 }
