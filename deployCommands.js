@@ -38,6 +38,17 @@ const commands = [
     .setName( 'ping' )
     .setDescription( 'Replies with the bot\'s ping!' ),
   new SlashCommandBuilder()
+    .setName( 'react' )
+    .setDescription( 'Make bot react to a message.' )
+    .addStringOption( option =>
+      option.setName( 'message-id' )
+        .setDescription( 'Paste message ID here' )
+        .setRequired( true ) )
+    .addStringOption( option =>
+      option.setName( 'reaction' )
+        .setDescription( 'How do you want me to react?' )
+        .setRequired( true ) ),
+  new SlashCommandBuilder()
     .setName( 'reply' )
     .setDescription( 'Make bot respond to message.' )
     .addStringOption( option =>

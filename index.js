@@ -6,10 +6,12 @@ var strNow = () => { return ( new Date() ).toLocaleDateString( 'en-us', objTimeS
 
 // Specify intents needed by the bot, in this case, just get guild events
 // https://discord.com/developers/docs/topics/gateway#list-of-intents
-const client = new Discord.Client( { intents: [
-  Discord.Intents.FLAGS.GUILDS,
-//  Discord.Intents.FLAGS.GUILD_MEMBERS // Don't need this just yet.
-] } );
+const client = new Discord.Client( {
+  intents: [
+    Discord.Intents.FLAGS.GUILDS,
+//    Discord.Intents.FLAGS.GUILD_MEMBERS // Don't need this just yet.
+  ]
+} );
 
 // Create an object-like data structure to store all our commands
 client.commands = new Discord.Collection();
