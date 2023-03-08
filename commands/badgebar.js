@@ -3,6 +3,7 @@ module.exports = {
 	description: "Show P-GC badgebar for user",
 	cooldown: 3000,
 	async run( interaction, client ) {
+    const myOwner = client.users.cache.get( process.env.OWNERID );
 
     // Figure what username to use
     const objGuildMembers = interaction.guild.members.cache;

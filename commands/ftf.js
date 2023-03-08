@@ -4,6 +4,7 @@ module.exports = {
 	cooldown: 1000,
 	async run( interaction, client ) {
     await interaction.deferReply();
+    const myOwner = client.users.cache.get( process.env.OWNERID );
     const { channel, options } = interaction;
     const objAuthor = interaction.user;
     const msgID = interaction.options.getString( 'message-id' );

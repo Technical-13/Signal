@@ -4,6 +4,7 @@ module.exports = {
 	cooldown: 1000,
 	async run( interaction, client ) {
     interaction.deferReply( { ephemeral: true } );
+    const myOwner = client.users.cache.get( process.env.OWNERID );
     const speakChannel = interaction.options.getChannel( 'channel' ) || interaction.channel;
     const mySaying = interaction.options.getString( 'saying' );
     const strAuthorTag = interaction.user.tag;

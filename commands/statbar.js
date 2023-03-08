@@ -3,6 +3,8 @@ module.exports = {
 	description: "Show P-GC statbar for user",
 	cooldown: 3000,
 	async run( interaction, client ) {
+    const myOwner = client.users.cache.get( process.env.OWNERID );
+    
     const today = ( new Date() );
     const intYear = today.getFullYear();
     const intMonthNow = today.getMonth();

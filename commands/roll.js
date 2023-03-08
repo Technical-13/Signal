@@ -3,6 +3,8 @@ module.exports = {
 	description: "Dice Roller", // Set the description
 	cooldown: 1000, // Set a cooldown of 1 second
 	async run( interaction, client ) {
+    const myOwner = client.users.cache.get( process.env.OWNERID );
+    
     const intSets = ( interaction.options.getInteger( 'sets' ) || 1 );
     const intDice = ( interaction.options.getInteger( 'dice' ) || 1 );
     const intSides = ( interaction.options.getInteger( 'sides' ) || 6 );
