@@ -20,12 +20,22 @@ module.exports = {
           strAuthorTag, message.author.tag, message.guild.name, message.channel.name, myResponse
         );
       } );
-    } ).catch( async noMessage => {
-      await interaction.editReply( { content: 'Unable to find message to repyly to.' } );
-      await objGuildOwner.send( '<@' + interaction.user.id + '> requested me to reply to a message I couldn\'t find (#' + msgID + '):\n```\n' + myResponse + '\n```' );
-      console.log( '%o requested me to reply to a message I couldn\'t find (#%o):\n\t%o',
-        strAuthorTag, msgID, myResponse
-      );
+    } ).catch( noMessage => {
+      switch( noMessage.code ) {
+        case 10008://Unknown Message
+          interaction.editReply( { content: 'Unable to find message to reply to.' } ); break;
+        case 50035://Invalid Form Body\nmessage_id: Value "..." is not snowflake.
+          interaction.editReply( { content: '`' + msgID + '` is not a valid `message-id`. Please try again.' } ); break;
+        default:
+          myOwner.send( 'Error attempting to reply with ' + theReaction + ' to message :ID:`' + msgID +
+            '` as requested by: <@' + interaction.user.id + '>' + ' from `' + interaction.guild.name +
+            '`<#' + interaction.channel.id + '>:\n```\n' + noMessage + '\n```')
+            .then( notified => { interaction.editReply( { content: 'Unknown Error replying to message. My owner, <@' + myOwner.id + '>, has been notified.' } ); } )
+            .catch( notNotified => { interaction.editReply( { content: 'Unknown Error replying to message. Unable to notify owner, <@' + myOwner.id + '>.' } ); } );
+          console.error( '%o requested me to reply with %o (%s) to a message I couldn\'t find (#%s):\n\tCode: %o\n\tMsg: %o\n\tErr: %o',
+            strAuthorTag, myReaction, theReaction, msgID, noMessage.code, noMessage.message, noMessage
+          );
+      }
     } );
 	}
 }
