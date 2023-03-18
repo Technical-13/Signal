@@ -1,16 +1,9 @@
 module.exports = {
-	name: "statbar",
-	description: "Show Project-GC statbar for user",
-	cooldown: 3000,
+	name: "profilestats",
+	description: "Show link to Project-GC ProfileStats page for user",
+	cooldown: 300000,
 	async run( interaction, client ) {
     const myOwner = client.users.cache.get( process.env.OWNERID );
-    
-    const today = ( new Date() );
-    const intYear = today.getFullYear();
-    const intMonthNow = today.getMonth();
-    const intMonth = ( intMonthNow < 9 ? '0' + ( intMonthNow + 1 ).toString() : ( intMonthNow + 1 ).toString() );
-    const intDayNow = today.getDate();
-    const intDay = ( intDayNow <= 9 ? '0' + intDayNow.toString() : intDayNow.toString() );
 
     // Figure what username to use
     const objGuildMembers = interaction.guild.members.cache;
@@ -34,6 +27,6 @@ module.exports = {
     const encName = encodeURI( useName ).replace( '&', '%26' );
 
     // Send result
-		interaction.reply( { content: 'StatBar for: ' + ( objInputUser == null ? useName : '<@' +  objInputUser + '>' ) + '\nhttps://cdn2.project-gc.com/statbar.php?includeLabcaches&quote=https://discord.me/Geocaching%20-%20' + intYear + '-' + intMonth + '-' + intDay + '&user=' + encName } );
+		interaction.reply( { content: 'ProfileStats link for: ' + ( objInputUser == null ? useName : '<@' +  objInputUser + '>' ) + '\n<https://project-gc.com/Profile/ProfileStats?profile_name=' + encName + '>' } );
 	}
 }

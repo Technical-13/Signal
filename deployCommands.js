@@ -8,7 +8,7 @@ const clientId = '445799905177632768'; // <---- Enter your client ID here
 const commands = [
 	new SlashCommandBuilder()
     .setName( 'badgebar' )
-    .setDescription( 'Show P-GC badgebar.' )
+    .setDescription( 'Show Project-GC badgebar for user.' )
     .addStringOption( option =>
       option.setName( 'gc-name' )
         .setDescription( 'The case-sensitive Geocaching.com username' ) )
@@ -36,7 +36,16 @@ const commands = [
        .setDescription( 'Tag someone in response' ) ),
 	new SlashCommandBuilder()
     .setName( 'ping' )
-    .setDescription( 'Replies with the bot\'s ping!' ),
+    .setDescription( 'Replies with the bot\'s ping!' ),	
+	new SlashCommandBuilder()
+    .setName( 'profilestats' )
+    .setDescription( 'Show link to Project-GC ProfileStats for user.' )
+    .addStringOption( option =>
+      option.setName( 'gc-name' )
+        .setDescription( 'The case-sensitive Geocaching.com username' ) )
+    .addUserOption( option =>
+      option.setName( 'discord-user' )
+        .setDescription( 'Discord member (requires nickname to be set if different from GC name)' ) ),
   new SlashCommandBuilder()
     .setName( 'react' )
     .setDescription( 'Make bot react to a message.' )
@@ -84,9 +93,39 @@ const commands = [
     .addChannelOption( option =>
       option.setName( 'channel' )
         .setDescription( 'Where do you want me to say it? (default: current channel)' ) ),
+  new SlashCommandBuilder()
+    .setName( 'setup-log' )
+    .setDescription( 'Set up log channels for this server.' )
+    .addSubcommand( subcommand => subcommand
+      .setName( 'default' )
+      .setDescription( 'Channel to log all requests.' )
+      .addChannelOption( option => option
+        .setName( 'default-channel' )
+        .setDescription( 'Default channel for all logs.' ) ) )
+    .addSubcommand( subcommand => subcommand
+      .setName( 'react' )
+      .setDescription( 'Channel to log `/react` requests.' )
+      .addChannelOption( option => option
+        .setName( 'react-channel' )
+        .setDescription( 'Select channel:' )
+        .setRequired( true ) ) )
+    .addSubcommand( subcommand => subcommand
+      .setName( 'reply' )
+      .setDescription( 'Channel to log `/reply` requests.' )
+      .addChannelOption( option => option
+        .setName( 'reply-channel' )
+        .setDescription( 'Select channel:' )
+        .setRequired( true ) ) )
+    .addSubcommand( subcommand => subcommand
+      .setName( 'say' )
+      .setDescription( 'Channel to log `/say` requests.' )
+      .addChannelOption( option => option
+        .setName( 'say-channel' )
+        .setDescription( 'Select channel:' )
+        .setRequired( true ) ) ),	
 	new SlashCommandBuilder()
     .setName( 'statbar' )
-    .setDescription( 'Show P-GC statbar.' )
+    .setDescription( 'Show Project-GC statbar for user.' )
     .addStringOption( option =>
       option.setName( 'gc-name' )
         .setDescription( 'The case-sensitive Geocaching.com username' ) )
