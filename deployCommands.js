@@ -48,7 +48,33 @@ const commands = [
         .setDescription( 'Paste message ID here' ) )
     .addUserOption( option =>
       option.setName( 'target' )
-       .setDescription( 'Tag someone in response' ) ),
+       .setDescription( 'Tag someone in response' ) )
+    .addStringOption( option =>
+      option.setName( 'language' )
+        .setNameLocalizations( {
+          de: 'sprache',
+          fi: 'kieli',
+          fr: 'langue',
+          no: 'språk',
+          pl: 'język',
+          'sv-SE': 'språk' } )
+        .setDescription( 'Language to give information in.' )
+        .setDescriptionLocalizations( {
+          de: 'Sprache, um Informationen zu geben.',
+          fi: 'Kieli, jolla tiedot annetaan.',
+          fr: 'Langue dans laquelle donner des informations.',
+          no: 'Språk å gi informasjon på.',
+          pl: 'Język, w którym należy podawać informacje.',
+          'sv-SE': 'Språk att ge information på.' } )
+        .addChoices(
+          { name: 'de', value: 'Deutsch/German' },
+          { name: 'en', value: 'English (default)' },
+          { name: 'fi', value: 'Suomalainen/Finnish' },
+          { name: 'fr', value: 'Français/French' },
+          { name: 'no', value: 'Norsk/Norwegian' },
+          { name: 'pl', value: 'Polski/Polish' },
+          { name: 'sv-SE', value: 'Svenska/Swedish' }
+        ) ),
 	new SlashCommandBuilder()
     .setName( 'lmgt' )
     .setDescription( 'Let Me Google That for you...' )
