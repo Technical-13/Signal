@@ -1,5 +1,6 @@
-// Source and more info:
-// https://discordjs.guide/slash-commands
+// Source and more info : https://discordjs.guide/slash-commands
+// List of valid locales: https://discord.com/developers/docs/reference#locales
+
 const { SlashCommandBuilder } = require( '@discordjs/builders' );
 const { REST } = require( '@discordjs/rest' );
 const { Routes } = require( 'discord-api-types/v9' );
