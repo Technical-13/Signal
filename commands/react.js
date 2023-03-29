@@ -7,7 +7,7 @@ module.exports = {
 	cooldown: 1000,
 	async run( interaction, client ) {
     await interaction.deferReply( { ephemeral: true } );
-    const myOwner = client.users.cache.get( process.env.OWNERID );
+    const myOwner = client.users.cache.get( process.env.OWNER_IDS.split( ';' )[ 0 ] );
     const { channel, options } = interaction;
     const msgID = interaction.options.getString( 'message-id' );
 /* Should be checking if bot is blocked by the user */

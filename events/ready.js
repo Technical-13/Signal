@@ -5,7 +5,6 @@ module.exports = {
 	name: 'ready',
 	once: true,
 	async run( client ) {
-    const myOwner = client.users.cache.get( process.env.OWNERID );
     
     mongoose.set( 'strictQuery', false );
     client.user.setActivity( 'Geocaching', { type: 'PLAYING' } );
@@ -13,9 +12,8 @@ module.exports = {
     await mongoose.connect( process.env.mongodb || '', { keepAlive: true } )
       .then( connected => { console.log( 'Connected to MongoDB.' ); } )
       .catch( errDB => {
-        myOwner.send( 'Failed to connect to MongoDB:\n```\n' + errDB + '\n```' )
-          .catch( errSend => { console.error( 'Unable to send DM:\n%o', errSend ); } );
-        console.error( 'Failed to connect to MongoDB:\n%o', errDB );
+        console.error( 'Failed to connect to MongoDB:\n\t%s\n\t%o',
+          Array.from( errDB.reason.servers.keys() ).join( '\n\t' ), errDB.message );
       } );
     
     console.log( 'Successfully logged in as: ' + client.user.tag );

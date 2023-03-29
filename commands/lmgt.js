@@ -3,7 +3,7 @@ module.exports = {
 	description: "Let Me Google That", // Set the description
 	cooldown: 1000, // Set a cooldown of 1 second
 	async run( interaction, client ) {
-    const myOwner = client.users.cache.get( process.env.OWNERID );
+    const myOwner = client.users.cache.get( process.env.OWNER_IDS.split( ';' )[ 0 ] );
     const cmdInputUser = interaction.options.getUser( 'target' );
     const tagUser = ( cmdInputUser ? '<@' + cmdInputUser.id + '>: ' : '' );
     const strInputQuery = interaction.options.getString( 'query' );

@@ -3,7 +3,7 @@ module.exports = {
 	description: "Show Project-GC statbar for user",
 	cooldown: 3000,
 	async run( interaction, client ) {
-    const myOwner = client.users.cache.get( process.env.OWNERID );
+    const myOwner = client.users.cache.get( process.env.OWNER_IDS.split( ';' )[ 0 ] );
     
     const today = ( new Date() );
     const intYear = today.getFullYear();

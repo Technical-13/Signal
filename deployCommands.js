@@ -8,13 +8,37 @@ const clientId = '445799905177632768'; // <---- Enter your client ID here
 const commands = [
 	new SlashCommandBuilder()
     .setName( 'badgebar' )
-    .setDescription( 'Show Project-GC badgebar for user.' )
+    .setDescription( 'Show Project-GC BadgeBar for user.' )
+    .setDescriptionLocalizations( {
+      de: 'Project-GC BadgeBar für Benutzer anzeigen.',
+      fi: 'Näytä Project-GC BadgeBar käyttäjälle.',
+      pl: 'Pokaż pasek odznak Project-GC dla użytkownika.' } )
     .addStringOption( option =>
       option.setName( 'gc-name' )
-        .setDescription( 'The case-sensitive Geocaching.com username' ) )
+        .setNameLocalizations( {
+          de: 'gc-name',
+          fr: 'nom-gc',
+          fi: 'gc-nimi',
+          pl: 'gc-name',
+          'sv-SE': 'gc-namn' } )
+        .setDescription( 'The case-sensitive Geocaching.com username.' )
+        .setDescriptionLocalizations( {
+          de: 'Der Geocaching.com-Benutzername, bei dem die Groß-/Kleinschreibung beachtet werden muss.',
+          fi: 'Kirjainkoolla erottuva Geocaching.com-käyttäjänimi.',
+          pl: 'W nazwie użytkownika Geocaching.com rozróżniana jest wielkość liter.' } ) )
     .addUserOption( option =>
       option.setName( 'discord-user' )
-        .setDescription( 'Discord member (requires nickname to be set if different from GC name)' ) ),
+        .setNameLocalizations( {
+          de: 'discord-benutzer',
+          fr: 'utilisateur-discord',
+          fi: 'discord-käyttäjä',
+          pl: 'discord-użytkownik',
+          'sv-SE': 'discord-användare' } )
+        .setDescription( 'Discord member (requires nickname to be set if different from GC name).' )
+        .setDescriptionLocalizations( {
+          de: 'Discord-Mitglied (erfordert das Festlegen eines Spitznamens, wenn dieser vom GC-Namen abweicht).',
+          fi: 'Discord-jäsen (vaatii lempinimen asettamisen, jos se on eri kuin GC-nimi).',
+          pl: 'Członek Discord (wymaga ustawienia pseudonimu, jeśli różni się od nazwy GC).' } ) ),
 	new SlashCommandBuilder()
     .setName( 'ftf' )
     .setDescription( 'Tell someone how to get their FTF (First To Find) noticed on Project-GC' )
@@ -36,18 +60,58 @@ const commands = [
        .setDescription( 'Tag someone in response' ) ),
 	new SlashCommandBuilder()
     .setName( 'ping' )
-    .setDescription( 'Replies with the bot\'s ping!' ),	
+    .setNameLocalizations( {
+      de: 'klingeln',
+      fr: 'ping',
+      fi: 'ping',
+      pl: 'świst',
+      'sv-SE': 'ping' } )
+    .setDescription( 'Replies with the bot\'s ping!' )
+    .setDescriptionLocalizations( {
+      de: 'Antworten mit dem Ping des Bots!',
+      fi: 'Vastaa botin pingillä!',
+      pl: 'Odpowiedzi z pingiem bota!' } ),	
 	new SlashCommandBuilder()
     .setName( 'profilestats' )
     .setDescription( 'Show link to Project-GC ProfileStats for user.' )
+    .setDescriptionLocalizations( {
+      de: 'Link zu Project-GC ProfileStats für Benutzer anzeigen.',
+      fi: 'Näytä käyttäjälle linkki Project-GC ProfileStatsiin.',
+      pl: 'Pokaż link do Project-GC ProfileStats dla użytkownika.' } )
     .addStringOption( option =>
       option.setName( 'gc-name' )
-        .setDescription( 'The case-sensitive Geocaching.com username' ) )
+        .setNameLocalizations( {
+          de: 'gc-name',
+          fr: 'nom-gc',
+          fi: 'gc-nimi',
+          pl: 'gc-name',
+          'sv-SE': 'gc-namn' } )
+        .setDescription( 'The case-sensitive Geocaching.com username.' )
+        .setDescriptionLocalizations( {
+          de: 'Der Geocaching.com-Benutzername, bei dem die Groß-/Kleinschreibung beachtet werden muss.',
+          fi: 'Kirjainkoolla erottuva Geocaching.com-käyttäjänimi.',
+          pl: 'W nazwie użytkownika Geocaching.com rozróżniana jest wielkość liter.' } ) )
     .addUserOption( option =>
       option.setName( 'discord-user' )
-        .setDescription( 'Discord member (requires nickname to be set if different from GC name)' ) ),
+        .setNameLocalizations( {
+          de: 'discord-benutzer',
+          fr: 'utilisateur-discord',
+          fi: 'discord-käyttäjä',
+          pl: 'discord-użytkownik',
+          'sv-SE': 'discord-användare' } )
+        .setDescription( 'Discord member (requires nickname to be set if different from GC name).' )
+        .setDescriptionLocalizations( {
+          de: 'Discord-Mitglied (erfordert das Festlegen eines Spitznamens, wenn dieser vom GC-Namen abweicht).',
+          fi: 'Discord-jäsen (vaatii lempinimen asettamisen, jos se on eri kuin GC-nimi).',
+          pl: 'Członek Discord (wymaga ustawienia pseudonimu, jeśli różni się od nazwy GC).' } ) ),
   new SlashCommandBuilder()
     .setName( 'react' )
+    .setNameLocalizations( {
+      de: 'reagieren',
+      fr: 'réagir',
+      fi: 'reagoida',
+      pl: 'reagować',
+      'sv-SE': 'reagera' } )
     .setDescription( 'Make bot react to a message.' )
     .addStringOption( option =>
       option.setName( 'message-id' )
@@ -59,6 +123,12 @@ const commands = [
         .setRequired( true ) ),
   new SlashCommandBuilder()
     .setName( 'reply' )
+    .setNameLocalizations( {
+      de: 'antwort',
+      fr: 'répondre',
+      fi: 'vastaa',
+      pl: 'odpowiedź',
+      'sv-SE': 'svar' } )
     .setDescription( 'Make bot respond to message.' )
     .addStringOption( option =>
       option.setName( 'message-id' )
@@ -70,6 +140,12 @@ const commands = [
         .setRequired( true ) ),
 	new SlashCommandBuilder()
     .setName( 'roll' )
+    .setNameLocalizations( {
+      de: 'würfeln',
+      fr: 'lancer-les-dés',
+      fi: 'heitä-noppaa',
+      pl: 'rzuć-kostką',
+      'sv-SE': 'rulla-tärningen' } )
     .setDescription( 'Dice Roller' )
     .addIntegerOption( option =>
       option.setName( 'dice' )
@@ -85,6 +161,12 @@ const commands = [
        .setDescription( '± to final roll for each die? (default: 0)' ) ),
   new SlashCommandBuilder()
     .setName( 'say' )
+    .setNameLocalizations( {
+      de: 'sagen',
+      fr: 'dire',
+      fi: 'sanoa',
+      pl: 'mowić',
+      'sv-SE': 'säga' } )
     .setDescription( 'Make bot speak.' )
     .addStringOption( option =>
       option.setName( 'saying' )
@@ -125,13 +207,38 @@ const commands = [
         .setRequired( true ) ) ),	
 	new SlashCommandBuilder()
     .setName( 'statbar' )
-    .setDescription( 'Show Project-GC statbar for user.' )
+    .setDescription( 'Show Project-GC StatBar for user.' )
+    .setDescriptionLocalizations( {
+      de: 'Project-GC StatBar für Benutzer anzeigen.',
+      fi: 'Näytä Project-GC StatBar käyttäjälle.',
+      pl: 'Pokaż Project-GC StatBar dla użytkownika.'
+    } )
     .addStringOption( option =>
       option.setName( 'gc-name' )
-        .setDescription( 'The case-sensitive Geocaching.com username' ) )
+        .setNameLocalizations( {
+          de: 'gc-name',
+          fr: 'nom-gc',
+          fi: 'gc-nimi',
+          pl: 'gc-name',
+          'sv-SE': 'gc-namn' } )
+        .setDescription( 'The case-sensitive Geocaching.com username.' )
+        .setDescriptionLocalizations( {
+          de: 'Der Geocaching.com-Benutzername, bei dem die Groß-/Kleinschreibung beachtet werden muss.',
+          fi: 'Kirjainkoolla erottuva Geocaching.com-käyttäjänimi.',
+          pl: 'W nazwie użytkownika Geocaching.com rozróżniana jest wielkość liter.' } ) )
     .addUserOption( option =>
       option.setName( 'discord-user' )
-        .setDescription( 'Discord member (requires nickname to be set if different from GC name)' ) )
+        .setNameLocalizations( {
+          de: 'discord-benutzer',
+          fr: 'utilisateur-discord',
+          fi: 'discord-käyttäjä',
+          pl: 'discord-użytkownik',
+          'sv-SE': 'discord-användare' } )
+        .setDescription( 'Discord member (requires nickname to be set if different from GC name).' )
+        .setDescriptionLocalizations( {
+          de: 'Discord-Mitglied (erfordert das Festlegen eines Spitznamens, wenn dieser vom GC-Namen abweicht).',
+          fi: 'Discord-jäsen (vaatii lempinimen asettamisen, jos se on eri kuin GC-nimi).',
+          pl: 'Członek Discord (wymaga ustawienia pseudonimu, jeśli różni się od nazwy GC).' } ) )
 ].map( command => command.toJSON() );
 
 const rest = new REST( { version: '9' } ).setToken( process.env.token );
