@@ -67,13 +67,13 @@ const commands = [
           pl: 'Język, w którym należy podawać informacje.',
           'sv-SE': 'Språk att ge information på.' } )
         .addChoices(
-          { name: 'de', value: 'Deutsch/German' },
-          { name: 'en', value: 'English (default)' },
-          { name: 'fi', value: 'Suomalainen/Finnish' },
-          { name: 'fr', value: 'Français/French' },
-          { name: 'no', value: 'Norsk/Norwegian' },
-          { name: 'pl', value: 'Polski/Polish' },
-          { name: 'sv-SE', value: 'Svenska/Swedish' }
+          { name: 'Deutsch/German', value: 'de' },
+          { name: 'English (default)', value: 'en' },
+          { name: 'Suomalainen/Finnish', value: 'fi' },
+          { name: 'Français/French', value: 'fr' },
+          { name: 'Norsk/Norwegian', value: 'no' },
+          { name: 'Polski/Polish', value: 'pl' },
+          { name: 'Svenska/Swedish', value: 'sv-SE' }
         ) ),
 	new SlashCommandBuilder()
     .setName( 'lmgt' )

@@ -9,7 +9,7 @@ module.exports = {
     const objAuthor = interaction.user;
     const msgID = interaction.options.getString( 'message-id' );
     const cmdInputUser = interaction.options.getUser( 'target' );
-    const localeInput = interaction.options.getString( 'locale' );
+    const localeInput = interaction.options.getString( 'language' );
     var getLocale = 'en';
     switch ( interaction.locale ) {
       case 'de' :
