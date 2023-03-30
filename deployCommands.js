@@ -212,6 +212,13 @@ const commands = [
         .setName( 'default-channel' )
         .setDescription( 'Default channel for all logs.' ) ) )
     .addSubcommand( subcommand => subcommand
+      .setName( 'error' )
+      .setDescription( 'Channel to log bot errors.' )
+      .addChannelOption( option => option
+        .setName( 'error-channel' )
+        .setDescription( 'Select channel:' )
+        .setRequired( true ) ) )
+    .addSubcommand( subcommand => subcommand
       .setName( 'react' )
       .setDescription( 'Channel to log `/react` requests.' )
       .addChannelOption( option => option

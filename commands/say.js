@@ -13,6 +13,7 @@ module.exports = {
     const objGuildMembers = interaction.guild.members.cache;
     const objGuildOwner = objGuildMembers.get( interaction.guild.ownerId );
     var logChan = objGuildOwner;
+    var logErrorChan = objGuildOwner;
     const author = interaction.user;
     const strAuthorTag = author.tag;
     const arrAuthorPermissions = ( interaction.guild.members.cache.get( author.id ).permissions.toArray() || [] );
@@ -20,7 +21,10 @@ module.exports = {
 
     if ( mySaying ) {    
       logSchema.findOne( { Guild: interaction.guild.id }, async ( err, data ) => {
-        if ( data ) { logChan = interaction.guild.channels.cache.get( data.Logs.Say ); }
+        if ( data ) {
+          logChan = interaction.guild.channels.cache.get( data.Logs.Say );
+          logErrorChan = interaction.guild.channels.cache.get( data.Logs.Error );
+        }
         if ( cmdAllowed ) {
           speakChannel.send( mySaying ).then( async spoke => {
             logChan.send( 'I spoke in <#' + spoke.channel.id + '> at <@' + interaction.user.id + '>\'s request:\n```\n' + mySaying + '\n```' );
@@ -29,8 +33,8 @@ module.exports = {
             switch ( muted.code ) {
               case 50001 :
                 const noChan = '<#' + speakChannel + '>';
-                await objGuildOwner.send( 'Please give me permission to send to ' + noChan );
-                await interaction.editReply( { content: 'I do not have permission to send messages in ' + noChan } );
+                await logErrorChan.send( 'Please give me permission to send to ' + noChan );
+                await interaction.editReply( { content: 'I do not have permission to send messages in ' + noChan + '.' } );
                 break;
               default:
                 myOwner.send( 'Error attempting to speak as requested by: <@' + interaction.user.id + '>' +

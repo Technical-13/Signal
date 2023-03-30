@@ -2,11 +2,17 @@
 // All modules must be re-imported since they are in a seperate file.
 
 const Discord = require( "discord.js" );
+const logSchema = require( '../models/Log' );
+const { model, Schema } = require( 'mongoose' );
 
 module.exports = {
 	name: 'interactionCreate', // Event name
 	once: false, // multiple commands can be run
 	run( interaction, client ) { // Function to run on event fire
+    const author = interaction.user;
+    const objGuildMembers = interaction.guild.members.cache;
+    const objGuildOwner = objGuildMembers.get( interaction.guild.ownerId );
+    var logChan = objGuildOwner;
     
     // Do not proceed if this isn't a command
 		if ( !interaction.isCommand() ) return;
@@ -34,8 +40,13 @@ module.exports = {
 			if ( Date.now() < expirationTime ) { // Has it expired yet?
         // If not, how long is left?
 				const timeLeft = ( expirationTime - Date.now() ) / 1000;
-        // Return an error message
-				return interaction.reply( "Whoops, you are on cooldown for this command for another " + timeLeft + " seconds." );
+        
+        // Log an error message and let the author know. 
+        logSchema.findOne( { Guild: interaction.guild.id }, async ( err, data ) => {
+          if ( data ) { logChan = interaction.guild.channels.cache.get( data.Logs.Error ); }
+          logChan.send( '<@' + author.id + '> has ' + timeLeft + ' seconds cooldown left on `/' + command.name + '`.' );
+        } );
+        return interaction.reply( { content: 'Whoops, you are on cooldown for `/' + command.name + '` for another ' + timeLeft + ' seconds.', ephemeral: true } );
 			}
 		} // continue running if no errors
 

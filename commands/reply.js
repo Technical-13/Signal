@@ -14,13 +14,17 @@ module.exports = {
     const objGuildMembers = interaction.guild.members.cache;
     const objGuildOwner = objGuildMembers.get( interaction.guild.ownerId );
     var logChan = objGuildOwner;
+    var logErrorChan = objGuildOwner;
     const author = interaction.user;
     const strAuthorTag = author.tag;
     const arrAuthorPermissions = ( interaction.guild.members.cache.get( author.id ).permissions.toArray() || [] );
     const cmdAllowed = ( arrAuthorPermissions.indexOf( 'PRIORITY_SPEAKER' ) !== -1 ? true : false );
 
     logSchema.findOne( { Guild: interaction.guild.id }, async ( err, data ) => {
-      if ( data ) { logChan = interaction.guild.channels.cache.get( data.Logs.Reply ); }
+      if ( data ) {
+        logChan = interaction.guild.channels.cache.get( data.Logs.Reply );
+        logErrorChan = interaction.guild.channels.cache.get( data.Logs.Error );
+      }
       channel.messages.fetch( msgID ).then( async message => {
         if ( cmdAllowed ) {
           await message.reply( myResponse ).then( async responded => {
@@ -29,7 +33,7 @@ module.exports = {
               message.channel.id + '> at <@' + interaction.user.id + '>\'s request:\n```\n' + myResponse + '\n```' );
           } );
         } else {
-          logChan.send( '<@' + interaction.user.id + '> has no permission to use my `/reply` command from <#' +
+          logErrorChan.send( '<@' + interaction.user.id + '> has no permission to use my `/reply` command from <#' +
             interaction.channel.id + '>. They tried to get me to reply to <@' + message.author.id +
             '>\'s message:' + ( message.content === '' ? ' **__Attachment Only!__**\n' : '\n```\n' + message.content + '\n```' ) + 'With:\n```\n' + myResponse + '\n```' );   
           interaction.editReply( { content: 'You don\'t have permission to get me to speak in `' +

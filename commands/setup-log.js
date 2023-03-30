@@ -11,6 +11,7 @@ module.exports = {
     const botMods = process.env.OWNER_IDS.split( ';' );
     const botOwner = client.users.cache.get( botMods[ 0 ] );
     const newAll = ( options.getChannel( 'default-channel' ) || channel ).id;
+    const newError = ( newAll ? newAll : options.getChannel( 'error-channel' ).id );
     const newReact = ( newAll ? newAll : options.getChannel( 'react-channel' ).id );
     const newReply = ( newAll ? newAll : options.getChannel( 'reply-channel' ).id );
     const newSay = ( newAll ? newAll : options.getChannel( 'say-channel' ).id );
@@ -33,6 +34,8 @@ module.exports = {
           const newLog = await logSchema.create( {
             Guild: interaction.guild.id,
             Logs: {
+              Default: newAll,
+              Error: newError,
               React: newReact,
               Reply: newReply,
               Say: newSay
@@ -40,12 +43,16 @@ module.exports = {
           } );
           interaction.editReply( { content: 'Log channels created.' } );
         } else {
+          let oldDefault = data.Logs.Default;
+          let oldError = data.Logs.Error;
           let oldReact = data.Logs.React;
           let oldReply = data.Logs.Reply;
           let oldSay = data.Logs.Say;
           const updateLog = await logSchema.updateOne( {
             Guild: interaction.guild.id,
             Logs: {
+              Default: newAll || oldDefault,
+              Error: newError || oldError,
               React: newReact || oldReact,
               Reply: newReply || oldReply,
               Say: newSay || oldSay
@@ -53,6 +60,8 @@ module.exports = {
           } );
           interaction.editReply( { content:
             'Log channels updated:' +
+            '\n\t`/Error` requests log to: <#' +
+            ( newError || oldError ) + '>' +
             '\n\t`/React` requests log to: <#' +
             ( newReact || oldReact ) + '>' +
             '\n\t`/Reply` requests log to: <#' +

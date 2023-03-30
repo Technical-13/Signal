@@ -16,6 +16,7 @@ module.exports = {
     const objGuildMembers = interaction.guild.members.cache;
     const objGuildOwner = objGuildMembers.get( interaction.guild.ownerId );
     var logChan = objGuildOwner;
+    var logErrorChan = objGuildOwner;
     
     var myReaction = theReaction;
     var rxp = /<:(.*)?:([\d]*)>/;
@@ -23,7 +24,10 @@ module.exports = {
     else { myReaction = encodeURI( myReaction );  }
     
     logSchema.findOne( { Guild: interaction.guild.id }, async ( err, data ) => {
-      if ( data && data.Logs.React ) { logChan = interaction.guild.channels.cache.get( data.Logs.React ); }
+      if ( data ) {
+        logChan = interaction.guild.channels.cache.get( data.Logs.React );
+        logErrorChan = interaction.guild.channels.cache.get( data.Logs.Error );
+      }
       channel.messages.fetch( msgID ).then( async message => {
         await message.react( myReaction ).then( reacted => {
           interaction.editReply( { content: 'Reacted!' } );

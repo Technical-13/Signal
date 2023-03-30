@@ -1,7 +1,7 @@
 module.exports = {
 	name: "profilestats",
 	description: "Show link to Project-GC ProfileStats page for user",
-	cooldown: 300000,
+	cooldown: 120000,
 	async run( interaction, client ) {
     const myOwner = client.users.cache.get( process.env.OWNER_IDS.split( ';' )[ 0 ] );
 
