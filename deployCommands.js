@@ -25,7 +25,7 @@ const commands = [
         .setDescription( 'The case-sensitive Geocaching.com username.' )
         .setDescriptionLocalizations( {
           de: 'Der Geocaching.com-Benutzername, bei dem die Groß-/Kleinschreibung beachtet werden muss.',
-          fi: 'Kirjainkoolla erottuva Geocaching.com-käyttäjänimi.',
+          fi: 'Geocaching.com-käyttäjänimi, kirjainkoko merkitsevä.',
           pl: 'W nazwie użytkownika Geocaching.com rozróżniana jest wielkość liter.' } ) )
     .addUserOption( option =>
       option.setName( 'discord-user' )
@@ -38,7 +38,7 @@ const commands = [
         .setDescription( 'Discord member (requires nickname to be set if different from GC name).' )
         .setDescriptionLocalizations( {
           de: 'Discord-Mitglied (erfordert das Festlegen eines Spitznamens, wenn dieser vom GC-Namen abweicht).',
-          fi: 'Discord-jäsen (vaatii lempinimen asettamisen, jos se on eri kuin GC-nimi).',
+          fi: 'Discord-jäsen (vaatii nimimerkin asettamisen, jos se on eri kuin GC-nimi).',
           pl: 'Członek Discord (wymaga ustawienia pseudonimu, jeśli różni się od nazwy GC).' } ) ),
 	new SlashCommandBuilder()
     .setName( 'ftf' )
@@ -69,7 +69,7 @@ const commands = [
         .addChoices(
           { name: 'Deutsch/German', value: 'de' },
           { name: 'English (default)', value: 'en' },
-          { name: 'Suomalainen/Finnish', value: 'fi' },
+          { name: 'Suomi/Finnish', value: 'fi' },
           { name: 'Français/French', value: 'fr' },
           { name: 'Norsk/Norwegian', value: 'no' },
           { name: 'Polski/Polish', value: 'pl' },
@@ -116,7 +116,7 @@ const commands = [
         .setDescription( 'The case-sensitive Geocaching.com username.' )
         .setDescriptionLocalizations( {
           de: 'Der Geocaching.com-Benutzername, bei dem die Groß-/Kleinschreibung beachtet werden muss.',
-          fi: 'Kirjainkoolla erottuva Geocaching.com-käyttäjänimi.',
+          fi: 'Geocaching.com-käyttäjänimi, kirjainkoko merkitsevä.',
           pl: 'W nazwie użytkownika Geocaching.com rozróżniana jest wielkość liter.' } ) )
     .addUserOption( option =>
       option.setName( 'discord-user' )
@@ -129,14 +129,14 @@ const commands = [
         .setDescription( 'Discord member (requires nickname to be set if different from GC name).' )
         .setDescriptionLocalizations( {
           de: 'Discord-Mitglied (erfordert das Festlegen eines Spitznamens, wenn dieser vom GC-Namen abweicht).',
-          fi: 'Discord-jäsen (vaatii lempinimen asettamisen, jos se on eri kuin GC-nimi).',
+          fi: 'Discord-jäsen (vaatii nimimerkin asettamisen, jos se on eri kuin GC-nimi).',
           pl: 'Członek Discord (wymaga ustawienia pseudonimu, jeśli różni się od nazwy GC).' } ) ),
   new SlashCommandBuilder()
     .setName( 'react' )
     .setNameLocalizations( {
       de: 'reagieren',
       fr: 'réagir',
-      fi: 'reagoida',
+      fi: 'reagoi',
       pl: 'reagować',
       'sv-SE': 'reagera' } )
     .setDescription( 'Make bot react to a message.' )
@@ -191,7 +191,7 @@ const commands = [
     .setNameLocalizations( {
       de: 'sagen',
       fr: 'dire',
-      fi: 'sanoa',
+      fi: 'sano',
       pl: 'mowić',
       'sv-SE': 'säga' } )
     .setDescription( 'Make bot speak.' )
@@ -258,7 +258,7 @@ const commands = [
         .setDescription( 'The case-sensitive Geocaching.com username.' )
         .setDescriptionLocalizations( {
           de: 'Der Geocaching.com-Benutzername, bei dem die Groß-/Kleinschreibung beachtet werden muss.',
-          fi: 'Kirjainkoolla erottuva Geocaching.com-käyttäjänimi.',
+          fi: 'Geocaching.com-käyttäjänimi, kirjainkoko merkitsevä.',
           pl: 'W nazwie użytkownika Geocaching.com rozróżniana jest wielkość liter.' } ) )
     .addUserOption( option =>
       option.setName( 'discord-user' )
@@ -271,7 +271,7 @@ const commands = [
         .setDescription( 'Discord member (requires nickname to be set if different from GC name).' )
         .setDescriptionLocalizations( {
           de: 'Discord-Mitglied (erfordert das Festlegen eines Spitznamens, wenn dieser vom GC-Namen abweicht).',
-          fi: 'Discord-jäsen (vaatii lempinimen asettamisen, jos se on eri kuin GC-nimi).',
+          fi: 'Discord-jäsen (vaatii nimimerkin asettamisen, jos se on eri kuin GC-nimi).',
           pl: 'Członek Discord (wymaga ustawienia pseudonimu, jeśli różni się od nazwy GC).' } ) )
 ].map( command => command.toJSON() );
 
