@@ -41,6 +41,12 @@ const commands = [
           fi: 'Discord-jäsen (vaatii nimimerkin asettamisen, jos se on eri kuin GC-nimi).',
           pl: 'Członek Discord (wymaga ustawienia pseudonimu, jeśli różni się od nazwy GC).' } ) ),
 	new SlashCommandBuilder()
+    .setName( 'bot' )
+    .setDescription( 'Options to find the GitHub repository, report bugs, and suggest features!' )
+    .addStringOption( option =>
+      option.setName( 'action' )
+        .setDescription( 'Link, Sponsor, Report Bug, Request Feature' ) ),
+	new SlashCommandBuilder()
     .setName( 'ftf' )
     .setDescription( 'Tell someone how to get their FTF (First To Find) noticed on Project-GC' )
     .addStringOption( option =>
