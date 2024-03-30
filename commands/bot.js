@@ -3,8 +3,8 @@ module.exports = {
 	description: "Options to find the GitHub repository, report bugs, and suggest features!",
 	cooldown: 3000,
 	async run( interaction, client ) {
-		const strAction = interaction.options.getString( 'action' ) ?? 'link';
-    switch strAction {
+		const strAction = ( interaction.options.getString( 'action' ) ?? 'link' );
+    switch ( strAction ) {
       case 'link' : default :
         interaction.reply( { content: 'You can check me out on GitHub: :link:\nhttps://github.com/Technical-13/Signal/tree/master' } );
     }
