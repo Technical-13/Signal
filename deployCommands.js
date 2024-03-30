@@ -29,29 +29,31 @@ const commands = [
           pl: 'W nazwie użytkownika Geocaching.com rozróżniana jest wielkość liter.' } ) )
     .addUserOption( option =>
       option.setName( 'discord-user' )
-        .setNameLocalizations( {
-          de: 'discord-benutzer',
-          fr: 'utilisateur-discord',
-          fi: 'discord-käyttäjä',
-          pl: 'discord-użytkownik',
-          'sv-SE': 'discord-användare' } )
-        .setDescription( 'Discord member (requires nickname to be set if different from GC name).' )
-        .setDescriptionLocalizations( {
-          de: 'Discord-Mitglied (erfordert das Festlegen eines Spitznamens, wenn dieser vom GC-Namen abweicht).',
-          fi: 'Discord-jäsen (vaatii nimimerkin asettamisen, jos se on eri kuin GC-nimi).',
-          pl: 'Członek Discord (wymaga ustawienia pseudonimu, jeśli różni się od nazwy GC).' } ) ),
+      .setNameLocalizations( {
+        de: 'discord-benutzer',
+        fr: 'utilisateur-discord',
+        fi: 'discord-käyttäjä',
+        pl: 'discord-użytkownik',
+        'sv-SE': 'discord-användare' } )
+      .setDescription( 'Discord member (requires nickname to be set if different from GC name).' )
+      .setDescriptionLocalizations( {
+        de: 'Discord-Mitglied (erfordert das Festlegen eines Spitznamens, wenn dieser vom GC-Namen abweicht).',
+        fi: 'Discord-jäsen (vaatii nimimerkin asettamisen, jos se on eri kuin GC-nimi).',
+        pl: 'Członek Discord (wymaga ustawienia pseudonimu, jeśli różni się od nazwy GC).' } ) ),
 	new SlashCommandBuilder()
     .setName( 'bot' )
     .setDescription( 'Options to find the GitHub repository, report bugs, and suggest features!' )
     .addStringOption( option =>
       option.setName( 'action' )
-        .setDescription( 'Link, Sponsor, Report Bug, Request Feature' )
-	    .addChoices(
-		{ name: 'Link', value: 'link' },
-		{ name: 'Sponsor', value: 'sponsor' },
-		{ name: 'Report Bug', value: 'bug' },
-		{ name: 'Request Feature', value: 'feature' },
-		) ),
+      .setDescription( 'Link, Sponsor, Report Bug, Request Feature' )
+      .addChoices(
+        { name: 'Link', value: 'link' },
+        { name: 'Sponsor', value: 'sponsor' },
+        { name: 'Report Bug', value: 'bug' },
+        { name: 'Request Feature', value: 'feature' } ) )
+    .addStringOption( option =>
+      option.setName( 'title' )
+      .setDescription( 'A short description of the bug or feature request' ) ),
 	new SlashCommandBuilder()
     .setName( 'ftf' )
     .setDescription( 'Tell someone how to get their FTF (First To Find) noticed on Project-GC' )
