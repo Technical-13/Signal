@@ -5,7 +5,7 @@ module.exports = {
 	async run( interaction, client ) {
 		const strAction = ( interaction.options.getString( 'action' ) ?? 'link' );
     var strTitle = ( interaction.options.getString( 'title' ) ?? '' );
-    if ( strTitle ) { strTitle = '&title=' + strTitle; }
+    if ( strTitle ) { strTitle = '&title=' + encodeURI( strTitle ); }
 		switch ( strAction ) {
 			case 'sponsor':
   			interaction.reply( { content: 'Sponsor me from GitHub:\n:link: <https://github.com/sponsors/Technical-13>' } );
