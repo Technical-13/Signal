@@ -8,16 +8,16 @@ module.exports = {
     if ( strTitle ) { strTitle = '&title=' + encodeURI( strTitle ); }
 		switch ( strAction ) {
 			case 'sponsor':
-  			interaction.reply( { content: 'Sponsor me from GitHub:\n:link: <https://github.com/sponsors/Technical-13>' } );
+  			interaction.reply( { content: 'Sponsor me from GitHub:\n:link: <https://github.com/sponsors/Technical-13>', ephemeral: interaction.inGuild() } );
   			break;
 			case 'bug': 
-  			interaction.reply( { content: 'Report a bug on GitHub:\n:link: <https://github.com/Technical-13/Signal/issues/new?labels=bug&template=bug_report.md' + strTitle + '>' } );
+  			interaction.reply( { content: 'Report a bug on GitHub:\n:link: <https://github.com/Technical-13/Signal/issues/new?labels=bug&template=bug_report.md' + strTitle + '>', ephemeral: interaction.inGuild() } );
   			break;
 			case 'feature':
-  			interaction.reply( { content: 'Request a feature on GitHub:\n:link: <https://github.com/Technical-13/Signal/issues/new?labels=enhancement&template=feature_request.md' + strTitle + '>' } );
+  			interaction.reply( { content: 'Request a feature on GitHub:\n:link: <https://github.com/Technical-13/Signal/issues/new?labels=enhancement&template=feature_request.md' + strTitle + '>', ephemeral: interaction.inGuild() } );
   			break;
 			case 'link' : default :
-		  	interaction.reply( { content: 'You can check me out on GitHub:\n:link: <https://github.com/Technical-13/Signal/tree/master>' } );
+		  	interaction.reply( { content: 'You can check me out on GitHub:\n:link: <https://github.com/Technical-13/Signal/tree/master>', ephemeral: interaction.inGuild() } );
 		}
 	}
 }
