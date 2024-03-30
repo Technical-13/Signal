@@ -45,7 +45,13 @@ const commands = [
     .setDescription( 'Options to find the GitHub repository, report bugs, and suggest features!' )
     .addStringOption( option =>
       option.setName( 'action' )
-        .setDescription( 'Link, Sponsor, Report Bug, Request Feature' ) ),
+        .setDescription( 'Link, Sponsor, Report Bug, Request Feature' )
+	    .addChoices(
+		{ name: 'Link', value: 'link' },
+		{ name: 'Sponsor', value: 'sponsor' },
+		{ name: 'Report Bug', value: 'bug' },
+		{ name: 'Request Feature', value: 'feature' },
+		) ),
 	new SlashCommandBuilder()
     .setName( 'ftf' )
     .setDescription( 'Tell someone how to get their FTF (First To Find) noticed on Project-GC' )
