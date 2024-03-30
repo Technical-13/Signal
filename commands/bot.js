@@ -4,12 +4,18 @@ module.exports = {
 	cooldown: 3000,
 	async run( interaction, client ) {
 		const strAction = ( interaction.options.getString( 'action' ) ?? 'link' );
-    switch ( strAction ) {
-      case 'link' : default :
-        interaction.reply( { content: 'You can check me out on GitHub: :link:\nhttps://github.com/Technical-13/Signal/tree/master' } );
-    }
-    // https://github.com/sponsors/Technical-13
-    // https://github.com/Technical-13/Signal/issues/new?assignees=&labels=bug&projects=&template=bug_report.md&title=
-    // https://github.com/Technical-13/Signal/issues/new?assignees=&labels=enhancement&projects=&template=feature_request.md&title=
+		switch ( strAction ) {
+			case 'sponsor':
+  			interaction.reply( { content: 'Sponsor me from GitHub:\n:link: <https://github.com/sponsors/Technical-13>' } );
+  			break;
+			case 'bug': 
+  			interaction.reply( { content: 'Report a bug on GitHub:\n:link: <https://github.com/Technical-13/Signal/issues/new?assignees=&labels=bug&projects=&template=bug_report.md&title=>' } );
+  			break;
+			case 'feature':
+  			interaction.reply( { content: 'Request a feature on GitHub:\n:link: <https://github.com/Technical-13/Signal/issues/new?assignees=&labels=enhancement&projects=&template=feature_request.md&title=>' } );
+  			break;
+			case 'link' : default :
+		  	interaction.reply( { content: 'You can check me out on GitHub:\n:link: <https://github.com/Technical-13/Signal/tree/master>' } );
+		}
 	}
 }
