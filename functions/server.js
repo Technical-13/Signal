@@ -1,4 +1,4 @@
-const bot = process.env.REPL_SLUG;
+const bot = process.env.BOT_USERNAME;
 const express = require( 'express' );
 const replServer = express();
 const objTimeString = require( '../time.json' );
