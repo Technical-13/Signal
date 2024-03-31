@@ -1,4 +1,4 @@
-const objTimeString = require( '../../time.json' );
+const objTimeString = require( '../time.json' );
 var strNow = () => { return ( new Date() ).toLocaleDateString( 'en-us', objTimeString ) };
 
 module.exports = ( client, err ) => {
