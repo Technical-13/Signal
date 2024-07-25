@@ -27,13 +27,14 @@ module.exports = {
       const strUserNick = interaction.guild.members.cache.get( objInputUser.id ).nickname;
       useUserName = ( strUserNick ?? strUserName );
     }
-    
+
+    const boolLabcaches = '&includeLabcaches';
     const strInputName = ( interaction.options.getString( 'gc-name' ) || null );
     
     const useName = ( strInputName ?? ( useUserName ?? useAuthorName ) );
     const encName = encodeURI( useName ).replace( '&', '%26' );
 
     // Send result
-		interaction.reply( { content: 'StatBar for: ' + ( objInputUser == null ? useName : '<@' +  objInputUser + '>' ) + '\nhttps://cdn2.project-gc.com/statbar.php?includeLabcaches&quote=https://discord.me/Geocaching%20-%20' + intYear + '-' + intMonth + '-' + intDay + '&user=' + encName } );
+		interaction.reply( { content: 'StatBar for: ' + ( objInputUser == null ? useName : '<@' +  objInputUser + '>' ) + '\nhttps://cdn2.project-gc.com/statbar.php?quote=https://discord.me/Geocaching%20-%20' + intYear + '-' + intMonth + '-' + intDay + boolLabcaches + '&user=' + encName } );
 	}
 }
