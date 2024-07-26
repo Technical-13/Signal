@@ -15,9 +15,10 @@ module.exports = {
     // Figure what username to use
     const objGuildMembers = interaction.guild.members.cache;
     
-    const strAuthorName = interaction.user.username;    
+    const strAuthorName = interaction.user.username;
+    const strGlobalName = interaction.user.global_name;
     const strAuthorNick = objGuildMembers.get( interaction.user.id ).nickname;
-    const useAuthorName = ( strAuthorNick ?? strAuthorName );
+    const useAuthorName = ( ( strAuthorNick ?? strGlobalName ) ?? strAuthorName );
     
     const objInputUser = ( interaction.options.getUser( 'discord-user' ) ?? null );
     var useUserName;
