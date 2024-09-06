@@ -63,9 +63,9 @@ module.exports = {
       if ( msgID && isNaN( msgID ) ) {
         interaction.editReply( '`' + msgID + '` ' + i18InvalidMsgId[ locale ] );
       } else if ( msgID ) {
-        channel.messages.fetch( msgID ).then( message => {
+        channel.messages.fetch( msgID ).then( async message => {
           interaction.deleteReply();
-          await message.reply( '<@' + message.author.id + '>, ' + i18FTFinfo[ locale ] ).then( async replied => {
+          await message.reply( '<@' + message.author.id + '>, ' + i18FTFinfo[ locale ] ).then( replied => {
             logChan.send( 'I told <@' + message.author.id + '> about FTFs at <@' + interaction.user.id +'>\'s `/ftf` request in response to:\n```\n' +
                         message.content + '\n```\n----' );
           } );
