@@ -32,7 +32,7 @@ module.exports = {
         await message.react( myReaction ).then( reacted => {
           interaction.editReply( { content: 'Reacted!' } );
           let setupPlease = ( logChan == objGuildOwner ? '. Please run `/setup-log` to have these logs go to a channel in the server instead of your DMs.' : '.' );
-          logChan.send( 'I reacted to <@' + message.author.id + '> in https://discord.com/channels/' + message.guild.id + '/' + message.channel.id + '/' + message.id + ' with ' + theReaction + ' at <@' + interaction.user.id + '>\'s request' + setupPlease );
+          logChan.send( 'I reacted to <@' + message.author.id + '> in https://discord.com/channels/' + message.guild.id + '/' + message.channel.id + '/' + message.id + ' with ' + theReaction + ' at <@' + interaction.user.id + '>\'s request' + setupPlease + '\n----' );
         } ).catch( noReaction => {
           switch ( noReaction.code ) {
             case 10014://
