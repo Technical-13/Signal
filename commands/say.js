@@ -27,7 +27,7 @@ module.exports = {
         }
         if ( cmdAllowed ) {
           speakChannel.send( mySaying ).then( async spoke => {
-            logChan.send( 'I spoke in https://discord.com/channels/' + spoke.guild.id + '/' + spoke.channel.id + '/' + spoke.id + ' at <@' + interaction.user.id + '>\'s request:\n```\n' + mySaying + '\n```' );
+            logChan.send( 'I spoke in https://discord.com/channels/' + spoke.guild.id + '/' + spoke.channel.id + '/' + spoke.id + ' at <@' + interaction.user.id + '>\'s request:\n```\n' + mySaying + '\n```\n----' );
             interaction.editReply( { content: 'I said the thing!' } );
           } ).catch( async muted => {
             switch ( muted.code ) {
