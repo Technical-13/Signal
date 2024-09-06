@@ -1,3 +1,6 @@
+const logSchema = require( '../models/Log' );
+const { model, Schema } = require( 'mongoose' );
+
 module.exports = {
 	name: "ftf",
 	description: "Tell someone how to get their FTF (First To Find) noticed on Project-GC",
@@ -51,20 +54,30 @@ module.exports = {
       'sv-SE': 'Det gick inte att hitta ett specifikt meddelande att svara på.'
     };
 
-    if ( msgID && isNaN( msgID ) ) {
-      interaction.editReply( '`' + msgID + '` ' + i18InvalidMsgId[ locale ] );
-    } else if ( msgID ) {
-      channel.messages.fetch( msgID ).then( message => {
-        interaction.deleteReply();
-        message.reply( i18FTFinfo[ locale ] );
-      } ).catch( noMessage => {
-        interaction.editReply( i18NoMessage[ locale ] + ' ' + i18FTFinfo[ locale ] );
-        console.error( 'Unable to find message with ID:%o\n\t%o', msgID, noMessage );
-      } );
-    } else if ( cmdInputUser ) {
-      interaction.editReply( '<@' + cmdInputUser.id + '>, ' + i18FTFinfo[ locale ] );
-    } else {
-      interaction.editReply( i18FTFinfo[ locale ] );
-    }
+    logSchema.findOne( { Guild: interaction.guild.id }, async ( err, data ) => {
+      if ( data ) {
+        logChan = interaction.guild.channels.cache.get( data.Logs.Reply );
+        logErrorChan = interaction.guild.channels.cache.get( data.Logs.Error );
+      }
+
+      if ( msgID && isNaN( msgID ) ) {
+        interaction.editReply( '`' + msgID + '` ' + i18InvalidMsgId[ locale ] );
+      } else if ( msgID ) {
+        channel.messages.fetch( msgID ).then( message => {
+          interaction.deleteReply();
+          await message.reply( '<@' + message.author.id + '>, ' + i18FTFinfo[ locale ] ).then( async replied => {
+            logChan.send( 'I told <@' + message.author.id + '> about FTFs at <@' + interaction.user.id +'>\'s `/ftf` request in response to:\n```\n' +
+                        message.content + '\n```\n----' );
+          } );
+        } ).catch( noMessage => {
+          interaction.editReply( i18NoMessage[ locale ] + ' ' + i18FTFinfo[ locale ] );
+          console.error( 'Unable to find message with ID:%o\n\t%o', msgID, noMessage );
+        } );
+      } else if ( cmdInputUser ) {
+        interaction.editReply( '<@' + cmdInputUser.id + '>, ' + i18FTFinfo[ locale ] );
+      } else {
+        interaction.editReply( i18FTFinfo[ locale ] );
+      }
+    } );
 	}
 }
