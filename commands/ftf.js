@@ -63,9 +63,9 @@ module.exports = {
       if ( msgID && isNaN( msgID ) ) {
         interaction.editReply( '`' + msgID + '` ' + i18InvalidMsgId[ locale ] );
       } else if ( msgID ) {
-        channel.messages.fetch( msgID ).then( async message => {
+        channel.messages.fetch( msgID ).then( message => {
           interaction.deleteReply();
-          await message.reply( '<@' + message.author.id + '>, ' + i18FTFinfo[ locale ] ).then( replied => {
+          message.reply( '<@' + message.author.id + '>, ' + i18FTFinfo[ locale ] ).then( replied => {
             logChan.send( 'I told <@' + message.author.id + '> about FTFs at <@' + interaction.user.id +'>\'s `/ftf` request in response to:\n```\n' +
                         message.content + '\n```\n----' );
           } );
@@ -74,9 +74,13 @@ module.exports = {
           console.error( 'Unable to find message with ID:%o\n\t%o', msgID, noMessage );
         } );
       } else if ( cmdInputUser ) {
-        interaction.editReply( '<@' + cmdInputUser.id + '>, ' + i18FTFinfo[ locale ] );
+        interaction.editReply( '<@' + cmdInputUser.id + '>, ' + i18FTFinfo[ locale ] ).then( replied => {
+          logChan.send( 'I told <@' + cmdInputUser.id + '> about FTFs at <@' + interaction.user.id +'>\'s `/ftf` request.\n----' )
+        } );
       } else {
-        interaction.editReply( i18FTFinfo[ locale ] );
+        interaction.editReply( i18FTFinfo[ locale ] ).then( replied => {
+          logChan.send( 'I told <@' + interaction.user.id + '> about FTFs via `/ftf` request.\n----' )
+        } );
       }
     } );
 	}
