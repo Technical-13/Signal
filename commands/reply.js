@@ -29,7 +29,9 @@ module.exports = {
         if ( cmdAllowed ) {
           await message.reply( myResponse ).then( async responded => {
             interaction.editReply( { content: 'Responded!' } );
-            logChan.send( 'I replied in https://discord.com/channels/' + responded.guild.id + '/' + responded.channel.id + '/' + responded.id + ' to <@' + message.author.id + '>\'s message in https://discord.com/channels/' + message.guild.id + '/' + message.channel.id + '/' + message.id + ' at <@' + interaction.user.id + '>\'s request:\n```\n' + myResponse + '\n```' );
+            logChan.send( 'I replied to <@' + message.author.id + '>\'s message in https://discord.com/channels/' + message.guild.id + '/' + message.channel.id + '/' + message.id + '\n```\n' +
+                         message.content + '\n```\n in https://discord.com/channels/' + responded.guild.id + '/' + responded.channel.id + '/' + responded.id +
+                         ' at <@' + interaction.user.id + '>\'s request:\n```\n' + myResponse + '\n```\n----' );
           } );
         } else {
           logErrorChan.send( '<@' + interaction.user.id + '> has no permission to use my `/reply` command from <#' +
