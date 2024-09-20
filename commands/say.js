@@ -11,6 +11,7 @@ module.exports = {
     const speakChannel = interaction.options.getChannel( 'channel' ) || interaction.channel;
     const mySaying = interaction.options.getString( 'saying' );
     const mentionsEveryone = /@(everyone|here)/g.test( mySaying );
+    const strEveryoneHere = ( mentionsEveryone ? '`@' + ( /@everyone/g.test( mySaying ) ? 'everyone' : 'here' ) + '`' : null );
     const objGuildMembers = interaction.guild.members.cache;
     const objGuildOwner = objGuildMembers.get( interaction.guild.ownerId );
     var logChan = objGuildOwner;
@@ -49,6 +50,10 @@ module.exports = {
                 console.error( 'Unable to speak:\n\tCode: %o\n\tMsg: %o\n\tErr: %o', muted.code, muted.message, muted );
             }
           } );
+        } else if ( mentionsEveryone && !canEveryone ) {
+          logChan.send( '<@' + interaction.user.id + '> has no permission to get me to ' + strEveryoneHere + ' in <#' + interaction.channel.id + '>. They tried to get me to say:\n```\n' + mySaying + '\n```');
+          interaction.editReply( { content: 'You don\'t have permission to get me to ' + strEveryoneHere + ' in `' +
+            interaction.guild.name + '`<#' + interaction.channel.id + '>.' } );
         } else {
           logChan.send( '<@' + interaction.user.id + '> has no permission to use my `/say` command from <#' + interaction.channel.id + '>. They tried to get me to say:\n```\n' + mySaying + '\n```');
           interaction.editReply( { content: 'You don\'t have permission to get me to speak in `' +
