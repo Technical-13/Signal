@@ -11,8 +11,6 @@ module.exports = {
     const speakChannel = interaction.options.getChannel( 'channel' ) || interaction.channel;
     const mySaying = interaction.options.getString( 'saying' );
     const mentionsEveryone = /@(everyone|here)/g.test( mySaying );
-    const allMentions = mySaying.match( /<?@&?(everyone|here|[\d]{18,19})>?/g );
-      console.log( 'allMentions match: %o', allMentions );
     const objGuildMembers = interaction.guild.members.cache;
     const objGuildOwner = objGuildMembers.get( interaction.guild.ownerId );
     var logChan = objGuildOwner;
@@ -29,7 +27,7 @@ module.exports = {
           logChan = interaction.guild.channels.cache.get( data.Logs.Say );
           logErrorChan = interaction.guild.channels.cache.get( data.Logs.Error );
         }
-        if ( cmdAllowed ) {
+        if ( cmdAllowed && ( !mentionsEveryone || canEveryone ) ) {
           speakChannel.send( mySaying ).then( async spoke => {
             logChan.send( 'I spoke in https://discord.com/channels/' + spoke.guild.id + '/' + spoke.channel.id + '/' + spoke.id + ' at <@' + interaction.user.id + '>\'s request:\n```\n' + mySaying + '\n```\n----' );
             interaction.editReply( { content: 'I said the thing!' } );
