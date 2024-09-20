@@ -12,7 +12,7 @@ module.exports = {
     const mySaying = interaction.options.getString( 'saying' );
     const mentionsEveryoneTestOne = mySaying.match( /<@(everyone|here)>/g );
       console.log( 'mentionsEveryoneTestOne match: %o', mentionsEveryoneTestOne );
-    const mentionsEveryoneTestTwo = /<@(everyone|here)>/g.test( mySaying );
+    const mentionsEveryoneTestTwo = /@(everyone|here)/g.test( mySaying );
       console.log( 'mentionsEveryoneTestTwo test: %o', mentionsEveryoneTestTwo );
     const objGuildMembers = interaction.guild.members.cache;
     const objGuildOwner = objGuildMembers.get( interaction.guild.ownerId );
