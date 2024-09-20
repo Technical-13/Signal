@@ -10,8 +10,8 @@ module.exports = {
     const myOwner = client.users.cache.get( process.env.OWNER_IDS.split( ';' )[ 0 ] );
     const speakChannel = interaction.options.getChannel( 'channel' ) || interaction.channel;
     const mySaying = interaction.options.getString( 'saying' );
-    const mentionsEveryone = mySaying.mentions.everyone;
-      console.log( 'Message mentions %s', ( mentionsEveryone ? 'everyone' : 'noone important' ) );
+    const mentionsEveryone = mySaying.mentions;
+      console.log( 'Message mentions %s', ( mentionsEveryone ? 'everyone' : 'no-one important' ) );
     const objGuildMembers = interaction.guild.members.cache;
     const objGuildOwner = objGuildMembers.get( interaction.guild.ownerId );
     var logChan = objGuildOwner;
