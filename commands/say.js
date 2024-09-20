@@ -11,7 +11,7 @@ module.exports = {
     const speakChannel = interaction.options.getChannel( 'channel' ) || interaction.channel;
     const mySaying = interaction.options.getString( 'saying' );
     const mentionsEveryone = mySaying.mentions;
-      console.log( 'Message mentions %s', ( mentionsEveryone ? 'everyone' : 'no-one important' ) );
+      console.log( 'Message mentions: %o', mentionsEveryone );
     const objGuildMembers = interaction.guild.members.cache;
     const objGuildOwner = objGuildMembers.get( interaction.guild.ownerId );
     var logChan = objGuildOwner;
