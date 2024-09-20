@@ -10,10 +10,9 @@ module.exports = {
     const myOwner = client.users.cache.get( process.env.OWNER_IDS.split( ';' )[ 0 ] );
     const speakChannel = interaction.options.getChannel( 'channel' ) || interaction.channel;
     const mySaying = interaction.options.getString( 'saying' );
-    const mentionsEveryoneTestOne = mySaying.match( /@(everyone|here)/g );
-      console.log( 'mentionsEveryoneTestOne match: %o', mentionsEveryoneTestOne );
-    const mentionsEveryoneTestTwo = /@(everyone|here)/g.test( mySaying );
-      console.log( 'mentionsEveryoneTestTwo test: %o', mentionsEveryoneTestTwo );
+    const mentionsEveryone = /@(everyone|here)/g.test( mySaying );
+    const allMentions = mySaying.match( /<?@&?(everyone|here|[\d]{18,19})>?/g );
+      console.log( 'allMentions match: %o', allMentions );
     const objGuildMembers = interaction.guild.members.cache;
     const objGuildOwner = objGuildMembers.get( interaction.guild.ownerId );
     var logChan = objGuildOwner;
