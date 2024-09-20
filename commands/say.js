@@ -10,6 +10,8 @@ module.exports = {
     const myOwner = client.users.cache.get( process.env.OWNER_IDS.split( ';' )[ 0 ] );
     const speakChannel = interaction.options.getChannel( 'channel' ) || interaction.channel;
     const mySaying = interaction.options.getString( 'saying' );
+    const mentionsEveryone = mysaying.mentions.everyone;
+      console.log( 'Message mentions %s', ( mentionsEveryone ? 'everyone' : 'noone important' ) );
     const objGuildMembers = interaction.guild.members.cache;
     const objGuildOwner = objGuildMembers.get( interaction.guild.ownerId );
     var logChan = objGuildOwner;
@@ -18,9 +20,7 @@ module.exports = {
     const strAuthorTag = author.tag;
     const arrAuthorPermissions = ( interaction.guild.members.cache.get( author.id ).permissions.toArray() || [] );
     const canEveryone = ( arrAuthorPermissions.indexOf( 'MENTION_EVERYONE' ) !== -1 ? true : false );
-      console.log( '%o can%o @everyone.', strAuthorTag, ( canEveryone ? '' : ' NOT' ) );
     const cmdAllowed = ( arrAuthorPermissions.indexOf( 'PRIORITY_SPEAKER' ) !== -1 ? true : false );
-      console.log( '%o can%o speak.', strAuthorTag, ( cmdAllowed ? '' : ' NOT' ) );
 
     if ( mySaying ) {    
       logSchema.findOne( { Guild: interaction.guild.id }, async ( err, data ) => {
