@@ -17,6 +17,8 @@ module.exports = {
     const author = interaction.user;
     const strAuthorTag = author.tag;
     const arrAuthorPermissions = ( interaction.guild.members.cache.get( author.id ).permissions.toArray() || [] );
+    const canEveryone = ( arrAuthorPermissions.indexOf( 'MENTION_EVERYONE' ) !== -1 ? true : false );
+      console.log( '%o can %o @everyone.', strAuthorTag, ( canEveryone ? '' : ' NOT' ) );
     const cmdAllowed = ( arrAuthorPermissions.indexOf( 'PRIORITY_SPEAKER' ) !== -1 ? true : false );
 
     if ( mySaying ) {    
