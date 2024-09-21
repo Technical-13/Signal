@@ -6,7 +6,7 @@ const logSchema = require( '../models/Log' );
 const { model, Schema } = require( 'mongoose' );
 
 module.exports = {
-	name: 'message', // Event name
+	name: 'messageCreate', // Event name
 	once: false, // multiple commands can be run
 	run( message, client ) {
     console.log( 'I see a message!' );
