@@ -8,7 +8,7 @@ module.exports = {
     
     mongoose.set( 'strictQuery', false );
     client.user.setActivity( 'Geocaching', { type: 'PLAYING' } );
-    mongoose.disconnect( () => console.log( 'Closed MongoDBs.' ) );
+    mongoose.disconnect( () => console.log( 'MongoDB disconnected.' ) );
     await mongoose.connect( process.env.mongodb || '', { keepAlive: true } )
       .then( connected => { console.log( 'Connected to MongoDB.' ); } )
       .catch( errDB => {
