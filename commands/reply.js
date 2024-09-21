@@ -11,6 +11,8 @@ module.exports = {
     const { channel, options } = interaction;
     const msgID = interaction.options.getString( 'message-id' );
     const myResponse = interaction.options.getString( 'response' );
+    const mentionsEveryone = /@(everyone|here)/g.test( myResponse );
+    const strEveryoneHere = ( mentionsEveryone ? '`@' + ( /@everyone/g.test( myResponse ) ? 'everyone' : 'here' ) + '`' : null );
     const objGuildMembers = interaction.guild.members.cache;
     const objGuildOwner = objGuildMembers.get( interaction.guild.ownerId );
     var logChan = objGuildOwner;
@@ -18,6 +20,7 @@ module.exports = {
     const author = interaction.user;
     const strAuthorTag = author.tag;
     const arrAuthorPermissions = ( interaction.guild.members.cache.get( author.id ).permissions.toArray() || [] );
+    const canEveryone = ( arrAuthorPermissions.indexOf( 'MENTION_EVERYONE' ) !== -1 ? true : false );
     const cmdAllowed = ( arrAuthorPermissions.indexOf( 'PRIORITY_SPEAKER' ) !== -1 ? true : false );
 
     logSchema.findOne( { Guild: interaction.guild.id }, async ( err, data ) => {
@@ -26,15 +29,19 @@ module.exports = {
         logErrorChan = interaction.guild.channels.cache.get( data.Logs.Error );
       }
       channel.messages.fetch( msgID ).then( async message => {
-        if ( cmdAllowed ) {
+        if ( cmdAllowed && ( !mentionsEveryone || canEveryone ) ) {
           await message.reply( myResponse ).then( async responded => {
             interaction.editReply( { content: 'Responded!' } );
             logChan.send( 'I replied to <@' + message.author.id + '>\'s message in https://discord.com/channels/' + message.guild.id + '/' + message.channel.id + '/' + message.id + '\n```\n' +
                          message.content + '\n```\n in https://discord.com/channels/' + responded.guild.id + '/' + responded.channel.id + '/' + responded.id +
                          ' at <@' + interaction.user.id + '>\'s request:\n```\n' + myResponse + '\n```\n----' );
           } );
+        } else if ( mentionsEveryone && !canEveryone ) {
+          logChan.send( '<@' + interaction.user.id + '> has no permission to get me to ' + strEveryoneHere + ' in <#' + interaction.channel.id + '>. They tried to get me to say:\n```\n' + myResponse + '\n```');
+          interaction.editReply( { content: 'You don\'t have permission to get me to ' + strEveryoneHere + ' in `' +
+            interaction.guild.name + '`<#' + interaction.channel.id + '>.' } );
         } else {
-          logErrorChan.send( '<@' + interaction.user.id + '> has no permission to use my `/reply` command from <#' +
+          logChan.send( '<@' + interaction.user.id + '> has no permission to use my `/reply` command from <#' +
             interaction.channel.id + '>. They tried to get me to reply to <@' + message.author.id +
             '>\'s message:' + ( message.content === '' ? ' **__Attachment Only!__**\n' : '\n```\n' + message.content + '\n```' ) + 'With:\n```\n' + myResponse + '\n```' );   
           interaction.editReply( { content: 'You don\'t have permission to get me to speak in `' +
