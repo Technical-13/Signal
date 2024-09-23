@@ -1,14 +1,15 @@
+const bot = ( process.env.BOT_USERNAME ?? 'Server' );
 const express = require( 'express' );
-const replServer = express();
+const expressServer = express();
 const objTimeString = require( '../time.json' );
 var strNow = () => { return ( new Date() ).toLocaleDateString( 'en-us', objTimeString ) };
 
-replServer.all( '/', ( req, res ) => { res.send( bot + ' was last restarted: ' + strNow() ); } );
+expressServer.all( '/', ( req, res ) => { res.send( bot + ' was last restarted: ' + strNow() ); } );
 
 function keepAlive() {
-  var server = replServer.listen( 3000, () => {
+  var server = expressServer.listen( 3000, () => {
     const port = server.address().port;
-    console.log( 'Server is ready on port: %s', port );
+    console.log( '%s is ready on port: %s', bot, port );
   } );
 }
 
