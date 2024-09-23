@@ -3,6 +3,7 @@ const fs = require( 'fs' );
 const keepAlive = require( './functions/server' );
 const objTimeString = require( './time.json' );
 var strNow = () => { return ( new Date() ).toLocaleDateString( 'en-us', objTimeString ) };
+require( 'dotenv' ).config();
 
 // Specify intents needed by the bot, in this case, just get guild events
 // https://discord.com/developers/docs/topics/gateway#list-of-intents
