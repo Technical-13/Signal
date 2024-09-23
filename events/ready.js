@@ -12,8 +12,8 @@ module.exports = {
     await mongoose.connect( process.env.mongodb || '', { keepAlive: true } )
       .then( connected => { console.log( 'Connected to MongoDB.' ); } )
       .catch( errDB => {
-        console.error( 'Failed to connect to MongoDB:\n\t%s\n\t%o',
-          Array.from( errDB.reason.servers.keys() ).join( '\n\t' ), errDB.message );
+        console.error( 'Failed to connect to MongoDB:\n\t%o', errDB.message );
+//          Array.from( errDB.reason.servers.keys() ).join( '\n\t' ), errDB.message );
       } );
     
     console.log( 'Successfully logged in as: ' + client.user.tag );
