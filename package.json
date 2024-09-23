@@ -1,14 +1,17 @@
 {
-  "name": "discordjs-bot-template-v14",
-  "version": "1.0.0",
+  "name": "Signal",
+  "version": "2024.09.23.12.28",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Technical-13",
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "node": "^21.0.0"
+  },
   "dependencies": {
     "@discordjs/builders": "^0.13.0",
     "@discordjs/rest": "^0.4.1",
