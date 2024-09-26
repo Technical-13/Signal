@@ -60,9 +60,6 @@ module.exports = {
             interaction.guild.name + '`<#' + interaction.channel.id + '>.' } );
         }
       } );
-    } else {
-      console.error( 'mySaying: %o', mySaying );
-      interaction.editReply( { content: 'I don\'t know what to say.' } );
-    }
+    } else { interaction.editReply( { content: 'I don\'t know what to say.' } ); }
 	}
 }
