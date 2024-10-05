@@ -1,6 +1,7 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder } = require( 'discord.js' );
 const { model, Schema } = require( 'mongoose' );
 const botConfig = require( '../../models/GuildLogs.js' );
+const pagination = require( '../../functions/pagination.js' );
 
 module.exports = {
   name: 'inspectdb',
@@ -13,10 +14,12 @@ module.exports = {
     const isBotOwner = ( author.id === botOwner.id ? true : false );
     if ( isBotOwner ) {
       message.delete();
-      botConfig.find().then( entries => {
-        botOwner.send( '<@' + botOwner.id + '>, I\'m sending you the details of the ' + entries.length + ' guilds in my database:' ).catch( errSend => {
-          console.error( 'Error trying to show contents of the DB as you requested.\n%o', errSend );
-        } );//*/
+      
+      const guildConfigs = await botConfig.find();
+      console.log('guildConfigs:\n%o',guildConfigs);
+      console.log('guildConfigs.toJSON():\n%o',guildConfigs.toJSON());
+        
+        botConfig.find().then( entries => {
         entries.forEach( ( entry, i ) => {
           setTimeout( async () => {
             const guildId = entry.Guild;
@@ -29,8 +32,7 @@ module.exports = {
             if ( maximumMembers > 10**9 ) { maximumMembers = ( maximumMembers / ( 10**9 ) ).toFixed( 2 ) + 'b'; }
             else if ( maximumMembers > 10**6 ) { maximumMembers = ( maximumMembers / ( 10**6 ) ).toFixed( 2 ) + 'm'; }
             else if ( maximumMembers > 10**3 ) { maximumMembers = ( maximumMembers / ( 10**3 ) ).toFixed( 1 ) + 'k'; }
-            const intBotMembers = guild.members.cache.filter( mbr => { if ( mbr.bot ) { return mbr; } } ).size;
-            console.log( 'intBotMembers:\n%o', guild.members.cache.filter( mbr => { if ( mbr.bot ) { return mbr; } } ) );
+            const intBotMembers = guild.members.cache.filter( mbr => { if ( mbr.user.bot ) { return mbr; } } ).size;
             const vanityURLCode = objGuild.vanityURLCode;
             if ( vanityURLCode ) { console.log( '%s has a vanityURLCode: %s', guildName, vanityURLCode ); }
             const iconURL = objGuild.iconURL;
