@@ -1,7 +1,7 @@
 {
-  "name": "ShoeBot",
-  "version": "2024.09.23.09.13",
-  "description": "",
+  "name": "Signal",
+  "version": "2024.10.05.12.10",
+  "description": "Signal the Geocaching bot!",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,7 +10,7 @@
   "author": "Technical-13",
   "license": "GPL-3.0",
   "devDependencies": {
-    "node": "^21.0.0"
+    "node": "^20.0.0"
   },
   "dependencies": {
     "@discordjs/rest": "^0.4.0",
