@@ -18,6 +18,7 @@ module.exports = {
       const guildConfigs = await botConfig.find();
       const guildConfigIds = [];
       guildConfigs.forEach( ( entry, i ) => { guildConfigIds.push( entry.Guild ); } );
+      const embedGuilds = [];
       const guildIds = Array.from( client.guilds.cache.keys() );
       
       for ( const guildId of guildIds ) {
@@ -90,7 +91,7 @@ module.exports = {
         }
   
         embedGuilds.push( thisGuild );
-      }      
+      }
       await pagination( message, embedGuilds );
     }
   }
