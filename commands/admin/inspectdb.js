@@ -30,7 +30,9 @@ if ( vanityURLCode ) { console.log( '%s has a vanityURLCode: %s', guildName, van
         const chanSafetyAlerts = objGuild.safetyAlertsChannelId;
         const chanSystem = objGuild.systemChannelId;
         const chanFirst = guild.channels.cache.filter( chan => { if ( !chan.nsfw && chan.viewable ) { return chan; } } ).first().id;
-        const chanInvite = ( chanWidget || chanRules || chanPublicUpdates || chanSafetyAlerts || chanSystem || chanFirst );
+        const doneConfig = ( guildConfigIds.indexOf( guildId ) != -1 ? true : false );
+        const definedInvite = ( doneConfig ? guildConfigs[ guildConfigIds.indexOf( guildId ) ].Invite : null );
+        const chanInvite = ( definedInvite || chanWidget || chanRules || chanPublicUpdates || chanSafetyAlerts || chanSystem || chanFirst );
         const chanLinkUrl = 'https://discordapp.com/channels/' + guildId + '/' + chanInvite;
         const ownerId = objGuild.ownerId;
         const objGuildOwner = guild.members.cache.get( ownerId );
