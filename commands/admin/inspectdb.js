@@ -12,14 +12,6 @@ module.exports = {
     const botOwner = client.users.cache.get( process.env.OWNER_ID );
     const isBotOwner = ( author.id === botOwner.id ? true : false );
     if ( isBotOwner ) {
-      let intPageNumber = 0;    
-      const first = new ButtonBuilder().setCustomId( 'firstPage' ).setEmoji( '⏪' ).setStyle( ButtonStyle.Secondary ).setDisabled( true );
-      const prev = new ButtonBuilder().setCustomId( 'prevPage' ).setEmoji( '⏮️' ).setStyle( ButtonStyle.Secondary ).setDisabled( true );
-      const curr = new ButtonBuilder().setCustomId( 'currPage' ).setLabel( ( intPageNumber + 1 ) + '/' + pages.length ).setStyle( ButtonStyle.Primary ).setDisabled( true );
-      const next = new ButtonBuilder().setCustomId( 'nextPage' ).setEmoji( '⏭️' ).setStyle( ButtonStyle.Secondary ).setDisabled( false );
-      const last = new ButtonBuilder().setCustomId( 'lastPage' ).setEmoji( '⏩' ).setStyle( ButtonStyle.Secondary ).setDisabled( false );
-      const buttons = new ActionRowBuilder().addComponents( [ first, prev, curr, next, last ] );
-      
       message.delete();
       
       const guildConfigs = await botConfig.find();
@@ -109,7 +101,15 @@ if ( vanityURLCode ) { console.log( '%s has a vanityURLCode: %s', guildName, van
         embedGuilds.push( thisGuild );
       }
       
-      const msg = await message.reply( { embeds: [ pages[ intPageNumber ] ], components: [ buttons ], fetchReply: true } );
+      let intPageNumber = 0;    
+      const first = new ButtonBuilder().setCustomId( 'firstPage' ).setEmoji( '⏪' ).setStyle( ButtonStyle.Secondary ).setDisabled( true );
+      const prev = new ButtonBuilder().setCustomId( 'prevPage' ).setEmoji( '⏮️' ).setStyle( ButtonStyle.Secondary ).setDisabled( true );
+      const curr = new ButtonBuilder().setCustomId( 'currPage' ).setLabel( ( intPageNumber + 1 ) + '/' + embedGuilds.length ).setStyle( ButtonStyle.Primary ).setDisabled( true );
+      const next = new ButtonBuilder().setCustomId( 'nextPage' ).setEmoji( '⏭️' ).setStyle( ButtonStyle.Secondary ).setDisabled( false );
+      const last = new ButtonBuilder().setCustomId( 'lastPage' ).setEmoji( '⏩' ).setStyle( ButtonStyle.Secondary ).setDisabled( false );
+      const buttons = new ActionRowBuilder().addComponents( [ first, prev, curr, next, last ] );      
+      
+      const msg = await message.reply( { embeds: [ embedGuilds[ intPageNumber ] ], components: [ buttons ], fetchReply: true } );
   
       const collector = await msg.createMessageComponentCollector( { componentType: ComponentType.Button, time } );
   
@@ -120,17 +120,17 @@ if ( vanityURLCode ) { console.log( '%s has a vanityURLCode: %s', guildName, van
   
         if ( buttonInteraction.customId === 'firstPage' ) { intPageNumber = 0; }
         else if ( buttonInteraction.customId === 'prevPage' ) { if ( intPageNumber > 0 ) { intPageNumber-- } }
-        else if ( buttonInteraction.customId === 'nextPage' ) { if ( intPageNumber < ( pages.length - 1 ) ) { intPageNumber++; } }
-        else if ( buttonInteraction.customId === 'lastPage' ) { intPageNumber = ( pages.length - 1 ); }
-        curr.setLabel( ( intPageNumber + 1 ) + '/' + pages.length );
+        else if ( buttonInteraction.customId === 'nextPage' ) { if ( intPageNumber < ( embedGuilds.length - 1 ) ) { intPageNumber++; } }
+        else if ( buttonInteraction.customId === 'lastPage' ) { intPageNumber = ( embedGuilds.length - 1 ); }
+        curr.setLabel( ( intPageNumber + 1 ) + '/' + embedGuilds.length );
   
         if ( intPageNumber === 0 ) { first.setDisabled( true ); prev.setDisabled( true ); }
         else { first.setDisabled( false ); prev.setDisabled( false ); }
   
-        if ( intPageNumber === ( pages.length - 1 ) ) { next.setDisabled( true ); last.setDisabled( true ); }
+        if ( intPageNumber === ( embedGuilds.length - 1 ) ) { next.setDisabled( true ); last.setDisabled( true ); }
         else { next.setDisabled( false ); last.setDisabled( false ); }
   
-        await msg.edit( { embeds: [ pages[ intPageNumber ] ], components: [ buttons ] } ).catch( errEditPage => { console.error( 'Error in pagination.js editing page:\n%o', errEditPage ); } );
+        await msg.edit( { embeds: [ embedGuilds[ intPageNumber ] ], components: [ buttons ] } ).catch( errEditPage => { console.error( 'Error in pagination.js editing page:\n%o', errEditPage ); } );
   
         collector.resetTimer();
       } );
