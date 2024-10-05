@@ -66,7 +66,7 @@ module.exports = {
       setDefault = options.getChannel( 'log-default' ) ? options.getChannel( 'log-default' ).id : null;
       setError = options.getChannel( 'log-error' ) ? options.getChannel( 'log-error' ).id : null;
       setChat = options.getChannel( 'log-hat' ) ? options.getChannel( 'log-chat' ).id : null;
-      boolWelcome = options.getBoolean( 'welcome' ) ?  : null;
+      boolWelcome = options.getBoolean( 'welcome' ) ? options.getBoolean( 'welcome' ) : null;
       strWelcome = options.getString( 'welcome-message' ) ? options.getString( 'welcome-message' )  : null;
     }
 
