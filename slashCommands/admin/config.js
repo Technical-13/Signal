@@ -9,29 +9,40 @@ module.exports = {
   contexts: [ InteractionContextType.Guild ],
   cooldown: 1000,
   options: [
-    { type: 1, name: 'get-all', description: 'Get log channels for the server.' },
-    { type: 1, name: 'get-default', description: 'Channel all requests not otherwise specified are logged.' },
-    { type: 1, name: 'get-error', description: 'Channel errors are logged.' },
-    { type: 1, name: 'get-chat', description: 'Channel chat command requests are logged.' },
-    { type: 1, name: 'reset', description: 'Reset log channels for the server to defaul channel.',
-     options: [ { name: 'all-logs', description: 'Channel to log all requests (current channel if not set).', type: 7 } ] },
-    { type: 1, name: 'set', description: 'Set log channels for the server.',
+    { type: 1, name: 'get-all', description: 'Get all settings for the server.' },
+    { type: 1, name: 'reset', description: 'Reset all settings for the server to default.' },
+    { type: 1, name: 'set', description: 'Set settings for the server.',
      options: [
        {
-         name: 'default',
+         name: 'invite',
+         description: 'Channel to make invites to. Will try to guess if not set.',
+         type: 7
+       }/*invite channel//*/,
+       {
+         name: 'log-default',
          description: 'Channel to log all requests not otherwise specified.',
          type: 7
        }/*default channel//*/,
        {
-         name: 'error',
+         name: 'log-error',
          description: 'Channel to log errors.',
          type: 7
        }/*error channel//*/,
        {
-         name: 'chat',
+         name: 'log-chat',
          description: 'Channel to log chat command (`/edit`, `/react`, `/reply`, and `/say`) requests.',
          type: 7
-       }/*chat channel//*/
+       }/*chat channel//*/,
+       {
+         name: 'welcome',
+         description: 'Send a DM to welcome new members to the server?',
+         type: /*boolean*/
+       }/*welcomer on/off//*/,
+       {
+         name: 'welcome-message',
+         description: 'Message to DM new members to the server?',
+         type: 3
+       }/*welcome message//*/
      ]
     }/*Set channels//*/
   ],
