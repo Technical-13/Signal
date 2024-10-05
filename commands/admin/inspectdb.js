@@ -23,10 +23,10 @@ module.exports = {
       
       for ( const guildId of guildIds ) {
         const guild = client.guilds.cache.get( guildId );
-        const objGuild = guild.toJSON();console.log('objGuild:\n%o',objGuild);
+        const objGuild = guild.toJSON();
         const guildName = objGuild.name;
         const ownerId = objGuild.ownerId;
-        const objGuildOwner = guild.members.cache.get( ownerId );
+        const objGuildOwner = guild.members.cache.get( ownerId );console.log('objGuildOwner:\n%o'.objGuildOwner.toJSON());
         const ownerName = objGuildOwner.displayName;
         const iconURL = objGuild.iconURL;
         const memberCount = objGuild.memberCount;
