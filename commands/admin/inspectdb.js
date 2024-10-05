@@ -59,9 +59,11 @@ module.exports = {
                 guildName, objGuild.widgetEnabled, objGuild.widgetChannelId, chanWidget, chanRules, chanPublicUpdates, chanSafetyAlerts, chanSystem, chanFirst );
               break;
             case 50013://Missing permissions
-              objGuildOwner.send( 'Help!  Please give me `CreateInstantInvite` permission in ' + chanLinkUrl + '!' ).catch( errSendGuildOwner => {
-                console.error( 'Unable to DM guild owner, %s, for %s to get `CreateInstantInvite` permission:\n%o', ownerName, guildName, errSendGuildOwner );
-              } );
+              if ( objGuildOwner ) {
+                objGuildOwner.send( 'Help!  Please give me `CreateInstantInvite` permission in ' + chanLinkUrl + '!' ).catch( errSendGuildOwner => {
+                  console.error( 'Unable to DM guild owner, %s, for %s to get `CreateInstantInvite` permission:\n%o', ownerName, guildName, errSendGuildOwner );
+                } );
+              } else { console.error( 'Unable to DM unknown guild owner with id:%s, for %s to get `CreateInstantInvite` permission!', ownerId, guildName ); }
               break;
             default:
               console.error( 'Unable to create an invite for %s:\n%o', guildName, errCreateInvite );
