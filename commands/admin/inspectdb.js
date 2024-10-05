@@ -27,7 +27,7 @@ module.exports = {
         const guildName = objGuild.name;
         const ownerId = objGuild.ownerId;
         const objGuildOwner = guild.members.cache.get( ownerId );
-        const ownerName = ( objGuildOwner ? objGuildOwner.displayName : client.users.cache.get( ownerId ).displayName );
+        const ownerName = ( objGuildOwner ? objGuildOwner.displayName : ( client.users.cache.get( ownerId ) ? client.users.cache.get( ownerId ).displayName : 'unknown' );
         const iconURL = objGuild.iconURL;
         const memberCount = objGuild.memberCount;
         var maximumMembers = objGuild.maximumMembers;
@@ -60,7 +60,7 @@ module.exports = {
               break;
             case 50013://Missing permissions
               objGuildOwner.send( 'Help!  Please give me `CreateInstantInvite` permission in ' + chanLinkUrl + '!' ).catch( errSendGuildOwner => {
-                console.error( 'Unable to DM guild owner, %s, for %s to get `CreateInstantInvite` permission:\n%o', objGuildOwner.displayName, guildName, errSendGuildOwner );
+                console.error( 'Unable to DM guild owner, %s, for %s to get `CreateInstantInvite` permission:\n%o', ownerName, guildName, errSendGuildOwner );
               } );
               break;
             default:
