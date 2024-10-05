@@ -14,7 +14,7 @@ client.on( 'ready', async rdy => {
     client.user.setPresence( { activities: [ { type: activityTypes.custom, name: '🥱 Just waking up...' } ], status: 'dnd' } );
     setTimeout( () => { client.user.setPresence( { activities: [ { type: activityTypes.watching, name: 'my ' + myTime + ' coffee brew...' } ], status: 'dnd' } ); }, 15000 );
     setTimeout( () => { client.user.setPresence( { activities: [ { type: activityTypes.custom, name: 'Drinking ' + myCup + ' cup of ☕' } ], status: 'idle' } ); }, 60000 );
-    setTimeout( () => { client.user.setPresence( { activities: [ { type: activityTypes.custom, name: 'https://discord.me/MagentaRV' } ], status: 'online' } ); }, 180000 );
+    setTimeout( () => { client.user.setPresence( { activities: [ { type: activityTypes.custom, name: 'https://discord.me/geocaching' } ], status: 'online' } ); }, 180000 );
     
     const strConnectDB = ( process.env.mongodb || '' );
     mongoose.set( 'strictQuery', false );
