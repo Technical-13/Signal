@@ -1,4 +1,4 @@
-const logSchema = require( '../../models/GuildLogs.js' );
+const botConfig = require( '../../models/GuildLogs.js' );
 const { model, Schema } = require( 'mongoose' );
 const { ApplicationCommandType, EmbedBuilder } = require( 'discord.js' );
 const pagination = require( '../../functions/pagination.js' );
