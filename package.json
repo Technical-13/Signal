@@ -1,0 +1,26 @@
+{
+  "name": "ShoeBot",
+  "version": "2024.09.23.09.13",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Technical-13",
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "node": "^21.0.0"
+  },
+  "dependencies": {
+    "@discordjs/rest": "^0.4.0",
+    "ascii-table": "^0.0.9",
+    "chalk": "^2.4.1",
+    "discord-api-types": "^0.30.0",
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "mongoose": "^7.3.1",
+    "ms": "^2.1.3"
+  }
+}
