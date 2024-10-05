@@ -112,7 +112,7 @@ if ( vanityURLCode ) { console.log( '%s has a vanityURLCode: %s', guildName, van
       const collector = await msg.createMessageComponentCollector( { componentType: ComponentType.Button, time: 60000 } );
   
       collector.on( 'collect', async buttonInteraction => {
-        if ( buttonInteraction.user.id != interaction.user.id ) { return await buttonInteraction.reply( { content: 'These buttons are not for you <@' + buttonInteraction.user.id + '>!', ephemeral: true } ); }
+        if ( buttonInteraction.user.id != author.id ) { return await buttonInteraction.reply( { content: 'These buttons are not for you <@' + buttonInteraction.user.id + '>!', ephemeral: true } ); }
   
         await buttonInteraction.deferUpdate();
   
