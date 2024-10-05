@@ -7,8 +7,8 @@ module.exports = async ( interaction, pages, options = { intPageNumber: 0, time:
   try {
     if ( !interaction ) { throw new Error( '[PAGINATION] no interaction.' ); }
     if( !pages || !pages > 0 ) { throw new Error( '[PAGINATION] no pages.' ); }
-
-    await interaction.deferReply();
+console.log( 'Already deferred: %o', interaction.deferred );
+//    await interaction.deferReply();
 
     if ( pages.length === 1 ) { return await interaction.editReply( { embeds: pages, components: [], fetchReply: true } ); }
 
