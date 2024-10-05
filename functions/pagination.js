@@ -51,5 +51,5 @@ module.exports = async ( interaction, pages, options = { intPageNumber: 0, time:
 
     collector.on( 'end', async () => { await msg.delete(); } );
     
-  } catch ( errPagination ) { console.error( 'Error in pagination.js: %s\n%o', errPagination.message, errPagination.stack ); }
+  } catch ( errPagination ) { console.error( 'Error in pagination.js: %s', errPagination.stack ); }
 };
