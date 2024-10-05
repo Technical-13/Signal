@@ -9,40 +9,16 @@ module.exports = {
   contexts: [ InteractionContextType.Guild ],
   cooldown: 1000,
   options: [
-    { type: 1, name: 'get-all', description: 'Get all settings for the server.' },
+    { type: 1, name: 'get', description: 'Get all settings for the server.' },
     { type: 1, name: 'reset', description: 'Reset all settings for the server to default.' },
     { type: 1, name: 'set', description: 'Set settings for the server.',
      options: [
-       {
-         name: 'invite',
-         description: 'Channel to make invites to. Will try to guess if not set.',
-         type: 7
-       }/*invite channel//*/,
-       {
-         name: 'log-default',
-         description: 'Channel to log all requests not otherwise specified.',
-         type: 7
-       }/*default channel//*/,
-       {
-         name: 'log-error',
-         description: 'Channel to log errors.',
-         type: 7
-       }/*error channel//*/,
-       {
-         name: 'log-chat',
-         description: 'Channel to log chat command (`/edit`, `/react`, `/reply`, and `/say`) requests.',
-         type: 7
-       }/*chat channel//*/,
-       {
-         name: 'welcome',
-         description: 'Send a DM to welcome new members to the server?',
-         type: /*boolean*/
-       }/*welcomer on/off//*/,
-       {
-         name: 'welcome-message',
-         description: 'Message to DM new members to the server?',
-         type: 3
-       }/*welcome message//*/
+       { name: 'invite', description: 'Channel to make invites to. Will try to guess if not set.', type: 7 }/*invite channel//*/,
+       { name: 'log-default', description: 'Channel to log all requests not otherwise specified.', type: 7 }/*default channel//*/,
+       { name: 'log-error', description: 'Channel to log errors.', type: 7 }/*error channel//*/,
+       { name: 'log-chat', description: 'Channel to log chat command (`/edit`, `/react`, `/reply`, and `/say`) requests.', type: 7 }/*chat channel//*/,
+       { name: 'welcome', description: 'Send a DM to welcome new members to the server?', type: 5 }/*welcomer on/off//*/,
+       { name: 'welcome-message', description: 'Message to DM new members to the server?', type: 3 }/*welcome message//*/
      ]
     }/*Set channels//*/
   ],
@@ -60,24 +36,25 @@ module.exports = {
     const objGuildOwner = objGuildMembers.get( guild.ownerId );
     const isGuildOwner = ( author.id === objGuildOwner.id ? true : false );
     const hasAdministrator = ( ( isBotMod || isGuildOwner || arrAuthorPermissions.indexOf( 'Administrator' ) !== -1 ) ? true : false );
-    const hasManageServer = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'ManageGuild' ) !== -1 ) ? true : false );
+    const hasManageGuild = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'ManageGuild' ) !== -1 ) ? true : false );
     const hasManageRoles = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'ManageRoles' ) !== -1 ) ? true : false );
 
     const myTask = interaction.options.getSubcommand();
-    var setDefault, setError, setChat;
-    if ( myTask === 'reset' &&  hasManageServer ) {
-      setDefault = ( options.getChannel( 'all-logs' ) ? options.getChannel( 'all-logs' ).id : channel.id );
+    var setInvite, setDefault, setError, setChat, boolWelcome, strWelcome;
+    if ( myTask === 'reset' &&  hasManageGuild ) {
       await logSchema.updateOne(
         { Guild: guild.id },
         {
           Guild: guild.id,
-          Logs: { Default: setDefault, Error: setDefault, Chat: setDefault }
+          Invite: channel.id,
+          Logs: { Default: channel.id, Error: channel.id, Chat: channel.id },
+          Welcome: { Active: false, Message: 'Welcome!' }
         },
         { upsert: true } ).then( resetSuccess => {
-        interaction.editReply( { content: 'Log channels reset.' } );
+        interaction.editReply( { content: 'Guild reset.' } );
       } ).catch( resetError => {
-        interaction.editReply( { content: 'Error reseting log channels.' } );
-        console.error( 'Error attempting to reset logging channels in %s:\n%o', guild.name, resetError );
+        interaction.editReply( { content: 'Error resetting guild.' } );
+        console.error( 'Error attempting to reset guild for %s:\n%o', guild.name, resetError );
       } );
       return;
     } else if ( myTask === 'reset' ) {
@@ -85,60 +62,78 @@ module.exports = {
       interaction.editReply( { content: 'Sorry, you do not have permission to do that.  Please talk to <@' + objGuildOwner.id + '> or one of my masters if you think you shouldn\'t have gotten this error.' } );
       return;
     } else if ( myTask === 'set' ) {
-      setDefault = options.getChannel( 'default' ) ? options.getChannel( 'default' ).id : null;
-      setError = options.getChannel( 'error' ) ? options.getChannel( 'error' ).id : null;
-      setChat = options.getChannel( 'chat' ) ? options.getChannel( 'chat' ).id : null;
+      setInvite = options.getChannel( 'invite' ) ? options.getChannel( 'invite' ).id : null;
+      setDefault = options.getChannel( 'log-default' ) ? options.getChannel( 'log-default' ).id : null;
+      setError = options.getChannel( 'log-error' ) ? options.getChannel( 'log-error' ).id : null;
+      setChat = options.getChannel( 'log-hat' ) ? options.getChannel( 'log-chat' ).id : null;
+      boolWelcome = options.getBoolean( 'welcome' ) ?  : null;
+      strWelcome = options.getString( 'welcome-message' ) ? options.getString( 'welcome-message' )  : null;
     }
 
     logSchema.findOne( { Guild: interaction.guild.id } ).then( async data => {
-      if ( myTask === 'set' && hasManageServer ) {
+      if ( myTask === 'set' && hasManageGuild ) {
         if ( !data ) {
+          if ( !setInvite ) { setInvite = channel.id; }
           if ( !setDefault ) { setDefault = channel.id; }
           if ( !setError ) { setError = setDefault; }
-          if ( !setChat ) { setChat = setDefault; }
+          if ( !setChat ) { setChat = setDefault; }          
           await logSchema.create( {
             Guild: interaction.guild.id,
-            Logs: { Default: setDefault, Error: setError, Chat: setChat }
+            Invite: setInvite,
+            Logs: { Default: setDefault, Error: setError, Chat: setChat },
+            Welcome: { Active: boolWelcome, Message: strWelcome }
           } ).then( setSuccess => {
-            interaction.editReply( { content: 'Log channels set.' } );
+            interaction.editReply( { content: 'Guild configuration set.' } );
           } ).catch( setError => {
-            interaction.editReply( { content: 'Error setting log channels.' } );
-            console.error( 'Error attempting to set logging channels in %s:\n%o', guild.name, setError );
+            interaction.editReply( { content: 'Error setting guild configuration.' } );
+            console.error( 'Error attempting to set guild configuration for %s:\n%o', guild.name, setError );
           } );
         } else {
+          let oldInvite = data.Invite;
           let oldDefault = data.Logs.Default;
           let oldError = data.Logs.Error;
           let oldChat = data.Logs.Chat;
+          let oldWelcome = data.Welcome.Active;
+          let oldWelcomeMsg = data.Welcome.Message;
           await logSchema.updateOne( { Guild: guild.id }, {
             Guild: guild.id,
+            Invite: setInvite || oldInvite,
             Logs: {
               Default: setDefault || oldDefault,
               Error: setError || oldError,
               Chat: setChat || oldChat
+            },
+            Welcome: {
+              Active: boolWelcome || oldWelcome,
+              Message: strWelcome || oldWelcomeMsg
             }
           } );
           interaction.editReply( {
-            content: 'Log channels updated:\n\t' +
+            content: 'Guild configuration updated:\n\t' +
+            'Invite channel is: <#' + ( setInvite || oldInvite ) + '>\n\t' +
             'Default log channel is: <#' + ( setDefault || oldDefault ) + '>\n\t' +
             'Error message logs go to: <#' + ( setError || oldError ) + '>\n\t' +
-            'Chat command requests log to: <#' + ( setChat || oldChat ) + '>' } );
+            'Chat command requests log to: <#' + ( setChat || oldChat ) + '>\n\t' +
+            'On join welcomes are ' + ( !( boolWelcome || oldWelcome ) ? '**DISABLED**.' : '**ENABLED** and the message is set to:\n```\n' + ( strWelcome || oldWelcomeMsg ) + '\n```\n' ) } );
         }
-      } else if ( myTask.substring( 0, 3 ) === 'get' && hasManageRoles ) {
+      } else if ( myTask === 'get' && hasManageRoles ) {
         if ( !data ) {
-          interaction.editReply( { content: 'Log channels not configured for this server. All logs will go to the server owner, <@' + objGuildOwner.id + '>' } );
-        } else if (  myTask === 'get-default' ) {
-          interaction.editReply( { content: 'Default log channel is: <#' + data.Logs.Default + '>' } );
-        } else if (  myTask === 'get-error' ) {
-          interaction.editReply( { content: 'Error message logs go to: <#' + data.Logs.Error + '>' } );
-        } else if (  myTask === 'get-chat' ) {
-          interaction.editReply( { content: 'Chat command requests log to: <#' + data.Logs.Chat + '>' } );
-        } else {
-          //        } else if (  myTask === 'get-all' ) {
           interaction.editReply( {
-            content: 'Log channels:\n\t' +
-            'Default log channel is: <#' + data.Logs.Default + '>\n\t' +
-            'Error message logs go to: <#' + data.Logs.Error + '>\n\t' +
-            'Chat command requests log to: <#' + data.Logs.Chat + '>' } );
+            content: 'Guild configuration:\n\t' +
+            'Invite channel is not configured for this server\n\t' +
+            'Log channels are not configured for this server.\n\t' +
+            'All logs will go to the server owner, <@' + objGuildOwner.id + '>\n\t' +
+            'On join welcomes are **DISABLED**.'
+          } );
+        } else {
+          interaction.editReply( {
+            content: 'Guild configuration:\n\t' +
+            'Invite channel is: <#' + ( setInvite || oldInvite ) + '>\n\t' +
+            'Default log channel is: <#' + ( setDefault || oldDefault ) + '>\n\t' +
+            'Error message logs go to: <#' + ( setError || oldError ) + '>\n\t' +
+            'Chat command requests log to: <#' + ( setChat || oldChat ) + '>\n\t' +
+            'On join welcomes are ' + ( !( boolWelcome || oldWelcome ) ? '**DISABLED**.' : '**ENABLED** and the message is set to:\n```\n' + ( strWelcome || oldWelcomeMsg ) + '\n```\n' )
+          } );
         }
       } else {
         objGuildOwner.send( '<@' + author.id + '> attempted to modify my configuration settings for `' + guild.name + '`.  Only yourself, those with the `ADMINISTRATOR` or `MANAGE_GUILD` permission, and my bot mods can do that.' );
