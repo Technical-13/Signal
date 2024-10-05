@@ -39,7 +39,7 @@ if ( vanityURLCode ) { console.log( '%s has a vanityURLCode: %s', guildName, van
         const objGuildOwner = guild.members.cache.get( ownerId );
         if ( !objGuildOwner ) {
           await guild.leave()
-            .then( left => { console.log( 'I left guild with no owner!\n%o', left ); } )
+            .then( left => { console.log( 'I left guild (%s) with no owner!\n\t%s', left.name, chanLinkUrl ); } )
             .catch( stayed => { console.error( 'I could NOT leave guild with no owner!\n%o', stayed ); } );
           continue;
         }
@@ -61,8 +61,7 @@ if ( vanityURLCode ) { console.log( '%s has a vanityURLCode: %s', guildName, van
         } ).then( invite => { return 'https://discord.gg/invite/' + invite.code; } ).catch( errCreateInvite => {
           switch ( errCreateInvite.code ) {
             case 10003://Unknown Channel
-              console.log( 'Unknown channel to create invite for %s:\n\tWidget (%o::%s):%s\n\tRules: %s\n\tPU: %s\n\tSA: %s\n\tSys: %s\n\tFirst: %s',
-                guildName, objGuild.widgetEnabled, objGuild.widgetChannelId, chanWidget, chanRules, chanPublicUpdates, chanSafetyAlerts, chanSystem, chanFirst );
+              console.log( 'Unknown channel to create invite for %s:\n\tLink: %s\n\tFirst: %s\n\tObjGuild:%o', guildName, chanLinkUrl, chanFirst, objGuild );
               break;
             case 50013://Missing permissions
               objGuildOwner.send( 'Help!  Please give me `CreateInstantInvite` permission in ' + chanLinkUrl + '!' ).catch( errSendGuildOwner => {
