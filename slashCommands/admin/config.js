@@ -126,6 +126,12 @@ module.exports = {
             'On join welcomes are **DISABLED**.'
           } );
         } else {
+          let oldInvite = data.Invite;
+          let oldDefault = data.Logs.Default;
+          let oldError = data.Logs.Error;
+          let oldChat = data.Logs.Chat;
+          let oldWelcome = data.Welcome.Active;
+          let oldWelcomeMsg = data.Welcome.Message;
           interaction.editReply( {
             content: 'Guild configuration:\n\t' +
             'Invite channel is: <#' + ( setInvite || oldInvite ) + '>\n\t' +
@@ -140,7 +146,7 @@ module.exports = {
         interaction.editReply( { content: 'Sorry, you do not have permission to do that.  Please talk to <@' + objGuildOwner.id + '> or one of my masters if you think you shouldn\'t have gotten this error.' } );
       }
     } ).catch( err => {
-      console.error( 'Encountered an error running config.js from %o<#%s>:\n\t%o', err );
+      console.error( 'Encountered an error running config.js from %s(ID:%s):\n%s', guild.name, guild.id, err.stack );
       botOwner.send( 'Encountered an error running config.js from `' + guild.name + '`<#' + channel.id + '>.  Please check console for details.' );
     } );
   }
