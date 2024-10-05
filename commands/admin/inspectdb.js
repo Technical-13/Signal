@@ -12,9 +12,9 @@ module.exports = {
     const botOwner = client.users.cache.get( process.env.OWNER_ID );
     const isBotOwner = ( author.id === botOwner.id ? true : false );
     if ( isBotOwner ) {
-    
-      const first = new ButtonBuilder().setCustomId( 'firstPage' ).setEmoji( '⏪' ).setStyle( ButtonStyle.Secondary ).setDisabled( false );
-      const prev = new ButtonBuilder().setCustomId( 'prevPage' ).setEmoji( '⏮️' ).setStyle( ButtonStyle.Secondary ).setDisabled( false );
+      let intPageNumber = 0;    
+      const first = new ButtonBuilder().setCustomId( 'firstPage' ).setEmoji( '⏪' ).setStyle( ButtonStyle.Secondary ).setDisabled( true );
+      const prev = new ButtonBuilder().setCustomId( 'prevPage' ).setEmoji( '⏮️' ).setStyle( ButtonStyle.Secondary ).setDisabled( true );
       const curr = new ButtonBuilder().setCustomId( 'currPage' ).setLabel( ( intPageNumber + 1 ) + '/' + pages.length ).setStyle( ButtonStyle.Primary ).setDisabled( true );
       const next = new ButtonBuilder().setCustomId( 'nextPage' ).setEmoji( '⏭️' ).setStyle( ButtonStyle.Secondary ).setDisabled( false );
       const last = new ButtonBuilder().setCustomId( 'lastPage' ).setEmoji( '⏩' ).setStyle( ButtonStyle.Secondary ).setDisabled( false );
@@ -108,8 +108,6 @@ if ( vanityURLCode ) { console.log( '%s has a vanityURLCode: %s', guildName, van
   
         embedGuilds.push( thisGuild );
       }
-
-      let intPageNumber = 0;
       
       const msg = await message.reply( { embeds: [ pages[ intPageNumber ] ], components: [ buttons ], fetchReply: true } );
   
