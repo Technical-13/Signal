@@ -1,3 +1,5 @@
+const logSchema = require( '../../models/GuildLogs.js' );
+const { model, Schema } = require( 'mongoose' );
 const { ApplicationCommandType, EmbedBuilder } = require( 'discord.js' );
 const pagination = require( '../../functions/pagination.js' );
 
@@ -12,6 +14,10 @@ module.exports = {
   modCmd: true,
   run: async ( client, interaction ) => {
     await interaction.deferReply();
+
+    const guildConfigs = await botConfig.find();
+    const guildConfigIds = [];
+    guildConfigs.forEach( ( entry, i ) => { guildConfigIds.push( entry.Guild ); } );
 
     const bot = client.user;
     const { channel, guild, options } = interaction;
@@ -43,7 +49,9 @@ if ( vanityURLCode ) { console.log( '%s has a vanityURLCode: %s', guildName, van
       const chanSafetyAlerts = objGuild.safetyAlertsChannelId;
       const chanSystem = objGuild.systemChannelId;
       const chanFirst = guild.channels.cache.filter( chan => { if ( !chan.nsfw && chan.viewable ) { return chan; } } ).first().id;
-      const chanInvite = ( chanWidget || chanRules || chanPublicUpdates || chanSafetyAlerts || chanSystem || chanFirst );
+      const doneConfig = ( guildConfigIds.indexOf( guildId ) != -1 ? true : false );
+      const definedInvite = ( doneConfig ? guildConfigs[ guildConfigIds.indexOf( guildId ) ].Invite : null );
+      const chanInvite = ( definedInvite || chanWidget || chanRules || chanPublicUpdates || chanSafetyAlerts || chanSystem || chanFirst );
       const chanLinkUrl = 'https://discordapp.com/channels/' + guildId + '/' + chanInvite;
       const ownerId = objGuild.ownerId;
       const objGuildOwner = guild.members.cache.get( ownerId );
