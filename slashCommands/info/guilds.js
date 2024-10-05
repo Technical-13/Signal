@@ -11,6 +11,7 @@ module.exports = {
   cooldown: 300000,
   modCmd: true,
   run: async ( client, interaction ) => {
+    await interaction.deferReply();
 
     const bot = client.user;
     const { channel, guild, options } = interaction;
