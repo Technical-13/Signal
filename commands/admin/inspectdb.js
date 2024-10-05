@@ -11,9 +11,7 @@ module.exports = {
     const author = message.author;
     const botOwner = client.users.cache.get( process.env.OWNER_ID );
     const isBotOwner = ( author.id === botOwner.id ? true : false );
-    if ( isBotOwner ) {
-      message.delete();
-      
+    if ( isBotOwner ) {      
       const guildConfigs = await botConfig.find();
       const guildConfigIds = [];
       guildConfigs.forEach( ( entry, i ) => { guildConfigIds.push( entry.Guild ); } );
@@ -60,7 +58,7 @@ if ( vanityURLCode ) { console.log( '%s has a vanityURLCode: %s', guildName, van
         } ).then( invite => { return 'https://discord.gg/invite/' + invite.code; } ).catch( errCreateInvite => {
           switch ( errCreateInvite.code ) {
             case 10003://Unknown Channel
-              console.log( 'Unknown channel to create invite for %s:\n\tLink: %s\n\tFirst: %s\n\tObjGuild:%o', guildName, chanLinkUrl, chanFirst, objGuild );
+              console.log( 'Unknown channel to create invite for %s:\n\tLink: %s', guildName, chanLinkUrl );
               break;
             case 50013://Missing permissions
               objGuildOwner.send( 'Help!  Please give me `CreateInstantInvite` permission in ' + chanLinkUrl + '!' ).catch( errSendGuildOwner => {
@@ -136,7 +134,8 @@ if ( vanityURLCode ) { console.log( '%s has a vanityURLCode: %s', guildName, van
       } );
   
       collector.on( 'end', async () => {
-        await msg.delete();
+        message.delete();
+        msg.delete();
       } );
     }
   }
