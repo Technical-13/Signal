@@ -54,6 +54,10 @@ module.exports = {
           maxAge: 300, maxUses: 1, reason: 'Single use invite for my botmod, ' + author.displayName + '.  Expires in 5 minutes if not used.'
         } ).then( invite => { return 'https://discord.gg/invite/' + invite.code; } ).catch( errCreateInvite => {
           switch ( errCreateInvite.code ) {
+            case 10003://Unknown Channel
+              console.log( 'Unknown channel to create invite for %s:\n\tWidget (%o::%s):%s\n\tRules: %s\n\tPU: %s\n\tSA: %s\n\tSys: %s\n\tFirst: %s',
+                guildName, objGuild.widgetEnabled, objGuild.widgetChannelId, chanWidget, chanRules, chanPublicUpdates, chanSafetyAlerts, chanSystem, chanFirst );
+              break;
             case 50013://Missing permissions
               objGuildOwner.send( 'Help!  Please give me `CreateInstantInvite` permission in ' + chanLinkUrl + '!' ).catch( errSendGuildOwner => {
                 console.error( 'Unable to DM guild owner, %s, for %s to get `CreateInstantInvite` permission:\n%o', objGuildOwner.displayName, guildName, errSendGuildOwner );
