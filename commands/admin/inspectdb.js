@@ -109,7 +109,7 @@ if ( vanityURLCode ) { console.log( '%s has a vanityURLCode: %s', guildName, van
       
       const msg = await message.reply( { embeds: [ embedGuilds[ intPageNumber ] ], components: [ buttons ], fetchReply: true } );
   
-      const collector = await msg.createMessageComponentCollector( { componentType: ComponentType.Button, time } );
+      const collector = await msg.createMessageComponentCollector( { componentType: ComponentType.Button, 60000 } );
   
       collector.on( 'collect', async buttonInteraction => {
         if ( buttonInteraction.user.id != interaction.user.id ) { return await buttonInteraction.reply( { content: 'These buttons are not for you <@' + buttonInteraction.user.id + '>!', ephemeral: true } ); }
