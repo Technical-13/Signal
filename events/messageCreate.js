@@ -27,9 +27,11 @@ client.on( 'messageCreate', async message => {
   for ( let word of arrContent ) {
     word = word.trim().toUpperCase();
     if ( word.startsWith( 'GC' ) ) {
+      word = word.match( /GC[A-Z0-9]*/ )[ 0 ];
       arrGcTbCodes.push( word );
       hasGC = true;
     } else if ( word.startsWith( 'TB' ) ) {
+      word = word.match( /TB[A-Z0-9]*/ )[ 0 ];
       arrGcTbCodes.push( word );
       hasTB = true;
     }
