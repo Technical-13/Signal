@@ -14,6 +14,19 @@ client.on( 'messageDelete', async message => {
         if ( data ) {  if ( data.Logs.Chat ) { logChan = await guild.channels.cache.get( data.Logs.Default ); } }
         let setupPlease = ( logChan == objGuildOwner ? 'Please run `/config` to have these logs go to a channel in the server instead of your DMs.' : '----' );
         if ( logChan !== channel ) {
+            const mentionsIds = ( message.content.match( /<@[\d]{17,20}>/g ) || [] );
+            let strMentions = '';
+            if ( mentionsIds.length > 0 ) {
+                strMentions = ' mentioning ';
+                switch ( mentionsIds.length ) {
+                    case 1: strMentions += mentionsIds.pop(); break;
+                    case 2:  strMentions += mentionsIds.join( ' and ' ); break;
+                    default:
+                        let lastMention = mentionsIds.pop();
+                        strMentions += mentionsIds.join( ', ' ) + ', and ' + lastMention;
+                }
+            }
+            
             var attachments = [];
             if ( message.attachments.size != 0 ) {
                 message.attachments.each( attachment => {
@@ -50,7 +63,7 @@ client.on( 'messageDelete', async message => {
             const content = ( message.content ? 'the following content:\n```\n' + message.content + '\n```\n' : 'no content.\n' );
             const msgContained = ( ( attachments.length == 0 && intEmbeds === 0 && !message.content ) ? 'and was completely empty.' : 'with ' + strAttachments + strEmbeds + content );
             logChan.send( {
-                content: ( author ? '<@' + author.id + '>\'s' : 'A' ) + ' message in <#' + channel.id + '> was deleted ' + msgContained + setupPlease,
+                content: ( author ? '<@' + author.id + '>\'s' : 'A' ) + ' message' + strMentions + ' in <#' + channel.id + '> was deleted ' + msgContained + setupPlease,
                 files: ( attachments.length === 0 ? null : attachments )
             } ).catch( noLogChan => { console.error( 'logChan.send error:\n%o', noLogChan ) } );
         }
