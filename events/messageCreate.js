@@ -49,62 +49,65 @@ client.on( 'messageCreate', async message => {
     }
   }
   const cmd = args.shift().toLowerCase();
-  if ( cmd.length == 0 ) return;
-  let command = client.commands.get( cmd );
-  if ( !command ) command = client.commands.get( client.aliases.get( cmd ) );
-
-  if ( command ) {
-    const isOwnerOnly = command.ownerOnly;
-    const isModOnly = command.modOnly;
-    if ( isOwnerOnly && ( !isBotOwner ) ) {// || isBotMod 
-//      if ( isBotMod ) {
-//        return message.reply( { content: `This is an **owner only command**, speak to <@${botOwner.id}>/` } );
-//      } else { /* DO NOTHING */ }
-//    } else if ( isModOnly && !isBotMod ) {
-        /* DO NOTHING */
-    } else {
-      if ( command.cooldown ) {
-        if ( cooldown.has( `${command.name}${author.id}` ) ) {
-          return channel.send( { content: `You are on \`${ms(cooldown.get(`${command.name}${author.id}`) - Date.now(), {long : true})}\` cooldown!` } );
-        }
-        if ( command.userPerms || command.botPerms ) {
-          if ( !message.member.permissions.has( PermissionsBitField.resolve( command.userPerms || [] ) ) ) {
-            const userPerms = new EmbedBuilder()
-            .setDescription( `🚫 ${author}, You don't have \`${command.userPerms}\` permissions to use this command!` )
-            .setColor( 'Red' )
-            return message.reply( { embeds: [ userPerms ] } );
-          }
-          if ( !objGuildMembers.get( bot.id ).permissions.has( PermissionsBitField.resolve( command.botPerms || [] ) ) ) {
-            const botPerms = new EmbedBuilder()
-            .setDescription( `🚫 ${author}, I don't have \`${command.botPerms}\` permissions to use this command!` )
-            .setColor( 'Red' )
-            return message.reply( { embeds: [ botPerms ] } );
-          }
-        }
+  if ( cmd.length != 0 ) {
+    let command = client.commands.get( cmd );
+    if ( !command ) command = client.commands.get( client.aliases.get( cmd ) );
   
-        command.run( client, message, args );
-        cooldown.set( `${command.name}${author.id}`, Date.now() + command.cooldown );
-        setTimeout( () => { cooldown.delete( `${command.name}${author.id}` ) }, command.cooldown );
+    if ( command ) {
+      const isOwnerOnly = command.ownerOnly;
+      const isModOnly = command.modOnly;
+      if ( isOwnerOnly && ( !isBotOwner ) ) {// || isBotMod 
+  //      if ( isBotMod ) {
+          return message.reply( { content: `This is an **owner only command**, speak to <@${botOwner.id}>/` } );
+  //      } else { /* DO NOTHING */ }
+  //    } else if ( isModOnly && !isBotMod ) {
+          /* DO NOTHING */
       } else {
-        if ( command.userPerms || command.botPerms ) {
-          if ( !message.member.permissions.has( PermissionsBitField.resolve( command.userPerms || [] ) ) ) {
-            const userPerms = new EmbedBuilder()
-            .setDescription( `🚫 ${message.author}, You don't have \`${command.userPerms}\` permissions to use this command!` )
-            .setColor( 'Red' )
-            return message.reply( { embeds: [userPerms] } );
+        if ( command.cooldown ) {
+          if ( cooldown.has( `${command.name}${author.id}` ) ) {
+            return channel.send( { content: `You are on \`${ms(cooldown.get(`${command.name}${author.id}`) - Date.now(), {long : true})}\` cooldown!` } );
           }
-  
-          if ( !objGuildMembers.get( bot.id ).permissions.has( PermissionsBitField.resolve( command.botPerms || [] ) ) ) {
-            const botPerms = new EmbedBuilder()
-            .setDescription( `🚫 ${author}, I don't have \`${command.botPerms}\` permissions to use this command!` )
-            .setColor( 'Red' )
-            return message.reply( { embeds: [ botPerms ] } );
+          if ( command.userPerms || command.botPerms ) {
+            if ( !message.member.permissions.has( PermissionsBitField.resolve( command.userPerms || [] ) ) ) {
+              const userPerms = new EmbedBuilder()
+              .setDescription( `🚫 ${author}, You don't have \`${command.userPerms}\` permissions to use this command!` )
+              .setColor( 'Red' )
+              return message.reply( { embeds: [ userPerms ] } );
+            }
+            if ( !objGuildMembers.get( bot.id ).permissions.has( PermissionsBitField.resolve( command.botPerms || [] ) ) ) {
+              const botPerms = new EmbedBuilder()
+              .setDescription( `🚫 ${author}, I don't have \`${command.botPerms}\` permissions to use this command!` )
+              .setColor( 'Red' )
+              return message.reply( { embeds: [ botPerms ] } );
+            }
           }
+    
+          command.run( client, message, args );
+          cooldown.set( `${command.name}${author.id}`, Date.now() + command.cooldown );
+          setTimeout( () => { cooldown.delete( `${command.name}${author.id}` ) }, command.cooldown );
+        } else {
+          if ( command.userPerms || command.botPerms ) {
+            if ( !message.member.permissions.has( PermissionsBitField.resolve( command.userPerms || [] ) ) ) {
+              const userPerms = new EmbedBuilder()
+              .setDescription( `🚫 ${message.author}, You don't have \`${command.userPerms}\` permissions to use this command!` )
+              .setColor( 'Red' )
+              return message.reply( { embeds: [userPerms] } );
+            }
+    
+            if ( !objGuildMembers.get( bot.id ).permissions.has( PermissionsBitField.resolve( command.botPerms || [] ) ) ) {
+              const botPerms = new EmbedBuilder()
+              .setDescription( `🚫 ${author}, I don't have \`${command.botPerms}\` permissions to use this command!` )
+              .setColor( 'Red' )
+              return message.reply( { embeds: [ botPerms ] } );
+            }
+          }
+          command.run( client, message, args );
         }
-        command.run( client, message, args );
       }
     }
-  } else if ( hasGC || hasTB ) {
+  }
+  
+  if ( hasGC || hasTB ) {
 console.log( 'I found the following codes!\n\t%o', arrGcTbCodes );
     let strCodes = ( hasGC ? ( hasTB ? 'GC & TB' : 'GC' ) : 'TB' ) + ' code(s) detected, here are links:';
 console.log( 'strCodes:\n\t%o', strCodes );
