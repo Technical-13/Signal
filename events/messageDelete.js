@@ -33,21 +33,23 @@ client.on( 'messageDelete', async message => {
             const strAttachments = ( attachments.length == 0 ? 'no attachments' : attachments.length === 1 ? 'an attachment' : attachments.length + ' attachments' ) + ', ';
             var intEmbeds = message.embeds.length;
             var strEmbedList = '';
-            if ( intEmbeds === 1 ) { strEmbedList = ' (`' + message.embeds[ 0 ].footer.text + '`)'; }
-            else if ( intEmbeds === 2 ) {
-                strEmbedList = ' (`' + message.embeds[ 0 ].footer.text + '` and `' +  message.embeds[ 0 ].footer.text + '``)';
+            if ( intEmbeds != 0 ) {
+                let embeds = await message.embeds.forEach( embed => { embeds.push( embed.footer ? embed.footer.text : embed.title ); } );
+                if ( intEmbeds >= 3 ) {
+                    let lastEmbed = embeds.pop();
+                    strEmbedList = ' [ `' + embeds.join( '`, `' ) + '`, and `' + lastEmbed + '` ]';
+                } else if ( intEmbeds === 2 ) {
+                    strEmbedList = ' (`' + embeds.join( '` and `' ) + '``)';
+                } else if ( intEmbeds === 1 ) {
+                    strEmbedList = ' (`' + embeds[ 0 ] + '`)';
+                }
             }
-            else if ( intEmbeds != 0 ) {
-                let embeds = [];
-                await message.embeds.forEach( embed => { embeds.push( embed.footer.text ); } );
-                let lastEmbed = embeds.pop();
-                strEmbedList = ' [ `' + embeds.join( '`, `' ) + '`, and `' + lastEmbed + '` ]';
-            }
+            
             const strEmbeds = ( intEmbeds == 0 ? 'no embeds' : intEmbeds == 1 ? 'an embed'  : intEmbeds + ' embeds' ) + strEmbedList + ', and ';
             const content = ( message.content ? ':\n```\n' + message.content + '\n```\n' : ' no content.\n' );
-            const msgContained = strAttachments + strEmbeds + content;
+            const msgContained = ( ( attachments.length == 0 && intEmbeds === 0 && !message.content ) ? 'and was completely empty.' : 'with ' + strAttachments + strEmbeds + content );
             logChan.send( {
-                content: ( author ? '<@' + author.id + '>\'s' : 'A' ) + ' message in <#' + channel.id + '> was deleted with ' + msgContained + setupPlease,
+                content: ( author ? '<@' + author.id + '>\'s' : 'A' ) + ' message in <#' + channel.id + '> was deleted ' + msgContained + setupPlease,
                 files: ( attachments.length === 0 ? null : attachments )
             } ).catch( noLogChan => { console.error( 'logChan.send error:\n%o', noLogChan ) } );
         }
