@@ -25,15 +25,11 @@ client.on( 'messageCreate', async message => {
   const arrGcTbCodes = [];
   const arrContent = content.trim().split( ' ' );
   for ( let word of arrContent ) {
-    word = word.trim().toUpperCase();
-    if ( word.startsWith( 'GC' ) ) {
-      word = word.match( /GC[A-Z0-9]*/ )[ 0 ];
-      arrGcTbCodes.push( word );
-      hasGC = true;
-    } else if ( word.startsWith( 'TB' ) ) {
-      word = word.match( /TB[A-Z0-9]*/ )[ 0 ];
-      arrGcTbCodes.push( word );
-      hasTB = true;
+    word = word.trim().match( /(GC|TB)[A-Z0-9]*/ )[ 0 ].toUpperCase();
+    if ( word.length >= 4 && word.length <= 8 ) {
+      if ( word.startsWith( 'GC' ) ) { hasGC = true; }
+      else if ( word.startsWith( 'TB' ) ) { hasTB = true; }
+      if ( word.startsWith( 'GC' ) || word.startsWith( 'TB' ) ) { arrGcTbCodes.push( word ); }
     }
   }
   
