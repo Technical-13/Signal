@@ -41,7 +41,7 @@ client.on( 'messageUpdate', async ( oldMessage, newMessage ) => {
       '<@' + author.id + '>, I cleaned the embeds from your message.\n' +
       'To avoid this in the future, please wrap links like `<' + arrJunkEmbedURLs[ 0 ] + '>`\n' +
       'This message will self destruct in ' + seconds + ' seconds.'
-    ); }, seconds * 1000 ); }
+    ); }, ( 15 - seconds ) * 1000 ); }
     setTimeout( () => { msgCleaned.delete(); }, 15000 );
   }
 } );
