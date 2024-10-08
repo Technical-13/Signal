@@ -20,19 +20,6 @@ client.on( 'messageCreate', async message => {
   const isGuildOwner = ( author.id === objGuildOwner.id ? true : false );
   const msgAuthor = await guild.members.cache.get( author.id );
   
-  const arrJunkEmbedTitles = [
-    'Geocaching: Join the world\'s largest treasure hunt.'
-  ];
-  const arrJunkEmbedURLs = [];
-  const hasJunkEmbed = ( message.embeds.find( embed => {
-    for ( const title of arrJunkEmbedTitles ) {
-      if ( embed.title === title ) {
-        arrJunkEmbedURLs.push( embed.url );
-        return embed;
-      };
-    }
-  } ) ? true : false );
-  
   const hasPrefix = content.startsWith( prefix );
   const meMentionPrefix = '<@' + CLIENT_ID + '>';
   const mePrefix = content.startsWith( meMentionPrefix );
@@ -102,12 +89,6 @@ client.on( 'messageCreate', async message => {
         }
         command.run( client, message, args );
       }
-    }
-  } else {
-    if ( hasJunkEmbed ) {
-      message.suppressEmbeds( true );
-      const msgCleaned = await message.reply( '<@' + author.id + '>, I cleaned the embeds from your message.\nTo avoid this in the future, please wrap links like `<`' + arrJunkEmbedURLs[ 0 ] + '`>`' );
-      msgCleaned.delete( 5000 );
     }
   }
 } );
