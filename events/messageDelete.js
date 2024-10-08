@@ -34,7 +34,8 @@ client.on( 'messageDelete', async message => {
             var intEmbeds = message.embeds.length;
             var strEmbedList = '';
             if ( intEmbeds != 0 ) {
-                let embeds = await message.embeds.forEach( embed => { embeds.push( embed.footer ? embed.footer.text : embed.title ); } );
+                let embeds = [];
+                await message.embeds.forEach( embed => { embeds.push( embed.footer ? embed.footer.text : embed.title ); } );
                 if ( intEmbeds >= 3 ) {
                     let lastEmbed = embeds.pop();
                     strEmbedList = ' [ `' + embeds.join( '`, `' ) + '`, and `' + lastEmbed + '` ]';
