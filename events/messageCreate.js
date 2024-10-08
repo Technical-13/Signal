@@ -104,8 +104,8 @@ client.on( 'messageCreate', async message => {
       }
     }
   } else if ( hasGC | hasTB ) {
-    let strCodes = ( hasGC ? ( hasTB ? 'GC & TB' : 'GC' ) : 'TB' ) ' code(s) detected, here are links:';
-    for ( let code of arrGcTbCodes ) { strCodes += '\n/t' + code + ' :link: https://coord.info/' + code.toUpperCase(); }
+    let strCodes = ( hasGC ? ( hasTB ? 'GC & TB' : 'GC' ) : 'TB' ) + ' code(s) detected, here are links:';
+    for ( let code of arrGcTbCodes ) { strCodes += '\n\t' + code.toUpperCase() + ' :link: https://coord.info/' + code.toUpperCase(); }
     channel.send( strCodes );
   }
 } );
