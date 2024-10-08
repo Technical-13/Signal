@@ -1,12 +1,11 @@
 const client = require( '..' );
 const { EmbedBuilder, Collection, PermissionsBitField } = require( 'discord.js' );
-const ms = require( 'ms' );
 const CLIENT_ID = process.env.CLIENT_ID;
 const DEV_GUILD_ID = process.env.DEV_GUILD_ID;
 const OWNER_ID = process.env.OWNER_ID;
 
-client.on( 'messageUpdate', async message => {
-  const { author, channel, content, guild, mentions } = message;
+client.on( 'messageUpdate', async ( oldMessage, newMessage ) => {
+  const { author, channel, content, guild, mentions } = newMessage;
   if ( author.bot ) return;
   if ( channel.type !== 0 ) return;
   const isDevGuild = ( guild.id == DEV_GUILD_ID );
@@ -22,7 +21,7 @@ client.on( 'messageUpdate', async message => {
     'Geocaching: Join the world\'s largest treasure hunt.'
   ];
   const arrJunkEmbedURLs = [];
-  const hasJunkEmbed = ( message.embeds.find( embed => {
+  const hasJunkEmbed = ( newMessage.embeds.find( embed => {
     for ( const title of arrJunkEmbedTitles ) {
       if ( embed.title === title ) {
         arrJunkEmbedURLs.push( embed.url );
@@ -32,8 +31,8 @@ client.on( 'messageUpdate', async message => {
   } ) ? true : false );
   
   if ( hasJunkEmbed ) {
-    message.suppressEmbeds( true );
-    const msgCleaned = await message.reply( '<@' + author.id + '>, I cleaned the embeds from your message.\nTo avoid this in the future, please wrap links like `<`' + arrJunkEmbedURLs[ 0 ] + '`>`' );
+    newMessage.suppressEmbeds( true );
+    const msgCleaned = await newMessage.reply( '<@' + author.id + '>, I cleaned the embeds from your message.\nTo avoid this in the future, please wrap links like `<`' + arrJunkEmbedURLs[ 0 ] + '`>`' );
     msgCleaned.delete( 5000 );
   }
 } );
