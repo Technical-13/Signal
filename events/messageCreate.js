@@ -111,7 +111,7 @@ client.on( 'messageCreate', async message => {
 console.log( 'I found the following codes!\n\t%o', arrGcTbCodes );
     let strCodes = ( hasGC ? ( hasTB ? 'GC & TB' : 'GC' ) : 'TB' ) + ' code(s) detected, here are links:';
 console.log( 'strCodes:\n\t%o', strCodes );
-    for ( let code of arrGcTbCodes ) { strCodes += '\n\t' + code + ' :link: https://coord.info/' + code; }
+    for ( let code of arrGcTbCodes ) { strCodes += '\n\t' + code + ' :link: <https://coord.info/' + code + '>'; }
 console.log( 'strCodes final:\n\t%o', strCodes );
     channel.send( strCodes );
   }
