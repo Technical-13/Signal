@@ -32,7 +32,16 @@ client.on( 'messageUpdate', async ( oldMessage, newMessage ) => {
   
   if ( hasJunkEmbed ) {
     newMessage.suppressEmbeds( true );
-    const msgCleaned = await newMessage.reply( '<@' + author.id + '>, I cleaned the embeds from your message.\nTo avoid this in the future, please wrap links like `<`' + arrJunkEmbedURLs[ 0 ] + '`>`' );
-    msgCleaned.delete( 5000 );
+    const msgCleaned = await newMessage.reply(
+      '<@' + author.id + '>, I cleaned the embeds from your message.\n' +
+      'To avoid this in the future, please wrap links like `<`' + arrJunkEmbedURLs[ 0 ] + '`>`\n' +
+      'This message will self destruct in 15 seconds.'
+    );
+    for ( const seconds = 14; seconds > 0; seconds-- ) { setTimeout( () => { msgCleaned.edit(
+      '<@' + author.id + '>, I cleaned the embeds from your message.\n' +
+      'To avoid this in the future, please wrap links like `<`' + arrJunkEmbedURLs[ 0 ] + '`>`\n' +
+      'This message will self destruct in ' + seconds + ' seconds.'
+    ); }, seconds * 1000 );
+    setTimeout( () => { msgCleaned.delete(); }, 15000 );
   }
 } );
