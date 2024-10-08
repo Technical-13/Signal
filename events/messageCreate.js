@@ -48,9 +48,9 @@ client.on( 'messageCreate', async message => {
       if ( args[ 0 ].length == 0 ) { args = args.shift(); }
     }
   }
-  const cmd = ( !args || args.length === 0 ? null : args.shift().toLowerCase() );
+  const cmd = ( args.shift() || [] );
   if ( cmd.length != 0 ) {
-    let command = client.commands.get( cmd );
+    let command = client.commands.get( cmd.toLowerCase() );
     if ( !command ) command = client.commands.get( client.aliases.get( cmd ) );
   
     if ( command ) {
