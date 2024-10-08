@@ -48,7 +48,7 @@ client.on( 'messageCreate', async message => {
       if ( args[ 0 ].length == 0 ) { args = args.shift(); }
     }
   }
-  const cmd = args.shift().toLowerCase();
+  const cmd = ( args.length > 0 ? args.shift().toLowerCase() : null );
   if ( cmd.length != 0 ) {
     let command = client.commands.get( cmd );
     if ( !command ) command = client.commands.get( client.aliases.get( cmd ) );
@@ -111,7 +111,7 @@ client.on( 'messageCreate', async message => {
 console.log( 'I found the following codes!\n\t%o', arrGcTbCodes );
     let strCodes = ( hasGC ? ( hasTB ? 'GC & TB' : 'GC' ) : 'TB' ) + ' code(s) detected, here are links:';
 console.log( 'strCodes:\n\t%o', strCodes );
-    for ( let code of arrGcTbCodes ) { strCodes += '\n\t' + code.toUpperCase() + ' :link: https://coord.info/' + code.toUpperCase(); }
+    for ( let code of arrGcTbCodes ) { strCodes += '\n\t' + code + ' :link: https://coord.info/' + code; }
 console.log( 'strCodes final:\n\t%o', strCodes );
     channel.send( strCodes );
   }
