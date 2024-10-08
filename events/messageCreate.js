@@ -48,6 +48,7 @@ client.on( 'messageCreate', async message => {
       if ( args[ 0 ].length == 0 ) { args = args.shift(); }
     }
   }
+console.log('args: %o',args);
   const cmd = ( args ? args.shift().toLowerCase() : null );
   if ( cmd.length != 0 ) {
     let command = client.commands.get( cmd );
