@@ -37,7 +37,7 @@ client.on( 'messageUpdate', async ( oldMessage, newMessage ) => {
       'To avoid this in the future, please wrap links like `<`' + arrJunkEmbedURLs[ 0 ] + '`>`\n' +
       'This message will self destruct in 15 seconds.'
     );
-    for ( const seconds = 14; seconds > 0; seconds-- ) { setTimeout( () => { msgCleaned.edit(
+    for ( let seconds = 14; seconds > 0; seconds-- ) { setTimeout( () => { msgCleaned.edit(
       '<@' + author.id + '>, I cleaned the embeds from your message.\n' +
       'To avoid this in the future, please wrap links like `<`' + arrJunkEmbedURLs[ 0 ] + '`>`\n' +
       'This message will self destruct in ' + seconds + ' seconds.'
