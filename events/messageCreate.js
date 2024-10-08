@@ -22,7 +22,7 @@ client.on( 'messageCreate', async message => {
 
   var hasGC = false, hasTB = false;
   const arrGcTbCodes = [];
-  const arrContent = content.trim().split();
+  const arrContent = content.trim().split( ' ' );
   for ( let word of arrContent ) {
     if ( word.startsWith( 'GC' ) ) {
       arrGcTbCodes.push( word );
