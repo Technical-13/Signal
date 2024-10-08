@@ -26,12 +26,13 @@ client.on( 'messageCreate', async message => {
   for ( let word of arrContent ) {
     if ( word.startsWith( 'GC' ) ) {
       arrGcTbCodes.push( word );
-      hasGC = true;
+      hasGC = true;console.log( 'It is %o that %s is a GC code', hasGC, word );
     } else if ( word.startsWith( 'TB' ) ) {
       arrGcTbCodes.push( word );
-      hasTB = true;
+      hasTB = true;console.log( 'It is %o that %s is a TB code', hasTB, word );
     }
   }
+  if ( hasGC || hasTB ) { console.log( 'I found the following codes!\n\t%o', arrGcTbCodes ); }
   
   const hasPrefix = content.startsWith( prefix );
   const meMentionPrefix = '<@' + CLIENT_ID + '>';
