@@ -19,6 +19,19 @@ client.on( 'messageCreate', async message => {
   const objGuildOwner = objGuildMembers.get( guild.ownerId );
   const isGuildOwner = ( author.id === objGuildOwner.id ? true : false );
   const msgAuthor = await guild.members.cache.get( author.id );
+
+  var hasGC = false, hasTB = false;
+  const arrGcTbCodes = [];
+  const arrContent = content.trim().split();
+  for ( let word of arrContent ) {
+    if ( word.prefix( 'GC' ) ) {
+      arrGcTbCodes.push( word );
+      hasGC = true;
+    } else if ( word.prefix( 'TB' ) ) {
+      arrGcTbCodes.push( word );
+      hasTB = true;
+    }
+  }
   
   const hasPrefix = content.startsWith( prefix );
   const meMentionPrefix = '<@' + CLIENT_ID + '>';
@@ -90,5 +103,9 @@ client.on( 'messageCreate', async message => {
         command.run( client, message, args );
       }
     }
+  } else if ( hasGC | hasTB ) {
+    let strCodes = ( hasGC ? ( hasTB ? 'GC & TB' : 'GC' ) : 'TB' ) ' code(s) detected, here are links:';
+    for ( let code of arrGcTbCodes ) { strCodes += '\n/t' + code + ' :link: https://coord.info/' + code.toUpperCase(); }
+    channel.send( strCodes );
   }
 } );
