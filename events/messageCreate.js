@@ -9,6 +9,7 @@ const OWNER_ID = process.env.OWNER_ID;
 
 client.on( 'messageCreate', async message => {
   const { author, channel, content, guild, mentions } = message;
+  const bot = client.user;
   if ( author.bot ) return;
   if ( channel.type !== 0 ) return;
   const isDevGuild = ( guild.id == DEV_GUILD_ID );
@@ -26,13 +27,12 @@ client.on( 'messageCreate', async message => {
   for ( let word of arrContent ) {
     if ( word.startsWith( 'GC' ) ) {
       arrGcTbCodes.push( word );
-      hasGC = true;console.log( 'It is %o that %s is a GC code', hasGC, word );
+      hasGC = true;
     } else if ( word.startsWith( 'TB' ) ) {
       arrGcTbCodes.push( word );
-      hasTB = true;console.log( 'It is %o that %s is a TB code', hasTB, word );
+      hasTB = true;
     }
   }
-  if ( hasGC || hasTB ) { console.log( 'I found the following codes!\n\t%o', arrGcTbCodes ); }
   
   const hasPrefix = content.startsWith( prefix );
   const meMentionPrefix = '<@' + CLIENT_ID + '>';
@@ -74,17 +74,17 @@ client.on( 'messageCreate', async message => {
             .setColor( 'Red' )
             return message.reply( { embeds: [ userPerms ] } );
           }
-          if ( !objGuildMembers.get( client.user.id ).permissions.has( PermissionsBitField.resolve( command.botPerms || [] ) ) ) {
+          if ( !objGuildMembers.get( bot.id ).permissions.has( PermissionsBitField.resolve( command.botPerms || [] ) ) ) {
             const botPerms = new EmbedBuilder()
-            .setDescription( `🚫 ${message.author}, I don't have \`${command.botPerms}\` permissions to use this command!` )
+            .setDescription( `🚫 ${author}, I don't have \`${command.botPerms}\` permissions to use this command!` )
             .setColor( 'Red' )
             return message.reply( { embeds: [ botPerms ] } );
           }
         }
   
         command.run( client, message, args );
-        cooldown.set( `${command.name}${message.author.id}`, Date.now() + command.cooldown );
-        setTimeout( () => { cooldown.delete( `${command.name}${message.author.id}` ) }, command.cooldown );
+        cooldown.set( `${command.name}${author.id}`, Date.now() + command.cooldown );
+        setTimeout( () => { cooldown.delete( `${command.name}${author.id}` ) }, command.cooldown );
       } else {
         if ( command.userPerms || command.botPerms ) {
           if ( !message.member.permissions.has( PermissionsBitField.resolve( command.userPerms || [] ) ) ) {
@@ -94,9 +94,9 @@ client.on( 'messageCreate', async message => {
             return message.reply( { embeds: [userPerms] } );
           }
   
-          if ( !objGuildMembers.get( client.user.id ).permissions.has( PermissionsBitField.resolve( command.botPerms || [] ) ) ) {
+          if ( !objGuildMembers.get( bot.id ).permissions.has( PermissionsBitField.resolve( command.botPerms || [] ) ) ) {
             const botPerms = new EmbedBuilder()
-            .setDescription( `🚫 ${message.author}, I don't have \`${command.botPerms}\` permissions to use this command!` )
+            .setDescription( `🚫 ${author}, I don't have \`${command.botPerms}\` permissions to use this command!` )
             .setColor( 'Red' )
             return message.reply( { embeds: [ botPerms ] } );
           }
@@ -105,8 +105,11 @@ client.on( 'messageCreate', async message => {
       }
     }
   } else if ( hasGC || hasTB ) {
+console.log( 'I found the following codes!\n\t%o', arrGcTbCodes );
     let strCodes = ( hasGC ? ( hasTB ? 'GC & TB' : 'GC' ) : 'TB' ) + ' code(s) detected, here are links:';
+console.log( 'strCodes:\n\t%o', strCodes );
     for ( let code of arrGcTbCodes ) { strCodes += '\n\t' + code.toUpperCase() + ' :link: https://coord.info/' + code.toUpperCase(); }
+console.log( 'strCodes final:\n\t%o', strCodes );
     channel.send( strCodes );
   }
 } );
