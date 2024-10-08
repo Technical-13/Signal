@@ -103,7 +103,7 @@ client.on( 'messageCreate', async message => {
         command.run( client, message, args );
       }
     }
-  } else if ( hasGC | hasTB ) {
+  } else if ( hasGC || hasTB ) {
     let strCodes = ( hasGC ? ( hasTB ? 'GC & TB' : 'GC' ) : 'TB' ) + ' code(s) detected, here are links:';
     for ( let code of arrGcTbCodes ) { strCodes += '\n\t' + code.toUpperCase() + ' :link: https://coord.info/' + code.toUpperCase(); }
     channel.send( strCodes );
