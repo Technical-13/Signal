@@ -14,7 +14,7 @@ client.on( 'messageDelete', async message => {
         if ( data ) {  if ( data.Logs.Chat ) { logChan = await guild.channels.cache.get( data.Logs.Default ); } }
         let setupPlease = ( logChan == objGuildOwner ? 'Please run `/config` to have these logs go to a channel in the server instead of your DMs.' : '----' );
         if ( logChan !== channel ) {
-            const mentionsIds = ( message.content.match( /<@[\d]{17,20}>/g ) || [] );
+            const mentionsIds = ( message.content ? ( message.content.match( /<@[\d]{17,20}>/g ) || [] ) : [] );
             let strMentions = '';
             if ( mentionsIds.length > 0 ) {
                 strMentions = ' mentioning ';
