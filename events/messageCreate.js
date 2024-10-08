@@ -24,10 +24,10 @@ client.on( 'messageCreate', async message => {
   const arrGcTbCodes = [];
   const arrContent = content.trim().split();
   for ( let word of arrContent ) {
-    if ( word.prefix( 'GC' ) ) {
+    if ( word.startsWith( 'GC' ) ) {
       arrGcTbCodes.push( word );
       hasGC = true;
-    } else if ( word.prefix( 'TB' ) ) {
+    } else if ( word.startsWith( 'TB' ) ) {
       arrGcTbCodes.push( word );
       hasTB = true;
     }
