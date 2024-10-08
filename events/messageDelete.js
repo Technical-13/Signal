@@ -46,7 +46,7 @@ client.on( 'messageDelete', async message => {
             }
             
             const strEmbeds = ( intEmbeds == 0 ? 'no embeds' : intEmbeds == 1 ? 'an embed'  : intEmbeds + ' embeds' ) + strEmbedList + ', and ';
-            const content = ( message.content ? ':\n```\n' + message.content + '\n```\n' : ' no content.\n' );
+            const content = ( message.content ? 'the following content:\n```\n' + message.content + '\n```\n' : 'no content.\n' );
             const msgContained = ( ( attachments.length == 0 && intEmbeds === 0 && !message.content ) ? 'and was completely empty.' : 'with ' + strAttachments + strEmbeds + content );
             logChan.send( {
                 content: ( author ? '<@' + author.id + '>\'s' : 'A' ) + ' message in <#' + channel.id + '> was deleted ' + msgContained + setupPlease,
