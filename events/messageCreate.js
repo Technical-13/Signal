@@ -25,6 +25,7 @@ client.on( 'messageCreate', async message => {
   const arrGcTbCodes = [];
   const arrContent = content.trim().split( ' ' );
   for ( let word of arrContent ) {
+    word = word.trim().toUpperCase();
     if ( word.startsWith( 'GC' ) ) {
       arrGcTbCodes.push( word );
       hasGC = true;
@@ -38,7 +39,6 @@ client.on( 'messageCreate', async message => {
   const meMentionPrefix = '<@' + CLIENT_ID + '>';
   const mePrefix = content.startsWith( meMentionPrefix );
   const mentionsMe = mentions.users.has( CLIENT_ID );
-  if ( !hasPrefix && !mePrefix ) return;
   var args = [];
   if ( hasPrefix ) { args = content.slice( prefix.length ).trim().split( / +/g ); }
   else if ( mePrefix ) {
