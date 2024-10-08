@@ -18,7 +18,8 @@ client.on( 'messageUpdate', async ( oldMessage, newMessage ) => {
   const msgAuthor = await guild.members.cache.get( author.id );
   
   const arrJunkEmbedTitles = [
-    'Geocaching: Join the world\'s largest treasure hunt.'
+    'Geocaching: Join the world\'s largest treasure hunt.',
+    'Get the free Official Geocaching app and join the world\'s largest t...'
   ];
   const arrJunkEmbedURLs = [];
   const hasJunkEmbed = ( newMessage.embeds.find( embed => {
