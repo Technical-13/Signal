@@ -139,7 +139,7 @@ client.on( 'messageCreate', async message => {
     let strCodes = strCodeTypes + ' code' + strPlural + ' detected, here ' + ( intCodes === 1 ? 'is the ' : 'are ' ) + 'link' + strPlural + ':';
     const codesResponse = await channel.send( strCodes );
     for ( let gcCode of arrGcCodes ) {
-      let objCache = await cacheinfo( gcCode );
+      let objCache = await cacheinfo( gcCode );console.log( 'objCache: %o', objCache );
       strCodes += '\n:' + gcCacheTypeIcons[ objCache.type ] + ': [' + objCache.name + '](<https://coord.info/' + objCache.code + '>)';
       await codesResponse.edit( strCodes );
     }
