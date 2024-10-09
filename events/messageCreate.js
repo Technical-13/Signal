@@ -137,7 +137,7 @@ client.on( 'messageCreate', async message => {
     }
     const strCodes = strCodeTypes + ' code' + strPlural + ' detected, here ' + ( intCodes === 1 ? 'is the ' : 'are ' ) + 'link' + strPlural + ':';
     for ( let gcCode of arrGcCodes ) {
-      const cacheInfo = cacheinfo( gcCode );
+      const cacheInfo = await cacheinfo( gcCode );console.log( 'cacheInfo:%o', cacheInfo );
       strCodes += '\n:' + cacheInfo.type.replace( / /g, '' ) + ': [' + cacheInfo.name + '](<https://coord.info/' + cacheInfo.code + '>)';
     }
     for ( let code of arrOtherCodes ) { strCodes += '\n\t' + code + ' :link: <https://coord.info/' + code + '>'; }
