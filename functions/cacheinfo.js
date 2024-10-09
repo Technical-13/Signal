@@ -4,11 +4,12 @@ const cheerio = require( 'cheerio' );
 module.exports = async ( gcCode ) => {
   const info = await axios( 'https://coord.info/' + gcCode ).then( response => {
     const $ = cheerio.load( response.data );
-    let result = {};
+    let result = { code: gcCode, failed: true, error: 'Unknown Error' };
     let isPMO = ( $( 'head' ).find( 'meta[name="page_name"]' ).attr( 'content' ) === 'PMO Cache Upsell' ? true : false );;
     if ( isPMO ) {
       result = {
         code: gcCode,
+        failed: false,
         type: $( '.li__cache-type' ).text().trim(),
         name: $( 'div#ctl00_divContentMain > h1.heading-3' ).text().trim(),
         nameCO: $( '#ctl00_ContentBody_uxCacheBy' ).text().split( 'by' ).pop().trim(),
@@ -22,6 +23,7 @@ module.exports = async ( gcCode ) => {
     } else {
       result = {
         code: gcCode,
+        failed: false,
         type: $( 'a.cacheImage' ).attr( 'title' ).trim(),
         name: $( '#ctl00_ContentBody_CacheName' ).text().trim(),
         nameCO: $( '#ctl00_ContentBody_mcd1 > a' ).text().trim(),
@@ -35,7 +37,13 @@ module.exports = async ( gcCode ) => {
     }
     return result;
   } ).catch( errGetPage => {
-    console.error( 'Error attempting to get page for - https://coord.info/%s - :\n%o', gcCode, errGetPage );
+    switch ( errGetPage.status ) {
+      case 404:
+        return { code: gcCode, failed: true, error: 'Cache page not found!', status: 404 };
+      default:
+        console.error( 'Error attempting to get page for - https://coord.info/%s - :\n%o', gcCode, errGetPage );
+        return { code: gcCode, failed: true, error: errGetPage.statusText, status: errGetPage.status };
+    }
   } );
   return info;
 };
