@@ -136,11 +136,13 @@ client.on( 'messageCreate', async message => {
         strCodeTypes = arrCodeTypes.join( ', ' ) + ', and ' + lastType;
     }
     const strCodes = strCodeTypes + ' code' + strPlural + ' detected, here ' + ( intCodes === 1 ? 'is the ' : 'are ' ) + 'link' + strPlural + ':';
+    const codesResponse = await channel.send( strCodes );
     for ( let gcCode of arrGcCodes ) {
-      const cacheInfo = await cacheinfo( gcCode );console.log( 'cacheInfo:%o', cacheInfo );
-      strCodes += '\n:' + cacheInfo.type.replace( / /g, '' ) + ': [' + cacheInfo.name + '](<https://coord.info/' + cacheInfo.code + '>)';
+      let objCache = await cacheinfo( gcCode );
+      strCodes += '\n:' + objCache.type.replace( / /g, '' ) + ': [' + objCache.name + '](<https://coord.info/' + objCache.code + '>)';
+      await codesResponse.edit( strCodes );
     }
     for ( let code of arrOtherCodes ) { strCodes += '\n\t' + code + ' :link: <https://coord.info/' + code + '>'; }
-    channel.send( strCodes );
+    codesResponse.edit( strCodes );
   }
 } );
