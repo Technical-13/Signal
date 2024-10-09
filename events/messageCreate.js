@@ -157,7 +157,7 @@ client.on( 'messageCreate', async message => {
         let cacheTypeIcon = ( Object.keys( gcCacheTypeIcons ).indexOf( objCache.type ) != -1 ? gcCacheTypeIcons[ objCache.type ] : '⁉' );
         strCodes += '\n';
         if ( objCache.pmo ) { strCodes += '<:PMO:1293693055127519315>'; }
-        if ( objCache.archived ) { strCodes += '<:archived:467385636173905942>'; }
+        if ( objCache.archived || objCache.locked ) { strCodes += '<:archived:467385636173905942>'; }
         else if ( objCache.disabled ) { strCodes += '<:disabled:467385661415227393>'; }
         strCodes += cacheTypeIcon + ' [' + objCache.name + '](<https://coord.info/' + objCache.code + '>) by ' + objCache.nameCO + ' (D/T = ' + objCache.difficulty + '/' + objCache.terrain + ')';
         await codesResponse.edit( strCodes );
