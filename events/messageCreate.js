@@ -139,9 +139,10 @@ client.on( 'messageCreate', async message => {
     let strCodes = strCodeTypes + ' code' + strPlural + ' detected, here ' + ( intCodes === 1 ? 'is the ' : 'are ' ) + 'link' + strPlural + ':';
     const codesResponse = await channel.send( strCodes );
     for ( let gcCode of arrGcCodes ) {
+      await codesResponse.edit( strCodes + '\n Gathering information about [' + gcCode + '](<https://coord.info/' + gcCode + '>)...' );
       let objCache = await cacheinfo( gcCode );console.log( 'objCache: %o', objCache );
       let cacheTypeIcon = ( Object.keys( gcCacheTypeIcons ).indexOf( objCache.type ) != -1 ? gcCacheTypeIcons[ objCache.type ] : '⁉' );
-      strCodes += '\n:' + cacheTypeIcon + ': [' + objCache.name + '](<https://coord.info/' + objCache.code + '>)';
+      strCodes += '\n' + cacheTypeIcon + ' [' + objCache.name + '](<https://coord.info/' + objCache.code + '>) by ' + objCache.nameCO;
       await codesResponse.edit( strCodes );
     }
     for ( let code of arrOtherCodes ) { strCodes += '\n\t' + code + ' :link: <https://coord.info/' + code + '>'; }
