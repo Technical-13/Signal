@@ -139,10 +139,14 @@ client.on( 'messageCreate', async message => {
     let strCodes = strCodeTypes + ' code' + strPlural + ' detected, here ' + ( intCodes === 1 ? 'is the ' : 'are ' ) + 'link' + strPlural + ':';
     const codesResponse = await channel.send( strCodes );
     for ( let gcCode of arrGcCodes ) {
-      await codesResponse.edit( strCodes + '\n Gathering information about [' + gcCode + '](<https://coord.info/' + gcCode + '>)...' );
+      await codesResponse.edit( strCodes + '\n<:Signal:398980726000975914> Gathering information about [' + gcCode + '](<https://coord.info/' + gcCode + '>)...' );
       let objCache = await cacheinfo( gcCode );console.log( 'objCache: %o', objCache );
       let cacheTypeIcon = ( Object.keys( gcCacheTypeIcons ).indexOf( objCache.type ) != -1 ? gcCacheTypeIcons[ objCache.type ] : '⁉' );
-      strCodes += '\n' + cacheTypeIcon + ' [' + objCache.name + '](<https://coord.info/' + objCache.code + '>) by ' + objCache.nameCO;
+      strCodes += '\n';
+      if ( objCache.pmo ) { strCodes += '<:PMO:1293693055127519315>'; }
+      if ( objCache.archived ) { strCodes += '<:archived:467385636173905942>'; }
+      else if ( objCache.disabled ) { strCodes += '<:disabled:467385661415227393>'; }
+      strCodes += cacheTypeIcon + ' [' + objCache.name + '](<https://coord.info/' + objCache.code + '>) by ' + objCache.nameCO + ' (D/T = ' + objCache.difficulty + '/' + objCache.terrain + ')';
       await codesResponse.edit( strCodes );
     }
     for ( let code of arrOtherCodes ) { strCodes += '\n\t' + code + ' :link: <https://coord.info/' + code + '>'; }
