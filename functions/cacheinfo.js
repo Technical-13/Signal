@@ -5,7 +5,7 @@ module.exports = async ( gcCode ) => {
   const info = await axios( 'https://coord.info/' + gcCode ).then( response => {
     const $ = cheerio.load( response.data );
     let result = {};
-    let isPMO = ( $( 'head' ).find( 'meta[content="PMO Cache Upsell"]' ) ? true : false );
+    let isPMO = ( $( 'head' ).find( 'meta[name="page_name"]' ).attr( 'content' ) === 'PMO Cache Upsell' ? true : false );;
     if ( isPMO ) {
       result = {
         code: gcCode,
