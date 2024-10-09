@@ -135,7 +135,7 @@ client.on( 'messageCreate', async message => {
         let lastType = arrCodeTypes.pop();
         strCodeTypes = arrCodeTypes.join( ', ' ) + ', and ' + lastType;
     }
-    const strCodes = strCodeTypes + ' code' + strPlural + ' detected, here ' + ( intCodes === 1 ? 'is the ' : 'are ' ) + 'link' + strPlural + ':';
+    let strCodes = strCodeTypes + ' code' + strPlural + ' detected, here ' + ( intCodes === 1 ? 'is the ' : 'are ' ) + 'link' + strPlural + ':';
     const codesResponse = await channel.send( strCodes );
     for ( let gcCode of arrGcCodes ) {
       let objCache = await cacheinfo( gcCode );
