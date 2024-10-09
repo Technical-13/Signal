@@ -140,7 +140,8 @@ client.on( 'messageCreate', async message => {
     const codesResponse = await channel.send( strCodes );
     for ( let gcCode of arrGcCodes ) {
       let objCache = await cacheinfo( gcCode );console.log( 'objCache: %o', objCache );
-      strCodes += '\n:' + gcCacheTypeIcons[ objCache.type ] + ': [' + objCache.name + '](<https://coord.info/' + objCache.code + '>)';
+      let cacheTypeIcon = ( gcCacheTypeIcons.indexOf( objCache.type ) != -1 ? gcCacheTypeIcons[ objCache.type ] : '⁉' );
+      strCodes += '\n:' + cacheTypeIcon + ': [' + objCache.name + '](<https://coord.info/' + objCache.code + '>)';
       await codesResponse.edit( strCodes );
     }
     for ( let code of arrOtherCodes ) { strCodes += '\n\t' + code + ' :link: <https://coord.info/' + code + '>'; }
