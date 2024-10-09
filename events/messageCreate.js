@@ -126,14 +126,14 @@ client.on( 'messageCreate', async message => {
     switch ( intCodeTypes ) {
       case 0: break;
       case 1:
-        strCodeTypes = strCodeTypes.pop();
+        strCodeTypes = arrCodeTypes.pop();
         break;
       case 2:
-        strCodeTypes = strCodeTypes.join( ' and ' );
+        strCodeTypes = arrCodeTypes.join( ' and ' );
         break;
       default:
-        let lastType = strCodeTypes.pop();
-        strCodeTypes = strCodeTypes.join( ', ' ) + ', and ' + lastType;
+        let lastType = arrCodeTypes.pop();
+        strCodeTypes = arrCodeTypes.join( ', ' ) + ', and ' + lastType;
     }
     const strCodes = strCodeTypes + ' code' + strPlural + ' detected, here ' + ( intCodes === 1 ? 'is the ' : 'are ' ) + 'link' + strPlural + ':';
     for ( let gcCode of arrGcCodes ) {
