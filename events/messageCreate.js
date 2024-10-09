@@ -3,6 +3,7 @@ const { EmbedBuilder, Collection, PermissionsBitField } = require( 'discord.js' 
 const ms = require( 'ms' );
 const prefix = client.prefix;
 const cooldown = new Collection();
+const cacheinfo = require( '../functions/cacheinfo.js' );
 const CLIENT_ID = process.env.CLIENT_ID;
 const DEV_GUILD_ID = process.env.DEV_GUILD_ID;
 const OWNER_ID = process.env.OWNER_ID;
@@ -21,16 +22,25 @@ client.on( 'messageCreate', async message => {
   const isGuildOwner = ( author.id === objGuildOwner.id ? true : false );
   const msgAuthor = await guild.members.cache.get( author.id );
 
-  var hasGC = false, hasTB = false;
-  const arrGcTbCodes = [];
+  var hasCodes = {
+    GC: false,
+    TB: false
+  };
+  const arrGcCodes = [];
+  const arrOtherCodes = [];
   const arrContent = content.trim().split( ' ' );
   for ( let word of arrContent ) {
     word = word.trim().match( /(GC|TB)[A-Z0-9]*/ );
     word = ( word ? word[ 0 ] : [] );
     if ( word.length >= 4 && word.length <= 8 ) {
-      if ( word.startsWith( 'GC' ) ) { hasGC = true; }
-      else if ( word.startsWith( 'TB' ) ) { hasTB = true; }
-      if ( word.startsWith( 'GC' ) || word.startsWith( 'TB' ) ) { arrGcTbCodes.push( word.toUpperCase() ); }
+      if ( word.startsWith( 'GC' ) ) {
+        arrGcCodes.push( word.toUpperCase() );
+        hasCodes.GC = true;
+      }
+      else if ( word.startsWith( 'TB' ) ) {
+        arrOtherCodes.push( word.toUpperCase() );
+        hasCodes.TB = true;
+      }
     }
   }
   
@@ -106,9 +116,31 @@ client.on( 'messageCreate', async message => {
     }
   }
   
-  if ( hasGC || hasTB ) {
-    let strCodes = ( hasGC ? ( hasTB ? 'GC & TB' : 'GC' ) : 'TB' ) + ' code(s) detected, here are links:';
-    for ( let code of arrGcTbCodes ) { strCodes += '\n\t' + code + ' :link: <https://coord.info/' + code + '>'; }
+  if ( Object.values( hasCodes ).some( b => b ) ) {
+    const intCodes = arrGcCodes.length + arrOtherCodes.length;
+    const strPlural = ( intCodes === 1 ? '' : 's' );
+    let arrCodeTypes = [];
+    Object.entries( hasCodes ).forEach( entry => { if ( entry[ 1 ] ) { arrCodeTypes.push( entry[ 0 ] ) } } );
+    const intCodeTypes = arrCodeTypes.length;
+    let strCodeTypes = '';
+    switch ( intCodeTypes ) {
+      case 0: break;
+      case 1:
+        strCodeTypes = strCodeTypes.pop();
+        break;
+      case 2:
+        strCodeTypes = strCodeTypes.join( ' and ' );
+        break;
+      default:
+        let lastType = strCodeTypes.pop();
+        strCodeTypes = strCodeTypes.join( ', ' ) + ', and ' + lastType;
+    }
+    const strCodes = strCodeTypes + ' code' + strPlural + ' detected, here ' + ( intCodes === 1 ? 'is the ' : 'are ' ) + 'link' + strPlural + ':';
+    for ( let gcCode of arrGcCodes ) {
+      const cacheInfo = cacheinfo( gcCode );
+      strCodes += '\n:' + cacheInfo.type.replace( / /g, '' ) + ': [' + cacheInfo.name + '](<https://coord.info/' + cacheInfo.code + '>)';
+    }
+    for ( let code of arrOtherCodes ) { strCodes += '\n\t' + code + ' :link: <https://coord.info/' + code + '>'; }
     channel.send( strCodes );
   }
 } );
