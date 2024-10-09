@@ -5,7 +5,8 @@ module.exports = async ( gcCode ) => {
   const info = await axios( 'https://coord.info/' + gcCode ).then( response => {
     const $ = cheerio.load( response.data );
     let result = {};
-    if ( $( '.premium-upgrade-widget' ) ) {
+    let isPMO = ( $( 'head' ).find( 'meta[content="PMO Cache Upsell"]' ) ? true : false );
+    if ( isPMO ) {
       result = {
         code: gcCode,
         type: $( '.li__cache-type' ).text().trim(),
@@ -18,7 +19,7 @@ module.exports = async ( gcCode ) => {
 //        hidden: ( new Date( Date.parse( $( '' ).trim() ) ) ),// Not listed
 //        disabled: ( $( '#ctl00_ContentBody_disabledMessage' ) ? true : false ),
 //        archived: ( $( '#ctl00_ContentBody_archivedMessage' ) ? true : false ),
-        poc: true
+        pmo: true
       };
     } else {
       result = {
@@ -33,7 +34,7 @@ module.exports = async ( gcCode ) => {
         size: $( '#ctl00_ContentBody_size > p > span > small' ).text().trim().replace( /[\(\)]/g, '' ),
         disabled: ( $( '#ctl00_ContentBody_disabledMessage' ) ? true : false ),
         archived: ( $( '#ctl00_ContentBody_archivedMessage' ) ? true : false ),
-        poc: false
+        pmo: false
       };
     }
 console.log( 'result:%o', result );
