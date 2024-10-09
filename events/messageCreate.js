@@ -24,23 +24,32 @@ client.on( 'messageCreate', async message => {
   const msgAuthor = await guild.members.cache.get( author.id );
 
   var hasCodes = {
-    GC: false,
-    TB: false
+    GC: false,// Geocache
+    TB: false,// Trackable
+    WM: false,// Waymark
+    GL: false,// Geocache Log
+    TL: false,// Trackable Log
+    PR: false,// User Profile
+    BM: false,// Bookmark
+    GT: false//  GeoTour  
   };
   const arrGcCodes = [];
   const arrOtherCodes = [];
   const arrContent = content.trim().split( ' ' );
+  const arrOtherTypeCodes = [ 'GC', 'TB', 'WM', 'GL', 'TL', 'PR', 'BM', 'GT' ];
   for ( let word of arrContent ) {
-    word = word.trim().match( /(GC|TB)[A-Z0-9]*/ );
+    word = word.trim();
+    let wordPrefix = word.slice( 0, 2 );
+    word = word.match( /(GC|TB|WM|GL|TL|PR|BM|GT)[A-Z0-9]*/ );
     word = ( word ? word[ 0 ] : [] );
     if ( word.length >= 4 && word.length <= 8 ) {
       if ( word.startsWith( 'GC' ) ) {
         arrGcCodes.push( word.toUpperCase() );
         hasCodes.GC = true;
       }
-      else if ( word.startsWith( 'TB' ) ) {
+      else if ( arrOtherTypeCodes.indexOf( wordPrefix ) != -1 ) {
         arrOtherCodes.push( word.toUpperCase() );
-        hasCodes.TB = true;
+        hasCodes[ wordPrefix ] = true;
       }
     }
   }
@@ -139,8 +148,8 @@ client.on( 'messageCreate', async message => {
     let strCodes = strCodeTypes + ' code' + strPlural + ' detected, here ' + ( intCodes === 1 ? 'is the ' : 'are ' ) + 'link' + strPlural + ':';
     const codesResponse = await channel.send( strCodes );
     for ( let gcCode of arrGcCodes ) {
-      await codesResponse.edit( strCodes + '\n<:Signal:398980726000975914> Gathering information about [' + gcCode + '](<https://coord.info/' + gcCode + '>)...' );
-      let objCache = await cacheinfo( gcCode );console.log( 'objCache: %o', objCache );
+      await codesResponse.edit( strCodes + '\n<:Signal:398980726000975914> ...attempting to gather information about [' + gcCode + '](<https://coord.info/' + gcCode + '>)...' );
+      let objCache = await cacheinfo( gcCode );
       let cacheTypeIcon = ( Object.keys( gcCacheTypeIcons ).indexOf( objCache.type ) != -1 ? gcCacheTypeIcons[ objCache.type ] : '⁉' );
       strCodes += '\n';
       if ( objCache.pmo ) { strCodes += '<:PMO:1293693055127519315>'; }
