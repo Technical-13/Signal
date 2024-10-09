@@ -36,9 +36,11 @@ module.exports = async ( gcCode ) => {
         poc: false
       };
     }
+console.log( 'result:%o', result );
     return result;
   } ).catch( errGetPage => {
     console.error( 'Error attempting to get page for - https://coord.info/%s - :\n%o', gcCode, errGetPage );
   } );
+console.log( 'info:%o', info );
   return info;
 };
