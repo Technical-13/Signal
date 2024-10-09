@@ -4,6 +4,7 @@ const ms = require( 'ms' );
 const prefix = client.prefix;
 const cooldown = new Collection();
 const cacheinfo = require( '../functions/cacheinfo.js' );
+const gcCacheTypeIcons = require( '../eventTypes.json' );
 const CLIENT_ID = process.env.CLIENT_ID;
 const DEV_GUILD_ID = process.env.DEV_GUILD_ID;
 const OWNER_ID = process.env.OWNER_ID;
@@ -139,7 +140,7 @@ client.on( 'messageCreate', async message => {
     const codesResponse = await channel.send( strCodes );
     for ( let gcCode of arrGcCodes ) {
       let objCache = await cacheinfo( gcCode );
-      strCodes += '\n:' + objCache.type.replace( / /g, '' ) + ': [' + objCache.name + '](<https://coord.info/' + objCache.code + '>)';
+      strCodes += '\n:' + gcCacheTypeIcons[ objCache.type ] + ': [' + objCache.name + '](<https://coord.info/' + objCache.code + '>)';
       await codesResponse.edit( strCodes );
     }
     for ( let code of arrOtherCodes ) { strCodes += '\n\t' + code + ' :link: <https://coord.info/' + code + '>'; }
