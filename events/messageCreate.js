@@ -150,13 +150,18 @@ client.on( 'messageCreate', async message => {
     for ( let gcCode of arrGcCodes ) {
       await codesResponse.edit( strCodes + '\n<:Signal:398980726000975914> ...attempting to gather information about [' + gcCode + '](<https://coord.info/' + gcCode + '>)...' );
       let objCache = await cacheinfo( gcCode );
-      let cacheTypeIcon = ( Object.keys( gcCacheTypeIcons ).indexOf( objCache.type ) != -1 ? gcCacheTypeIcons[ objCache.type ] : '⁉' );
-      strCodes += '\n';
-      if ( objCache.pmo ) { strCodes += '<:PMO:1293693055127519315>'; }
-      if ( objCache.archived ) { strCodes += '<:archived:467385636173905942>'; }
-      else if ( objCache.disabled ) { strCodes += '<:disabled:467385661415227393>'; }
-      strCodes += cacheTypeIcon + ' [' + objCache.name + '](<https://coord.info/' + objCache.code + '>) by ' + objCache.nameCO + ' (D/T = ' + objCache.difficulty + '/' + objCache.terrain + ')';
-      await codesResponse.edit( strCodes );
+      if ( objCache.failed ) {
+        strCodes += '\n<:RIP:1015415145180176535> **Failed to get information about __[' + gcCode + '](<https://coord.info/' + gcCode + '>)__: ' + objCache.error + '...**';
+        await codesResponse.edit( strCodes );
+      } else {
+        let cacheTypeIcon = ( Object.keys( gcCacheTypeIcons ).indexOf( objCache.type ) != -1 ? gcCacheTypeIcons[ objCache.type ] : '⁉' );
+        strCodes += '\n';
+        if ( objCache.pmo ) { strCodes += '<:PMO:1293693055127519315>'; }
+        if ( objCache.archived ) { strCodes += '<:archived:467385636173905942>'; }
+        else if ( objCache.disabled ) { strCodes += '<:disabled:467385661415227393>'; }
+        strCodes += cacheTypeIcon + ' [' + objCache.name + '](<https://coord.info/' + objCache.code + '>) by ' + objCache.nameCO + ' (D/T = ' + objCache.difficulty + '/' + objCache.terrain + ')';
+        await codesResponse.edit( strCodes );
+      }
     }
     for ( let code of arrOtherCodes ) { strCodes += '\n\t' + code + ' :link: <https://coord.info/' + code + '>'; }
     codesResponse.edit( strCodes );
