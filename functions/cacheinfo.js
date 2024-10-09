@@ -18,6 +18,5 @@ module.exports = async ( gcCode ) => {
     
     return result;
   } );
-  console.log( 'Returning `info`:%o', info );
   return info;
 };
