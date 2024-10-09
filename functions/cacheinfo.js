@@ -32,8 +32,8 @@ module.exports = async ( gcCode ) => {
         terrain: $( '#ctl00_ContentBody_Localize12 > img' ).attr( 'alt' ).split( ' ' )[ 0 ],
         hidden: ( new Date( Date.parse( $( '#ctl00_ContentBody_mcd2' ).text().trim().split( ' ' ).pop() ) ) ),
         size: $( '#ctl00_ContentBody_size > p > span > small' ).text().trim().replace( /[\(\)]/g, '' ),
-        disabled: ( $( '#ctl00_ContentBody_disabledMessage' ) ? true : false ),
-        archived: ( $( '#ctl00_ContentBody_archivedMessage' ) ? true : false ),
+        disabled: ( $( '#ctl00_ContentBody_disabledMessage' ).length ? true : false ),
+        archived: ( $( '#ctl00_ContentBody_archivedMessage' ).length ? true : false ),
         pmo: false
       };
     }
