@@ -37,6 +37,8 @@ module.exports = async ( gcCode ) => {
       };
     }
     return result;
+  } ).catch( errGetPage => {
+    console.error( 'Error attempting to get page for - https://coord.info/%s - :\n%o', gcCode, errGetPage );
   } );
   return info;
 };
