@@ -18,6 +18,7 @@ module.exports = async ( gcCode ) => {
         size: $( '#ctl00_ContentBody_lblSize' ).next( 'span' ).text().trim(),
 //        disabled: ( $( '#ctl00_ContentBody_disabledMessage' ).length ? true : false ),
 //        archived: ( $( '#ctl00_ContentBody_archivedMessage' ).length ? true : false ),
+//        locked: ( $( '#ctl00_ContentBody_lockedMessage' ).length ? true : false ),
         pmo: true
       };
     } else {
@@ -32,6 +33,7 @@ module.exports = async ( gcCode ) => {
         size: $( '#ctl00_ContentBody_size > p > span > small' ).text().trim().replace( /[\(\)]/g, '' ),
         disabled: ( $( '#ctl00_ContentBody_disabledMessage' ).length ? true : false ),
         archived: ( $( '#ctl00_ContentBody_archivedMessage' ).length ? true : false ),
+        locked: ( $( '#ctl00_ContentBody_lockedMessage' ).length ? true : false ),
         pmo: false
       };
     }
