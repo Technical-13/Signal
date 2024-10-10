@@ -154,13 +154,14 @@ client.on( 'messageCreate', async message => {
         strCodes += '\n<:RIP:1015415145180176535> **Failed to get information about __[' + gcCode + '](<https://coord.info/' + gcCode + '>)__: ' + objCache.error + '...**';
         await codesResponse.edit( strCodes );
       } else {
+        let cacheName = encodeURIComponent( objCache.name ).replace( /%20/g, ' ' );
         let cacheTypeIcon = ( Object.keys( gcCacheTypeIcons ).indexOf( objCache.type ) != -1 ? gcCacheTypeIcons[ objCache.type ] : '⁉' );
         strCodes += '\n';
         if ( objCache.pmo ) { strCodes += '<:PMO:1293693055127519315>'; }
         if ( objCache.archived || objCache.locked ) { strCodes += '<:archived:467385636173905942>'; }
         else if ( objCache.disabled ) { strCodes += '<:disabled:467385661415227393>'; }
         let dtURL = '[[' + objCache.difficulty + '/' + objCache.terrain + ']](<https://www.geocaching.com/help/index.php?pg=kb.page&inc=1&id=82>)';
-        strCodes += cacheTypeIcon + ' [' + objCache.name + '](<https://coord.info/' + objCache.code + '>) by ' + objCache.nameCO + ' ' + dtURL;
+        strCodes += cacheTypeIcon + ' [' + cacheName + '](<https://coord.info/' + objCache.code + '>) by ' + objCache.nameCO + ' ' + dtURL;
         await codesResponse.edit( strCodes );
       }
     }
