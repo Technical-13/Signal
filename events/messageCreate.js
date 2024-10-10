@@ -156,7 +156,7 @@ client.on( 'messageCreate', async message => {
       } else {
         let cacheName = objCache.name;
         let arrCName = cacheName.split( ' ' );
-        arrCacheName.forEach( ( n, i ) => {
+        arrCName.forEach( ( n, i ) => {
         	if ( ( new RegExp( '\p{Emoji_Presentation}', 'gu' ) ).test( n.trim() ) ) { arrCName[ i ] = '\\u' + n.trim().codePointAt( 0 ) }
         } );
         cacheName = arrCName.join( ' ' );
