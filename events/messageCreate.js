@@ -154,7 +154,12 @@ client.on( 'messageCreate', async message => {
         strCodes += '\n<:RIP:1015415145180176535> **Failed to get information about __[' + gcCode + '](<https://coord.info/' + gcCode + '>)__: ' + objCache.error + '...**';
         await codesResponse.edit( strCodes );
       } else {
-        let cacheName = encodeURIComponent( objCache.name ).replace( /%20/g, ' ' );
+        let cacheName = objCache.name;
+        let arrCName = cacheName.split( ' ' );
+        arrCacheName.forEach( ( n, i ) => {
+        	if ( ( new RegExp( '\p{Emoji_Presentation}', 'gu' ) ).test( n.trim() ) ) { arrCName[ i ] = '\\u' + n.trim().codePointAt( 0 ) }
+        } );
+        cacheName = arrCName.join( ' ' );
         let cacheTypeIcon = ( Object.keys( gcCacheTypeIcons ).indexOf( objCache.type ) != -1 ? gcCacheTypeIcons[ objCache.type ] : '⁉' );
         strCodes += '\n';
         if ( objCache.pmo ) { strCodes += '<:PMO:1293693055127519315>'; }
