@@ -40,7 +40,7 @@ client.on( 'messageCreate', async message => {
   for ( let word of arrContent ) {
     word = word.trim();
     let wordPrefix = word.slice( 0, 2 );
-    word = word.match( /(GC|TB|WM|GL|TL|PR|BM|GT)[A-Z0-9]*/ );
+    word = word.match( /^(GC|TB|WM|GL|TL|PR|BM|GT)[A-Z0-9]*$/ );
     word = ( word ? word[ 0 ] : [] );
     if ( word.length >= 4 && word.length <= 8 ) {
       if ( word.startsWith( 'GC' ) ) {
