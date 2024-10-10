@@ -157,7 +157,7 @@ client.on( 'messageCreate', async message => {
         let cacheName = objCache.name;
         let arrCName = cacheName.split( ' ' );
         arrCName.forEach( ( n, i ) => {
-        	if ( ( new RegExp( '\p{Emoji_Presentation}', 'gu' ) ).test( n.trim() ) ) { arrCName[ i ] = '\\u' + n.trim().codePointAt( 0 ) }
+        	if ( ( new RegExp( '\\p{Emoji_Presentation}', 'gu' ) ).test( n.trim() ) ) { arrCName[ i ] = '\\u' + n.trim().codePointAt( 0 ) }
         } );
         cacheName = arrCName.join( ' ' );
         let cacheTypeIcon = ( Object.keys( gcCacheTypeIcons ).indexOf( objCache.type ) != -1 ? gcCacheTypeIcons[ objCache.type ] : '⁉' );
