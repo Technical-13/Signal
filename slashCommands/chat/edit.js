@@ -23,6 +23,7 @@ module.exports = {
         type: 3
     } ],
     type: ApplicationCommandType.ChatInput,
+    modCmd: true,
     cooldown: 1000,
     run: async ( client, interaction ) => {
         await interaction.deferReply( { ephemeral: true } );
