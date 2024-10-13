@@ -29,16 +29,16 @@ module.exports = {
     const author = interaction.user;
     const strAuthorTag = author.tag;
     const botOwner = client.users.cache.get( process.env.OWNER_ID );
-    const isBotOwner = ( author.id === botOwner.id ? true : false );
+    const isBotOwner = ( author.id === botOwner.id ? true : false );console.log('isBotOwner:%o',isBotOwner);
     const botMods = [];
-    const isBotMod = ( ( botOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
+    const isBotMod = ( ( botOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );console.log('isBotMod:%o',isBotMod);
     const arrAuthorPermissions = ( guild.members.cache.get( author.id ).permissions.toArray() || [] );
     const objGuildMembers = guild.members.cache;
     const objGuildOwner = objGuildMembers.get( guild.ownerId );
-    const isGuildOwner = ( author.id === objGuildOwner.id ? true : false );
-    const hasAdministrator = ( ( isBotMod || isGuildOwner || arrAuthorPermissions.indexOf( 'Administrator' ) !== -1 ) ? true : false );
-    const hasManageGuild = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'ManageGuild' ) !== -1 ) ? true : false );
-    const hasManageRoles = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'ManageRoles' ) !== -1 ) ? true : false );
+    const isGuildOwner = ( author.id === objGuildOwner.id ? true : false );console.log('isGuildOwner:%o',isGuildOwner);
+    const hasAdministrator = ( ( isBotMod || isGuildOwner || arrAuthorPermissions.indexOf( 'Administrator' ) !== -1 ) ? true : false );console.log('hasAdministrator:%o',hasAdministrator);
+    const hasManageGuild = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'ManageGuild' ) !== -1 ) ? true : false );console.log('hasManageGuild:%o',hasManageGuild);
+    const hasManageRoles = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'ManageRoles' ) !== -1 ) ? true : false );console.log('hasManageRoles:%o',hasManageRoles);
 
     const myTask = interaction.options.getSubcommand();
     var setInvite, setDefault, setError, setChat, boolWelcome, strWelcome;
