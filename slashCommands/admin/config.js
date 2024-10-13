@@ -8,6 +8,7 @@ module.exports = {
   type: ApplicationCommandType.ChatInput,
   contexts: [ InteractionContextType.Guild ],
   cooldown: 1000,
+  modOnly: true,
   options: [
     { type: 1, name: 'get', description: 'Get all settings for the server.' },
     { type: 1, name: 'reset', description: 'Reset all settings for the server to default.' },
