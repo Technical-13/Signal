@@ -31,6 +31,7 @@ module.exports = {
     const isBotOwner = ( author.id === botOwner.id ? true : false );
 console.log('isBotOwner:%o',isBotOwner);
     const botMods = [];
+console.log('botMods.indexOf( author.id ):%o',botMods.indexOf( author.id ));
     const isBotMod = ( ( botOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
 console.log('isBotMod:%o',isBotMod);
     const arrAuthorPermissions = ( guild.members.cache.get( author.id ).permissions.toArray() || [] );
