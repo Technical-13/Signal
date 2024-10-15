@@ -8,6 +8,7 @@ module.exports = {
   type: ApplicationCommandType.ChatInput,
   contexts: [ InteractionContextType.Guild ],
   cooldown: 1000,
+  modCmd: true,
   options: [
     { type: 1, name: 'get', description: 'Get all settings for the server.' },
     { type: 1, name: 'reset', description: 'Reset all settings for the server to default.' },
@@ -31,7 +32,7 @@ console.log('strAuthorTag: %s', strAuthorTag);
     const botOwner = client.users.cache.get( process.env.OWNER_ID );
     const isBotOwner = ( author.id === botOwner.id ? true : false );
 console.log('\tisBotOwner: %o',isBotOwner);
-    const botMods = [];
+    const botMods = await [];
 console.log('\tbotMods.indexOf( author.id ): %o',botMods.indexOf( author.id ));
 console.log('\tbotMods.indexOf( author.id ) != -1: %o',botMods.indexOf( author.id ) != -1);
 console.log('\t( botOwner || botMods.indexOf( author.id ) != -1 ): %o',( botOwner || botMods.indexOf( author.id ) != -1 ));
