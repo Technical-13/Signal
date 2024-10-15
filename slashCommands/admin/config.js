@@ -30,12 +30,13 @@ module.exports = {
 console.log('strAuthorTag: %s', strAuthorTag);
     const botOwner = client.users.cache.get( process.env.OWNER_ID );
     const isBotOwner = ( author.id === botOwner.id ? true : false );
-console.log('\tisBotOwner:%o',isBotOwner);
+console.log('\tisBotOwner: %o',isBotOwner);
     const botMods = [];
-console.log('\tbotMods.indexOf( author.id ):%o',botMods.indexOf( author.id ));
-console.log('\tbotMods.indexOf( author.id ) != -1:%o',botMods.indexOf( author.id ) != -1);
+console.log('\tbotMods.indexOf( author.id ): %o',botMods.indexOf( author.id ));
+console.log('\tbotMods.indexOf( author.id ) != -1: %o',botMods.indexOf( author.id ) != -1);
+console.log('\t( botOwner || botMods.indexOf( author.id ) != -1 ): %o',( botOwner || botMods.indexOf( author.id ) != -1 ));
     const isBotMod = ( ( botOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
-console.log('\tisBotMod:%o',isBotMod);
+console.log('\tisBotMod: %o',isBotMod);
     const arrAuthorPermissions = ( guild.members.cache.get( author.id ).permissions.toArray() || [] );
     const objGuildMembers = guild.members.cache;
     const objGuildOwner = objGuildMembers.get( guild.ownerId );
