@@ -1,5 +1,6 @@
 const client = require( '..' );
 const config = require( '../config.json' );
+const chalk = require( 'chalk' );
 require( 'dotenv' ).config();
 
 const thisBotName = ( config.botName || process.env.BOT_USERNAME );
