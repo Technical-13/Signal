@@ -4,13 +4,12 @@ let logSchema = new Schema( {
   Guild: String,
   Invite: String,
   Logs: {
+    Chat: String,
     Default: String,
-    Error: String,
-    Chat: String
+    Error: String
   },
   Welcome: {
     Active: Boolean,
-    Guild: String,
     Channel: String,
     Msg: String,
     Role: String
