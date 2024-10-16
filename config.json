@@ -1,1 +1,8 @@
-{ "prefix": "^" }
+{
+  "botName": "Signal",
+  "botOwnerId": "440752068509040660",
+  "clientId": "445799905177632768",
+  "devGuildId": "192775085420052489",
+  "moderatorIds": [],
+  "prefix": "^",
+}

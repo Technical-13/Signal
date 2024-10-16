@@ -1,6 +1,6 @@
 const { model, Schema } = require( 'mongoose' );
 
-let logSchema = new Schema( {
+let botSchema = new Schema( {
   BotName: String,
   Owner: String,
   Prefix: String,
@@ -8,4 +8,4 @@ let logSchema = new Schema( {
   DevGuild: String
 } );
 
-module.exports = model( 'BotConfig', logSchema );
+module.exports = model( 'BotConfig', botSchema );
