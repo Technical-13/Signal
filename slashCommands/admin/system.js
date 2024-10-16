@@ -35,22 +35,24 @@ module.exports = {
     const author = interaction.user;
     const strAuthorTag = author.tag;
     const oldConfig = await botConfig.findOne( { BotName: thisBotName } )
-    .catch( errFindBot => {  console.error( 'Unable to find oldConfig:\n%o', errFindBot );  } );
-    const botOwner = client.users.cache.get( botOwnerID );
+      .catch( errFindBot => {  console.error( 'Unable to find oldConfig:\n%o', errFindBot );  } );
+    const botUsers = client.users.cache;
+    const botGuilds = client.guilds.cache;
+    const botOwner = botUsers.get( botOwnerID );
     const isBotOwner = ( author.id === botOwner.id ? true : false );
-    const botMods = ( oldConfig.Mods || [] );
+    const botMods = ( Array.from( oldConfig.Mods ) || [] );
     const isBotMod = ( ( isBotOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
     const myTask = options.getSubcommand();
 
     if ( !isBotMod ) { return interaction.editReply( { content: 'You are not the boss of me...' } ); }
     else if ( isBotMod && myTask === 'get' ) {
-      let strModList = ( oldConfig.Mods.length === 0 ? '`None`' : '\n\t\t`[`\n\t\t<@' + oldConfig.Mods.join( '>`,`\n\t\t\t<@' ) + '>\n\t\t`]`' );
+      let strModList = ( botMods.length === 0 ? '`None`' : '\n\t\t`[`\n\t\t<@' + botMods.join( '>`,`\n\t\t\t<@' ) + '>\n\t\t`]`' );
       return interaction.editReply( {
         content: 'My configuration:\n\t' +
         'Name: `' + oldConfig.BotName + '` (:id:`' + oldConfig.ClientID + '`)\n\t' +
         'Owner: <@' + oldConfig.Owner + '>\n\t' +
         'Command Prefix: `' + oldConfig.Prefix + '`\n\t' +
-        'Development Guild: `' + client.guilds.cache.get( oldConfig.DevGuild ).name + '`\n\t' +
+        'Development Guild: `' + botGuilds.get( oldConfig.DevGuild ).name + '`\n\t' +
         'Moderators: ' + strModList
       } );
     }
@@ -59,44 +61,46 @@ module.exports = {
       switch ( myTask ) {
         case 'add':
           let addMod = options.getUser( 'add-moderator' ).id;
-          if ( oldConfig.Mods.indexOf( addMod ) != -1 ) { return interaction.editReply( { content: '<@' + addMod + '> is already a moderator of me!' } ) }
+          if ( botMods.indexOf( addMod ) != -1 ) { return interaction.editReply( { content: '<@' + addMod + '> is already a moderator of me!' } ) }
           else {
+            botMods.push( addMod );
             await botConfig.updateOne( { BotName: thisBotName }, {
               BotName: oldConfig.BotName,
               ClientID: oldConfig.ClientID,
               Owner: oldConfig.Owner,
               Prefix: oldConfig.Prefix,
-              Mods: oldConfig.Mods.push( addMod ),
+              Mods: botMods,
               DevGuild: oldConfig.DevGuild
             }, { upsert: true } )
-            .then( initSuccess => {
-              console.log( chalk.bold.greenBright( 'Added moderator to database.' ) );
+            .then( addSuccess => {
+              console.log( chalk.bold.greenBright( `Added moderator, ${addMod} (${botUsers.get( addMod ).displayName}), to database.` ) );
               return interaction.editReply( { content: 'Added moderator, <@' + addMod + '>, to database.' } );
             } )
-            .catch( initError => {
-              console.error( chalk.bold.red.bgYellowBright( `Encountered an error attempting to add moderator to database:\n${initError}` ) );
+            .catch( addError => {
+              console.error( chalk.bold.red.bgYellowBright( `Encountered an error attempting to add moderator to database:\n${addError}` ) );
               return interaction.editReply( { content: 'Encountered an error attempting to add moderator, <@' + addMod + '>, to database. Please check the console.' } );
             } );
           }
           break;
         case 'remove':
           let remMod = options.getUser( 'remove-moderator' ).id;
-          if ( oldConfig.Mods.indexOf( remMod ) === -1 ) { return interaction.editReply( { content: '<@' + addMod + '> wasn\'t a moderator of me!' } ) }
+          if ( botMods.indexOf( remMod ) === -1 ) { return interaction.editReply( { content: '<@' + remMod + '> wasn\'t a moderator of me!' } ) }
           else {
+            botMods.splice( botMods.indexOf( remMod ), 1 );
             await botConfig.updateOne( { BotName: thisBotName }, {
               BotName: oldConfig.BotName,
               ClientID: oldConfig.ClientID,
               Owner: oldConfig.Owner,
               Prefix: oldConfig.Prefix,
-              Mods: oldConfig.Mods.splice( oldConfig.Mods.indexOf( remMod ), 1 ),
+              Mods: botMods,
               DevGuild: oldConfig.DevGuild
             }, { upsert: true } )
-            .then( initSuccess => {
-              console.log( chalk.bold.greenBright( 'Removed moderator from database.' ) );
+            .then( remSuccess => {
+              console.log( chalk.bold.greenBright( `Removed moderator, ${remMod} (${botUsers.get( remMod ).displayName}), from database.` ) );
               return interaction.editReply( { content: 'Removed moderator, <@' + remMod + '>, from database.' } );
             } )
-            .catch( initError => {
-              console.error( chalk.bold.red.bgYellowBright( `Encountered an error attempting to remove moderator from database:\n${initError}` ) );
+            .catch( remError => {
+              console.error( chalk.bold.red.bgYellowBright( `Encountered an error attempting to remove moderator from database:\n${remError}` ) );
               return interaction.editReply( { content: 'Encountered an error attempting to remove moderator, <@' + remMod + '>, from database. Please check the console.' } );
             } );
           }
@@ -110,12 +114,12 @@ module.exports = {
             Mods: ( config.moderatorIds || [] ),
             DevGuild: ( config.devGuildId || '' )
           }, { upsert: true } )
-          .then( initSuccess => {
+          .then( resetSuccess => {
             console.log( chalk.bold.greenBright( 'Bot configuration reset in my database.' ) );
             return interaction.editReply( { content: 'Bot configuration reset in my database.' } );
           } )
-          .catch( initError => {
-            console.error( chalk.bold.red.bgYellowBright( `Encountered an error attempting to reset bot configuration in my database:\n${initError}` ) );
+          .catch( resetError => {
+            console.error( chalk.bold.red.bgYellowBright( `Encountered an error attempting to reset bot configuration in my database:\n${resetError}` ) );
             return interaction.editReply( { content: 'Encountered an error attempting to reset bot configuration in my database. Please check the console.' } );
           } );
           break;
@@ -129,15 +133,23 @@ module.exports = {
               ClientID: oldConfig.ClientID,
               Owner: newOwner,
               Prefix: newPrefix,
-              Mods: ( oldConfig.Mods || [] ),
+              Mods: botMods,
               DevGuild: newDevGuild
           }, { upsert: true } )
-          .then( initSuccess => {
+          .then( setSuccess => {
             console.log( chalk.bold.greenBright( 'Bot configuration modified in my database.' ) );
-            return interaction.editReply( { content: 'Bot configuration modified in my database.' } );
+            let strModList = ( botMods.length === 0 ? '`None`' : '\n\t\t`[`\n\t\t<@' + botMods.join( '>`,`\n\t\t\t<@' ) + '>\n\t\t`]`' );
+            return interaction.editReply( {
+              content: 'New configuration:\n\t' +
+              'Name: `' + newName + '` (:id:`' + oldConfig.ClientID + '`)\n\t' +
+              'Owner: <@' + newOwner + '>\n\t' +
+              'Command Prefix: `' + newPrefix + '`\n\t' +
+              'Development Guild: `' + botGuilds.get( newDevGuild ).name + '`\n\t' +
+              'Moderators: ' + strModList
+            } );
           } )
-          .catch( initError => {
-            console.error( chalk.bold.red.bgYellowBright( `Encountered an error attempting to modify bot configuration in my database:\n${initError}` ) );
+          .catch( setError => {
+            console.error( chalk.bold.red.bgYellowBright( `Encountered an error attempting to modify bot configuration in my database:\n${setError}` ) );
             return interaction.editReply( { content: 'Encountered an error attempting to modify bot configuration in my database. Please check the console.' } );
           } );
           break;
