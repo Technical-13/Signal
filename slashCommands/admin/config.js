@@ -40,7 +40,7 @@ module.exports = {
     const isGuildOwner = ( author.id === objGuildOwner.id ? true : false );
     const hasAdministrator = ( ( isBotMod || isGuildOwner || arrAuthorPermissions.indexOf( 'Administrator' ) !== -1 ) ? true : false );
     const hasManageGuild = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'ManageGuild' ) !== -1 ) ? true : false );
-    const hasManageRoles = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'ManageRoles' ) !== -1 ) ? true : false 
+    const hasManageRoles = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'ManageRoles' ) !== -1 ) ? true : false );
 
     const myTask = interaction.options.getSubcommand();
     var setInvite, setDefault, setError, setChat, boolWelcome, strWelcome;
