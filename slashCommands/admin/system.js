@@ -15,13 +15,13 @@ module.exports = {
   modCmd: true,
   options: [/* add, get, remove, reset, set //*/
     { type: 1, name: 'add', description: 'Add a user to my moderator list', options: [
-      { type: 6, name: 'moderator', description: 'User to add.' }
+      { type: 6, name: 'moderator', description: 'User to add.', required: true }
     ] }/* add //*/,
     { type: 1, name: 'get', description: 'Get my current configuration.', options: [
       { type: 5, name: 'share', description: 'Share result to current channel instead of making it ephemeral.' }
     ] },
     { type: 1, name: 'remove', description: 'Remove a user from my moderator list.', options: [
-      { type: 6, name: 'moderator', description: 'User to remove.' }
+      { type: 6, name: 'moderator', description: 'User to remove.', required: true }
     ] }/* remove //*/,
     { type: 1, name: 'reset', description: 'Watch me rise from the ashes like a phoenix.' },
     { type: 1, name: 'set', description: 'Set settings for the bot.', options: [
@@ -132,7 +132,7 @@ module.exports = {
           break;
         case 'set':
           let newName = ( options.getString( 'name' ) || botConfig.BotName );
-          let newOwner = ( options.getUser( 'owner' ).id || botConfig.Owner );
+          let newOwner = ( options.getUser( 'owner' ) ? options.getUser( 'owner' ).id : botConfig.Owner );
           let newPrefix = ( options.getString( 'prefix' ) || botConfig.Prefix );
           let newDevGuild = ( options.getString( 'dev-guild' ) || botConfig.DevGuild );
           await botConfigDB.updateOne( { BotName: thisBotName }, {
