@@ -6,7 +6,7 @@ const thisBotName = ( config.botName || process.env.BOT_USERNAME );
 const botOwnerID = ( config.botOwnerId || process.env.OWNER_ID );
 const mongoose = require( 'mongoose' );
 const { model, Schema } = mongoose;
-const botConfig = require( './models/BotConfig.js' );
+const botConfig = require( '../models/BotConfig.js' );
 const strConnectDB = ( process.env.mongodb || '' );
 mongoose.set( 'strictQuery', false );
 
