@@ -1,6 +1,5 @@
 const thisBotName = process.env.BOT_USERNAME;
-const botOwnerID = process.env.OWNER_ID;
-const botConfig = require( '../../models/BotConfig.js' );
+const guildConfigDB = require( '../../models/BotConfig.js' );
 const config = require( '../../config.json' );
 const { model, Schema } = require( 'mongoose' );
 const { ApplicationCommandType, InteractionContextType } = require( 'discord.js' );
@@ -34,13 +33,13 @@ module.exports = {
     const { channel, guild, options } = interaction;
     const author = interaction.user;
     const strAuthorTag = author.tag;
-    const oldConfig = await botConfig.findOne( { BotName: thisBotName } )
-      .catch( errFindBot => {  console.error( 'Unable to find oldConfig:\n%o', errFindBot );  } );
+    const botConfig = await guildConfigDB.findOne( { BotName: thisBotName } )
+      .catch( errFindBot => {  console.error( 'Unable to find botConfig:\n%o', errFindBot );  } );
     const botUsers = client.users.cache;
     const botGuilds = client.guilds.cache;
-    const botOwner = botUsers.get( botOwnerID );
+    const botOwner = botUsers.get( botConfig.Owner );
     const isBotOwner = ( author.id === botOwner.id ? true : false );
-    const botMods = ( Array.from( oldConfig.Mods ) || [] );
+    const botMods = ( Array.from( botConfig.Mods ) || [] );
     const isBotMod = ( ( isBotOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
     const myTask = options.getSubcommand();
 
@@ -49,10 +48,10 @@ module.exports = {
       let strModList = ( botMods.length === 0 ? '`None`' : '\n\t\t`[`\n\t\t<@' + botMods.join( '>`,`\n\t\t\t<@' ) + '>\n\t\t`]`' );
       return interaction.editReply( {
         content: 'My configuration:\n\t' +
-        'Name: `' + oldConfig.BotName + '` (:id:`' + oldConfig.ClientID + '`)\n\t' +
-        'Owner: <@' + oldConfig.Owner + '>\n\t' +
-        'Command Prefix: `' + oldConfig.Prefix + '`\n\t' +
-        'Development Guild: `' + botGuilds.get( oldConfig.DevGuild ).name + '`\n\t' +
+        'Name: `' + botConfig.BotName + '` (:id:`' + botConfig.ClientID + '`)\n\t' +
+        'Owner: <@' + botConfig.Owner + '>\n\t' +
+        'Command Prefix: `' + botConfig.Prefix + '`\n\t' +
+        'Development Guild: `' + botGuilds.get( botConfig.DevGuild ).name + '`\n\t' +
         'Moderators: ' + strModList
       } );
     }
@@ -64,13 +63,13 @@ module.exports = {
           if ( botMods.indexOf( addMod ) != -1 ) { return interaction.editReply( { content: '<@' + addMod + '> is already a moderator of me!' } ) }
           else {
             botMods.push( addMod );
-            await botConfig.updateOne( { BotName: thisBotName }, {
-              BotName: oldConfig.BotName,
-              ClientID: oldConfig.ClientID,
-              Owner: oldConfig.Owner,
-              Prefix: oldConfig.Prefix,
+            await guildConfigDB.updateOne( { BotName: thisBotName }, {
+              BotName: botConfig.BotName,
+              ClientID: botConfig.ClientID,
+              Owner: botConfig.Owner,
+              Prefix: botConfig.Prefix,
               Mods: botMods,
-              DevGuild: oldConfig.DevGuild
+              DevGuild: botConfig.DevGuild
             }, { upsert: true } )
             .then( addSuccess => {
               console.log( chalk.bold.greenBright( `Added moderator, ${addMod} (${botUsers.get( addMod ).displayName}), to database.` ) );
@@ -87,13 +86,13 @@ module.exports = {
           if ( botMods.indexOf( remMod ) === -1 ) { return interaction.editReply( { content: '<@' + remMod + '> wasn\'t a moderator of me!' } ) }
           else {
             botMods.splice( botMods.indexOf( remMod ), 1 );
-            await botConfig.updateOne( { BotName: thisBotName }, {
-              BotName: oldConfig.BotName,
-              ClientID: oldConfig.ClientID,
-              Owner: oldConfig.Owner,
-              Prefix: oldConfig.Prefix,
+            await guildConfigDB.updateOne( { BotName: thisBotName }, {
+              BotName: botConfig.BotName,
+              ClientID: botConfig.ClientID,
+              Owner: botConfig.Owner,
+              Prefix: botConfig.Prefix,
               Mods: botMods,
-              DevGuild: oldConfig.DevGuild
+              DevGuild: botConfig.DevGuild
             }, { upsert: true } )
             .then( remSuccess => {
               console.log( chalk.bold.greenBright( `Removed moderator, ${remMod} (${botUsers.get( remMod ).displayName}), from database.` ) );
@@ -106,7 +105,7 @@ module.exports = {
           }
           break;
         case 'reset':
-          await botConfig.updateOne( { BotName: thisBotName }, {
+          await guildConfigDB.updateOne( { BotName: thisBotName }, {
             BotName: thisBotName,
             ClientID: ( config.clientID || process.env.CLIENT_ID || client.id ),
             Owner: botOwnerID,
@@ -124,13 +123,13 @@ module.exports = {
           } );
           break;
         case 'set':
-          let newName = ( options.getString( 'name' ) || oldConfig.BotName );
-          let newOwner = ( options.getUser( 'owner' ) || oldConfig.Owner );
-          let newPrefix = ( options.getString( 'prefix' ) || oldConfig.Prefix );
-          let newDevGuild = ( options.getString( 'dev-guild' ) || oldConfig.DevGuild );
-          await botConfig.updateOne( { BotName: thisBotName }, {
+          let newName = ( options.getString( 'name' ) || botConfig.BotName );
+          let newOwner = ( options.getUser( 'owner' ) || botConfig.Owner );
+          let newPrefix = ( options.getString( 'prefix' ) || botConfig.Prefix );
+          let newDevGuild = ( options.getString( 'dev-guild' ) || botConfig.DevGuild );
+          await guildConfigDB.updateOne( { BotName: thisBotName }, {
               BotName: newName,
-              ClientID: oldConfig.ClientID,
+              ClientID: botConfig.ClientID,
               Owner: newOwner,
               Prefix: newPrefix,
               Mods: botMods,
@@ -141,7 +140,7 @@ module.exports = {
             let strModList = ( botMods.length === 0 ? '`None`' : '\n\t\t`[`\n\t\t<@' + botMods.join( '>`,`\n\t\t\t<@' ) + '>\n\t\t`]`' );
             return interaction.editReply( {
               content: 'New configuration:\n\t' +
-              'Name: `' + newName + '` (:id:`' + oldConfig.ClientID + '`)\n\t' +
+              'Name: `' + newName + '` (:id:`' + botConfig.ClientID + '`)\n\t' +
               'Owner: <@' + newOwner + '>\n\t' +
               'Command Prefix: `' + newPrefix + '`\n\t' +
               'Development Guild: `' + botGuilds.get( newDevGuild ).name + '`\n\t' +
