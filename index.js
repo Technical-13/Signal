@@ -27,15 +27,14 @@ client.prefix = config.prefix;
 
 module.exports = client;
 
+initDatabase();
+
 fs.readdirSync( './handlers' ).forEach( ( handler ) => {
 	require( `./handlers/${handler}` )( client );
 } );
 
 client.login( process.env.token )
-  .then( async loggedIn => {
-    console.log( 'Successfully connected!' );
-    await initDatabase();
-  } )
+  .then( async loggedIn => { console.log( 'Successfully connected!' ); } )
   .catch( errLogin => { console.error( 'There was an error logging in:\n%s', errLogin.stack ); } );
 
 keepAlive();
