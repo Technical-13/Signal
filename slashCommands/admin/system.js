@@ -131,14 +131,15 @@ module.exports = {
           } );
           break;
         case 'set':
-          let newName = ( options.getString( 'name' ) || botConfig.BotName );
-          let newOwner = ( options.getUser( 'owner' ) ? options.getUser( 'owner' ).id : botConfig.Owner );
-          let newPrefix = ( options.getString( 'prefix' ) || botConfig.Prefix );
-          let newDevGuild = ( options.getString( 'dev-guild' ) || botConfig.DevGuild );
+          let newName = ( options.getString( 'name' ) || botConfig.BotName || config.botName );
+          let newOwner = options.getUser( 'owner' );
+          let newOwnerId = ( newOwner ? newOwner.id : ( botConfig.Owner || config.botOwnerId || botOwnerID ) );
+          let newPrefix = ( options.getString( 'prefix' ) || botConfig.Prefix || config.prefix );
+          let newDevGuild = ( options.getString( 'dev-guild' ) || botConfig.DevGuild || config.devGuildId );
           await botConfigDB.updateOne( { BotName: thisBotName }, {
               BotName: newName,
               ClientID: botConfig.ClientID,
-              Owner: newOwner,
+              Owner: newOwnerId,
               Prefix: newPrefix,
               Mods: botMods,
               DevGuild: newDevGuild
