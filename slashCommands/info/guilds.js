@@ -1,5 +1,5 @@
 const botConfigDB = require( '../../models/BotConfig.js' );
-const guildConfigDB = require( '../../models/guildConfig.js' );
+const guildConfigDB = require( '../../models/GuildConfig.js' );
 const { model, Schema } = require( 'mongoose' );
 const { ApplicationCommandType, EmbedBuilder } = require( 'discord.js' );
 const pagination = require( '../../functions/pagination.js' );
