@@ -1,6 +1,6 @@
-const { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, EmbedBuilder } = require( 'discord.js' );
 const { model, Schema } = require( 'mongoose' );
-const botConfig = require( '../../models/GuildLogs.js' );
+const guildConfigDB = require( '../../models/GuildConfig.js' );
+const { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, EmbedBuilder } = require( 'discord.js' );
 
 module.exports = {
   name: 'inspectdb',
@@ -12,7 +12,7 @@ module.exports = {
     const botOwner = client.users.cache.get( process.env.OWNER_ID );
     const isBotOwner = ( author.id === botOwner.id ? true : false );
     if ( isBotOwner ) {      
-      const guildConfigs = await botConfig.find();
+      const guildConfigs = await guildConfigDB.find();
       const guildConfigIds = [];
       guildConfigs.forEach( ( entry, i ) => { guildConfigIds.push( entry.Guild ); } );
       const embedGuilds = [];

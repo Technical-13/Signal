@@ -1,4 +1,5 @@
-const botConfig = require( '../../models/GuildLogs.js' );
+const botConfigDB = require( '../../models/BotConfig.js' );
+const guildConfigDB = require( '../../models/guildConfig.js' );
 const { model, Schema } = require( 'mongoose' );
 const { ApplicationCommandType, EmbedBuilder } = require( 'discord.js' );
 const pagination = require( '../../functions/pagination.js' );
@@ -15,7 +16,7 @@ module.exports = {
   run: async ( client, interaction ) => {
     await interaction.deferReply();
 
-    const guildConfigs = await botConfig.find();
+    const guildConfigs = await guildConfigDB.find();
     const guildConfigIds = [];
     guildConfigs.forEach( ( entry, i ) => { guildConfigIds.push( entry.Guild ); } );
 

@@ -10,8 +10,11 @@ let logSchema = new Schema( {
   },
   Welcome: {
     Active: Boolean,
-    Message: String
+    Guild: String,
+    Channel: String,
+    Msg: String,
+    Role: String
   }
 } );
 
-module.exports = model( 'GuildLogs', logSchema );
+module.exports = model( 'GuildConfig', logSchema );

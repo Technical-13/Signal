@@ -1,4 +1,5 @@
-const botConfig = require( '../../models/BotConfig.js' );
+const botConfigDB = require( '../../models/BotConfig.js' );
+const guildConfigDB = require( '../../models/GuildConfig.js' );
 const { model, Schema } = require( 'mongoose' );
 
 module.exports = {
@@ -18,8 +19,6 @@ module.exports = {
     const botMods = await botConfig.find();
     const isBotMod = ( ( botOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
 
-    if ( !isBotMod ) {
-      return interaction.editReply( { content: 'You are not the boss of me...' } );
-    }
+    if ( !botOwner ) { return interaction.editReply( { content: 'You are not the boss of me...' } ); }
   }
 };

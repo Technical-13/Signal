@@ -1,4 +1,5 @@
-const logSchema = require( '../../models/GuildLogs.js' );
+const botConfigDB = require( '../../models/BotConfig.js' );
+const guildConfigDB = require( '../../models/GuildConfig.js' );
 const { model, Schema } = require( 'mongoose' );
 const { ApplicationCommandType, InteractionContextType } = require( 'discord.js' );
 
@@ -24,20 +25,15 @@ module.exports = {
     }/*Set channels//*/
   ],
   run: async ( client, interaction ) => {
+    const botConfig = await botConfigDB.find();
     await interaction.deferReply( { ephemeral: true } );
     const { channel, guild, options } = interaction;
     const author = interaction.user;
     const strAuthorTag = author.tag;
-console.log('strAuthorTag: %s', strAuthorTag);
     const botOwner = client.users.cache.get( process.env.OWNER_ID );
     const isBotOwner = ( author.id === botOwner.id ? true : false );
-console.log('\tisBotOwner: %o',isBotOwner);
     const botMods = await [];
-console.log('\tbotMods.indexOf( author.id ): %o',botMods.indexOf( author.id ));
-console.log('\tbotMods.indexOf( author.id ) != -1: %o',botMods.indexOf( author.id ) != -1);
-console.log('\t( botOwner || botMods.indexOf( author.id ) != -1 ): %o',( botOwner || botMods.indexOf( author.id ) != -1 ));
     const isBotMod = ( ( botOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
-console.log('\tisBotMod: %o',isBotMod);
     const arrAuthorPermissions = ( guild.members.cache.get( author.id ).permissions.toArray() || [] );
     const objGuildMembers = guild.members.cache;
     const objGuildOwner = objGuildMembers.get( guild.ownerId );
@@ -45,11 +41,13 @@ console.log('\tisBotMod: %o',isBotMod);
     const hasAdministrator = ( ( isBotMod || isGuildOwner || arrAuthorPermissions.indexOf( 'Administrator' ) !== -1 ) ? true : false );
     const hasManageGuild = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'ManageGuild' ) !== -1 ) ? true : false );
     const hasManageRoles = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'ManageRoles' ) !== -1 ) ? true : false );
+    
+    if ( !botOwner ) { return interaction.editReply( { content: 'You are not the boss of me...' } ); }
 
     const myTask = interaction.options.getSubcommand();
     var setInvite, setDefault, setError, setChat, boolWelcome, strWelcome;
     if ( myTask === 'reset' &&  hasManageGuild ) {
-      await logSchema.updateOne(
+      await guildConfigDB.updateOne(
         { Guild: guild.id },
         {
           Guild: guild.id,
@@ -77,14 +75,14 @@ console.log('\tisBotMod: %o',isBotMod);
       strWelcome = options.getString( 'welcome-message' ) ? options.getString( 'welcome-message' )  : null;
     }
 
-    logSchema.findOne( { Guild: interaction.guild.id } ).then( async data => {
+    guildConfigDB.findOne( { Guild: interaction.guild.id } ).then( async data => {
       if ( myTask === 'set' && hasManageGuild ) {
         if ( !data ) {
           if ( !setInvite ) { setInvite = channel.id; }
           if ( !setDefault ) { setDefault = channel.id; }
           if ( !setError ) { setError = setDefault; }
           if ( !setChat ) { setChat = setDefault; }          
-          await logSchema.create( {
+          await guildConfigDB.create( {
             Guild: interaction.guild.id,
             Invite: setInvite,
             Logs: { Default: setDefault, Error: setError, Chat: setChat },
@@ -102,7 +100,7 @@ console.log('\tisBotMod: %o',isBotMod);
           let oldChat = data.Logs.Chat;
           let oldWelcome = data.Welcome.Active;
           let oldWelcomeMsg = data.Welcome.Message;
-          await logSchema.updateOne( { Guild: guild.id }, {
+          await guildConfigDB.updateOne( { Guild: guild.id }, {
             Guild: guild.id,
             Invite: setInvite || oldInvite,
             Logs: {
