@@ -1,5 +1,6 @@
 const thisBotName = process.env.BOT_USERNAME;
-const guildConfigDB = require( '../../models/BotConfig.js' );
+const botOwnerID = process.env.OWNER_ID;
+const botConfigDB = require( '../../models/BotConfig.js' );
 const config = require( '../../config.json' );
 const { model, Schema } = require( 'mongoose' );
 const { ApplicationCommandType, InteractionContextType } = require( 'discord.js' );
@@ -33,7 +34,7 @@ module.exports = {
     const { channel, guild, options } = interaction;
     const author = interaction.user;
     const strAuthorTag = author.tag;
-    const botConfig = await guildConfigDB.findOne( { BotName: thisBotName } )
+    const botConfig = await botConfigDB.findOne( { BotName: thisBotName } )
       .catch( errFindBot => {  console.error( 'Unable to find botConfig:\n%o', errFindBot );  } );
     const botUsers = client.users.cache;
     const botGuilds = client.guilds.cache;
@@ -45,7 +46,7 @@ module.exports = {
 
     if ( !isBotMod ) { return interaction.editReply( { content: 'You are not the boss of me...' } ); }
     else if ( isBotMod && myTask === 'get' ) {
-      let strModList = ( botMods.length === 0 ? '`None`' : '\n\t\t`[`\n\t\t<@' + botMods.join( '>`,`\n\t\t\t<@' ) + '>\n\t\t`]`' );
+      let strModList = ( botMods.length === 0 ? '`None`' : '\n\t\t`[`\n\t\t\t<@' + botMods.join( '>`,`\n\t\t\t<@' ) + '>\n\t\t`]`' );
       return interaction.editReply( {
         content: 'My configuration:\n\t' +
         'Name: `' + botConfig.BotName + '` (:id:`' + botConfig.ClientID + '`)\n\t' +
@@ -63,7 +64,7 @@ module.exports = {
           if ( botMods.indexOf( addMod ) != -1 ) { return interaction.editReply( { content: '<@' + addMod + '> is already a moderator of me!' } ) }
           else {
             botMods.push( addMod );
-            await guildConfigDB.updateOne( { BotName: thisBotName }, {
+            await botConfigDB.updateOne( { BotName: thisBotName }, {
               BotName: botConfig.BotName,
               ClientID: botConfig.ClientID,
               Owner: botConfig.Owner,
@@ -86,7 +87,7 @@ module.exports = {
           if ( botMods.indexOf( remMod ) === -1 ) { return interaction.editReply( { content: '<@' + remMod + '> wasn\'t a moderator of me!' } ) }
           else {
             botMods.splice( botMods.indexOf( remMod ), 1 );
-            await guildConfigDB.updateOne( { BotName: thisBotName }, {
+            await botConfigDB.updateOne( { BotName: thisBotName }, {
               BotName: botConfig.BotName,
               ClientID: botConfig.ClientID,
               Owner: botConfig.Owner,
@@ -105,7 +106,7 @@ module.exports = {
           }
           break;
         case 'reset':
-          await guildConfigDB.updateOne( { BotName: thisBotName }, {
+          await botConfigDB.updateOne( { BotName: thisBotName }, {
             BotName: thisBotName,
             ClientID: ( config.clientID || process.env.CLIENT_ID || client.id ),
             Owner: botOwnerID,
@@ -127,7 +128,7 @@ module.exports = {
           let newOwner = ( options.getUser( 'owner' ) || botConfig.Owner );
           let newPrefix = ( options.getString( 'prefix' ) || botConfig.Prefix );
           let newDevGuild = ( options.getString( 'dev-guild' ) || botConfig.DevGuild );
-          await guildConfigDB.updateOne( { BotName: thisBotName }, {
+          await botConfigDB.updateOne( { BotName: thisBotName }, {
               BotName: newName,
               ClientID: botConfig.ClientID,
               Owner: newOwner,
