@@ -1,3 +1,4 @@
+const thisBotName = process.env.BOT_USERNAME;
 const botConfigDB = require( '../../models/BotConfig.js' );
 const guildConfigDB = require( '../../models/GuildConfig.js' );
 const { model, Schema } = require( 'mongoose' );
