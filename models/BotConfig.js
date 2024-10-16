@@ -5,7 +5,7 @@ let botSchema = new Schema( {
   ClientID: String,
   Owner: String,
   Prefix: String,
-  Mods: Array,
+  Mods: [ String ],
   DevGuild: String
 } );
 
