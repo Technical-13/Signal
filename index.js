@@ -1,4 +1,5 @@
-const keepAlive = require( './functions/server' );
+const keepAlive = require( './functions/server.js' );
+const initDatabase = require( './functions/database.js' );
 const fs = require( 'fs' );
 const { Client, GatewayIntentBits, Partials, Collection } = require( 'discord.js' );
 const config = require( './config.json' );
@@ -17,33 +18,6 @@ const client = new Client( {
 	partials: [ Partials.Channel, Partials.Message, Partials.User, Partials.GuildMember, Partials.Reaction ]
 } );
 
-const thisBotName = ( config.botName || process.env.BOT_USERNAME );
-const botOwnerID = ( config.botOwnerId || process.env.OWNER_ID );
-const mongoose = require( 'mongoose' );
-const { model, Schema } = mongoose;
-const botConfig = require( './models/BotConfig.js' );
-const strConnectDB = ( process.env.mongodb || '' );
-mongoose.set( 'strictQuery', false );
-await mongoose.disconnect().then( dbDisconnected => console.log( chalk.yellow( 'MongoDB closed.' ) ) );
-await mongoose.connect( strConnectDB )
-  .then( async dbConnected => {
-    console.log( chalk.greenBright( 'Connected to MongoDB.' ) );
-    const newBot = ( await botConfig.countDocuments( { BotName: thisBotName } ) === 0 ? true : false );
-    if ( newBot ) {
-      await guildConfigDB.create( {
-        BotName: thisBotName,
-        ClientID: ( config.clientID || process.env.CLIENT_ID || client.id ),
-        Owner: botOwnerID,
-        Prefix: ( config.prefix || '!' ),
-        Mods: ( config.moderatorIds || [] ),
-        DevGuild: ( config.devGuildId || '' )
-      } )
-      .then( initSuccess => { console.log( 'Bot configuration initialized in my database.' ); } )
-      .catch( initError => { console.error( 'Encountered an error attempting to initialize bot configuration in my database:\n%o', initError ); } );
-    }
-  } )
-  .catch( dbConnectErr => { console.error( chalk.bold.red( `Failed to connect to MongoDB:\n${dbConnectErr}` ) ); } );
-
 /* ------------------ COLLECTIONS ------------------ */
 client.commands = new Collection();
 client.aliases = new Collection();
@@ -58,7 +32,10 @@ fs.readdirSync( './handlers' ).forEach( ( handler ) => {
 } );
 
 client.login( process.env.token )
-  .then( loggedIn => { console.log( 'Successfully connected!' ); } )
+  .then( async loggedIn => {
+    console.log( 'Successfully connected!' );
+    await initDatabase();
+  } )
   .catch( errLogin => { console.error( 'There was an error logging in:\n%o', errLogin ); } );
 
 keepAlive();
