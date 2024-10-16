@@ -133,7 +133,9 @@ module.exports = {
         case 'set':
           let newName = ( options.getString( 'name' ) || botConfig.BotName || config.botName );
           let newOwner = options.getUser( 'owner' );
+console.log( 'newOwner: %o', (newOwner?true:false);
           let newOwnerId = ( newOwner ? newOwner.id : ( botConfig.Owner || config.botOwnerId || botOwnerID ) );
+console.log( 'newOwnerId: %o', newOwnerId );
           let newPrefix = ( options.getString( 'prefix' ) || botConfig.Prefix || config.prefix );
           let newDevGuild = ( options.getString( 'dev-guild' ) || botConfig.DevGuild || config.devGuildId );
           await botConfigDB.updateOne( { BotName: thisBotName }, {
