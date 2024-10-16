@@ -36,6 +36,6 @@ client.login( process.env.token )
     console.log( 'Successfully connected!' );
     await initDatabase();
   } )
-  .catch( errLogin => { console.error( 'There was an error logging in:\n%o', errLogin ); } );
+  .catch( errLogin => { console.error( 'There was an error logging in:\n%s', errLogin.stack ); } );
 
 keepAlive();

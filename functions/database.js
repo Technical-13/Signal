@@ -18,7 +18,7 @@ module.exports = async () => {
       console.log( chalk.greenBright( 'Connected to MongoDB.' ) );
       const newBot = ( await botConfig.countDocuments( { BotName: thisBotName } ) === 0 ? true : false );
       if ( newBot ) {
-        await guildConfigDB.create( {
+        await botConfig.create( {
           BotName: thisBotName,
           ClientID: ( config.clientID || process.env.CLIENT_ID || client.id ),
           Owner: botOwnerID,
