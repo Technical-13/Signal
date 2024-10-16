@@ -26,7 +26,7 @@ const strConnectDB = ( process.env.mongodb || '' );
 mongoose.set( 'strictQuery', false );
 await mongoose.disconnect().then( dbDisconnected => console.log( chalk.yellow( 'MongoDB closed.' ) ) );
 await mongoose.connect( strConnectDB )
-  .then( dbConnected => {
+  .then( async dbConnected => {
     console.log( chalk.greenBright( 'Connected to MongoDB.' ) );
     const newBot = ( await botConfig.countDocuments( { BotName: thisBotName } ) === 0 ? true : false );
     if ( newBot ) {
