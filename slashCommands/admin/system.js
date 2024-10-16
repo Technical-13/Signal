@@ -58,7 +58,7 @@ module.exports = {
       if ( !options.getBoolean( 'share' ) ) {
         return interaction.editReply( { content: showConfigs } );
       } else {
-        channel.send( { body: showConfigs } )
+        channel.send( showConfigs )
         .then( sent => { return interaction.editReply( { content: 'I shared the settings in the channel.' } ); } )
         .catch( errSend => { return interaction.editReply( { content: 'Error sharing the settings in the channel.' } ); } );        
       }
@@ -133,9 +133,7 @@ module.exports = {
         case 'set':
           let newName = ( options.getString( 'name' ) || botConfig.BotName || config.botName );
           let newOwner = options.getUser( 'owner' );
-console.log( 'newOwner: %o', (newOwner?true:false));
           let newOwnerId = ( newOwner ? newOwner.id : ( botConfig.Owner || config.botOwnerId || botOwnerID ) );
-console.log( 'newOwnerId: %o', newOwnerId );
           let newPrefix = ( options.getString( 'prefix' ) || botConfig.Prefix || config.prefix );
           let newDevGuild = ( options.getString( 'dev-guild' ) || botConfig.DevGuild || config.devGuildId );
           await botConfigDB.updateOne( { BotName: thisBotName }, {
@@ -152,7 +150,7 @@ console.log( 'newOwnerId: %o', newOwnerId );
             return interaction.editReply( {
               content: 'New configuration:\n\t' +
               'Name: `' + newName + '` (:id:`' + botConfig.ClientID + '`)\n\t' +
-              'Owner: <@' + newOwner + '>\n\t' +
+              'Owner: <@' + newOwnerId + '>\n\t' +
               'Command Prefix: `' + newPrefix + '`\n\t' +
               'Development Guild: `' + botGuilds.get( newDevGuild ).name + '`\n\t' +
               'Moderators: ' + strModList

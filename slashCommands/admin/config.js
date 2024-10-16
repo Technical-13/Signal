@@ -84,7 +84,7 @@ module.exports = {
           let showWelcomeRole = ( oldConfig.Welcome.Role ? 'assigned <@' + oldConfig.Welcome.Role + '> and ' : '' );
           let showWelcomeChan = 'sent to ' + ( '<#' + oldConfig.Welcome.Channel + '>' || 'DM' );
           let showWelcomeMsg = ' with the following message:\n```\n' + oldConfig.Welcome.Msg + '\n```\n';
-          let showWelcome = ( oldConfig.Welcome.Active ? '**DISABLED**.' : showWelcomeRole + showWelcomeChan + showWelcomeMsg );
+          let showWelcome = ( oldConfig.Welcome.Active ? showWelcomeRole + showWelcomeChan + showWelcomeMsg : '**DISABLED**.' );
           
           const showConfigs = 'Guild configuration:\n\t' +
             'Invite channel is: <#' + showInvite + '>\n\t' +
