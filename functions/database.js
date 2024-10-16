@@ -26,8 +26,8 @@ module.exports = async () => {
           Mods: ( config.moderatorIds || [] ),
           DevGuild: ( config.devGuildId || '' )
         } )
-        .then( initSuccess => { console.log( 'Bot configuration initialized in my database.' ); } )
-        .catch( initError => { console.error( 'Encountered an error attempting to initialize bot configuration in my database:\n%o', initError ); } );
+        .then( initSuccess => { console.log( chalk.bold.greenBright( 'Bot configuration initialized in my database.' ) ); } )
+        .catch( initError => { console.error( chalk.bold.red.bgYellowBright( `Encountered an error attempting to initialize bot configuration in my database:\n${initError}` ) ); } );
       }
     } )
     .catch( dbConnectErr => { console.error( chalk.bold.red( `Failed to connect to MongoDB:\n${dbConnectErr}` ) ); } );
