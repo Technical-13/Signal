@@ -125,9 +125,9 @@ module.exports = {
           break;
         case 'set':
           let newName = ( options.getString( 'name' ) || botConfig.BotName );
-          let newOwner = ( options.getUser( 'owner' ) || botConfig.Owner );
+          let newOwner = ( options.getUser( 'owner' ).id || botConfig.Owner );
           let newPrefix = ( options.getString( 'prefix' ) || botConfig.Prefix );
-          let newDevGuild = ( options.getString( 'dev-guild' ) || botConfig.DevGuild );
+          let newDevGuild = ( options.getString( 'dev-guild' ).id || botConfig.DevGuild );
           await botConfigDB.updateOne( { BotName: thisBotName }, {
               BotName: newName,
               ClientID: botConfig.ClientID,
