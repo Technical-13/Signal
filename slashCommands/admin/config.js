@@ -11,7 +11,9 @@ module.exports = {
   contexts: [ InteractionContextType.Guild ],
   cooldown: 1000,
   options: [/* get, reset, set //*/
-    { type: 1, name: 'get', description: 'Get all settings for the server.' },
+    { type: 1, name: 'get', description: 'Get all settings for the server.', options: [
+      { type: 5, name: 'share', description: 'Share result to current channel instead of making it ephemeral.' }
+    ] },
     { type: 1, name: 'reset', description: 'Reset all settings for the server to default.' },
     { type: 1, name: 'set', description: 'Set settings for the server.',/*Set options//*/
       options: [/* invite, log-chat, log-default, log-error, welcome, welcome-message, welcome-dm, welcome-channel, welcome-role-give, welcome-role //*/
@@ -61,13 +63,18 @@ module.exports = {
       } );
       if ( hasManageRoles && myTask === 'get' ) {
         if ( !oldConfig ) {
-          return interaction.editReply( {
-            content: 'Guild configuration:\n\t' +
+          const showConfigs = 'Guild configuration:\n\t' +
             'Invite channel is not configured for this server\n\t' +
             'Log channels are not configured for this server.\n\t' +
             '\tAll logs will go to the server owner, <@' + objGuildOwner.id + '>\n\t' +
-            'On join welcomes are **DISABLED**.'
-          } );
+            'On join welcomes are **DISABLED**.';            
+          if ( !options.getBoolean( 'share' ) ) {
+            return interaction.editReply( { content: showConfigs } );
+          } else {
+            channel.send( { body: showConfigs } )
+            .then( sent => { return interaction.editReply( { content: 'I shared the settings in the channel.' } ); } )
+            .catch( errSend => { return interaction.editReply( { content: 'Error sharing the settings in the channel.' } ); } );        
+          }
         }
         else {
           let showInvite = oldConfig.Invite;
@@ -79,14 +86,19 @@ module.exports = {
           let showWelcomeMsg = ' with the following message:\n```\n' + oldConfig.Welcome.Msg + '\n```\n';
           let showWelcome = ( oldConfig.Welcome.Active ? '**DISABLED**.' : showWelcomeRole + showWelcomeChan + showWelcomeMsg );
           
-          interaction.editReply( {
-            content: 'Guild configuration:\n\t' +
+          const showConfigs = 'Guild configuration:\n\t' +
             'Invite channel is: <#' + showInvite + '>\n\t' +
             'Default log channel is: <#' + showDefault + '>\n\t' +
             'Error message logs go to: <#' + showError + '>\n\t' +
             'Chat command requests log to: <#' + showChat + '>\n\t' +
-            'On join welcomes are ' + showWelcome
-          } );
+            'On join welcomes are ' + showWelcome;            
+          if ( !options.getBoolean( 'share' ) ) {
+            return interaction.editReply( { content: showConfigs } );
+          } else {
+            channel.send( { body: showConfigs } )
+            .then( sent => { return interaction.editReply( { content: 'I shared the settings in the channel.' } ); } )
+            .catch( errSend => { return interaction.editReply( { content: 'Error sharing the settings in the channel.' } ); } );        
+          }
         }
       }
       else if ( hasManageGuild && myTask === 'reset' ) {

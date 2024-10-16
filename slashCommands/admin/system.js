@@ -15,11 +15,13 @@ module.exports = {
   modCmd: true,
   options: [/* add, get, remove, reset, set //*/
     { type: 1, name: 'add', description: 'Add a user to my moderator list', options: [
-      { type: 6, name: 'add-moderator', description: 'User to add.' }
+      { type: 6, name: 'moderator', description: 'User to add.' }
     ] }/* add //*/,
-    { type: 1, name: 'get', description: 'Get my current configuration.' },
+    { type: 1, name: 'get', description: 'Get my current configuration.', options: [
+      { type: 5, name: 'share', description: 'Share result to current channel instead of making it ephemeral.' }
+    ] },
     { type: 1, name: 'remove', description: 'Remove a user from my moderator list.', options: [
-      { type: 6, name: 'remove-moderator', description: 'User to remove.' }
+      { type: 6, name: 'moderator', description: 'User to remove.' }
     ] }/* remove //*/,
     { type: 1, name: 'reset', description: 'Watch me rise from the ashes like a phoenix.' },
     { type: 1, name: 'set', description: 'Set settings for the bot.', options: [
@@ -47,20 +49,25 @@ module.exports = {
     if ( !isBotMod ) { return interaction.editReply( { content: 'You are not the boss of me...' } ); }
     else if ( isBotMod && myTask === 'get' ) {
       let strModList = ( botMods.length === 0 ? '`None`' : '\n\t\t`[`\n\t\t\t<@' + botMods.join( '>`,`\n\t\t\t<@' ) + '>\n\t\t`]`' );
-      return interaction.editReply( {
-        content: 'My configuration:\n\t' +
+      const showConfigs = 'My configuration:\n\t' +
         'Name: `' + botConfig.BotName + '` (:id:`' + botConfig.ClientID + '`)\n\t' +
         'Owner: <@' + botConfig.Owner + '>\n\t' +
         'Command Prefix: `' + botConfig.Prefix + '`\n\t' +
         'Development Guild: `' + botGuilds.get( botConfig.DevGuild ).name + '`\n\t' +
-        'Moderators: ' + strModList
-      } );
+        'Moderators: ' + strModList;
+      if ( !options.getBoolean( 'share' ) ) {
+        return interaction.editReply( { content: showConfigs } );
+      } else {
+        channel.send( { body: showConfigs } )
+        .then( sent => { return interaction.editReply( { content: 'I shared the settings in the channel.' } ); } )
+        .catch( errSend => { return interaction.editReply( { content: 'Error sharing the settings in the channel.' } ); } );        
+      }
     }
     else if ( isBotMod && !isBotOwner ) { return interaction.editReply( { content: 'You may only get my configuration.  Please try again.' } ); }
     else if ( isBotOwner ) {
       switch ( myTask ) {
         case 'add':
-          let addMod = options.getUser( 'add-moderator' ).id;
+          let addMod = options.getUser( 'moderator' ).id;
           if ( botMods.indexOf( addMod ) != -1 ) { return interaction.editReply( { content: '<@' + addMod + '> is already a moderator of me!' } ) }
           else {
             botMods.push( addMod );
@@ -83,7 +90,7 @@ module.exports = {
           }
           break;
         case 'remove':
-          let remMod = options.getUser( 'remove-moderator' ).id;
+          let remMod = options.getUser( 'moderator' ).id;
           if ( botMods.indexOf( remMod ) === -1 ) { return interaction.editReply( { content: '<@' + remMod + '> wasn\'t a moderator of me!' } ) }
           else {
             botMods.splice( botMods.indexOf( remMod ), 1 );
@@ -127,7 +134,7 @@ module.exports = {
           let newName = ( options.getString( 'name' ) || botConfig.BotName );
           let newOwner = ( options.getUser( 'owner' ).id || botConfig.Owner );
           let newPrefix = ( options.getString( 'prefix' ) || botConfig.Prefix );
-          let newDevGuild = ( options.getString( 'dev-guild' ).id || botConfig.DevGuild );
+          let newDevGuild = ( options.getString( 'dev-guild' ) || botConfig.DevGuild );
           await botConfigDB.updateOne( { BotName: thisBotName }, {
               BotName: newName,
               ClientID: botConfig.ClientID,
