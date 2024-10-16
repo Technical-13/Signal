@@ -26,9 +26,7 @@ module.exports = {
     const botOwner = client.users.cache.get( process.env.OWNER_ID );
     const isBotOwner = ( author.id === botOwner.id ? true : false );
     const botMods = [];
-    const isBotMod = ( ( botOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
-
-    if ( !botOwner ) { interaction.reply( { content: 'You are not the boss of me...', ephemeral: true } ); return; }
+    const isBotMod = ( ( isBotOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
 
     const embedGuilds = [], myInvites = [];
     const guildIds = Array.from( client.guilds.cache.keys() );

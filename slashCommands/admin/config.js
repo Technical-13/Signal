@@ -33,16 +33,14 @@ module.exports = {
     const botOwner = client.users.cache.get( process.env.OWNER_ID );
     const isBotOwner = ( author.id === botOwner.id ? true : false );
     const botMods = await [];
-    const isBotMod = ( ( botOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
+    const isBotMod = ( ( isBotOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
     const arrAuthorPermissions = ( guild.members.cache.get( author.id ).permissions.toArray() || [] );
     const objGuildMembers = guild.members.cache;
     const objGuildOwner = objGuildMembers.get( guild.ownerId );
     const isGuildOwner = ( author.id === objGuildOwner.id ? true : false );
     const hasAdministrator = ( ( isBotMod || isGuildOwner || arrAuthorPermissions.indexOf( 'Administrator' ) !== -1 ) ? true : false );
     const hasManageGuild = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'ManageGuild' ) !== -1 ) ? true : false );
-    const hasManageRoles = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'ManageRoles' ) !== -1 ) ? true : false );
-    
-    if ( !botOwner ) { return interaction.editReply( { content: 'You are not the boss of me...' } ); }
+    const hasManageRoles = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'ManageRoles' ) !== -1 ) ? true : false 
 
     const myTask = interaction.options.getSubcommand();
     var setInvite, setDefault, setError, setChat, boolWelcome, strWelcome;

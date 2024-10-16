@@ -30,7 +30,7 @@ module.exports = {
     const botOwner = client.users.cache.get( process.env.OWNER_ID );
     const isBotOwner = ( author.id === botOwner.id ? true : false );
     const botMods = [];
-    const isBotMod = ( ( botOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
+    const isBotMod = ( ( isBotOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
     const speakChannel = options.getChannel( 'channel' ) || channel;
     const mySaying = options.getString( 'saying' );
     const mentionsEveryone = /@(everyone|here)/g.test( mySaying );
@@ -45,8 +45,6 @@ module.exports = {
     const cmdAllowed = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'PrioritySpeaker' ) !== -1 ) ? true : false );
     var logChan = objGuildOwner;
     var logErrorChan = objGuildOwner;
-
-    if ( !botOwner ) { return interaction.editReply( { content: 'You are not the boss of me...' } ); }
 
     if ( mySaying ) {
       guildConfigDB.findOne( { Guild: guild.id } ).then( async data => {

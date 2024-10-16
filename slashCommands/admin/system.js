@@ -18,8 +18,8 @@ module.exports = {
     const botOwner = client.users.cache.get( process.env.OWNER_ID );
     const isBotOwner = ( author.id === botOwner.id ? true : false );
     const botMods = await botConfig.find();
-    const isBotMod = ( ( botOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
+    const isBotMod = ( ( isBotOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
 
-    if ( !botOwner ) { return interaction.editReply( { content: 'You are not the boss of me...' } ); }
+    if ( !isBotOwner ) { return interaction.editReply( { content: 'You are not the boss of me...' } ); }
   }
 };

@@ -34,12 +34,9 @@ module.exports = {
     const botOwner = client.users.cache.get( process.env.OWNER_ID );
     const isBotOwner = ( author.id === botOwner.id ? true : false );
     const botMods = [];
-    const isBotMod = ( ( botOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
+    const isBotMod = ( ( isBotOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
 
-    if ( !isBotMod ) {
-      interaction.editReply( { content: 'You are not the boss of me...' } );
-      return;
-    }
+    if ( !isBotMod ) { return interaction.editReply( { content: 'You are not the boss of me...' } ); }
     
     const ActivityTypes = { Playing: 0, Streaming: 1, Listening: 2, Watching: 3, Custom: 4, Competing: 5 };
 

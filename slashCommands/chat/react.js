@@ -31,7 +31,7 @@ module.exports = {
     const botOwner = client.users.cache.get( process.env.OWNER_ID );
     const isBotOwner = ( author.id === botOwner.id ? true : false );
     const botMods = [];
-    const isBotMod = ( ( botOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
+    const isBotMod = ( ( isBotOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
     const msgID = options.getString( 'message-id' );
     if ( !( /[\d]{18,19}/.test( msgID ) ) ) { return interaction.editReply( { content: '`' + msgID + '` is not a valid `message-id`. Please try again.' } ); }
     const theReaction = options.getString( 'reaction' );
@@ -40,9 +40,6 @@ module.exports = {
     const objGuildOwner = objGuildMembers.get( guild.ownerId );
     var logChan = objGuildOwner;
     var logErrorChan = objGuildOwner;
-
-    if ( !botOwner ) { return interaction.editReply( { content: 'You are not the boss of me...' } ); }
-
 
     var myReaction = theReaction;
     var rxp = /<:(.*)?:([\d]*)>/;

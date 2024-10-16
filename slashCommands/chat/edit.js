@@ -31,7 +31,7 @@ module.exports = {
     const botOwner = client.users.cache.get( process.env.OWNER_ID );
     const isBotOwner = ( author.id === botOwner.id ? true : false );
     const botMods = [];
-    const isBotMod = ( ( botOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
+    const isBotMod = ( ( isBotOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
     const msgID = options.getString( 'message-id' );
     if ( !( /[\d]{18,19}/.test( msgID ) ) ) { return interaction.editReply( { content: '`' + msgID + '` is not a valid `message-id`. Please try again.' } ); }
     const mySaying = options.getString( 'saying' );
@@ -47,8 +47,6 @@ module.exports = {
     const cmdAllowed = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'PrioritySpeaker' ) !== -1 ) ? true : false );
     var logChan = objGuildOwner;
     var logErrorChan = objGuildOwner;
-
-    if ( !botOwner ) { return interaction.editReply( { content: 'You are not the boss of me...' } ); }
 
     if ( mySaying ) {
       let setupPlease = ( logChan == objGuildOwner ? 'Please run `/config` to have these logs go to a channel in the server instead of your DMs.' : '----' );
