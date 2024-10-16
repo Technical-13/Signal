@@ -95,7 +95,7 @@ module.exports = {
           if ( !options.getBoolean( 'share' ) ) {
             return interaction.editReply( { content: showConfigs } );
           } else {
-            channel.send( { body: showConfigs } )
+            channel.send( showConfigs )
             .then( sent => { return interaction.editReply( { content: 'I shared the settings in the channel.' } ); } )
             .catch( errSend => { return interaction.editReply( { content: 'Error sharing the settings in the channel.' } ); } );        
           }
