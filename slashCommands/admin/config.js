@@ -279,7 +279,7 @@ module.exports = {
           { Guild: guild.id },
           {
             Guild: guild.id,
-            Blacklist; [],
+            Blacklist: [],
             Whitelist: [],
             Invite: null,
             Logs: { Chat: null, Default: null, Error: null },
@@ -317,7 +317,7 @@ module.exports = {
           if ( !setPrefix ) { setPrefix = botConfig.Prefix; }
           await guildConfigDB.create( {
             Guild: guild.id,
-            Blacklist; [],
+            Blacklist: [],
             Whitelist: [],
             Invite: setInvite,
             Logs: { Default: setDefault, Error: setError, Chat: setChat },
