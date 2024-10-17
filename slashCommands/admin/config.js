@@ -255,8 +255,8 @@ module.exports = {
           let showWelcomeChan = 'sent to ' + ( '<#' + oldConfig.Welcome.Channel + '>' || 'DM' );
           let showWelcomeMsg = ' with the following message:\n```\n' + oldConfig.Welcome.Msg + '\n```\n';
           let showWelcome = ( oldConfig.Welcome.Active ? showWelcomeRole + showWelcomeChan + showWelcomeMsg : '**DISABLED**.' );
-          //blacklist
-          //whitelist
+          let showBlackList = ( arrBlackGuild.length === 0 ? '`None`' : '\n\t\t`[`\n\t\t\t<@' + arrBlackGuild.join( '>`,`\n\t\t\t<@' ) + '>\n\t\t`]`' );
+          let showWhiteList = ( arrWhiteGuild.length === 0 ? '`None`' : '\n\t\t`[`\n\t\t\t<@' + arrWhiteGuild.join( '>`,`\n\t\t\t<@' ) + '>\n\t\t`]`' );
           
           const showConfigs = 'Guild configuration:\n\t' +
             'Invite channel is: ' + showInvite + '\n\t' +
@@ -264,7 +264,9 @@ module.exports = {
             'Error message logs go to: ' + showError + '\n\t' +
             'Chat command requests log to: ' + showChat + '\n\t' +
             'Command prefix is set to: `' + showPrefix + '`\n\t' +
-            'On join welcomes are ' + showWelcome;            
+            'On join welcomes are ' + showWelcome + '\n\t' +
+            'Blacklist: ' + showBlackList + '\n\t' +
+            'Whitelist: ' + showWhiteList;            
           if ( !options.getBoolean( 'share' ) ) {
             return interaction.editReply( { content: showConfigs } );
           } else {
@@ -365,8 +367,8 @@ module.exports = {
             let showWelcomeChan = 'sent to ' + ( '<#' + oldConfig.Welcome.Channel + '>' || 'DM' );
             let showWelcomeMsg = ' with the following message:\n```\n' + ( strWelcome || oldWelcomeMsg ) + '\n```\n';
             let showWelcome = ( ( boolWelcome || oldWelcome ) ? showWelcomeRole + showWelcomeChan + showWelcomeMsg : '**DISABLED**.' );
-            //blacklist
-            //whitelist
+            let showBlackList = ( arrBlackGuild.length === 0 ? '`None`' : '\n\t\t`[`\n\t\t\t<@' + arrBlackGuild.join( '>`,`\n\t\t\t<@' ) + '>\n\t\t`]`' );
+            let showWhiteList = ( arrWhiteGuild.length === 0 ? '`None`' : '\n\t\t`[`\n\t\t\t<@' + arrWhiteGuild.join( '>`,`\n\t\t\t<@' ) + '>\n\t\t`]`' );
             interaction.editReply( { content:
               'Guild configuration:\n\t' +
               'Invite channel is: ' + showInvite + '\n\t' +
@@ -374,7 +376,9 @@ module.exports = {
               'Error message logs go to: ' + showError + '\n\t' +
               'Chat command requests log to: ' + showChat + '\n\t' +
               'Command prefix is set to: `' + showPrefix + '`\n\t' +
-              'On join welcomes are ' + showWelcome
+              'On join welcomes are ' + showWelcome + '\n\t' +
+              'Blacklist: ' + showBlackList + '\n\t' +
+              'Whitelist: ' + showWhiteList
             } );
           } )
           .catch( setError => {

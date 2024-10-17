@@ -62,8 +62,8 @@ module.exports = {
         'Owner: <@' + botConfig.Owner + '>\n\t' +
         'Command Prefix: `' + botConfig.Prefix + '`\n\t' +
         'Development Guild: `' + botGuilds.get( botConfig.DevGuild ).name + '`\n\t' +
-        'Blacklist: ' + strBlackList +
-        'Whitelist: ' + strWhiteList +
+        'Blacklist: ' + strBlackList + '\n\t' +
+        'Whitelist: ' + strWhiteList + '\n\t' +
         'Moderators: ' + strModList;
       if ( !options.getBoolean( 'share' ) ) {
         return interaction.editReply( { content: showConfigs } );
@@ -292,13 +292,17 @@ module.exports = {
           }, { upsert: true } )
           .then( setSuccess => {
             console.log( chalk.bold.greenBright( 'Bot configuration modified in my database.' ) );
-            let strModList = ( botMods.length === 0 ? '`None`' : '\n\t\t`[`\n\t\t<@' + botMods.join( '>`,`\n\t\t\t<@' ) + '>\n\t\t`]`' );
+            let strBlackList = ( arrBlackList.length === 0 ? '`None`' : '\n\t\t`[`\n\t\t\t<@' + arrBlackList.join( '>`,`\n\t\t\t<@' ) + '>\n\t\t`]`' );
+            let strModList = ( botMods.length === 0 ? '`None`' : '\n\t\t`[`\n\t\t\t<@' + botMods.join( '>`,`\n\t\t\t<@' ) + '>\n\t\t`]`' );
+            let strWhiteList = ( arrWhiteList.length === 0 ? '`None`' : '\n\t\t`[`\n\t\t\t<@' + arrWhiteList.join( '>`,`\n\t\t\t<@' ) + '>\n\t\t`]`' );
             return interaction.editReply( {
               content: 'New configuration:\n\t' +
               'Name: `' + newName + '` (:id:`' + botConfig.ClientID + '`)\n\t' +
               'Owner: <@' + newOwnerId + '>\n\t' +
               'Command Prefix: `' + newPrefix + '`\n\t' +
               'Development Guild: `' + botGuilds.get( newDevGuild ).name + '`\n\t' +
+              'Blacklist: ' + strBlackList + '\n\t' +
+              'Whitelist: ' + strWhiteList + '\n\t' +
               'Moderators: ' + strModList
             } );
           } )
