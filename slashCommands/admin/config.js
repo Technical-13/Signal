@@ -81,7 +81,7 @@ module.exports = {
 
     const myTask = options.getSubcommand();
     
-    if ( ( !hasManageRoles && myTask === 'get' ) || ( !hasManageGuild && ( myTask === 'reset' || myTask === 'set' ) ) ) {
+    if ( ( !hasAdministrator && ( myTask === 'add' || myTask === 'remove' ) ) || ( !hasManageGuild && ( myTask === 'reset' || myTask === 'set' ) ) || ( !hasManageRoles && myTask === 'get' ) ) {
       objGuildOwner.send( '<@' + author.id + '> attempted to ' + myTask + ' my configuration settings for `' + guild.name + '`.  Only yourself, those with the `ADMINISTRATOR`, `MANAGE_GUILD`, or `MANAGE_ROLES` permission, and my bot mods can do that.' );
       return interaction.editReply( { content: 'Sorry, you do not have permission to do that.  Please talk to <@' + objGuildOwner.id + '> or one of my masters if you think you shouldn\'t have gotten this error.' } );
     }
@@ -283,7 +283,7 @@ module.exports = {
             Whitelist: [],
             Invite: null,
             Logs: { Chat: null, Default: null, Error: null },
-            Prefix: null,
+            Prefix: botConfig.Prefix,
             Welcome: { Active: false, Channel: null, Msg: null, Role: null }
           },
           { upsert: true } )
