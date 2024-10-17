@@ -63,9 +63,9 @@ client.on( 'messageCreate', async message => {
   }
   
   const hasPrefix = ( content.startsWith( prefix ) || content.startsWith( '§' ) );
-  const meMentionPrefix = '<@' + CLIENT_ID + '>';
+  const meMentionPrefix = '<@' + botConfig.ClientID + '>';
   const mePrefix = content.startsWith( meMentionPrefix );
-  const mentionsMe = mentions.users.has( CLIENT_ID );
+  const mentionsMe = mentions.users.has( botConfig.ClientID );
   var args = [];
   if ( hasPrefix ) { args = content.slice( prefix.length ).trim().split( / +/g ); }
   else if ( mePrefix ) {
