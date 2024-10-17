@@ -41,9 +41,11 @@ module.exports = {
   run: async ( client, interaction ) => {
     const { channel, guild, options } = interaction;
     const author = interaction.user;
+    const strAuthorTag = author.tag;
     await interaction.deferReply( { ephemeral: true } );
     const botConfig = await botConfigDB.findOne( { BotName: thisBotName } )
       .catch( errFindBot => {  console.error( 'Unable to find botConfig:\n%o', errFindBot ); } );
+    const botUsers = client.users.cache;
     const botOwner = botUsers.get( botConfig.Owner );
     const arrBlacklist = ( botConfig.Blacklist || [] );
     if ( arrBlacklist.indexOf( author.id ) != -1 ) {
@@ -54,6 +56,7 @@ module.exports = {
     const isBotOwner = ( author.id === botOwner.id ? true : false );
     const botMods = ( botConfig.Mods || [] );
     const isBotMod = ( ( isBotOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
+    const objGuildMembers = guild.members.cache;
     const objGuildOwner = objGuildMembers.get( guild.ownerId );
     const oldConfig = await guildConfigDB.findOne( { Guild: guild.id } ).catch( err => {
       console.error( 'Encountered an error attempting to find %s(ID:%s) in my database in preforming %s for %s in config.js:\n%s', guild.name, guild.id, myTask, strAuthorTag, err.stack );
@@ -69,10 +72,7 @@ module.exports = {
     
     const arrWhiteGuild = ( oldConfig.Whitelist || [] );
     const isWhiteListed = ( arrWhiteGuild.indexOf( author.id ) != -1 ? true : false );
-    const strAuthorTag = author.tag;
-    const botUsers = client.users.cache;
     const botGuilds = client.guilds.cache;
-    const objGuildMembers = guild.members.cache;
     const arrAuthorPermissions = ( objGuildMembers.get( author.id ).permissions.toArray() || [] );
     const isGuildOwner = ( author.id === objGuildOwner.id ? true : false );
     const hasAdministrator = ( ( isBotMod || isGuildOwner || arrAuthorPermissions.indexOf( 'Administrator' ) !== -1 ) ? true : false );
