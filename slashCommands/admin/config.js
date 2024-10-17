@@ -118,7 +118,7 @@ module.exports = {
             console.error( 'Error attempting to add %s (%s) to the blacklisted for %s: %o', addBlack, client.users.cache.get( addBlack ).displayName, guild.name, addError );
             botOwner.send( 'Error attempting to blacklisted <@' + addBlack + '> with `/config add` in https://discord.com/channels/' + guild.id + '/' + channel.id + '.  Please check the console.' )
             .then( sentOwner => { return interaction.editReply( { content: 'Error attempting to blacklisted <@' + addBlack + '>! My owner has been notified.' } ); } )
-            .catch( errSend = > {
+            .catch( errSend => {
               console.error( 'Error attempting to DM you about above error: %o', errSend );
               return interaction.editReply( { content: 'Error attempting to blacklisted <@' + addBlack + '>!' } );
             } );
@@ -153,7 +153,7 @@ module.exports = {
             console.error( 'Error attempting to add %s (%s) to the whitelist for %s: %o', addWhite, client.users.cache.get( addWhite ).displayName, guild.name, addError );
             botOwner.send( 'Error attempting to whitelist <@' + addWhite + '> with `/config add` in https://discord.com/channels/' + guild.id + '/' + channel.id + '.  Please check the console.' )
             .then( sentOwner => { return interaction.editReply( { content: 'Error attempting to whitelist <@' + addWhite + '>! My owner has been notified.' } ); } )
-            .catch( errSend = > {
+            .catch( errSend => {
               console.error( 'Error attempting to DM you about above error: %o', errSend );
               return interaction.editReply( { content: 'Error attempting to whitelist <@' + addWhite + '>!' } );
             } );
@@ -189,7 +189,7 @@ module.exports = {
             console.error( 'Error attempting to de-blacklist %s (%s) from %s: %o', remBlack, client.users.cache.get( remBlack ).displayName, guild.name, addError );
             botOwner.send( 'Error attempting to de-blacklist <@' + remBlack + '> with `/config remove` from https://discord.com/channels/' + guild.id + '/' + channel.id + '.  Please check the console.' )
             .then( sentOwner => { return interaction.editReply( { content: 'Error attempting to blacklisted <@' + remBlack + '>! My owner has been notified.' } ); } )
-            .catch( errSend = > {
+            .catch( errSend => {
               console.error( 'Error attempting to DM you about above error: %o', errSend );
               return interaction.editReply( { content: 'Error attempting to blacklisted <@' + remBlack + '>!' } );
             } );
@@ -221,7 +221,7 @@ module.exports = {
             console.error( 'Error attempting to de-whitelist %s (%s) from %s: %o', remWhite, client.users.cache.get( remWhite ).displayName, guild.name, addError );
             botOwner.send( 'Error attempting to de-whitelist <@' + remWhite + '> with `/config remove` in https://discord.com/channels/' + guild.id + '/' + channel.id + '.  Please check the console.' )
             .then( sentOwner => { return interaction.editReply( { content: 'Error attempting to de-whitelist <@' + remWhite + '>! My owner has been notified.' } ); } )
-            .catch( errSend = > {
+            .catch( errSend => {
               console.error( 'Error attempting to DM you about above error: %o', errSend );
               return interaction.editReply( { content: 'Error attempting to de-whitelist <@' + remWhite + '>!' } );
             } );
