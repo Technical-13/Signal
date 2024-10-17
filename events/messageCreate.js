@@ -1,23 +1,31 @@
 const client = require( '..' );
 const { EmbedBuilder, Collection, PermissionsBitField } = require( 'discord.js' );
 const ms = require( 'ms' );
-const prefix = client.prefix;
 const cooldown = new Collection();
 const cacheinfo = require( '../functions/cacheinfo.js' );
 const gcCacheTypeIcons = require( '../eventTypes.json' );
-const CLIENT_ID = process.env.CLIENT_ID;
-const DEV_GUILD_ID = process.env.DEV_GUILD_ID;
-const OWNER_ID = process.env.OWNER_ID;
+const thisBotName = process.env.BOT_USERNAME;
+const { model, Schema } = require( 'mongoose' );
+const botConfigDB = require( '../models/BotConfig.js' );
+const guildConfigDB = require( '../models/GuildConfig.js' );
 
 client.on( 'messageCreate', async message => {
   const { author, channel, content, guild, mentions } = message;
-  const bot = client.user;
   if ( author.bot ) return;
   if ( channel.type !== 0 ) return;
-  const isDevGuild = ( guild.id == DEV_GUILD_ID );
-  const botOwner = client.users.cache.get( OWNER_ID );
+  const botConfig = await botConfigDB.findOne( { BotName: thisBotName } )
+    .catch( errFindBot => {  console.error( 'Unable to find botConfig:\n%o', errFindBot );  } );
+  const guildConfig = await guildConfigDB.findOne( { Guild: message.guild.id } )
+    .catch( errFindBot => {  console.error( 'Unable to find guildConfig:\n%o', errFindBot );  } );
+  const globalPrefix = botConfig.Prefix;
+  const guildPrefix = guildConfig.Prefix;
+  const prefix = ( guildPrefix || globalPrefix || client.prefix );
+  const bot = client.user;
+  const isDevGuild = ( guild.id == botConfig.DevGuild );
+  const botOwner = client.users.cache.get( botConfig.Owner );
   const isBotOwner = ( author.id === botOwner.id ? true : false );
-// Get botMods, isBotMod
+  const botMods = botConfig.Mods;
+  const isBotMod = ( ( isBotOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
   const objGuildMembers = guild.members.cache;
   const objGuildOwner = objGuildMembers.get( guild.ownerId );
   const isGuildOwner = ( author.id === objGuildOwner.id ? true : false );
@@ -54,7 +62,7 @@ client.on( 'messageCreate', async message => {
     }
   }
   
-  const hasPrefix = content.startsWith( prefix );
+  const hasPrefix = ( content.startsWith( prefix ) || content.startsWith( '§' ) );
   const meMentionPrefix = '<@' + CLIENT_ID + '>';
   const mePrefix = content.startsWith( meMentionPrefix );
   const mentionsMe = mentions.users.has( CLIENT_ID );
@@ -75,11 +83,11 @@ client.on( 'messageCreate', async message => {
     if ( command ) {
       const isOwnerOnly = command.ownerOnly;
       const isModOnly = command.modOnly;
-      if ( isOwnerOnly && ( !isBotOwner ) ) {// || isBotMod 
-  //      if ( isBotMod ) {
-          return message.reply( { content: `This is an **owner only command**, speak to <@${botOwner.id}>/` } );
-  //      } else { /* DO NOTHING */ }
-  //    } else if ( isModOnly && !isBotMod ) {
+      if ( isOwnerOnly && !isBotOwner ) {
+        if ( isBotMod ) {
+          return message.reply( { content: `That is an **owner only command**, speak to <@${botOwner.id}>/` } );
+        } else { /* DO NOTHING */ }
+      } else if ( isModOnly && !isBotMod ) {
           /* DO NOTHING */
       } else {
         if ( command.cooldown ) {
@@ -156,11 +164,7 @@ client.on( 'messageCreate', async message => {
       } else {
         let cacheName = objCache.name;
         let arrCName = cacheName.split( ' ' );
-/*        arrCName.forEach( ( n, i ) => {
-        	if ( ( new RegExp( '\\p{Emoji_Presentation}', 'gu' ) ).test( n.trim() ) ) { arrCName[ i ] = '\\u' + n.trim().codePointAt( 0 ) }
-        } );
-  cacheName = arrCName.join( ' ' );//*/
-      cacheName = cacheName.replace( /\p{Emoji_Presentation}/gu, '�' );
+        cacheName = cacheName.replace( /\p{Emoji_Presentation}/gu, '�' );
         let cacheTypeIcon = ( Object.keys( gcCacheTypeIcons ).indexOf( objCache.type ) != -1 ? gcCacheTypeIcons[ objCache.type ] : '⁉' );
         strCodes += '\n';
         if ( objCache.pmo ) { strCodes += '<:PMO:1293693055127519315>'; }

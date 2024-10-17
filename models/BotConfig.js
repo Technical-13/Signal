@@ -5,6 +5,8 @@ let botSchema = new Schema( {
   ClientID: String,
   Owner: String,
   Prefix: String,
+  Blacklist: [ String ],
+  Whitelist: [ String ],
   Mods: [ String ],
   DevGuild: String
 } );

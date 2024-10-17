@@ -1,4 +1,6 @@
+const thisBotName = process.env.BOT_USERNAME;
 const { model, Schema } = require( 'mongoose' );
+const botConfigDB = require( '../../models/BotConfig.js' );
 const guildConfigDB = require( '../../models/GuildConfig.js' );
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, EmbedBuilder } = require( 'discord.js' );
 
@@ -8,8 +10,10 @@ module.exports = {
   ownerOnly: true,
   cooldown: 1000,
   run: async ( client, message, args ) => {
-    const author = message.author;
-    const botOwner = client.users.cache.get( process.env.OWNER_ID );
+    const botConfig = await botConfigDB.findOne( { BotName: thisBotName } )
+      .catch( errFindBot => {  console.error( 'Unable to find botConfig:\n%o', errFindBot );  } );
+    const { author, guild } = message;
+    const botOwner = client.users.cache.get( botConfig.Owner );
     const isBotOwner = ( author.id === botOwner.id ? true : false );
     if ( isBotOwner ) {      
       const guildConfigs = await guildConfigDB.find();
@@ -60,7 +64,10 @@ if ( vanityURLCode ) { console.log( '%s has a vanityURLCode: %s', guildName, van
         } ).then( invite => { return 'https://discord.gg/invite/' + invite.code; } ).catch( errCreateInvite => {
           switch ( errCreateInvite.code ) {
             case 10003://Unknown Channel
-              console.log( 'Unknown channel to create invite for %s:\n\tLink: %s', guildName, chanLinkUrl );
+                console.log( 'Unknown channel to create invite for %s:\n\tLink: %s', guildName, chanLinkUrl );
+              objGuildOwner.send( 'Help! I don\'t know which channel to make an invite to your server. Please use `\\config set invite` and select a channel for invites.' ).catch( errSendGuildOwner => {
+                console.error( 'Unable to DM guild owner, %s, for %s to get a defined channel for invites:\n%o', ownerName, guildName, errSendGuildOwner );
+              } );
               break;
             case 50013://Missing permissions
               objGuildOwner.send( 'Help!  Please give me `CreateInstantInvite` permission in ' + chanLinkUrl + '!' ).catch( errSendGuildOwner => {

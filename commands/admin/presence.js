@@ -1,3 +1,6 @@
+const thisBotName = process.env.BOT_USERNAME;
+const { model, Schema } = require( 'mongoose' );
+const botConfigDB = require( '../../models/BotConfig.js' );
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, EmbedBuilder } = require( 'discord.js' );
 
 module.exports = {
@@ -6,15 +9,15 @@ module.exports = {
   ownerOnly: true,
   cooldown: 1000,
   run: async ( client, message, args ) => {
+    const botConfig = await botConfigDB.findOne( { BotName: thisBotName } )
+      .catch( errFindBot => {  console.error( 'Unable to find botConfig:\n%o', errFindBot );  } );
     const { author, channel, guild } = message;
     const bot = client.user;
-    
-console.log( '&presence recieved arguments:\n%o', args );
 
     message.delete();
 
     const ActivityTypes = { Playing: 0, Streaming: 1, Listening: 2, Watching: 3, Custom: 4, Competing: 5 };
-    
+
     const embedPresence = new EmbedBuilder()
     .setTitle( 'setPresence' )
     .setDescription( 'Set my activity, description, and status.' )
@@ -41,8 +44,8 @@ console.log( '&presence recieved arguments:\n%o', args );
           break;
         case 'dnd':
           bot.setPresence( { status: 'dnd' } ).then( newPresence => {
-            interaction.reply( 'I am now **`Do Not Disturb`**!' );   
-          } ).catch( errSetPresence => { console.error( 'Encountered an error setting status to %s:\n%o', interaction.customId, errSetPresence ); } );       
+            interaction.reply( 'I am now **`Do Not Disturb`**!' );
+          } ).catch( errSetPresence => { console.error( 'Encountered an error setting status to %s:\n%o', interaction.customId, errSetPresence ); } );
           break;
         case 'idle':
           bot.setPresence( { status: 'idle' } ).then( newPresence => {

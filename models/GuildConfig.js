@@ -1,13 +1,16 @@
 const { model, Schema } = require( 'mongoose' );
 
-let logSchema = new Schema( {
+let guildSchema = new Schema( {
   Guild: String,
+  Blacklist: [ String ],
+  Whitelist: [ String ],
   Invite: String,
   Logs: {
     Chat: String,
     Default: String,
     Error: String
   },
+  Prefix: String,
   Welcome: {
     Active: Boolean,
     Channel: String,
@@ -16,4 +19,4 @@ let logSchema = new Schema( {
   }
 } );
 
-module.exports = model( 'GuildConfig', logSchema );
+module.exports = model( 'GuildConfig', guildSchema );
