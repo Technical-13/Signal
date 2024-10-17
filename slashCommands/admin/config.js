@@ -246,10 +246,10 @@ module.exports = {
           }
         }
         else {
-          let showInvite = oldConfig.Invite;
-          let showChat = oldConfig.Logs.Chat;
-          let showDefault = oldConfig.Logs.Default;
-          let showError = oldConfig.Logs.Error;
+          let showInvite = ( oldConfig.Invite ? '<#' + oldConfig.Invite + '>' : '**My best guess** ¯\_(ツ)_/¯' );
+          let showChat = ( oldConfig.Logs.Chat ? '<#' + oldConfig.Logs.Chat + '>' : 'DM to <@' + guild.ownerId + '>' );
+          let showDefault = ( oldConfig.Logs.Default ? '<#' + oldConfig.Logs.Default + '>' : 'DM to <@' + guild.ownerId + '>' );
+          let showError = ( oldConfig.Logs.Error ? '<#' + oldConfig.Logs.Error + '>' : 'DM to <@' + guild.ownerId + '>' );
           let showPrefix = ( oldConfig.Prefix || botConfig.Prefix );
           let showWelcomeRole = ( oldConfig.Welcome.Role ? 'assigned <@' + oldConfig.Welcome.Role + '> and ' : '' );
           let showWelcomeChan = 'sent to ' + ( '<#' + oldConfig.Welcome.Channel + '>' || 'DM' );
@@ -259,10 +259,10 @@ module.exports = {
           //whitelist
           
           const showConfigs = 'Guild configuration:\n\t' +
-            'Invite channel is: <#' + showInvite + '>\n\t' +
-            'Default log channel is: <#' + showDefault + '>\n\t' +
-            'Error message logs go to: <#' + showError + '>\n\t' +
-            'Chat command requests log to: <#' + showChat + '>\n\t' +
+            'Invite channel is: ' + showInvite + '\n\t' +
+            'Default log channel is: ' + showDefault + '\n\t' +
+            'Error message logs go to: ' + showError + '\n\t' +
+            'Chat command requests log to: ' + showChat + '\n\t' +
             'Command prefix is set to: `' + showPrefix + '`\n\t' +
             'On join welcomes are ' + showWelcome;            
           if ( !options.getBoolean( 'share' ) ) {
@@ -356,10 +356,10 @@ module.exports = {
             }
           } )
           .then( updateSuccess => {
-            let showInvite = ( setInvite || oldInvite );
-            let showChat = ( setChat || oldChat );
-            let showDefault = ( setDefault || oldDefault );
-            let showError = ( setError || oldError );
+            let showInvite = ( ( setInvite || oldInvite ) ? '<#' + ( setInvite || oldInvite ) + '>' : '**My best guess** ¯\_(ツ)_/¯' );
+            let showChat = ( ( setChat || oldChat ) ? '<#' + ( setChat || oldChat ) + '>' : 'DM to <@' + guild.ownerId + '>' );
+            let showDefault = ( ( setDefault || oldDefault ) ? '<#' + ( setDefault || oldDefault ) + '>' : 'DM to <@' + guild.ownerId + '>' );
+            let showError = ( ( setError || oldError ) ? '<#' + ( setError || oldError ) + '>' : 'DM to <@' + guild.ownerId + '>' );
             let showPrefix = ( setPrefix || oldPrefix );
             let showWelcomeRole = ( oldConfig.Welcome.Role ? 'assigned <@' + oldConfig.Welcome.Role + '> and ' : '' );
             let showWelcomeChan = 'sent to ' + ( '<#' + oldConfig.Welcome.Channel + '>' || 'DM' );
@@ -369,10 +369,10 @@ module.exports = {
             //whitelist
             interaction.editReply( { content:
               'Guild configuration:\n\t' +
-              'Invite channel is: <#' + showInvite + '>\n\t' +
-              'Default log channel is: <#' + showDefault + '>\n\t' +
-              'Error message logs go to: <#' + showError + '>\n\t' +
-              'Chat command requests log to: <#' + showChat + '>\n\t' +
+              'Invite channel is: ' + showInvite + '\n\t' +
+              'Default log channel is: ' + showDefault + '\n\t' +
+              'Error message logs go to: ' + showError + '\n\t' +
+              'Chat command requests log to: ' + showChat + '\n\t' +
               'Command prefix is set to: `' + showPrefix + '`\n\t' +
               'On join welcomes are ' + showWelcome
             } );
