@@ -12,7 +12,6 @@ module.exports = {
   type: ApplicationCommandType.ChatInput,
   contexts: [ InteractionContextType.Guild ],
   cooldown: 1000,
-  modCmd: true,
   options: [/* add, get, remove, reset, set //*/
     { type: 1, name: 'add', description: 'Add a user to one of my lists.', options: [
       { type: 6, name: 'blacklist', description: 'User to block from using all commands.' },
