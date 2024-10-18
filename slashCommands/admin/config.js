@@ -167,8 +167,9 @@ module.exports = {
         }
       }
       else if ( hasAdministrator && myTask === 'clear' ) {
-        let clearWhite = options.getBoolean( 'white' );
         let clearBlack = options.getBoolean( 'black' );
+        let clearWhite = options.getBoolean( 'white' );
+console.log( 'clearWhite ( %o ) clearBlack ( %o )', clearWhite, clearBlack )
         await guildConfigDB.updateOne( { Guild: oldConfig.Guild }, {
           Guild: oldConfig.Guild,
           Blacklist: ( clearBlack ? [] : arrBlackGuild ),
