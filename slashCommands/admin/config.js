@@ -113,15 +113,15 @@ module.exports = {
           }, { upsert: true } )
           .then( addSuccess => {
             interaction.deleteReply();
-            return channel.send( { body: '<@' + addBlack + '> has been blacklisted from using my commands in this server.' } );
+            return channel.send( '<@' + addBlack + '> has been blacklisted from using my commands in this server.' );
           } )
           .catch( addError => {
-            console.error( 'Error attempting to add %s (%s) to the blacklisted for %s: %o', addBlack, client.users.cache.get( addBlack ).displayName, guild.name, addError );
-            botOwner.send( 'Error attempting to blacklisted <@' + addBlack + '> with `/config add` in https://discord.com/channels/' + guild.id + '/' + channel.id + '.  Please check the console.' )
-            .then( sentOwner => { return interaction.editReply( { content: 'Error attempting to blacklisted <@' + addBlack + '>! My owner has been notified.' } ); } )
+            console.error( 'Error attempting to add %s (%s) to the blacklist for %s: %o', addBlack, client.users.cache.get( addBlack ).displayName, guild.name, addError );
+            botOwner.send( 'Error attempting to blacklist <@' + addBlack + '> with `/config add` in https://discord.com/channels/' + guild.id + '/' + channel.id + '.  Please check the console.' )
+            .then( sentOwner => { return interaction.editReply( { content: 'Error attempting to blacklist <@' + addBlack + '>! My owner has been notified.' } ); } )
             .catch( errSend => {
               console.error( 'Error attempting to DM you about above error: %o', errSend );
-              return interaction.editReply( { content: 'Error attempting to blacklisted <@' + addBlack + '>!' } );
+              return interaction.editReply( { content: 'Error attempting to blacklist <@' + addBlack + '>!' } );
             } );
           } );
         }
