@@ -23,9 +23,9 @@ module.exports = async ( client, user, guild ) => {
       console.error( 'Encountered an error attempting to find %s(ID:%s) in my database for %s in getPerms.js:\n%s', guild.name, guild.id, user.displayName, err.stack );
       botOwner.send( 'Encountered an error attempting to find `' + guild.name + '`(:id:' + guild.id + ') in my database for <@' + user.id + '>.  Please check console for details.' );
     } );
-    const guildBlacklist = ( guildConfig.Blacklist || [] );
+    const guildBlacklist = ( guildConfig ? ( guildConfig.Blacklist || [] ) : [] );
     const isGuildBlacklisted = ( guildBlacklist.indexOf( user.id ) != -1 ? true : false );
-    const guildWhitelist = ( guildConfig.Whitelist || [] );
+    const guildWhitelist = ( guildConfig ? ( guildConfig.Whitelist || [] ) : [] );
     const isGuildWhitelisted = ( guildWhitelist.indexOf( user.id ) != -1 ? true : false );
 
     const objGuildMembers = guild.members.cache;
@@ -39,7 +39,7 @@ module.exports = async ( client, user, guild ) => {
     const hasMentionEveryone = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'MentionEveryone' ) !== -1 ) ? true : false );
 
     const globalPrefix = botConfig.Prefix;
-    const guildPrefix = guildConfig.Prefix;
+    const guildPrefix = ( guildConfig ? guildConfig.Prefix : globalPrefix ) ;
     const prefix = ( guildPrefix || globalPrefix || client.prefix );
 
     return {
