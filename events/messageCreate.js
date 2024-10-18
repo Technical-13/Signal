@@ -11,7 +11,6 @@ client.on( 'messageCreate', async message => {
   if ( author.bot ) return;
   if ( channel.type !== 0 ) return;
   const permSlip = await userPerms( client, author, guild );
-console.log( 'permSlip', permSlip );
   const { clientId, botOwner, isDevGuild, prefix, isBotOwner, isBotMod, isBlacklisted } = permSlip;
   const bot = client.user;
   const objGuildMembers = guild.members.cache;
