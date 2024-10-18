@@ -5,7 +5,7 @@ const { model, Schema } = require( 'mongoose' );
 
 module.exports = async ( client, user, guild ) => {
   try {
-  console.log( 'Getting permissions for %s in %s', author.displayName, guild.name );
+  console.log( 'Getting permissions for %s in %s', user.displayName, guild.name );
     const botConfig = await botConfigDB.findOne( { BotName: thisBotName } )
       .catch( errFindBot => { console.error( 'Unable to find botConfig:\n%o', errFindBot ); } );
     const clientID = ( botConfig.ClientID || client.id );
@@ -31,8 +31,8 @@ module.exports = async ( client, user, guild ) => {
     
     const objGuildMembers = guild.members.cache;
     const guildOwner = objGuildMembers.get( guild.ownerId );
-    const isGuildOwner = ( user.id === guildOwner.id ? true : false );
-    
+    const isGuildOwner = ( user.id === guildOwner.id ? true : false );    
+    const arrAuthorPermissions = ( objGuildMembers.get( user.id ).permissions.toArray() || [] );
     const hasAdministrator = ( ( isBotMod || isGuildOwner || arrAuthorPermissions.indexOf( 'Administrator' ) !== -1 ) ? true : false );
     const hasManageGuild = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'ManageGuild' ) !== -1 ) ? true : false );
     const hasManageRoles = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'ManageRoles' ) !== -1 ) ? true : false );
