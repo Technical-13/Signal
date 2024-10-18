@@ -20,7 +20,7 @@ module.exports = {
     ] }/* add //*/,
     { type: 1, name: 'clear', description: 'Clear guild\'s black, white. and/or moderator lists.', options: [
       { type: 5, name: 'blacklist', description: 'Clear guild\'s blacklist.' },
-      { type: 5, name: 'moderators', description: 'Clear guild\'s moderator list.' }
+      { type: 5, name: 'moderators', description: 'Clear guild\'s moderator list.' },
       { type: 5, name: 'whitelist', description: 'Clear guild\'s whitelist.' }
     ] }/* clear //*/,
     { type: 1, name: 'get', description: 'Get my current configuration.', options: [
