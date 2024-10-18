@@ -218,19 +218,16 @@ module.exports = {
           }, { upsert: true } )
           .then( clearSuccess => {
             interaction.deleteReply();
-            chanDefaultLog.send( { content: 'My ' + clearLists + ' for this server ' + haveHas + ' been cleared.' } );
-            return channel.send( { content: 'My ' + clearLists + ' for this server ' + haveHas + ' been cleared.' } );
+            return channel.send( { content: 'My ' + clearLists + haveHas + ' been cleared.' } );
           } )
           .catch( clearError => {
             console.error( 'Error attempting to clear my %s for %s: %o', clearLists, author.displayName, guild.name, clearError );
-            botOwner.send( 'Error attempting to clear my ' + clearLists + ' with `/config clear` in https://discord.com/channels/' + guild.id + '/' + channel.id + '.  Please check the console.' )
+            botOwner.send( 'Error attempting to clear my ' + clearLists + ' with `/system clear`.  Please check the console.' )
             .then( sentOwner => {
-              chanErrorLog.send( { content: 'Error attempting to clear my ' + clearLists + ' for this server! My owner has been notified.' } );
               return interaction.editReply( { content: 'Error attempting to clear my ' + clearLists + ' for this server! My owner has been notified.' } );
             } )
             .catch( errSend => {
               console.error( 'Error attempting to DM you about above error: %o', errSend );
-              chanErrorLog.send( { content: 'Error attempting to clear my ' + clearLists + ' for this server!' } );
               return interaction.editReply( { content: 'Error attempting to clear my ' + clearLists + ' for this server!' } );
             } );
           } );
