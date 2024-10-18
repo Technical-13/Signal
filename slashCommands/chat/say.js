@@ -1,6 +1,7 @@
-const guildConfigDB = require( '../../models/GuildConfig.js' );
-const { model, Schema } = require( 'mongoose' );
 const { ApplicationCommandType } = require( 'discord.js' );
+const { model, Schema } = require( 'mongoose' );
+const guildConfigDB = require( '../../models/GuildConfig.js' );
+const userPerms = require( '../../functions/getPerms.js' );
 
 module.exports = {
   name: 'say',
@@ -22,29 +23,23 @@ module.exports = {
     type: 7
   } ],
   type: ApplicationCommandType.ChatInput,
+  contexts: [ InteractionContextType.Guild ],
   cooldown: 1000,
   run: async ( client, interaction ) => {
     await interaction.deferReply( { ephemeral: true } );
     const { channel, guild, options } = interaction;
     const author = interaction.user;
-    const botOwner = client.users.cache.get( process.env.OWNER_ID );
-    const isBotOwner = ( author.id === botOwner.id ? true : false );
-    const botMods = [];
-    const isBotMod = ( ( isBotOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
+    const { botOwner, isBotMod, guildOwner, isServerBooster, hasMentionEveryone, isBlacklisted, isWhitelisted, isGlobalWhitelisted, isGuildBlacklisted } = await userPerms( client, author, guild );
+    if ( isBlacklisted && !isGlobalWhitelisted ) {
+      return message.reply( { content: 'You\'ve been blacklisted from using my commands' + ( isGuildBlacklisted ? ' in this server.' : '.' ) } );
+    }
+    const canSpeak = ( isBotMod || isWhitelisted || isServerBooster ? true : false );    
     const speakChannel = options.getChannel( 'channel' ) || channel;
     const mySaying = options.getString( 'saying' );
     const mentionsEveryone = /@(everyone|here)/g.test( mySaying );
     const strEveryoneHere = ( mentionsEveryone ? '`@' + ( /@everyone/g.test( mySaying ) ? 'everyone' : 'here' ) + '`' : null );
-    const objGuildMembers = guild.members.cache;
-    const objGuildOwner = objGuildMembers.get( guild.ownerId );
-    const isGuildOwner = ( author.id === objGuildOwner.id ? true : false );
-    const strAuthorTag = author.tag;
-    const arrAuthorPermissions = ( objGuildMembers.get( author.id ).permissions.toArray() || [] );
-    const hasAdministrator = ( ( isBotMod || isGuildOwner || arrAuthorPermissions.indexOf( 'Administrator' ) !== -1 ) ? true : false );
-    const canEveryone = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'MentionEveryone' ) !== -1 ) ? true : false );
-    const cmdAllowed = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'PrioritySpeaker' ) !== -1 ) ? true : false );
-    var logChan = objGuildOwner;
-    var logErrorChan = objGuildOwner;
+    var logChan = guildOwner;
+    var logErrorChan = guildOwner;
 
     if ( mySaying ) {
       guildConfigDB.findOne( { Guild: guild.id } ).then( async data => {
@@ -52,8 +47,8 @@ module.exports = {
           if ( data.Logs.Chat ) { logChan = await guild.channels.cache.get( data.Logs.Default ); }
           if ( data.Logs.Error ) { logErrorChan = guild.channels.cache.get( data.Logs.Error ); }
         }
-        let setupPlease = ( logChan == objGuildOwner ? 'Please run `/config` to have these logs go to a channel in the server instead of your DMs.' : '----' );
-        if ( cmdAllowed && ( !mentionsEveryone || canEveryone ) ) {
+        let setupPlease = ( logChan == guildOwner ? 'Please run `/config` to have these logs go to a channel in the server instead of your DMs.' : '----' );
+        if ( canSpeak && ( !mentionsEveryone || hasMentionEveryone ) ) {
           speakChannel.send( mySaying ).then( async spoke => {
             interaction.editReply( { content: 'I said the thing!' } );
 
@@ -78,19 +73,21 @@ module.exports = {
             }
           } );
         }
-        else if ( mentionsEveryone && !canEveryone ) {
+        else if ( mentionsEveryone && !hasMentionEveryone ) {
           logChan.send( '<@' + interaction.user.id + '> has no permission to get me to ' + strEveryoneHere + ' in <#' + channel.id + '>. They tried to get me to say:\n```\n' + mySaying + '\n```' + setupPlease )
             .catch( noLogChan => { console.error( 'mentionsEveryone logChan.send error in say.js:\n%o', noLogChan ) } );
           interaction.editReply( {
             content: 'You don\'t have permission to get me to ' + strEveryoneHere + ' in `' +
             guild.name + '`<#' + channel.id + '>.' } );
-        } else {
+        }
+        else {
           logChan.send( '<@' + author.id + '> has no permission to use my `/say` command from <#' + channel.id + '>. They tried to get me to say:\n```\n' + mySaying + '\n```\n' + setupPlease )
             .catch( noLogChan => { console.error( 'no permission logChan.send error in say.js:\n%o', noLogChan ) } );
           interaction.editReply( { content: 'You don\'t have permission to get me to speak in `' +
                       guild.name + '`<#' + channel.id + '>.' } );
         }
       } ).catch( err => { console.error( 'Encountered an error running say.js from %s:\n\t%o', guild.name, err ); } );
-    } else { interaction.editReply( { content: 'I don\'t know what to say.' } ); }
+    }
+    else { interaction.editReply( { content: 'I don\'t know what to say.' } ); }
   }
 };

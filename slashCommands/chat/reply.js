@@ -1,6 +1,7 @@
-const guildConfigDB = require( '../../models/GuildConfig.js' );
-const { model, Schema } = require( 'mongoose' );
 const { ApplicationCommandType } = require( 'discord.js' );
+const { model, Schema } = require( 'mongoose' );
+const guildConfigDB = require( '../../models/GuildConfig.js' );
+const userPerms = require( '../../functions/getPerms.js' );
 
 module.exports = {
   name: 'reply',
@@ -23,30 +24,25 @@ module.exports = {
     type: 3
   }  ],
   type: ApplicationCommandType.ChatInput,
+  contexts: [ InteractionContextType.Guild ],
   cooldown: 1000,
   run: async ( client, interaction ) => {
     await interaction.deferReply( { ephemeral: true } );
     const { channel, guild, options } = interaction;
     const author = interaction.user;
-    const botOwner = client.users.cache.get( process.env.OWNER_ID );
-    const isBotOwner = ( author.id === botOwner.id ? true : false );
-    const botMods = [];
-    const isBotMod = ( ( isBotOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
+    const { botOwner, isBotMod, guildOwner, isServerBooster, hasMentionEveryone, isBlacklisted, isWhitelisted, isGlobalWhitelisted, isGuildBlacklisted } = await userPerms( client, author, guild );
+    if ( isBlacklisted && !isGlobalWhitelisted ) {
+      return message.reply( { content: 'You\'ve been blacklisted from using my commands' + ( isGuildBlacklisted ? ' in this server.' : '.' ) } );
+    }
+    const canSpeak = ( isBotMod || isWhitelisted || isServerBooster ? true : false );    
     const msgID = options.getString( 'message-id' );
     if ( !( /[\d]{18,19}/.test( msgID ) ) ) { return interaction.editReply( { content: '`' + msgID + '` is not a valid `message-id`. Please try again.' } ); }
     const myResponse = options.getString( 'response' );
     const mentionsEveryone = /@(everyone|here)/g.test( myResponse );
     const strEveryoneHere = ( mentionsEveryone ? '`@' + ( /@everyone/g.test( myResponse ) ? 'everyone' : 'here' ) + '`' : null );
-    const objGuildMembers = guild.members.cache;
-    const objGuildOwner = objGuildMembers.get( guild.ownerId );
-    const isGuildOwner = ( author.id === objGuildOwner.id ? true : false );
     const strAuthorTag = author.tag;
-    const arrAuthorPermissions = ( guild.members.cache.get( author.id ).permissions.toArray() || [] );
-    const hasAdministrator = ( ( isBotMod || isGuildOwner || arrAuthorPermissions.indexOf( 'Administrator' ) !== -1 ) ? true : false );
-    const canEveryone = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'MentionEveryone' ) !== -1 ) ? true : false );
-    const cmdAllowed = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'PrioritySpeaker' ) !== -1 ) ? true : false );
-    var logChan = objGuildOwner;
-    var logErrorChan = objGuildOwner;
+    var logChan = guildOwner;
+    var logErrorChan = guildOwner;
 
     if ( myResponse ) {
       guildConfigDB.findOne( { Guild: guild.id } ).then( async data => {
@@ -54,10 +50,10 @@ module.exports = {
           if ( data.Logs.Chat ) { logChan = await guild.channels.cache.get( data.Logs.Default ); }
           if ( data.Logs.Error ) { logErrorChan = guild.channels.cache.get( data.Logs.Error ); }
         }
-        let setupPlease = ( logChan == objGuildOwner ? 'Please run `/config` to have these logs go to a channel in the server instead of your DMs.' : '----' );  
-        if ( cmdAllowed && ( !mentionsEveryone || canEveryone ) ) {
+        let setupPlease = ( logChan == guildOwner ? 'Please run `/config` to have these logs go to a channel in the server instead of your DMs.' : '----' );  
+        if ( canSpeak && ( !mentionsEveryone || hasMentionEveryone ) ) {
           channel.messages.fetch( msgID ).then( async message => {
-            let setupPlease = ( logChan == objGuildOwner ? 'Please run `/config` to have these logs go to a channel in the server instead of your DMs.' : ( message.attachments.size === 0 ? '----' : '⬇️⬇️⬇️ Attachment Below ⬇️⬇️⬇️' ) );            
+            let setupPlease = ( logChan == guildOwner ? 'Please run `/config` to have these logs go to a channel in the server instead of your DMs.' : ( message.attachments.size === 0 ? '----' : '⬇️⬇️⬇️ Attachment Below ⬇️⬇️⬇️' ) );            
             await message.reply( myResponse ).then( async responded => {
               interaction.editReply( { content: 'Responded!' } );
               logChan.send( {
@@ -99,7 +95,7 @@ module.exports = {
                        );
             }
           } );
-        } else if ( mentionsEveryone && !canEveryone ) {
+        } else if ( mentionsEveryone && !hasMentionEveryone ) {
           logChan.send( '<@' + author.id + '> has no permission to get me to ' + strEveryoneHere + ' in <#' + channel.id + '>. They tried to get me to say:\n```\n' + myResponse + '\n```' + setupPlease )
             .catch( noLogChan => { console.error( 'mentionsEveryone logChan.send error in reply.js:\n%o', noLogChan ) } );
           interaction.editReply( {

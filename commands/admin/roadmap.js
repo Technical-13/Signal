@@ -11,6 +11,7 @@ module.exports = {
       'Create something for event logging.',
       'Add `guild*` and `guildMember*` event listeners.',
       'Finish `/guilds` command as a paginated embed.',
+      'Create function script to get log channels in commands.',
       'Add some more stuff to this array of stuff todo...'
     ];
     const embedToDo = new EmbedBuilder()

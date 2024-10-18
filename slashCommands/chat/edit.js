@@ -1,6 +1,7 @@
-const guildConfigDB = require( '../../models/GuildConfig.js' );
-const { model, Schema } = require( 'mongoose' );
 const { ApplicationCommandType } = require( 'discord.js' );
+const { model, Schema } = require( 'mongoose' );
+const guildConfigDB = require( '../../models/GuildConfig.js' );
+const userPerms = require( '../../functions/getPerms.js' );
 
 module.exports = {
   name: 'edit',
@@ -23,46 +24,41 @@ module.exports = {
     type: 3
   } ],
   type: ApplicationCommandType.ChatInput,
+  contexts: [ InteractionContextType.Guild ],
   cooldown: 1000,
   run: async ( client, interaction ) => {
     await interaction.deferReply( { ephemeral: true } );
     const { channel, guild, options } = interaction;
     const author = interaction.user;
-    const botOwner = client.users.cache.get( process.env.OWNER_ID );
-    const isBotOwner = ( author.id === botOwner.id ? true : false );
-    const botMods = [];
-    const isBotMod = ( ( isBotOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
+    const { botOwner, isBotMod, guildOwner, isServerBooster, hasMentionEveryone, isBlacklisted, isWhitelisted, isGlobalWhitelisted, isGuildBlacklisted } = await userPerms( client, author, guild );
+    if ( isBlacklisted && !isGlobalWhitelisted ) {
+      return message.reply( { content: 'You\'ve been blacklisted from using my commands' + ( isGuildBlacklisted ? ' in this server.' : '.' ) } );
+    }
+    const canSpeak = ( isBotMod || isWhitelisted || isServerBooster ? true : false );
     const msgID = options.getString( 'message-id' );
     if ( !( /[\d]{18,19}/.test( msgID ) ) ) { return interaction.editReply( { content: '`' + msgID + '` is not a valid `message-id`. Please try again.' } ); }
     const mySaying = options.getString( 'saying' );
     const mentionsEveryone = /@(everyone|here)/g.test( mySaying );
     const strEveryoneHere = ( mentionsEveryone ? '`@' + ( /@everyone/g.test( mySaying ) ? 'everyone' : 'here' ) + '`' : null );
-    const objGuildMembers = guild.members.cache;
-    const objGuildOwner = objGuildMembers.get( guild.ownerId );
-    const isGuildOwner = ( author.id === objGuildOwner.id ? true : false );
     const strAuthorTag = author.tag;
-    const arrAuthorPermissions = ( guild.members.cache.get( author.id ).permissions.toArray() || [] );
-    const hasAdministrator = ( ( isBotMod || isGuildOwner || arrAuthorPermissions.indexOf( 'Administrator' ) !== -1 ) ? true : false );
-    const canEveryone = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'MentionEveryone' ) !== -1 ) ? true : false );
-    const cmdAllowed = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'PrioritySpeaker' ) !== -1 ) ? true : false );
-    var logChan = objGuildOwner;
-    var logErrorChan = objGuildOwner;
+    var logChan = guildOwner;
+    var logErrorChan = guildOwner;
 
     if ( mySaying ) {
-      let setupPlease = ( logChan == objGuildOwner ? 'Please run `/config` to have these logs go to a channel in the server instead of your DMs.' : '----' );
+      let setupPlease = ( logChan == guildOwner ? 'Please run `/config` to have these logs go to a channel in the server instead of your DMs.' : '----' );
       guildConfigDB.findOne( { Guild: guild.id } ).then( async data => {
         if ( data ) {
           if ( data.Logs.Chat ) { logChan = await guild.channels.cache.get( data.Logs.Default ); }
           if ( data.Logs.Error ) { logErrorChan = guild.channels.cache.get( data.Logs.Error ); }
         }
-        if ( cmdAllowed && ( !mentionsEveryone || canEveryone ) ) {
+        if ( canSpeak && ( !mentionsEveryone || hasMentionEveryone ) ) {
           channel.messages.fetch( msgID ).then( async message => {
             let oldContent = message.content;
             await message.edit( { content: mySaying } ).then( edited => {
               interaction.editReply( { content: 'I edited my message!' } );
               logChan.send( { content:
-                       'I edited what I said in https://discord.com/channels/' + edited.guild.id + '/' + edited.channel.id + '/' + edited.id + ' at <@' + author.id + '>\'s request from:\n```\n' + oldContent + '\n```\nTo:\n```\n' + edited.content + '\n```\n' + setupPlease
-                      } ).catch( noLogChan => { console.error( 'logChan.send error:\n%o', noLogChan ) } );
+                'I edited what I said in https://discord.com/channels/' + edited.guild.id + '/' + edited.channel.id + '/' + edited.id + ' at <@' + author.id + '>\'s request from:\n```\n' + oldContent + '\n```\nTo:\n```\n' + edited.content + '\n```\n' + setupPlease
+              } ).catch( noLogChan => { console.error( 'logChan.send error:\n%o', noLogChan ) } );
             } ).catch( async muted => {
               switch ( muted.code ) {
                 case 50001 :
@@ -103,7 +99,7 @@ module.exports = {
                 console.error( '%o requested me to reply with %o (%s) to a message I couldn\'t find (#%s):\n\tCode: %o\n\tMsg: %o\n\tErr: %o', strAuthorTag, mySaying, msgID, noMessage.code, noMessage.message, noMessage );
             }
           } );
-        } else if ( mentionsEveryone && !canEveryone ) {
+        } else if ( mentionsEveryone && !hasMentionEveryone ) {
           logChan.send( '<@' + author.id + '> has no permission to get me to ' + strEveryoneHere + ' in <#' + interaction.channel.id + '>. They tried to get me to say:\n```\n' + mySaying + '\n```' + setupPlease )
             .catch( noLogChan => { console.error( 'mentionsEveryone logChan.send error:\n%o', noLogChan ) } );
           interaction.editReply( {

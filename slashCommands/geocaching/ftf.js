@@ -1,6 +1,7 @@
-const guildConfigDB = require( '../../models/GuildConfig.js' );
-const { model, Schema } = require( 'mongoose' );
 const { ApplicationCommandType } = require( 'discord.js' );
+const { model, Schema } = require( 'mongoose' );
+const guildConfigDB = require( '../../models/GuildConfig.js' );
+const userPerms = require( '../../functions/getPerms.js' );
 
 module.exports = {
   name:'ftf',
@@ -41,21 +42,16 @@ module.exports = {
     type: 3
   } ],
   type: ApplicationCommandType.ChatInput,
+  contexts: [ InteractionContextType.Guild ],
   cooldown: 1000,
   run: async ( client, interaction ) => {
     await interaction.deferReply();
     const { channel, guild, options } = interaction;
     const author = interaction.user;
-    const botOwner = client.users.cache.get( process.env.OWNER_ID );
-    const isBotOwner = ( author.id === botOwner.id ? true : false );
-    const botMods = [];
-    const isBotMod = ( ( botOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
-    const objGuildMembers = guild.members.cache;
-    const objGuildOwner = objGuildMembers.get( guild.ownerId );
-    const isGuildOwner = ( author.id === objGuildOwner.id ? true : false );
-    const arrAuthorPermissions = ( guild.members.cache.get( author.id ).permissions.toArray() || [] );
-    var logChan = objGuildOwner;
-    var logErrorChan = objGuildOwner;
+    const { isBlacklisted, isGlobalWhitelisted, isGuildBlacklisted, guildOwner } = await userPerms( client, author, guild );
+    if ( isBlacklisted && !isGlobalWhitelisted ) {
+      return message.reply( { content: 'You\'ve been blacklisted from using my commands' + ( isGuildBlacklisted ? ' in this server.' : '.' ) } );
+    }
 
     const msgID = options.getString( 'message-id' );
     const cmdInputUser = options.getUser( 'target' );
@@ -112,12 +108,15 @@ module.exports = {
       'sv-SE': 'Det gick inte att hitta ett specifikt meddelande att svara på.'
     };
 
+    var logChan = guildOwner;
+    var logErrorChan = guildOwner;
+
     guildConfigDB.findOne( { Guild: interaction.guild.id } ).then( async data => {
       if ( data ) {
         if ( data.Logs.Chat ) { logChan = await guild.channels.cache.get( data.Logs.Default ); }
         if ( data.Logs.Error ) { logErrorChan = guild.channels.cache.get( data.Logs.Error ); }
       }
-      let setupPlease = ( logChan == objGuildOwner ? 'Please run `/config` to have these logs go to a channel in the server instead of your DMs.' : '----' );
+      let setupPlease = ( logChan == guildOwner ? 'Please run `/config` to have these logs go to a channel in the server instead of your DMs.' : '----' );
       if ( msgID && isNaN( msgID ) ) {
         interaction.editReply( '`' + msgID + '` ' + i18InvalidMsgId[ locale ] );
       } else if ( msgID ) {

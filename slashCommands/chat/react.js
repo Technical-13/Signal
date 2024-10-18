@@ -1,6 +1,7 @@
-const guildConfigDB = require( '../../models/GuildConfig.js' );
-const { model, Schema } = require( 'mongoose' );
 const { ApplicationCommandType } = require( 'discord.js' );
+const { model, Schema } = require( 'mongoose' );
+const guildConfigDB = require( '../../models/GuildConfig.js' );
+const userPerms = require( '../../functions/getPerms.js' );
 
 module.exports = {
   name: 'react',
@@ -23,23 +24,22 @@ module.exports = {
     type: 3
   } ],
   type: ApplicationCommandType.ChatInput,
+  contexts: [ InteractionContextType.Guild ],
   cooldown: 1000,
   run: async ( client, interaction ) => {
     await interaction.deferReply( { ephemeral: true } );
     const { channel, guild, options } = interaction;
     const author = interaction.user;
-    const botOwner = client.users.cache.get( process.env.OWNER_ID );
-    const isBotOwner = ( author.id === botOwner.id ? true : false );
-    const botMods = [];
-    const isBotMod = ( ( isBotOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
+    const { botOwner, guildOwner, isBlacklisted, isGlobalWhitelisted, isGuildBlacklisted } = await userPerms( client, author, guild );
+    if ( isBlacklisted && !isGlobalWhitelisted ) {
+      return message.reply( { content: 'You\'ve been blacklisted from using my commands' + ( isGuildBlacklisted ? ' in this server.' : '.' ) } );
+    }
     const msgID = options.getString( 'message-id' );
     if ( !( /[\d]{18,19}/.test( msgID ) ) ) { return interaction.editReply( { content: '`' + msgID + '` is not a valid `message-id`. Please try again.' } ); }
     const theReaction = options.getString( 'reaction' );
     const strAuthorTag = author.tag;
-    const objGuildMembers = guild.members.cache;
-    const objGuildOwner = objGuildMembers.get( guild.ownerId );
-    var logChan = objGuildOwner;
-    var logErrorChan = objGuildOwner;
+    var logChan = guildOwner;
+    var logErrorChan = guildOwner;
 
     var myReaction = theReaction;
     var rxp = /<:(.*)?:([\d]*)>/;
@@ -51,7 +51,7 @@ module.exports = {
         if ( data.Logs.Chat ) { logChan = await guild.channels.cache.get( data.Logs.Default ); }
         if ( data.Logs.Error ) { logErrorChan = guild.channels.cache.get( data.Logs.Error ); }
       }
-    let setupPlease = ( logChan == objGuildOwner ? '. Please run `/config` to have these logs go to a channel in the server instead of your DMs.' : '.\n----' );
+    let setupPlease = ( logChan == guildOwner ? '. Please run `/config` to have these logs go to a channel in the server instead of your DMs.' : '.\n----' );
       channel.messages.fetch( msgID ).then( async message => {
         await message.react( myReaction ).then( reacted => {
           interaction.editReply( { content: 'Reacted!' } );

@@ -1,6 +1,7 @@
-const guildConfigDB = require( '../../models/GuildConfig.js' );
-const { model, Schema } = require( 'mongoose' );
 const { ApplicationCommandType } = require( 'discord.js' );
+const { model, Schema } = require( 'mongoose' );
+const guildConfigDB = require( '../../models/GuildConfig.js' );
+const userPerms = require( '../../functions/getPerms.js' );
 
 module.exports = {
   name: 'statbar',
@@ -44,21 +45,16 @@ module.exports = {
     type : 5
   } ],
   type: ApplicationCommandType.ChatInput,
+  contexts: [ InteractionContextType.Guild ],
   cooldown: 3000,
   run: async ( client, interaction ) => {
     await interaction.deferReply();
     const { channel, guild, options } = interaction;
     const author = interaction.user;
-    const botOwner = client.users.cache.get( process.env.OWNER_ID );
-    const isBotOwner = ( author.id === botOwner.id ? true : false );
-    const botMods = [];
-    const isBotMod = ( ( botOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
-    const objGuildMembers = guild.members.cache;
-    const objGuildOwner = objGuildMembers.get( interaction.guild.ownerId );
-    const isGuildOwner = ( author.id === objGuildOwner.id ? true : false );
-    const arrAuthorPermissions = ( guild.members.cache.get( author.id ).permissions.toArray() || [] );
-    var logChan = objGuildOwner;
-    var logErrorChan = objGuildOwner;    
+    const { isBlacklisted, isGlobalWhitelisted, isGuildBlacklisted, guildOwner } = await userPerms( client, author, guild );
+    if ( isBlacklisted && !isGlobalWhitelisted ) {
+      return message.reply( { content: 'You\'ve been blacklisted from using my commands' + ( isGuildBlacklisted ? ' in this server.' : '.' ) } );
+    }
 
     const today = ( new Date() );
     const intYear = today.getFullYear();
@@ -67,6 +63,7 @@ module.exports = {
     const intDayNow = today.getDate();
     const intDay = ( intDayNow <= 9 ? '0' : '' ) + intDayNow.toString();
 
+    const objGuildMembers = guild.members.cache;
     const strAuthorDisplayName = objGuildMembers.get( author.id ).displayName;
     const strInputUser = ( options.getString( 'gc-name' ) || null );
     const objInputUser = ( options.getUser( 'discord-user' ) || null );
@@ -74,7 +71,9 @@ module.exports = {
     const strUseName = ( strInputUserDisplayName ? strInputUserDisplayName : strAuthorDisplayName );
     const encName = encodeURI( strUseName ).replace( '&', '%26' );
 		const strLabcaches = ( options.getBoolean( 'labcaches' ) ? '&includeLabcaches' : '' );
-    let setupPlease = ( logChan == objGuildOwner ? 'Please run `/config` to have these logs go to a channel in the server instead of your DMs.' : '----' );
+    var logChan = guildOwner;
+    var logErrorChan = guildOwner;
+    let setupPlease = ( logChan == guildOwner ? 'Please run `/config` to have these logs go to a channel in the server instead of your DMs.' : '----' );
 
     guildConfigDB.findOne( { Guild: guild.id } ).then( async data => {
       if ( data.Logs ) {

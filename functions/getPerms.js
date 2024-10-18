@@ -35,7 +35,7 @@ module.exports = async ( client, user, guild ) => {
     const hasAdministrator = ( ( isBotMod || isGuildOwner || arrAuthorPermissions.indexOf( 'Administrator' ) !== -1 ) ? true : false );
     const hasManageGuild = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'ManageGuild' ) !== -1 ) ? true : false );
     const hasManageRoles = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'ManageRoles' ) !== -1 ) ? true : false );
-    const hasPrioritySpeaker = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'PrioritySpeaker' ) !== -1 ) ? true : false );
+    const isServerBooster = ( guild.roles.premiumSubscriberRole.members.get( user.id ) ? true : false );
     const hasMentionEveryone = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'MentionEveryone' ) !== -1 ) ? true : false );
 
     const globalPrefix = botConfig.Prefix;
@@ -62,7 +62,7 @@ module.exports = async ( client, user, guild ) => {
       hasAdministrator: hasAdministrator,
       hasManageGuild: hasManageGuild,
       hasManageRoles: hasManageRoles,
-      hasPrioritySpeaker: hasPrioritySpeaker,
+      isServerBooster: isServerBooster,
       hasMentionEveryone: hasMentionEveryone
       };
   } catch ( errPerms ) { console.error( 'Error in getPerms.js: %s', errPerms.stack ); }
