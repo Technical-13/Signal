@@ -1,20 +1,10 @@
 const client = require( '..' );
-const thisBotName = process.env.BOT_USERNAME;
-const { model, Schema } = require( 'mongoose' );
-const botConfigDB = require( '../models/BotConfig.js' );
 const { EmbedBuilder, Collection, PermissionsBitField } = require( 'discord.js' );
 
 client.on( 'messageUpdate', async ( oldMessage, newMessage ) => {
-  const botConfig = await botConfigDB.findOne( { BotName: thisBotName } )
-    .catch( errFindBot => {  console.error( 'Unable to find botConfig:\n%o', errFindBot );  } );
   const { author, channel, content, guild, mentions } = newMessage;
   if ( author.bot ) return;
   if ( channel.type !== 0 ) return;
-  const isDevGuild = ( guild.id == botConfig.DevGuild );
-  const botOwner = client.users.cache.get( botConfig.Owner );
-  const isBotOwner = ( author.id === botOwner.id ? true : false );
-  const botMods = botConfig.Mods;
-  const isBotMod = ( ( isBotOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
   const objGuildMembers = guild.members.cache;
   const objGuildOwner = objGuildMembers.get( guild.ownerId );
   const isGuildOwner = ( author.id === objGuildOwner.id ? true : false );

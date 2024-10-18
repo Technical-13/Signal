@@ -4,32 +4,16 @@ const ms = require( 'ms' );
 const cooldown = new Collection();
 const cacheinfo = require( '../functions/cacheinfo.js' );
 const gcCacheTypeIcons = require( '../eventTypes.json' );
-const thisBotName = process.env.BOT_USERNAME;
-const { model, Schema } = require( 'mongoose' );
-const botConfigDB = require( '../models/BotConfig.js' );
-const guildConfigDB = require( '../models/GuildConfig.js' );
+const userPerms = require( '../../functions/getPerms.js' );
 
 client.on( 'messageCreate', async message => {
   const { author, channel, content, guild, mentions } = message;
   if ( author.bot ) return;
   if ( channel.type !== 0 ) return;
-  const botConfig = await botConfigDB.findOne( { BotName: thisBotName } )
-    .catch( errFindBot => {  console.error( 'Unable to find botConfig:\n%o', errFindBot );  } );
-  const guildConfig = await guildConfigDB.findOne( { Guild: message.guild.id } )
-    .catch( errFindBot => {  console.error( 'Unable to find guildConfig:\n%o', errFindBot );  } );
-  const globalPrefix = botConfig.Prefix;
-  const guildPrefix = guildConfig.Prefix;
-  const prefix = ( guildPrefix || globalPrefix || client.prefix );
+  const permSlip = userPerms( client, author, guild );
+  const { clientId, botOwner, isDevGuild, isBotOwner, isBotMod, isBlacklisted } = permSlip;
   const bot = client.user;
-  const isDevGuild = ( guild.id == botConfig.DevGuild );
-  const botOwner = client.users.cache.get( botConfig.Owner );
-  const isBotOwner = ( author.id === botOwner.id ? true : false );
-  const botMods = botConfig.Mods;
-  const isBotMod = ( ( isBotOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
   const objGuildMembers = guild.members.cache;
-  const objGuildOwner = objGuildMembers.get( guild.ownerId );
-  const isGuildOwner = ( author.id === objGuildOwner.id ? true : false );
-  const msgAuthor = await guild.members.cache.get( author.id );
 
   var hasCodes = {
     GC: false,// Geocache
@@ -63,9 +47,9 @@ client.on( 'messageCreate', async message => {
   }
   
   const hasPrefix = ( content.startsWith( prefix ) || content.startsWith( '§' ) );
-  const meMentionPrefix = '<@' + botConfig.ClientID + '>';
+  const meMentionPrefix = '<@' + clientId + '>';
   const mePrefix = content.startsWith( meMentionPrefix );
-  const mentionsMe = mentions.users.has( botConfig.ClientID );
+  const mentionsMe = mentions.users.has( clientId );
   var args = [];
   if ( hasPrefix ) { args = content.slice( prefix.length ).trim().split( / +/g ); }
   else if ( mePrefix ) {
@@ -80,12 +64,15 @@ client.on( 'messageCreate', async message => {
     let command = client.commands.get( cmd.toLowerCase() );
     if ( !command ) command = client.commands.get( client.aliases.get( cmd ) );
   
-    if ( command ) {
+    if ( isBlacklisted ) {
+      return message.reply( { content: 'You\'ve been blacklisted from using my commands' + ( permSlip.isGuildBlacklisted ? ' in this server.' : '.' ) } );
+    }
+    else if ( command ) {
       const isOwnerOnly = command.ownerOnly;
       const isModOnly = command.modOnly;
       if ( isOwnerOnly && !isBotOwner ) {
         if ( isBotMod ) {
-          return message.reply( { content: `That is an **owner only command**, speak to <@${botOwner.id}>/` } );
+          return message.reply( { content: `That is an **owner only command**, speak to <@${botOwner.id}>.` } );
         } else { /* DO NOTHING */ }
       } else if ( isModOnly && !isBotMod ) {
           /* DO NOTHING */

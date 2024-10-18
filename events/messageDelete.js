@@ -2,17 +2,9 @@ const client = require( '..' );
 const { Collection } = require( 'discord.js' );
 const thisBotName = process.env.BOT_USERNAME;
 const { model, Schema } = require( 'mongoose' );
-const botConfigDB = require( '../models/BotConfig.js' );
 const guildConfigDB = require( '../models/GuildConfig.js' );
 
 client.on( 'messageDelete', async message => {
-  const botConfig = await botConfigDB.findOne( { BotName: thisBotName } )
-    .catch( errFindBot => {  console.error( 'Unable to find botConfig:\n%o', errFindBot );  } );
-  const isDevGuild = ( guild.id == botConfig.DevGuild );
-  const botOwner = client.users.cache.get( botConfig.Owner );
-  const isBotOwner = ( author.id === botOwner.id ? true : false );
-  const botMods = botConfig.Mods;
-  const isBotMod = ( ( isBotOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
   const { author, guild, channel } = message;
   const objGuildMembers = guild.members.cache;
   const objGuildOwner = objGuildMembers.get( guild.ownerId );
