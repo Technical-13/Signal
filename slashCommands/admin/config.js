@@ -166,7 +166,7 @@ module.exports = {
         let remBlack = ( options.getUser( 'blacklist' ) ? options.getUser( 'blacklist' ).id : null );
         let remWhite = ( options.getUser( 'whitelist' ) ? options.getUser( 'whitelist' ).id : null );
         if ( remBlack ) {
-          if ( arrBlackGuild.indexOf( remBlack ) != -1 ) { return interaction.editReply( { content: '<@' + remBlack + '> wasn\'t on the blacklist!' } ) }
+          if ( arrBlackGuild.indexOf( remBlack ) === -1 ) { return interaction.editReply( { content: '<@' + remBlack + '> wasn\'t on the blacklist!' } ) }
           else { arrBlackGuild.splice( arrBlackGuild.indexOf( remBlack ), 1 ); }
           await guildConfigDB.updateOne( { Guild: oldConfig.Guild }, {
             Guild: oldConfig.Guild,
@@ -199,7 +199,7 @@ module.exports = {
           } );
         }
         if ( remWhite ) {
-          if ( arrWhiteGuild.indexOf( remWhite ) != -1 ) { return interaction.editReply( { content: '<@' + remWhite + '> wasn\'t on the whitelist!' } ) }
+          if ( arrWhiteGuild.indexOf( remWhite ) === -1 ) { return interaction.editReply( { content: '<@' + remWhite + '> wasn\'t on the whitelist!' } ) }
           else { arrWhiteGuild.splice( arrWhiteGuild.indexOf( remWhite ), 1 ); }
           await guildConfigDB.updateOne( { Guild: oldConfig.Guild }, {
             Guild: oldConfig.Guild,
