@@ -1,20 +1,16 @@
-const thisBotName = process.env.BOT_USERNAME;
 const { model, Schema } = require( 'mongoose' );
-const botConfigDB = require( '../../models/BotConfig.js' );
 const guildConfigDB = require( '../../models/GuildConfig.js' );
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, EmbedBuilder } = require( 'discord.js' );
+const userPerms = require( '../../functions/getPerms.js' );
 
 module.exports = {
   name: 'inspectdb',
   description: 'Inspect my database.',
-  ownerOnly: true,
+  modOnly: true,
   cooldown: 1000,
   run: async ( client, message, args ) => {
-    const botConfig = await botConfigDB.findOne( { BotName: thisBotName } )
-      .catch( errFindBot => {  console.error( 'Unable to find botConfig:\n%o', errFindBot );  } );
     const { author, guild } = message;
-    const botOwner = client.users.cache.get( botConfig.Owner );
-    const isBotOwner = ( author.id === botOwner.id ? true : false );
+    const { isBotOwner } = await userPerms( client, author, guild );
     if ( isBotOwner ) {      
       const guildConfigs = await guildConfigDB.find();
       const guildConfigIds = [];
@@ -23,8 +19,8 @@ module.exports = {
       const guildIds = Array.from( client.guilds.cache.keys() );
       
       for ( const guildId of guildIds ) {
-        const guild = client.guilds.cache.get( guildId );
-        const objGuild = guild.toJSON();
+        const doGuild = client.guilds.cache.get( guildId );
+        const objGuild = doGuild.toJSON();
         const guildName = objGuild.name;
         const vanityURLCode = objGuild.vanityURLCode;
 if ( vanityURLCode ) { console.log( '%s has a vanityURLCode: %s', guildName, vanityURLCode ); }//don't know what this looks like in the API...
@@ -33,15 +29,15 @@ if ( vanityURLCode ) { console.log( '%s has a vanityURLCode: %s', guildName, van
         const chanPublicUpdates = objGuild.publicUpdatesChannelId;
         const chanSafetyAlerts = objGuild.safetyAlertsChannelId;
         const chanSystem = objGuild.systemChannelId;
-        const chanFirst = guild.channels.cache.filter( chan => { if ( !chan.nsfw && chan.viewable ) { return chan; } } ).first().id;
+        const chanFirst = doGuild.channels.cache.filter( chan => { if ( !chan.nsfw && chan.viewable ) { return chan; } } ).first().id;
         const doneConfig = ( guildConfigIds.indexOf( guildId ) != -1 ? true : false );
         const definedInvite = ( doneConfig ? guildConfigs[ guildConfigIds.indexOf( guildId ) ].Invite : null );
         const chanInvite = ( definedInvite || chanWidget || chanRules || chanPublicUpdates || chanSafetyAlerts || chanSystem || chanFirst );
         const chanLinkUrl = 'https://discordapp.com/channels/' + guildId + '/' + chanInvite;
         const ownerId = objGuild.ownerId;
-        const objGuildOwner = guild.members.cache.get( ownerId );
+        const objGuildOwner = doGuild.members.cache.get( ownerId );
         if ( !objGuildOwner ) {
-          await guild.leave()
+          await doGuild.leave()
             .then( left => { console.log( 'I left guild (%s) with no owner!\n\t%s', left.name, chanLinkUrl ); } )
             .catch( stayed => { console.error( 'I could NOT leave guild with no owner!\n%o', stayed ); } );
           continue;
@@ -53,13 +49,13 @@ if ( vanityURLCode ) { console.log( '%s has a vanityURLCode: %s', guildName, van
         if ( maximumMembers > 10**8 ) { maximumMembers = ( Math.trunc( maximumMembers / ( 10**8 ) ) / 100 ) + 'b'; }
         else if ( maximumMembers > 10**5 ) { maximumMembers = ( Math.trunc( maximumMembers / ( 10**5 ) ) / 10 ) + 'm'; }
         else if ( maximumMembers > 10**3 ) { maximumMembers = ( maximumMembers / ( 10**3 ) ).toFixed( 1 ) + 'k'; }
-        const intBotMembers = guild.members.cache.filter( mbr => { if ( mbr.user.bot ) { return mbr; } } ).size;
+        const intBotMembers = doGuild.members.cache.filter( mbr => { if ( mbr.user.bot ) { return mbr; } } ).size;
         const preferredLocale = ( objGuild.preferredLocale || 'en-US' );
         const description = objGuild.description;
         const arrVerificationLevels = [ 'None', 'Low (email)', 'Medium (5m on Discord)', 'High (10m in guild)', 'Very High (phone number)' ];
         const verificationLevel = arrVerificationLevels[ ( objGuild.verificationLevel || 0 ) ];
         const mfaLevel = objGuild.mfaLevel;
-        const guildInvite = await guild.invites.create( chanInvite, {
+        const guildInvite = await doGuild.invites.create( chanInvite, {
           maxAge: 300, maxUses: 1, reason: 'Single use invite for my botmod, ' + author.displayName + '.  Expires in 5 minutes if not used.'
         } ).then( invite => { return 'https://discord.gg/invite/' + invite.code; } ).catch( errCreateInvite => {
           switch ( errCreateInvite.code ) {
@@ -108,7 +104,7 @@ if ( vanityURLCode ) { console.log( '%s has a vanityURLCode: %s', guildName, van
         embedGuilds.push( thisGuild );
       }
       
-      let intPageNumber = 0;    
+      let intPageNumber = 0;
       const first = new ButtonBuilder().setCustomId( 'firstPage' ).setEmoji( '⏪' ).setStyle( ButtonStyle.Secondary ).setDisabled( true );
       const prev = new ButtonBuilder().setCustomId( 'prevPage' ).setEmoji( '⏮️' ).setStyle( ButtonStyle.Secondary ).setDisabled( true );
       const curr = new ButtonBuilder().setCustomId( 'currPage' ).setLabel( ( intPageNumber + 1 ) + '/' + embedGuilds.length ).setStyle( ButtonStyle.Primary ).setDisabled( true );

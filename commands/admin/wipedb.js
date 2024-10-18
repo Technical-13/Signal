@@ -1,21 +1,17 @@
-const thisBotName = process.env.BOT_USERNAME;
 const { model, Schema } = require( 'mongoose' );
-const botConfigDB = require( '../../models/BotConfig.js' );
 const guildConfigDB = require( '../../models/GuildConfig.js' );
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder } = require( 'discord.js' );
+const userPerms = require( '../../functions/getPerms.js' );
 
 module.exports = {
   name: 'wipedb',
-  description: 'Wipe my database.',
+  description: 'Wipe my guilds database.',
   ownerOnly: true,
   cooldown: 1000,
   run: async ( client, message, args ) => {
-    const botConfig = await botConfigDB.findOne( { BotName: thisBotName } )
-      .catch( errFindBot => {  console.error( 'Unable to find botConfig:\n%o', errFindBot );  } );
     const { author, guild } = message;
-    const botOwner = client.users.cache.get( botConfig.Owner );
-    const isBotOwner = ( author.id === botOwner.id ? true : false );
-    if ( isBotOwner ) {
+    const { botOwner, isBotOwner, isDevGuild } = await userPerms( client, author, guild );
+    if ( isBotOwner && isDevGuild ) {
       message.delete();
       guildConfigDB.deleteMany().then( entries => {
         const wasDeleted = ( entries.deletedCount === 1 ? 'an entry' : entries.deletedCount + ' entries' );
@@ -24,6 +20,12 @@ module.exports = {
           console.error( 'Error trying to notify you that I deleted the DB as you requested.\n%o', errSend );
         } );
       } ).catch( err=> { console.error( 'Error trying to delete guildConfigDB:\n%o', err ); } );
+    }
+    else if ( isBotOwner ) {
+      botOwner.send( { content: 'You can only wipe my database from the development guild.' } )
+        .catch( errSend => {
+          console.error( 'Failed to DM you that you can only wipe my database from the development guild: %o', errSend );
+        } );
     }
   }
 };

@@ -10,8 +10,7 @@ client.on( 'messageCreate', async message => {
   const { author, channel, content, guild, mentions } = message;
   if ( author.bot ) return;
   if ( channel.type !== 0 ) return;
-  const permSlip = await userPerms( client, author, guild );
-  const { clientId, botOwner, isDevGuild, prefix, isBotOwner, isBotMod, isBlacklisted } = permSlip;
+  const { clientId, botOwner, isDevGuild, prefix, isBotOwner, isBotMod, isGlobalWhitelisted, isBlacklisted, isGuildBlacklisted } = await userPerms( client, author, guild );
   const bot = client.user;
   const objGuildMembers = guild.members.cache;
 
@@ -64,19 +63,18 @@ client.on( 'messageCreate', async message => {
     let command = client.commands.get( cmd.toLowerCase() );
     if ( !command ) command = client.commands.get( client.aliases.get( cmd ) );
 
-    if ( isBlacklisted ) {
-      return message.reply( { content: 'You\'ve been blacklisted from using my commands' + ( permSlip.isGuildBlacklisted ? ' in this server.' : '.' ) } );
+    if ( isBlacklisted && !isGlobalWhitelisted ) {
+      return message.reply( { content: 'You\'ve been blacklisted from using my commands' + ( isGuildBlacklisted ? ' in this server.' : '.' ) } );
     }
     else if ( command ) {
       const isOwnerOnly = command.ownerOnly;
       const isModOnly = command.modOnly;
       if ( isOwnerOnly && !isBotOwner ) {
-        if ( isBotMod ) {
-          return message.reply( { content: `That is an **owner only command**, speak to <@${botOwner.id}>.` } );
-        } else { /* DO NOTHING */ }
-      } else if ( isModOnly && !isBotMod ) {
-          /* DO NOTHING */
-      } else {
+        if ( isBotMod ) { return message.reply( { content: `That is an **owner only command**, speak to <@${botOwner.id}>.` } ); }
+        else { /* DO NOTHING */ }
+      }
+      else if ( isModOnly && !isBotMod ) { /* DO NOTHING */ }
+      else {
         if ( command.cooldown ) {
           if ( cooldown.has( `${command.name}${author.id}` ) ) {
             return channel.send( { content: `You are on \`${ms(cooldown.get(`${command.name}${author.id}`) - Date.now(), {long : true})}\` cooldown!` } );
@@ -99,7 +97,8 @@ client.on( 'messageCreate', async message => {
           command.run( client, message, args );
           cooldown.set( `${command.name}${author.id}`, Date.now() + command.cooldown );
           setTimeout( () => { cooldown.delete( `${command.name}${author.id}` ) }, command.cooldown );
-        } else {
+        }
+        else {
           if ( command.userPerms || command.botPerms ) {
             if ( !message.member.permissions.has( PermissionsBitField.resolve( command.userPerms || [] ) ) ) {
               const userPerms = new EmbedBuilder()
