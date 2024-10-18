@@ -27,7 +27,7 @@ module.exports = {
           }
         } );
       }
-      else {
+      else if ( !( cmd.ownerOnly || cmd.modOnly ) ) {
         helpEmbed.addFields( { name: '\u200B', value: '✅ **`' + prefix + cmd.name + '`** ' + cmd.description, inline: false } );
       }
     } );
