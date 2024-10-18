@@ -4,7 +4,7 @@ const ms = require( 'ms' );
 const cooldown = new Collection();
 const cacheinfo = require( '../functions/cacheinfo.js' );
 const gcCacheTypeIcons = require( '../eventTypes.json' );
-const userPerms = require( '../../functions/getPerms.js' );
+const userPerms = require( '../functions/getPerms.js' );
 
 client.on( 'messageCreate', async message => {
   const { author, channel, content, guild, mentions } = message;
