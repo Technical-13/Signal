@@ -223,7 +223,7 @@ module.exports = {
           }, { upsert: true } )
           .then( addSuccess => {
             interaction.deleteReply();
-            return channel.send( { content: '<@' + addBlack + '> is no longer blacklisted from using my commands in this server.' } );
+            return channel.send( { content: '<@' + remBlack + '> is no longer blacklisted from using my commands in this server.' } );
           } )
           .catch( addError => {
             console.error( 'Error attempting to de-blacklist %s (%s) from %s: %o', remBlack, client.users.cache.get( remBlack ).displayName, guild.name, addError );
@@ -256,7 +256,7 @@ module.exports = {
           }, { upsert: true } )
           .then( addSuccess => {
             interaction.deleteReply();
-            return channel.send( { content: '<@' + addWhite + '> is no longer whitelisted to use my commands in this server.' } );
+            return channel.send( { content: '<@' + remWhite + '> is no longer whitelisted to use my commands in this server.' } );
           } )
           .catch( addError => {
             console.error( 'Error attempting to de-whitelist %s (%s) from %s: %o', remWhite, client.users.cache.get( remWhite ).displayName, guild.name, addError );
