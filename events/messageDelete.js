@@ -12,7 +12,7 @@ client.on( 'messageDelete', async message => {
 
   guildConfigDB.findOne( { Guild: guild.id } ).then( async data => {
     if ( data ) {  if ( data.Logs.Chat ) { logChan = await guild.channels.cache.get( data.Logs.Default ); } }
-    let setupPlease = ( logChan == objGuildOwner ? 'Please run `/config` to have these logs go to a channel in the server instead of your DMs.' : '----' );
+    let setupPlease = ( logChan == objGuildOwner ? '\nPlease run `/config` to have these logs go to a channel in the server instead of your DMs.' : '\n----' );
     if ( logChan !== channel ) {
       const mentionsIds = ( message.content ? ( message.content.match( /<@[\d]{17,20}>/g ) || [] ) : [] );
       let strMentions = '';
@@ -60,7 +60,7 @@ client.on( 'messageDelete', async message => {
       }
       
       const strEmbeds = ( intEmbeds == 0 ? 'no embeds' : intEmbeds == 1 ? 'an embed'  : intEmbeds + ' embeds' ) + strEmbedList + ', and ';
-      const content = ( message.content ? 'the following content:\n```\n' + message.content + '\n```\n' : 'no content.\n' );
+      const content = ( message.content ? 'the following content:\n```\n' + message.content + '\n```' : 'no content.' );
       const msgContained = ( ( attachments.length == 0 && intEmbeds === 0 && !message.content ) ? 'and was completely empty.' : 'with ' + strAttachments + strEmbeds + content );
       logChan.send( {
         content: ( author ? '<@' + author.id + '>\'s' : 'A' ) + ' message' + strMentions + ' in <#' + channel.id + '> was deleted ' + msgContained + setupPlease,

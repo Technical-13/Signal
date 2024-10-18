@@ -5,7 +5,6 @@ const { model, Schema } = require( 'mongoose' );
 
 module.exports = async ( client, user, guild ) => {
   try {
-  console.log( 'Getting permissions for %s in %s', user.displayName, guild.name );
     const botConfig = await botConfigDB.findOne( { BotName: thisBotName } )
       .catch( errFindBot => { console.error( 'Unable to find botConfig:\n%o', errFindBot ); } );
     const clientID = ( botConfig.ClientID || client.id );
@@ -40,12 +39,8 @@ module.exports = async ( client, user, guild ) => {
     const hasMentionEveryone = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'MentionEveryone' ) !== -1 ) ? true : false );  
     
     const globalPrefix = botConfig.Prefix;
-console.log( 'globalPrefix', globalPrefix );
     const guildPrefix = guildConfig.Prefix;
-console.log( 'guildPrefix', guildPrefix );
-console.log( 'client.prefix', client.prefix );
     const prefix = ( guildPrefix || globalPrefix || client.prefix );    
-console.log( 'prefix', prefix );
   
     return {
       clientId: clientID,
