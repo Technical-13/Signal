@@ -1,4 +1,4 @@
-const { ApplicationCommandType } = require( 'discord.js' );
+const { ApplicationCommandType, InteractionContextType } = require( 'discord.js' );
 const { model, Schema } = require( 'mongoose' );
 const guildConfigDB = require( '../../models/GuildConfig.js' );
 const userPerms = require( '../../functions/getPerms.js' );
