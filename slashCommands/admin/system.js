@@ -12,12 +12,17 @@ module.exports = {
   type: ApplicationCommandType.ChatInput,
   contexts: [ InteractionContextType.Guild ],
   cooldown: 1000,
-  options: [/* add, get, remove, reset, set //*/
+  options: [/* add, clear, get, remove, reset, set //*/
     { type: 1, name: 'add', description: 'Add a user to one of my lists.', options: [
       { type: 6, name: 'blacklist', description: 'User to block from using all commands.' },
       { type: 6, name: 'moderator', description: 'User to add as a moderator.' },
       { type: 6, name: 'whitelist', description: 'User to permit to use all non-mod commands.' }
     ] }/* add //*/,
+    { type: 1, name: 'clear', description: 'Clear guild\'s black, white. and/or moderator lists.', options: [
+      { type: 5, name: 'blacklist', description: 'Clear guild\'s blacklist.' },
+      { type: 5, name: 'moderators', description: 'Clear guild\'s moderator list.' }
+      { type: 5, name: 'whitelist', description: 'Clear guild\'s whitelist.' }
+    ] }/* clear //*/,
     { type: 1, name: 'get', description: 'Get my current configuration.', options: [
       { type: 5, name: 'share', description: 'Share result to current channel instead of making it ephemeral.' }
     ] },
@@ -76,9 +81,9 @@ module.exports = {
     else if ( isBotOwner ) {
       switch ( myTask ) {
         case 'add':
-          let addBlack = options.getUser( 'blacklist' ).id;
-          let addMod = options.getUser( 'moderator' ).id;
-          let addWhite = options.getUser( 'whitelist' ).id;
+          let addBlack = ( options.getUser( 'blacklist' ) ? options.getUser( 'blacklist' ).id : null );
+          let addMod = ( options.getUser( 'moderator' ) ? options.getUser( 'moderator' ).id : null );
+          let addWhite = ( options.getUser( 'whitelist' ) ? options.getUser( 'whitelist' ).id : null );
           if ( addBlack ) {
             if ( arrBlackList.indexOf( addBlack ) != -1 ) { return interaction.editReply( { content: '<@' + addBlack + '> is already on the blacklist!' } ) }
             else {
@@ -176,10 +181,64 @@ module.exports = {
             }
           }
           break;
+        case 'clear':
+          let arrClearLists = [];
+          let clearBlack = options.getBoolean( 'blacklist' );
+          if ( clearBlack ) { arrClearLists.push( 'black' ); }
+          let clearWhite = options.getBoolean( 'whitelist' );
+          if ( clearWhite ) { arrClearLists.push( 'white' ); }
+          let clearMods = options.getBoolean( 'moderators' );
+          if ( clearMods ) { arrClearLists.push( 'moderator' ); }
+          let intListsClear = arrClearLists.length;
+          if ( intListsClear > 0 ) { arrClearLists[ 0 ] = arrClearLists[ 0 ].charAt( 0 ).toUpperCase() + arrClearLists[ 0 ].slice( 1 ); }
+          let haveHas = ( intListsClear === 1 ? 'has' : 'have' );
+          let clearLists = '';
+          switch ( intListsClear ) {
+            case 0: break;
+            case 1:
+              clearLists = arrClearLists[ 0 ] + ' list';
+              break;
+            case 2:
+              clearLists = arrClearLists.join( ' and ' ) + ' lists';
+              break;
+            case 3: default:
+              let lastList = arrClearLists.pop();
+              clearLists = arrClearLists.join( ', ' ) + ', and ' + lastList + ' lists';
+          }
+          
+          await botConfigDB.updateOne( { BotName: thisBotName }, {
+            BotName: botConfig.BotName,
+            ClientID: botConfig.ClientID,
+            Owner: botConfig.Owner,
+            Prefix: botConfig.Prefix,
+            Blacklist: ( clearBlack ? [] : arrBlackList ),
+            Whitelist: ( clearWhite ? [] : arrWhiteList ),
+            Mods: ( clearMods ? [] : botMods ),
+            DevGuild: botConfig.DevGuild
+          }, { upsert: true } )
+          .then( clearSuccess => {
+            interaction.deleteReply();
+            chanDefaultLog.send( { content: 'My ' + clearLists + ' for this server ' + haveHas + ' been cleared.' } );
+            return channel.send( { content: 'My ' + clearLists + ' for this server ' + haveHas + ' been cleared.' } );
+          } )
+          .catch( clearError => {
+            console.error( 'Error attempting to clear my %s for %s: %o', clearLists, author.displayName, guild.name, clearError );
+            botOwner.send( 'Error attempting to clear my ' + clearLists + ' with `/config clear` in https://discord.com/channels/' + guild.id + '/' + channel.id + '.  Please check the console.' )
+            .then( sentOwner => {
+              chanErrorLog.send( { content: 'Error attempting to clear my ' + clearLists + ' for this server! My owner has been notified.' } );
+              return interaction.editReply( { content: 'Error attempting to clear my ' + clearLists + ' for this server! My owner has been notified.' } );
+            } )
+            .catch( errSend => {
+              console.error( 'Error attempting to DM you about above error: %o', errSend );
+              chanErrorLog.send( { content: 'Error attempting to clear my ' + clearLists + ' for this server!' } );
+              return interaction.editReply( { content: 'Error attempting to clear my ' + clearLists + ' for this server!' } );
+            } );
+          } );
+          break;
         case 'remove':
-          let remBlack = options.getUser( 'blacklist' ).id;
-          let remMod = options.getUser( 'moderator' ).id;
-          let remWhite = options.getUser( 'whitelist' ).id;
+          let remBlack = ( options.getUser( 'blacklist' ) ? options.getUser( 'blacklist' ).id : null );
+          let remMod = ( options.getUser( 'moderator' ) ? options.getUser( 'moderator' ).id : null );
+          let remWhite = ( options.getUser( 'whitelist' ) ? options.getUser( 'whitelist' ).id : null );
           if ( remBlack ) {
             if ( arrBlackList.indexOf( remBlack ) === -1 ) { return interaction.editReply( { content: '<@' + remBlack + '> wasn\'t on the blacklist!' } ) }
             else {

@@ -9,7 +9,7 @@ module.exports = {
   type: ApplicationCommandType.ChatInput,
   contexts: [ InteractionContextType.Guild ],
   cooldown: 1000,
-  options: [/* get, reset, set //*/
+  options: [/* add, clear, remove, get, reset, set //*/
     { type: 1, name: 'add', description: 'Add a user to the guild blacklist or whitelist.', options: [
       { type: 6, name: 'blacklist', description: 'User to block from using all commands.' },
       { type: 6, name: 'whitelist', description: 'User to permit to use all commands.' }
@@ -186,7 +186,7 @@ module.exports = {
             Msg: oldConfig.Welcome.Msg
           }
         }, { upsert: true } )
-        .then( addSuccess => {
+        .then( clearSuccess => {
           interaction.deleteReply();
           let clearedLists = ( clearWhite && clearBlack ? 'white and black lists' : ( clearWhite ? 'whitelist' : 'blacklist' ) );
           let haveHas = ( clearWhite && clearBlack ? 'have' : 'has' );
@@ -195,7 +195,7 @@ module.exports = {
         } )
         .catch( clearError => {
           let unclearedLists = ( clearWhite && clearBlack ? 'white and black lists' : ( clearWhite ? 'whitelist' : 'blacklist' ) );
-          console.error( 'Error attempting to clear my %s for %s: %o', unclearedLists, client.users.cache.get( addWhite ).displayName, guild.name, clearError );
+          console.error( 'Error attempting to clear my %s for %s: %o', unclearedLists, author.displayName, guild.name, clearError );
           botOwner.send( 'Error attempting to clear my ' + unclearedLists + ' with `/config clear` in https://discord.com/channels/' + guild.id + '/' + channel.id + '.  Please check the console.' )
           .then( sentOwner => {
             chanErrorLog.send( { content: 'Error attempting to clear my ' + unclearedLists + ' for this server! My owner has been notified.' } );
