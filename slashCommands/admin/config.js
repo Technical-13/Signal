@@ -67,8 +67,8 @@ module.exports = {
     } );
     const arrBlackGuild = ( oldConfig.Blacklist || [] );
     const arrWhiteGuild = ( oldConfig.Whitelist || [] );
-    const chanDefaultLog = ( oldConfig.Log ? guild.channels.cache.get( oldConfig.Log.Default ) : guildOwner );
-    const chanErrorLog = ( oldConfig.Log ? guild.channels.cache.get( oldConfig.Log.Error ) : guildOwner );
+    const chanDefaultLog = ( oldConfig.Logs ? guild.channels.cache.get( oldConfig.Logs.Default ) : guildOwner );
+    const chanErrorLog = ( oldConfig.Logs ? guild.channels.cache.get( oldConfig.Logs.Error ) : guildOwner );
 
     const myTask = options.getSubcommand();
 
