@@ -149,7 +149,7 @@ module.exports = {
           }, { upsert: true } )
           .then( addSuccess => {
             interaction.deleteReply();
-            return channel.send( { body: '<@' + addWhite + '> has been whitelisted to use my commands in this server.' } );
+            return channel.send( { content: '<@' + addWhite + '> has been whitelisted to use my commands in this server.' } );
           } )
           .catch( addError => {
             console.error( 'Error attempting to add %s (%s) to the whitelist for %s: %o', addWhite, client.users.cache.get( addWhite ).displayName, guild.name, addError );
