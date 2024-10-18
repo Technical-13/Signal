@@ -32,9 +32,13 @@ module.exports = {
   run: async ( client, interaction ) => {
     const { options } = interaction;
     const author = interaction.user;
-    const { isBlacklisted, isGlobalWhitelisted, isGuildBlacklisted } = await userPerms( client, author, guild );
+    const { botOwner, isBotMod, isBlacklisted, isGlobalWhitelisted, guildOwner, isGuildBlacklisted } = await userPerms( client, author, guild );
     if ( isBlacklisted && !isGlobalWhitelisted ) {
-      return message.reply( { content: 'You\'ve been blacklisted from using my commands' + ( isGuildBlacklisted ? ' in this server.' : '.' ) } );
+      let contact = ( isGuildBlacklisted ? guildOwner.id : botOwner.id );
+      return message.reply( { content: 'Oh no!  It looks like you have been blacklisted from using my commands' + ( isGuildBlacklisted ? ' in this server.' : '.' ) + '!  Please contact <@' + contact + '> to resolve the situation.' } );
+    }
+    else if ( isBotMod && isGuildBlacklisted ) {
+      author.send( 'You have been blacklisted from using commands in https://discord.com/channels/' + guild.id + '/' + channel.id + '! Use `/config remove` to remove yourself from the blacklist.' );
     }
 
     const intSets = ( options.get( 'sets' ) ? ( options.get( 'sets' ).value || 1 ) : 1 );

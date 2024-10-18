@@ -42,22 +42,17 @@ module.exports = {
       ]
     }/*Set options//*/ ],
   run: async ( client, interaction ) => {
+    await interaction.deferReply( { ephemeral: true } );
     const { channel, guild, options } = interaction;
     const author = interaction.user;
-    const permSlip = await userPerms( client, author, guild );
-    const { botOwner, isBotOwner, isBotMod, isGlobalBlacklisted, globalPrefix, guildOwner, isGuildOwner, isGuildBlacklisted, hasAdministrator, hasManageGuild, hasManageRoles } = permSlip;
+    const { botOwner, isBotOwner, isBotMod, isGlobalWhitelisted, globalPrefix, guildOwner, isGuildOwner, isGuildBlacklisted, hasAdministrator, hasManageGuild, hasManageRoles, isBlacklisted } = await userPerms( client, author, guild );
     const strAuthorTag = author.tag;
-    await interaction.deferReply( { ephemeral: true } );
-    if ( isGlobalBlacklisted ) {
-      botOwner.send( 'Blacklisted user, <@' + author.id + '>, attempted to use `/config` in https://discord.com/channels/' + guild.id + '/' + channel.id );
-      return interaction.editReply( { content: 'Oh no!  It looks like you have been blacklisted from using my commands!  Please contact <@' + botOwner.id + '> to resolve the situation.' } );
+    if ( isBlacklisted && !isGlobalWhitelisted ) {
+      let contact = ( isGuildBlacklisted ? guildOwner.id : botOwner.id );
+      'Oh no!  It looks like you have been blacklisted from using my commands' + ( isGuildBlacklisted ? ' in this server.' : '.' ) + '!  Please contact <@' + contact + '> to resolve the situation.'
+      return message.reply( { content: 'You\'ve been blacklisted from using my commands} );
     }
-
-    if ( !isBotMod && isGuildBlacklisted ) {
-      guildOwner.send( 'Blacklisted user, <@' + author.id + '>, attempted to use `/config` in https://discord.com/channels/' + guild.id + '/' + channel.id );
-      return interaction.editReply( { content: 'Oh no!  It looks like you have been blacklisted from using my commands!  Please contact <@' + guild.ownerId + '> to resolve the situation.' } );
-    }
-    else if ( isGuildBlacklisted ) {
+    else if ( isBotMod && isGuildBlacklisted ) {
       author.send( 'You have been blacklisted from using commands in https://discord.com/channels/' + guild.id + '/' + channel.id + '! Use `/config remove` to remove yourself from the blacklist.' );
     }
 

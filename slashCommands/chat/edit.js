@@ -30,10 +30,15 @@ module.exports = {
     await interaction.deferReply( { ephemeral: true } );
     const { channel, guild, options } = interaction;
     const author = interaction.user;
-    const { botOwner, isBotMod, guildOwner, isServerBooster, hasMentionEveryone, isBlacklisted, isWhitelisted, isGlobalWhitelisted, isGuildBlacklisted } = await userPerms( client, author, guild );
+    const { botOwner, isBotMod, isBlacklisted, isGlobalWhitelisted, guildOwner, isGuildBlacklisted, isServerBooster, hasMentionEveryone, isWhitelisted } = await userPerms( client, author, guild );
     if ( isBlacklisted && !isGlobalWhitelisted ) {
-      return message.reply( { content: 'You\'ve been blacklisted from using my commands' + ( isGuildBlacklisted ? ' in this server.' : '.' ) } );
+      let contact = ( isGuildBlacklisted ? guildOwner.id : botOwner.id );
+      return message.reply( { content: 'Oh no!  It looks like you have been blacklisted from using my commands' + ( isGuildBlacklisted ? ' in this server.' : '.' ) + '!  Please contact <@' + contact + '> to resolve the situation.' } );
     }
+    else if ( isBotMod && isGuildBlacklisted ) {
+      author.send( 'You have been blacklisted from using commands in https://discord.com/channels/' + guild.id + '/' + channel.id + '! Use `/config remove` to remove yourself from the blacklist.' );
+    }
+
     const canSpeak = ( isBotMod || isWhitelisted || isServerBooster ? true : false );
     const msgID = options.getString( 'message-id' );
     if ( !( /[\d]{18,19}/.test( msgID ) ) ) { return interaction.editReply( { content: '`' + msgID + '` is not a valid `message-id`. Please try again.' } ); }
