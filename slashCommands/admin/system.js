@@ -54,9 +54,9 @@ module.exports = {
 
     if ( !isBotMod ) { return interaction.editReply( { content: 'You are not the boss of me...' } ); }
     else if ( isBotMod && myTask === 'get' ) {
-      let strBlackList = ( arrBlackList.length === 0 ? '`None`' : '\n\t\t`[`\n\t\t\t<@' + arrBlackList.join( '>`,`\n\t\t\t<@' ) + '>\n\t\t`]`' );
-      let strModList = ( botMods.length === 0 ? '`None`' : '\n\t\t`[`\n\t\t\t<@' + botMods.join( '>`,`\n\t\t\t<@' ) + '>\n\t\t`]`' );
-      let strWhiteList = ( arrWhiteList.length === 0 ? '`None`' : '\n\t\t`[`\n\t\t\t<@' + arrWhiteList.join( '>`,`\n\t\t\t<@' ) + '>\n\t\t`]`' );
+      let strBlackList = '**' + ( arrBlackList.length === 0 ? 'No one is blacklisted!' : '[ **<@' + arrBlackList.join( '>**, **<@' ) + '>** ]' ) + '**';
+      let strModList = '**' + ( botMods.length === 0 ? 'No bot moderators!' : '[ **<@' + botMods.join( '>**, **<@' ) + '>** ]' ) + '**';
+      let strWhiteList =  '**' + ( arrWhiteList.length === 0 ? 'No one is whitelisted!' : '[ **<@' + arrWhiteList.join( '>**, **<@' ) + '>** ]' ) + '**';
       const showConfigs = 'My configuration:\n\t' +
         'Name: `' + botConfig.BotName + '` (:id:`' + botConfig.ClientID + '`)\n\t' +
         'Owner: <@' + botConfig.Owner + '>\n\t' +
@@ -68,7 +68,7 @@ module.exports = {
       if ( !options.getBoolean( 'share' ) ) {
         return interaction.editReply( { content: showConfigs } );
       } else {
-        channel.send( showConfigs )
+        channel.send( { content: showConfigs } )
         .then( sent => { return interaction.editReply( { content: 'I shared the settings in the channel.' } ); } )
         .catch( errSend => { return interaction.editReply( { content: 'Error sharing the settings in the channel.' } ); } );        
       }
@@ -292,9 +292,9 @@ module.exports = {
           }, { upsert: true } )
           .then( setSuccess => {
             console.log( chalk.bold.greenBright( 'Bot configuration modified in my database.' ) );
-            let strBlackList = ( arrBlackList.length === 0 ? '`None`' : '\n\t\t`[`\n\t\t\t<@' + arrBlackList.join( '>`,`\n\t\t\t<@' ) + '>\n\t\t`]`' );
-            let strModList = ( botMods.length === 0 ? '`None`' : '\n\t\t`[`\n\t\t\t<@' + botMods.join( '>`,`\n\t\t\t<@' ) + '>\n\t\t`]`' );
-            let strWhiteList = ( arrWhiteList.length === 0 ? '`None`' : '\n\t\t`[`\n\t\t\t<@' + arrWhiteList.join( '>`,`\n\t\t\t<@' ) + '>\n\t\t`]`' );
+            let strBlackList = '**' + ( arrBlackList.length === 0 ? 'No one is blacklisted!' : '[ **<@' + arrBlackList.join( '>**, **<@' ) + '>** ]' ) + '**';
+            let strModList = '**' + ( botMods.length === 0 ? 'No bot moderators!' : '[ **<@' + botMods.join( '>**, **<@' ) + '>** ]' ) + '**';
+            let strWhiteList =  '**' + ( arrWhiteList.length === 0 ? 'No one is whitelisted!' : '[ **<@' + arrWhiteList.join( '>**, **<@' ) + '>** ]' ) + '**';
             return interaction.editReply( {
               content: 'New configuration:\n\t' +
               'Name: `' + newName + '` (:id:`' + botConfig.ClientID + '`)\n\t' +

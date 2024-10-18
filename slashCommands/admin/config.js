@@ -1,8 +1,7 @@
-const thisBotName = process.env.BOT_USERNAME;
-const botConfigDB = require( '../../models/BotConfig.js' );
-const guildConfigDB = require( '../../models/GuildConfig.js' );
 const { model, Schema } = require( 'mongoose' );
+const guildConfigDB = require( '../../models/GuildConfig.js' );
 const { ApplicationCommandType, InteractionContextType } = require( 'discord.js' );
+const userPerms = require( '../functions/getPerms.js' );
 
 module.exports = {
   name: 'config',
@@ -45,49 +44,34 @@ module.exports = {
   run: async ( client, interaction ) => {
     const { channel, guild, options } = interaction;
     const author = interaction.user;
+    const permSlip = await userPerms( client, author, guild );
+    const { botOwner, isBotOwner, isBotMod, isGlobalBlacklisted, globalPrefix, guildOwner, isGuildOwner, isGuildBlacklisted, hasAdministrator, hasManageGuild, hasManageRoles } = permSlip;
     const strAuthorTag = author.tag;
     await interaction.deferReply( { ephemeral: true } );
-    const botConfig = await botConfigDB.findOne( { BotName: thisBotName } )
-      .catch( errFindBot => {  console.error( 'Unable to find botConfig:\n%o', errFindBot ); } );
-    const botUsers = client.users.cache;
-    const botOwner = botUsers.get( botConfig.Owner );
-    const arrBlacklist = ( botConfig.Blacklist || [] );
-    if ( arrBlacklist.indexOf( author.id ) != -1 ) {
+    if ( isGlobalBlacklisted ) {
       botOwner.send( 'Blacklisted user, <@' + author.id + '>, attempted to use `/config` in https://discord.com/channels/' + guild.id + '/' + channel.id );
-      return interaction.editReply( { content: 'Oh no!  It looks like you have been blacklisted from using my commands!  Please contact <@' + botConfig.Owner + '> to resolve the situation.' } );
+      return interaction.editReply( { content: 'Oh no!  It looks like you have been blacklisted from using my commands!  Please contact <@' + botOwner.id + '> to resolve the situation.' } );
     }
     
-    const isBotOwner = ( author.id === botOwner.id ? true : false );
-    const botMods = ( botConfig.Mods || [] );
-    const isBotMod = ( ( isBotOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
-    const objGuildMembers = guild.members.cache;
-    const objGuildOwner = objGuildMembers.get( guild.ownerId );
+    if ( !isBotMod && isGuildBlacklisted ) {
+      guildOwner.send( 'Blacklisted user, <@' + author.id + '>, attempted to use `/config` in https://discord.com/channels/' + guild.id + '/' + channel.id );
+      return interaction.editReply( { content: 'Oh no!  It looks like you have been blacklisted from using my commands!  Please contact <@' + guild.ownerId + '> to resolve the situation.' } );
+    } else if ( isGuildBlacklisted ) {
+      author.send( 'You have been blacklisted from using commands in https://discord.com/channels/' + guild.id + '/' + channel.id + '! Use `/config remove` to remove yourself from the blacklist.' );
+    }
+    
     const oldConfig = await guildConfigDB.findOne( { Guild: guild.id } ).catch( err => {
       console.error( 'Encountered an error attempting to find %s(ID:%s) in my database in preforming %s for %s in config.js:\n%s', guild.name, guild.id, myTask, strAuthorTag, err.stack );
       botOwner.send( 'Encountered an error attempting to find `' + guild.name + '`(:id:' + guild.id + ') in my database in preforming ' + myTask + ' for <@' + author.id + '>.  Please check console for details.' );
     } );
     const arrBlackGuild = ( oldConfig.Blacklist || [] );
-    if ( !isBotMod && arrBlackGuild.indexOf( author.id ) != -1 ) {
-      objGuildOwner.send( 'Blacklisted user, <@' + author.id + '>, attempted to use `/config` in https://discord.com/channels/' + guild.id + '/' + channel.id );
-      return interaction.editReply( { content: 'Oh no!  It looks like you have been blacklisted from using my commands!  Please contact <@' + guild.ownerId + '> to resolve the situation.' } );
-    } else if ( arrBlackGuild.indexOf( author.id ) != -1 ) {
-      author.send( 'You have been blacklisted from using commands in https://discord.com/channels/' + guild.id + '/' + channel.id + '! Use `/config remove` to remove yourself from the blacklist.' );
-    }
-    
     const arrWhiteGuild = ( oldConfig.Whitelist || [] );
-    const isWhiteListed = ( arrWhiteGuild.indexOf( author.id ) != -1 ? true : false );
-    const botGuilds = client.guilds.cache;
-    const arrAuthorPermissions = ( objGuildMembers.get( author.id ).permissions.toArray() || [] );
-    const isGuildOwner = ( author.id === objGuildOwner.id ? true : false );
-    const hasAdministrator = ( ( isBotMod || isGuildOwner || arrAuthorPermissions.indexOf( 'Administrator' ) !== -1 ) ? true : false );
-    const hasManageGuild = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'ManageGuild' ) !== -1 || isWhiteListed ) ? true : false );
-    const hasManageRoles = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'ManageRoles' ) !== -1 || isWhiteListed ) ? true : false );
 
     const myTask = options.getSubcommand();
     
     if ( ( !hasAdministrator && ( myTask === 'add' || myTask === 'clear' || myTask === 'remove' ) ) || ( !hasManageGuild && ( myTask === 'reset' || myTask === 'set' ) ) || ( !hasManageRoles && myTask === 'get' ) ) {
-      objGuildOwner.send( '<@' + author.id + '> attempted to ' + myTask + ' my configuration settings for `' + guild.name + '`.  Only yourself, those with the `ADMINISTRATOR`, `MANAGE_GUILD`, or `MANAGE_ROLES` permission, and my bot mods can do that.' );
-      return interaction.editReply( { content: 'Sorry, you do not have permission to do that.  Please talk to <@' + objGuildOwner.id + '> or one of my masters if you think you shouldn\'t have gotten this error.' } );
+      guildOwner.send( '<@' + author.id + '> attempted to ' + myTask + ' my configuration settings for `' + guild.name + '`.  Only yourself, those with the `ADMINISTRATOR`, `MANAGE_GUILD`, or `MANAGE_ROLES` permission, and my bot mods can do that.' );
+      return interaction.editReply( { content: 'Sorry, you do not have permission to do that.  Please talk to <@' + guildOwner.id + '> or one of my masters if you think you shouldn\'t have gotten this error.' } );
     }
     else {
       if ( hasAdministrator && myTask === 'add' ) {
@@ -274,7 +258,7 @@ module.exports = {
           const showConfigs = 'Guild configuration:\n\t' +
             'Invite channel is not configured for this server\n\t' +
             'Log channels are not configured for this server.\n\t' +
-            '\tAll logs will go to the server owner, <@' + objGuildOwner.id + '>\n\t' +
+            '\tAll logs will go to the server owner, <@' + guildOwner.id + '>\n\t' +
             'Global prefix being used.\n\t' +
             'No members are blacklisted or whitelisted.\n\t' +
             'On join welcomes are **DISABLED**.';            
@@ -291,13 +275,13 @@ module.exports = {
           let showChat = ( oldConfig.Logs.Chat ? '<#' + oldConfig.Logs.Chat + '>' : 'DM to <@' + guild.ownerId + '>' );
           let showDefault = ( oldConfig.Logs.Default ? '<#' + oldConfig.Logs.Default + '>' : 'DM to <@' + guild.ownerId + '>' );
           let showError = ( oldConfig.Logs.Error ? '<#' + oldConfig.Logs.Error + '>' : 'DM to <@' + guild.ownerId + '>' );
-          let showPrefix = ( oldConfig.Prefix || botConfig.Prefix );
+          let showPrefix = '**`' + ( oldConfig.Prefix || globalPrefix ) + '`**';
           let showWelcomeRole = ( oldConfig.Welcome.Role ? 'assigned <@' + oldConfig.Welcome.Role + '> and ' : '' );
           let showWelcomeChan = 'sent to ' + ( '<#' + oldConfig.Welcome.Channel + '>' || 'DM' );
           let showWelcomeMsg = ' with the following message:\n```\n' + oldConfig.Welcome.Msg + '\n```\n';
-          let showWelcome = ( oldConfig.Welcome.Active ? showWelcomeRole + showWelcomeChan + showWelcomeMsg : '**DISABLED**.' );
-          let showBlackList = ( arrBlackGuild.length === 0 ? '`None`' : '\n\t\t`[`\n\t\t\t<@' + arrBlackGuild.join( '>`,`\n\t\t\t<@' ) + '>\n\t\t`]`' );
-          let showWhiteList = ( arrWhiteGuild.length === 0 ? '`None`' : '\n\t\t`[`\n\t\t\t<@' + arrWhiteGuild.join( '>`,`\n\t\t\t<@' ) + '>\n\t\t`]`' );
+          let showWelcome = ( oldConfig.Welcome.Active ? showWelcomeRole + showWelcomeChan + showWelcomeMsg : '**`DISABLED`**.' );
+          let showBlackList = '**' + ( arrBlackGuild.length === 0 ? 'No one is blacklisted!' : '[ **<@' + arrBlackGuild.join( '>**, **<@' ) + '>** ]' ) + '**';
+          let showWhiteList = '**' + ( arrWhiteGuild.length === 0 ? 'No one is whitelisted!' : '[ **<@' + arrWhiteGuild.join( '>**, **<@' ) + '>** ]' ) + '**';
           
           const showConfigs = 'Guild configuration:\n\t' +
             'Invite channel is: ' + showInvite + '\n\t' +
@@ -326,7 +310,7 @@ module.exports = {
             Whitelist: [],
             Invite: null,
             Logs: { Chat: null, Default: null, Error: null },
-            Prefix: botConfig.Prefix,
+            Prefix: globalPrefix,
             Welcome: { Active: false, Channel: null, Msg: null, Role: null }
           },
           { upsert: true } )
@@ -357,7 +341,7 @@ module.exports = {
           if ( !setDefault ) { setDefault = channel.id; }
           if ( !setChat ) { setChat = setDefault; }
           if ( !setError ) { setError = setDefault; }
-          if ( !setPrefix ) { setPrefix = botConfig.Prefix; }
+          if ( !setPrefix ) { setPrefix = globalPrefix; }
           await guildConfigDB.create( {
             Guild: guild.id,
             Blacklist: [],
@@ -403,13 +387,13 @@ module.exports = {
             let showChat = ( ( setChat || oldChat ) ? '<#' + ( setChat || oldChat ) + '>' : 'DM to <@' + guild.ownerId + '>' );
             let showDefault = ( ( setDefault || oldDefault ) ? '<#' + ( setDefault || oldDefault ) + '>' : 'DM to <@' + guild.ownerId + '>' );
             let showError = ( ( setError || oldError ) ? '<#' + ( setError || oldError ) + '>' : 'DM to <@' + guild.ownerId + '>' );
-            let showPrefix = ( setPrefix || oldPrefix );
+            let showPrefix = '**`' + ( setPrefix || oldPrefix ) + '`**';
             let showWelcomeRole = ( oldConfig.Welcome.Role ? 'assigned <@' + oldConfig.Welcome.Role + '> and ' : '' );
             let showWelcomeChan = 'sent to ' + ( '<#' + oldConfig.Welcome.Channel + '>' || 'DM' );
             let showWelcomeMsg = ' with the following message:\n```\n' + ( strWelcome || oldWelcomeMsg ) + '\n```\n';
-            let showWelcome = ( ( boolWelcome || oldWelcome ) ? showWelcomeRole + showWelcomeChan + showWelcomeMsg : '**DISABLED**.' );
-            let showBlackList = ( arrBlackGuild.length === 0 ? '`None`' : '\n\t\t`[`\n\t\t\t<@' + arrBlackGuild.join( '>`,`\n\t\t\t<@' ) + '>\n\t\t`]`' );
-            let showWhiteList = ( arrWhiteGuild.length === 0 ? '`None`' : '\n\t\t`[`\n\t\t\t<@' + arrWhiteGuild.join( '>`,`\n\t\t\t<@' ) + '>\n\t\t`]`' );
+            let showWelcome = ( ( boolWelcome || oldWelcome ) ? showWelcomeRole + showWelcomeChan + showWelcomeMsg : '**`DISABLED`**.' );
+            let showBlackList = '**' + ( arrBlackGuild.length === 0 ? 'No one is blacklisted!' : '[ **<@' + arrBlackGuild.join( '>**, **<@' ) + '>** ]' ) + '**';
+            let showWhiteList = '**' + ( arrWhiteGuild.length === 0 ? 'No one is whitelisted!' : '[ **<@' + arrWhiteGuild.join( '>**, **<@' ) + '>** ]' ) + '**';
             interaction.editReply( { content:
               'Guild configuration:\n\t' +
               'Invite channel is: ' + showInvite + '\n\t' +
