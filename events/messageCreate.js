@@ -10,7 +10,7 @@ client.on( 'messageCreate', async message => {
   const { author, channel, content, guild, mentions } = message;
   if ( author.bot ) return;
   if ( channel.type !== 0 ) return;
-  const permSlip = userPerms( client, author, guild );
+  const permSlip = await userPerms( client, author, guild );
 console.log( 'permSlip', permSlip );
   const { clientId, botOwner, isDevGuild, prefix, isBotOwner, isBotMod, isBlacklisted } = permSlip;
   const bot = client.user;
