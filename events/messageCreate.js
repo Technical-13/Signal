@@ -23,7 +23,7 @@ client.on( 'messageCreate', async message => {
     TL: false,// Trackable Log
     PR: false,// User Profile
     BM: false,// Bookmark
-    GT: false//  GeoTour  
+    GT: false//  GeoTour
   };
   const arrGcCodes = [];
   const arrOtherCodes = [];
@@ -45,7 +45,7 @@ client.on( 'messageCreate', async message => {
       }
     }
   }
-  
+
   const hasPrefix = ( content.startsWith( prefix ) || content.startsWith( '§' ) );
   const meMentionPrefix = '<@' + clientId + '>';
   const mePrefix = content.startsWith( meMentionPrefix );
@@ -63,7 +63,7 @@ client.on( 'messageCreate', async message => {
   if ( cmd.length != 0 ) {
     let command = client.commands.get( cmd.toLowerCase() );
     if ( !command ) command = client.commands.get( client.aliases.get( cmd ) );
-  
+
     if ( isBlacklisted ) {
       return message.reply( { content: 'You\'ve been blacklisted from using my commands' + ( permSlip.isGuildBlacklisted ? ' in this server.' : '.' ) } );
     }
@@ -95,7 +95,7 @@ client.on( 'messageCreate', async message => {
               return message.reply( { embeds: [ botPerms ] } );
             }
           }
-    
+
           command.run( client, message, args );
           cooldown.set( `${command.name}${author.id}`, Date.now() + command.cooldown );
           setTimeout( () => { cooldown.delete( `${command.name}${author.id}` ) }, command.cooldown );
@@ -107,7 +107,7 @@ client.on( 'messageCreate', async message => {
               .setColor( 'Red' )
               return message.reply( { embeds: [userPerms] } );
             }
-    
+
             if ( !objGuildMembers.get( bot.id ).permissions.has( PermissionsBitField.resolve( command.botPerms || [] ) ) ) {
               const botPerms = new EmbedBuilder()
               .setDescription( `🚫 ${author}, I don't have \`${command.botPerms}\` permissions to use this command!` )
@@ -120,7 +120,7 @@ client.on( 'messageCreate', async message => {
       }
     }
   }
-  
+
   if ( Object.values( hasCodes ).some( b => b ) ) {
     const intCodes = arrGcCodes.length + arrOtherCodes.length;
     const strPlural = ( intCodes === 1 ? '' : 's' );

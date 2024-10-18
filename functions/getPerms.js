@@ -18,7 +18,7 @@ module.exports = async ( client, user, guild ) => {
     const isGlobalWhitelisted = ( globalWhitelist.indexOf( user.id ) != -1 ? true : false );
     const botMods = ( botConfig.Mods || [] );
     const isBotMod = ( ( isBotOwner || botMods.indexOf( user.id ) != -1 ) ? true : false );
-    
+
     const guildConfig = await guildConfigDB.findOne( { Guild: guild.id } ).catch( err => {
       console.error( 'Encountered an error attempting to find %s(ID:%s) in my database for %s in getPerms.js:\n%s', guild.name, guild.id, user.displayName, err.stack );
       botOwner.send( 'Encountered an error attempting to find `' + guild.name + '`(:id:' + guild.id + ') in my database for <@' + user.id + '>.  Please check console for details.' );
@@ -27,21 +27,21 @@ module.exports = async ( client, user, guild ) => {
     const isGuildBlacklisted = ( guildBlacklist.indexOf( user.id ) != -1 ? true : false );
     const guildWhitelist = ( guildConfig.Whitelist || [] );
     const isGuildWhitelisted = ( guildWhitelist.indexOf( user.id ) != -1 ? true : false );
-    
+
     const objGuildMembers = guild.members.cache;
     const guildOwner = objGuildMembers.get( guild.ownerId );
-    const isGuildOwner = ( user.id === guildOwner.id ? true : false );    
+    const isGuildOwner = ( user.id === guildOwner.id ? true : false );
     const arrAuthorPermissions = ( objGuildMembers.get( user.id ).permissions.toArray() || [] );
     const hasAdministrator = ( ( isBotMod || isGuildOwner || arrAuthorPermissions.indexOf( 'Administrator' ) !== -1 ) ? true : false );
     const hasManageGuild = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'ManageGuild' ) !== -1 ) ? true : false );
     const hasManageRoles = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'ManageRoles' ) !== -1 ) ? true : false );
-    const hasPrioritySpeaker = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'PrioritySpeaker' ) !== -1 ) ? true : false );  
-    const hasMentionEveryone = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'MentionEveryone' ) !== -1 ) ? true : false );  
-    
+    const hasPrioritySpeaker = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'PrioritySpeaker' ) !== -1 ) ? true : false );
+    const hasMentionEveryone = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'MentionEveryone' ) !== -1 ) ? true : false );
+
     const globalPrefix = botConfig.Prefix;
     const guildPrefix = guildConfig.Prefix;
-    const prefix = ( guildPrefix || globalPrefix || client.prefix );    
-  
+    const prefix = ( guildPrefix || globalPrefix || client.prefix );
+
     return {
       clientId: clientID,
       globalPrefix: globalPrefix,

@@ -52,24 +52,30 @@ module.exports = {
       botOwner.send( 'Blacklisted user, <@' + author.id + '>, attempted to use `/config` in https://discord.com/channels/' + guild.id + '/' + channel.id );
       return interaction.editReply( { content: 'Oh no!  It looks like you have been blacklisted from using my commands!  Please contact <@' + botOwner.id + '> to resolve the situation.' } );
     }
-    
+
     if ( !isBotMod && isGuildBlacklisted ) {
       guildOwner.send( 'Blacklisted user, <@' + author.id + '>, attempted to use `/config` in https://discord.com/channels/' + guild.id + '/' + channel.id );
       return interaction.editReply( { content: 'Oh no!  It looks like you have been blacklisted from using my commands!  Please contact <@' + guild.ownerId + '> to resolve the situation.' } );
     } else if ( isGuildBlacklisted ) {
       author.send( 'You have been blacklisted from using commands in https://discord.com/channels/' + guild.id + '/' + channel.id + '! Use `/config remove` to remove yourself from the blacklist.' );
     }
-    
+
     const oldConfig = await guildConfigDB.findOne( { Guild: guild.id } ).catch( err => {
       console.error( 'Encountered an error attempting to find %s(ID:%s) in my database in preforming %s for %s in config.js:\n%s', guild.name, guild.id, myTask, strAuthorTag, err.stack );
       botOwner.send( 'Encountered an error attempting to find `' + guild.name + '`(:id:' + guild.id + ') in my database in preforming ' + myTask + ' for <@' + author.id + '>.  Please check console for details.' );
     } );
     const arrBlackGuild = ( oldConfig.Blacklist || [] );
     const arrWhiteGuild = ( oldConfig.Whitelist || [] );
+    const chanDefaultLog = ( oldConfig.Log ? guild.channels.cache.get( oldConfig.Log.Default ) : guildOwner );
+    const chanErrorLog = ( oldConfig.Log ? guild.channels.cache.get( oldConfig.Log.Error ) : guildOwner );
 
     const myTask = options.getSubcommand();
-    
-    if ( ( !hasAdministrator && ( myTask === 'add' || myTask === 'clear' || myTask === 'remove' ) ) || ( !hasManageGuild && ( myTask === 'reset' || myTask === 'set' ) ) || ( !hasManageRoles && myTask === 'get' ) ) {
+
+    if (
+      ( !hasAdministrator && ( myTask === 'add' || myTask === 'clear' || myTask === 'remove' ) ) ||
+      ( !hasManageGuild && ( myTask === 'reset' || myTask === 'set' ) ) ||
+      ( !hasManageRoles && myTask === 'get' )
+    ) {
       guildOwner.send( '<@' + author.id + '> attempted to ' + myTask + ' my configuration settings for `' + guild.name + '`.  Only yourself, those with the `ADMINISTRATOR`, `MANAGE_GUILD`, or `MANAGE_ROLES` permission, and my bot mods can do that.' );
       return interaction.editReply( { content: 'Sorry, you do not have permission to do that.  Please talk to <@' + guildOwner.id + '> or one of my masters if you think you shouldn\'t have gotten this error.' } );
     }
@@ -101,6 +107,7 @@ module.exports = {
           }, { upsert: true } )
           .then( addSuccess => {
             interaction.deleteReply();
+            chanDefaultLog.send( { content: '<@' + addBlack + '> has been blacklisted from using my commands in this server.' } );
             return channel.send( { content: '<@' + addBlack + '> has been blacklisted from using my commands in this server.' } );
           } )
           .catch( addError => {
@@ -137,6 +144,7 @@ module.exports = {
           }, { upsert: true } )
           .then( addSuccess => {
             interaction.deleteReply();
+            chanDefaultLog.send( { content: '<@' + addWhite + '> has been whitelisted to use my commands in this server.' } );
             return channel.send( { content: '<@' + addWhite + '> has been whitelisted to use my commands in this server.' } );
           } )
           .catch( addError => {
@@ -171,6 +179,7 @@ module.exports = {
         }, { upsert: true } )
         .then( addSuccess => {
           interaction.deleteReply();
+          chanDefaultLog.send( { content: 'My ' + ( clearWhite && clearBlack ? 'white and black lists' : ( clearWhite ? 'whitelist' : 'blacklist' ) ) + ' for this server ' + ( clearWhite && clearBlack ? 'have' : 'has' ) + ' been cleared.' } );
           return channel.send( { content: 'My ' + ( clearWhite && clearBlack ? 'white and black lists' : ( clearWhite ? 'whitelist' : 'blacklist' ) ) + ' for this server ' + ( clearWhite && clearBlack ? 'have' : 'has' ) + ' been cleared.' } );
         } )
         .catch( addError => {
@@ -207,6 +216,7 @@ module.exports = {
           }, { upsert: true } )
           .then( addSuccess => {
             interaction.deleteReply();
+            chanDefaultLog.send( { content: '<@' + remBlack + '> is no longer blacklisted from using my commands in this server.' } );
             return channel.send( { content: '<@' + remBlack + '> is no longer blacklisted from using my commands in this server.' } );
           } )
           .catch( addError => {
@@ -240,6 +250,7 @@ module.exports = {
           }, { upsert: true } )
           .then( addSuccess => {
             interaction.deleteReply();
+            chanDefaultLog.send( { content: '<@' + remWhite + '> is no longer whitelisted to use my commands in this server.' } );
             return channel.send( { content: '<@' + remWhite + '> is no longer whitelisted to use my commands in this server.' } );
           } )
           .catch( addError => {
@@ -254,23 +265,14 @@ module.exports = {
         }
       }
       else if ( hasManageRoles && myTask === 'get' ) {
-        if ( !oldConfig ) {
-          const showConfigs = 'Guild configuration:\n\t' +
-            'Invite channel is not configured for this server\n\t' +
-            'Log channels are not configured for this server.\n\t' +
-            '\tAll logs will go to the server owner, <@' + guildOwner.id + '>\n\t' +
-            'Global prefix being used.\n\t' +
-            'No members are blacklisted or whitelisted.\n\t' +
-            'On join welcomes are **DISABLED**.';            
-          if ( !options.getBoolean( 'share' ) ) {
-            return interaction.editReply( { content: showConfigs } );
-          } else {
-            channel.send( { body: showConfigs } )
-            .then( sent => { return interaction.editReply( { content: 'I shared the settings in the channel.' } ); } )
-            .catch( errSend => { return interaction.editReply( { content: 'Error sharing the settings in the channel.' } ); } );        
-          }
-        }
-        else {
+        let showConfigs = 'Guild configuration:\n\t' +
+          'Invite channel is not configured for this server\n\t' +
+          'Log channels are not configured for this server.\n\t' +
+          '\tAll logs will go to the server owner, <@' + guildOwner.id + '>\n\t' +
+          'Global prefix being used.\n\t' +
+          'No members are blacklisted or whitelisted.\n\t' +
+          'On join welcomes are **DISABLED**.';
+        if ( oldConfig ) {
           let showInvite = ( oldConfig.Invite ? '<#' + oldConfig.Invite + '>' : '**My best guess** ¯\_(ツ)_/¯' );
           let showChat = ( oldConfig.Logs.Chat ? '<#' + oldConfig.Logs.Chat + '>' : 'DM to <@' + guild.ownerId + '>' );
           let showDefault = ( oldConfig.Logs.Default ? '<#' + oldConfig.Logs.Default + '>' : 'DM to <@' + guild.ownerId + '>' );
@@ -282,8 +284,8 @@ module.exports = {
           let showWelcome = ( oldConfig.Welcome.Active ? showWelcomeRole + showWelcomeChan + showWelcomeMsg : '**`DISABLED`**.' );
           let showBlackList = '**' + ( arrBlackGuild.length === 0 ? 'No one is blacklisted!' : '[ **<@' + arrBlackGuild.join( '>**, **<@' ) + '>** ]' ) + '**';
           let showWhiteList = '**' + ( arrWhiteGuild.length === 0 ? 'No one is whitelisted!' : '[ **<@' + arrWhiteGuild.join( '>**, **<@' ) + '>** ]' ) + '**';
-          
-          const showConfigs = 'Guild configuration:\n\t' +
+
+          showConfigs = 'Guild configuration:\n\t' +
             'Invite channel is: ' + showInvite + '\n\t' +
             'Default log channel is: ' + showDefault + '\n\t' +
             'Error message logs go to: ' + showError + '\n\t' +
@@ -291,14 +293,14 @@ module.exports = {
             'Command prefix is set to: `' + showPrefix + '`\n\t' +
             'On join welcomes are ' + showWelcome + '\n\t' +
             'Blacklist: ' + showBlackList + '\n\t' +
-            'Whitelist: ' + showWhiteList;            
-          if ( !options.getBoolean( 'share' ) ) {
-            return interaction.editReply( { content: showConfigs } );
-          } else {
-            channel.send( showConfigs )
-            .then( sent => { return interaction.editReply( { content: 'I shared the settings in the channel.' } ); } )
-            .catch( errSend => { return interaction.editReply( { content: 'Error sharing the settings in the channel.' } ); } );        
-          }
+            'Whitelist: ' + showWhiteList;
+        }
+        if ( !options.getBoolean( 'share' ) ) {
+          return interaction.editReply( { content: showConfigs } );
+        } else {
+          channel.send( showConfigs )
+          .then( sent => { return interaction.editReply( { content: 'I shared the settings in the channel.' } ); } )
+          .catch( errSend => { return interaction.editReply( { content: 'Error sharing the settings in the channel.' } ); } );
         }
       }
       else if ( hasManageGuild && myTask === 'reset' ) {
@@ -315,12 +317,21 @@ module.exports = {
           },
           { upsert: true } )
         .then( resetSuccess => {
-          return interaction.editReply( { content: 'Guild reset.' } );
+          chanDefaultLog.send( { content: 'Guild settings reset by <@' + author.id + '>.' } );
+          return interaction.editReply( { content: 'Guild settings reset.' } );
         } )
         .catch( resetError => {
           console.error( 'Encountered an error attempting to reset %s(ID:%s) in my database for %s in config.js:\n%o', guild.name, guild.id, strAuthorTag, resetError );
-          botOwner.send( 'Encountered an error attempting to reset `' + guild.name + '`(:id:' + guild.id + ') in my database for <@' + author.id + '>.  Please check console for details.' );
-          return interaction.editReply( { content: 'Error resetting guild.' } );
+          botOwner.send( 'Encountered an error attempting to reset `' + guild.name + '`(:id:' + guild.id + ') in my database for <@' + author.id + '>.  Please check console for details.' )
+          .then( sentOwner => {
+            chanErrorLog.send( { content: 'Error resetting guild configuration for <@' + author.id + '>. My owner has been notified.' } );
+            return interaction.editReply( { content: 'Error resetting guild configuration. My owner has been notified.' } );
+          } )
+          .catch( errSend => {
+            console.error( 'Encountered an error attempting to DM you about the above error: %o', errSend );
+            chanErrorLog.send( { content: 'Error resetting guild configuration for <@' + author.id + '>.' } );
+            return interaction.editReply( { content: 'Error resetting guild configuration.' } );
+          } );
         } );
       }
       else if ( hasManageGuild && myTask === 'set' ) {
@@ -334,8 +345,8 @@ module.exports = {
         var setWelcome = ( options.getChannel( 'welcome-channel' ) ? options.getChannel( 'welcome-channel' ).id : null );
         var sendDM = ( options.getBoolean( 'welcome-dm' ) ? options.getBoolean( 'welcome-dm' ) : ( setWelcome ? false : true ) );
         var joinWelcome = ( options.getRole( 'welcome-role' ) ? options.getRole( 'welcome-role' ).id : null );
-        var giveRole = ( options.getBoolean( 'welcome-role-give' ) ? options.getBoolean( 'welcome-role-give' ) : ( joinWelcome ? true : false ) );        
-        
+        var giveRole = ( options.getBoolean( 'welcome-role-give' ) ? options.getBoolean( 'welcome-role-give' ) : ( joinWelcome ? true : false ) );
+
         if ( !oldConfig ) {
           if ( !setInvite ) { setInvite = channel.id; }
           if ( !setDefault ) { setDefault = channel.id; }
@@ -394,8 +405,8 @@ module.exports = {
             let showWelcome = ( ( boolWelcome || oldWelcome ) ? showWelcomeRole + showWelcomeChan + showWelcomeMsg : '**`DISABLED`**.' );
             let showBlackList = '**' + ( arrBlackGuild.length === 0 ? 'No one is blacklisted!' : '[ **<@' + arrBlackGuild.join( '>**, **<@' ) + '>** ]' ) + '**';
             let showWhiteList = '**' + ( arrWhiteGuild.length === 0 ? 'No one is whitelisted!' : '[ **<@' + arrWhiteGuild.join( '>**, **<@' ) + '>** ]' ) + '**';
-            interaction.editReply( { content:
-              'Guild configuration:\n\t' +
+
+            let showConfigs = 'Guild configuration updated:\n\t' +
               'Invite channel is: ' + showInvite + '\n\t' +
               'Default log channel is: ' + showDefault + '\n\t' +
               'Error message logs go to: ' + showError + '\n\t' +
@@ -404,12 +415,21 @@ module.exports = {
               'On join welcomes are ' + showWelcome + '\n\t' +
               'Blacklist: ' + showBlackList + '\n\t' +
               'Whitelist: ' + showWhiteList
-            } );
+            chanDefaultLog.send( { content: showConfigs } );
+            return interaction.editReply( { content: showConfigs } );
           } )
           .catch( setError => {
-            interaction.editReply( { content: 'Error setting guild configuration.' } );
             console.error( 'Encountered an error attempting to update %s(ID:%s) guild configuration in my database for %s in config.js:\n%o', guild.name, guild.id, strAuthorTag, setError );
-            botOwner.send( 'Encountered an error attempting to update `' + guild.name + '`(:id:' + guild.id + ') guild configuration in my database for <@' + author.id + '>.  Please check console for details.' );
+            botOwner.send( 'Encountered an error attempting to update `' + guild.name + '`(:id:' + guild.id + ') guild configuration in my database for <@' + author.id + '>.  Please check console for details.' )
+            .then( sentOwner => {
+              chanErrorLog.send( { content: 'Error setting guild configuration for <@' + author.id + '>. My owner has been notified.' } );
+              return interaction.editReply( { content: 'Error setting guild configuration. My owner has been notified.' } );
+            } )
+            .catch( errSend => {
+              console.error( 'Encountered an error attempting to DM you about the above error: %o', errSend );
+              chanErrorLog.send( { content: 'Error setting guild configuration for <@' + author.id + '>.' } );
+              return interaction.editReply( { content: 'Error setting guild configuration.' } );
+            } );
           } );
         }
       }
