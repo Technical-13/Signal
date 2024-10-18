@@ -3,7 +3,7 @@ const chalk = require( 'chalk' );
 
 client.on( 'ready', async rdy => {
   const today = ( new Date() );
-  const objTimeString = {"hour":"numeric","minute":"numeric","second":"numeric","timeZone":"America/New_York","timeZoneName":"short"};
+  const objTimeString = {"hour":"2-digit","hourCycle":"h24","minute":"2-digit","second":"2-digit","timeZone":"America/New_York","timeZoneName":"short"};
   const botTime = today.toLocaleTimeString( 'en-US', objTimeString );
   console.log( chalk.bold( `The bot owner's local time is ${botTime}.` ) );
   const hour = parseInt( botTime.split( ':' )[ 0 ] );
