@@ -113,7 +113,7 @@ module.exports = {
           }, { upsert: true } )
           .then( addSuccess => {
             interaction.deleteReply();
-            return channel.send( '<@' + addBlack + '> has been blacklisted from using my commands in this server.' );
+            return channel.send( { content: '<@' + addBlack + '> has been blacklisted from using my commands in this server.' } );
           } )
           .catch( addError => {
             console.error( 'Error attempting to add %s (%s) to the blacklist for %s: %o', addBlack, client.users.cache.get( addBlack ).displayName, guild.name, addError );
@@ -186,7 +186,7 @@ module.exports = {
           }, { upsert: true } )
           .then( addSuccess => {
             interaction.deleteReply();
-            return channel.send( { body: '<@' + addBlack + '> is no longer blacklisted from using my commands in this server.' } );
+            return channel.send( { content: '<@' + addBlack + '> is no longer blacklisted from using my commands in this server.' } );
           } )
           .catch( addError => {
             console.error( 'Error attempting to de-blacklist %s (%s) from %s: %o', remBlack, client.users.cache.get( remBlack ).displayName, guild.name, addError );
@@ -219,7 +219,7 @@ module.exports = {
           }, { upsert: true } )
           .then( addSuccess => {
             interaction.deleteReply();
-            return channel.send( { body: '<@' + addWhite + '> is no longer whitelisted to use my commands in this server.' } );
+            return channel.send( { content: '<@' + addWhite + '> is no longer whitelisted to use my commands in this server.' } );
           } )
           .catch( addError => {
             console.error( 'Error attempting to de-whitelist %s (%s) from %s: %o', remWhite, client.users.cache.get( remWhite ).displayName, guild.name, addError );
