@@ -87,8 +87,8 @@ module.exports = {
     }
     else {
       if ( hasAdministrator && myTask === 'add' ) {
-        let addBlack = options.getUser( 'blacklist' ).id;
-        let addWhite = options.getUser( 'whitelist' ).id;
+        let addBlack = ( options.getUser( 'blacklist' ) ? options.getUser( 'blacklist' ).id : null );
+        let addWhite = ( options.getUser( 'whitelist' ) ? options.getUser( 'whitelist' ).id : null );
         if ( addBlack ) {
           if ( arrBlackGuild.indexOf( addBlack ) != -1 ) { return interaction.editReply( { content: '<@' + addBlack + '> is already on the blacklist!' } ) }
           else {
@@ -163,8 +163,8 @@ module.exports = {
         }
       }
       else if ( hasAdministrator && myTask === 'remove' ) {
-        let remBlack = options.getUser( 'blacklist' ).id;
-        let remWhite = options.getUser( 'whitelist' ).id;
+        let remBlack = ( options.getUser( 'blacklist' ) ? options.getUser( 'blacklist' ).id : null );
+        let remWhite = ( options.getUser( 'whitelist' ) ? options.getUser( 'whitelist' ).id : null );
         if ( remBlack ) {
           if ( arrBlackGuild.indexOf( remBlack ) != -1 ) { return interaction.editReply( { content: '<@' + remBlack + '> wasn\'t on the blacklist!' } ) }
           else { arrBlackGuild.splice( arrBlackGuild.indexOf( remBlack ), 1 ); }
