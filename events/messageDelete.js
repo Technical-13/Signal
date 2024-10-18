@@ -6,6 +6,7 @@ const guildConfigDB = require( '../models/GuildConfig.js' );
 
 client.on( 'messageDelete', async message => {
   const { author, guild, channel } = message;
+  if ( author.bot ) return;
   const objGuildMembers = guild.members.cache;
   const objGuildOwner = objGuildMembers.get( guild.ownerId );
   var logChan = objGuildOwner;

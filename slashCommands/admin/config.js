@@ -314,7 +314,7 @@ module.exports = {
             'Default log channel is: ' + showDefault + '\n\t' +
             'Error message logs go to: ' + showError + '\n\t' +
             'Chat command requests log to: ' + showChat + '\n\t' +
-            'Command prefix is set to: `' + showPrefix + '`\n\t' +
+            'Command prefix is set to: ' + showPrefix + '\n\t' +
             'On join welcomes are ' + showWelcome + '\n\t' +
             'Blacklist: ' + showBlackList + '\n\t' +
             'Whitelist: ' + showWhiteList;
@@ -435,7 +435,7 @@ module.exports = {
               'Default log channel is: ' + showDefault + '\n\t' +
               'Error message logs go to: ' + showError + '\n\t' +
               'Chat command requests log to: ' + showChat + '\n\t' +
-              'Command prefix is set to: `' + showPrefix + '`\n\t' +
+              'Command prefix is set to: ' + showPrefix + '\n\t' +
               'On join welcomes are ' + showWelcome + '\n\t' +
               'Blacklist: ' + showBlackList + '\n\t' +
               'Whitelist: ' + showWhiteList
