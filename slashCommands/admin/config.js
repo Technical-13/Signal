@@ -15,13 +15,17 @@ module.exports = {
       { type: 6, name: 'blacklist', description: 'User to block from using all commands.' },
       { type: 6, name: 'whitelist', description: 'User to permit to use all commands.' }
     ] }/* add //*/,
-    { type: 1, name: 'get', description: 'Get all settings for the server.', options: [
-      { type: 5, name: 'share', description: 'Share result to current channel instead of making it ephemeral.' }
-    ] },
+    { type: 1, name: 'clear', description: 'Clear guild\'s blacklist and/or whitelist.', options: [
+      { type: 5, name: 'blacklist', description: 'Clear guild\'s blacklist.' },
+      { type: 5, name: 'whitelist', description: 'Clear guild\'s whitelist.' }
+    ] }/* clear //*/,
     { type: 1, name: 'remove', description: 'Remove a user from the guild blacklist or whitelist.', options: [
       { type: 6, name: 'blacklist', description: 'User to remove from blacklist.' },
       { type: 6, name: 'whitelist', description: 'User to remove from whitelist.' }
-    ] }/* add //*/,
+    ] }/* remove //*/,
+    { type: 1, name: 'get', description: 'Get all settings for the server.', options: [
+      { type: 5, name: 'share', description: 'Share result to current channel instead of making it ephemeral.' }
+    ] },
     { type: 1, name: 'reset', description: 'Reset all settings for the server to default.' },
     { type: 1, name: 'set', description: 'Set settings for the server.',/*Set options//*/
       options: [/* invite, log-chat, log-default, log-error, welcome, welcome-message, welcome-dm, welcome-channel, welcome-role-give, welcome-role //*/
@@ -81,7 +85,7 @@ module.exports = {
 
     const myTask = options.getSubcommand();
     
-    if ( ( !hasAdministrator && ( myTask === 'add' || myTask === 'remove' ) ) || ( !hasManageGuild && ( myTask === 'reset' || myTask === 'set' ) ) || ( !hasManageRoles && myTask === 'get' ) ) {
+    if ( ( !hasAdministrator && ( myTask === 'add' || myTask === 'clear' || myTask === 'remove' ) ) || ( !hasManageGuild && ( myTask === 'reset' || myTask === 'set' ) ) || ( !hasManageRoles && myTask === 'get' ) ) {
       objGuildOwner.send( '<@' + author.id + '> attempted to ' + myTask + ' my configuration settings for `' + guild.name + '`.  Only yourself, those with the `ADMINISTRATOR`, `MANAGE_GUILD`, or `MANAGE_ROLES` permission, and my bot mods can do that.' );
       return interaction.editReply( { content: 'Sorry, you do not have permission to do that.  Please talk to <@' + objGuildOwner.id + '> or one of my masters if you think you shouldn\'t have gotten this error.' } );
     }
@@ -161,6 +165,39 @@ module.exports = {
             } );
           } );
         }
+      }
+      else if ( hasAdministrator && myTask === 'clear' ) {
+        let clearWhite = options.getBoolean( 'white' );
+        let clearBlack = options.getBoolean( 'black' );
+        await guildConfigDB.updateOne( { Guild: oldConfig.Guild }, {
+          Guild: oldConfig.Guild,
+          Blacklist: ( clearBlack ? [] : arrBlackGuild ),
+          Whitelist: ( clearWhite ? [] : arrWhiteGuild ),
+          Invite: oldConfig.Invite,
+          Logs: {
+            Default: oldConfig.Logs.Default,
+            Error: oldConfig.Logs.Error,
+            Chat: oldConfig.Logs.Chat
+          },
+          Prefix: oldConfig.Prefix,
+          Welcome: {
+            Active: oldConfig.Welcome.Active,
+            Msg: oldConfig.Welcome.Msg
+          }
+        }, { upsert: true } )
+        .then( addSuccess => {
+          interaction.deleteReply();
+          return channel.send( { content: 'My ' + ( clearWhite && clearBlack ? 'white and black lists' : ( clearWhite ? 'whitelist' : 'blacklist' ) ) + ' for this server ' + ( clearWhite && clearBlack ? 'have' : 'has' ) + ' been cleared.' } );
+        } )
+        .catch( addError => {
+          console.error( 'Error attempting to add %s (%s) to the whitelist for %s: %o', addWhite, client.users.cache.get( addWhite ).displayName, guild.name, addError );
+          botOwner.send( 'Error attempting to whitelist <@' + addWhite + '> with `/config add` in https://discord.com/channels/' + guild.id + '/' + channel.id + '.  Please check the console.' )
+          .then( sentOwner => { return interaction.editReply( { content: 'Error attempting to whitelist <@' + addWhite + '>! My owner has been notified.' } ); } )
+          .catch( errSend => {
+            console.error( 'Error attempting to DM you about above error: %o', errSend );
+            return interaction.editReply( { content: 'Error attempting to whitelist <@' + addWhite + '>!' } );
+          } );
+        } );
       }
       else if ( hasAdministrator && myTask === 'remove' ) {
         let remBlack = ( options.getUser( 'blacklist' ) ? options.getUser( 'blacklist' ).id : null );
