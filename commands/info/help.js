@@ -7,7 +7,7 @@ module.exports = {
 	cooldown: 600000,    
 	run: async ( client, message, args ) => {
     const { author, guild } = message;
-    const { isBotMod, prefix } = await getPerms( client, author, guild );
+    const { isBotMod, prefix } = await userPerms( client, author, guild );
     const botCommands = client.commands;
 		const helpEmbed = new EmbedBuilder()
       .setTitle( 'Commands available to ' + message.guild.members.cache.get( message.author.id ).displayName )
