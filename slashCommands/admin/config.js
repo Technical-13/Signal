@@ -46,16 +46,15 @@ module.exports = {
     const { channel, guild, options } = interaction;
     const author = interaction.user;
     const { botOwner, isBotOwner, isBotMod, isGlobalWhitelisted, globalPrefix, guildOwner, isGuildOwner, isGuildBlacklisted, hasAdministrator, hasManageGuild, hasManageRoles, isBlacklisted } = await userPerms( client, author, guild );
-    const strAuthorTag = author.tag;
     if ( isBlacklisted && !isGlobalWhitelisted ) {
       let contact = ( isGuildBlacklisted ? guildOwner.id : botOwner.id );
-      'Oh no!  It looks like you have been blacklisted from using my commands' + ( isGuildBlacklisted ? ' in this server.' : '.' ) + '!  Please contact <@' + contact + '> to resolve the situation.'
-      return message.reply( { content: 'You\'ve been blacklisted from using my commands} );
+      return message.reply( { content: 'Oh no!  It looks like you have been blacklisted from using my commands' + ( isGuildBlacklisted ? ' in this server.' : '.' ) + '!  Please contact <@' + contact + '> to resolve the situation.' } );
     }
     else if ( isBotMod && isGuildBlacklisted ) {
       author.send( 'You have been blacklisted from using commands in https://discord.com/channels/' + guild.id + '/' + channel.id + '! Use `/config remove` to remove yourself from the blacklist.' );
     }
 
+    const strAuthorTag = author.tag;
     const oldConfig = await guildConfigDB.findOne( { Guild: guild.id } ).catch( err => {
       console.error( 'Encountered an error attempting to find %s(ID:%s) in my database in preforming %s for %s in config.js:\n%s', guild.name, guild.id, myTask, strAuthorTag, err.stack );
       botOwner.send( 'Encountered an error attempting to find `' + guild.name + '`(:id:' + guild.id + ') in my database in preforming ' + myTask + ' for <@' + author.id + '>.  Please check console for details.' );
