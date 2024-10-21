@@ -32,11 +32,30 @@ module.exports = async ( user, guild, doBlacklist = true ) => {
     var isServerBooster = false;
     var arrAuthorPermissions = [];
     
+    var guildConfig = null;
+    var objGuildMembers = null;
+    
     if ( guild ) {
-      const guildConfig = await guildConfigDB.findOne( { Guild: guild.id } )
+      guildConfig = await guildConfigDB.findOne( { Guild: guild.id } )
       .catch( async errFindGuild => { await errorHandler( errFindGuild, { author: user, command: 'getPerms', guild: guild, type: 'getGuildDB' } ); } );
+      if ( !guildConfig ) {
+        await guildConfigDB.create( {
+          Guild: guild.id,
+          Blacklist: [],
+          Whitelist: [],
+          Invite: null,
+          Logs: { Active: true, Default: null, Error: null, Chat: null },
+          Prefix: globalPrefix,
+          Welcome: { Active: false, Channel: null, Msg: null, Role: null }
+        } )
+        .then( createSuccess => { console.log( 'Created a default DB entry for %s that was not set up.', guild.name ); } )
+        .catch( setError => {
+          console.error( 'Encountered an error attempting to create %s(ID:%s) guild configuration in my database for %s in getPerms.js:\n%o', guild.name, guild.id, strAuthorTag, setError );
+          botOwner.send( 'Encountered an error attempting to create `' + guild.name + '`(:id:' + guild.id + ') guild configuration in my database for <@' + author.id + '>.  Please check console for details.' );
+        } );        
+      }      
       isDevGuild = ( guild.id === botConfig.DevGuild ? true : false );
-      const objGuildMembers = guild.members.cache;
+      objGuildMembers = guild.members.cache;
       guildOwner = objGuildMembers.get( guild.ownerId );
       isGuildOwner = ( user.id === guildOwner.id ? true : false );
       isServerBooster = ( guild.roles.premiumSubscriberRole.members.get( user.id ) ? true : false );
