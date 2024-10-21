@@ -6,10 +6,10 @@ const guildConfigDB = require( '../models/GuildConfig.js' );
 const errHandler = require( './errorHandler.js' );
 
 module.exports = async ( user, guild, doBlacklist = true ) => {
-  const preUser = ( user ? user.id : user );
+/*  const preUser = ( user ? user.id : user );
   const preGuild = ( guild ? guild.id : guild );
   const preProcessed = { user: preUser, guild: preGuild, doBlacklist: doBlacklist };
-  console.log( 'getPerms received inputs:%o', preProcessed );
+  console.log( 'getPerms received inputs:%o', preProcessed );//*/
   
   try {
     const botConfig = await botConfigDB.findOne( { BotName: thisBotName } )
