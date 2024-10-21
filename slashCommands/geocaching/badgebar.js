@@ -67,7 +67,7 @@ module.exports = {
 
     channel.send( { content:
       'BadgeBar for ' + ( objInputUser ? '<@' +  objInputUser.id + '>' : strUseName ) +
-      ( strInputUserDisplayName !== strAuthorDisplayName ? ' as requested by <@' + author.id + '>' : '' ) +
+      ( strInputUserDisplayName && strInputUserDisplayName !== strAuthorDisplayName ? ' as requested by <@' + author.id + '>' : '' ) +
       ':\nhttps://cdn2.project-gc.com/BadgeBar/' + encName + '.png#' + intYear + '-' + intMonth + '-' + intDay
     } )
     .then( sentMsg => {
