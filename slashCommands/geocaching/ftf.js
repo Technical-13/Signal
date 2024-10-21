@@ -1,61 +1,48 @@
 const { ApplicationCommandType, InteractionContextType } = require( 'discord.js' );
-const { model, Schema } = require( 'mongoose' );
-const guildConfigDB = require( '../../models/GuildConfig.js' );
 const userPerms = require( '../../functions/getPerms.js' );
+const logChans = require( '../../functions/getLogChans.js' );
+const errHandler = require( '../../functions/errorHandler.js' );
 
 module.exports = {
   name:'ftf',
   description: 'Tell someone how to get their FTF (First To Find) noticed on Project-GC.',
-  options: [ {
-    name: 'message-id',
-    description: 'Paste message ID here',
-    type: 3
-  }, {
-    name: 'target',
-    description: 'Tag someone in response.',
-    type: 6
-  }, {
-    name: 'language',
-    name_localizations: {
-      de: 'sprache',
-      fi: 'kieli',
-      fr: 'langue',
-      no: 'språk',
-      pl: 'język',
-      'sv-SE': 'språk' },
-    description: 'Language to give information in.',
-    description_localizations: {
-      de: 'Sprache, um Informationen zu geben.',
-      fi: 'Kieli, jolla tiedot annetaan.',
-      fr: 'Langue dans laquelle donner des informations.',
-      no: 'Språk å gi informasjon på.',
-      pl: 'Język, w którym należy podawać informacje.',
-      'sv-SE': 'Språk att ge information på.' },
-    choices: [
-      { name: 'Deutsch/German', value: 'de' },
-      { name: 'English (default)', value: 'en' },
-      { name: 'Suomi/Finnish', value: 'fi' },
-      { name: 'Français/French', value: 'fr' },
-      { name: 'Norsk/Norwegian', value: 'no' },
-      { name: 'Polski/Polish', value: 'pl' },
-      { name: 'Svenska/Swedish', value: 'sv-SE' } ],
-    type: 3
-  } ],
+  options: [
+    { type: 3, name: 'message-id', description: 'Paste message ID here' },
+    { type: 6, name: 'target', description: 'Tag someone in response.' },
+    { type: 3, name: 'language', description: 'Language to give information in.',
+      name_localizations: {
+        de: 'sprache',
+        fi: 'kieli',
+        fr: 'langue',
+        no: 'språk',
+        pl: 'język',
+        'sv-SE': 'språk' },
+      description_localizations: {
+        de: 'Sprache, um Informationen zu geben.',
+        fi: 'Kieli, jolla tiedot annetaan.',
+        fr: 'Langue dans laquelle donner des informations.',
+        no: 'Språk å gi informasjon på.',
+        pl: 'Język, w którym należy podawać informacje.',
+        'sv-SE': 'Språk att ge information på.' },
+      choices: [
+        { name: 'Deutsch/German', value: 'de' },
+        { name: 'English (default)', value: 'en' },
+        { name: 'Suomi/Finnish', value: 'fi' },
+        { name: 'Français/French', value: 'fr' },
+        { name: 'Norsk/Norwegian', value: 'no' },
+        { name: 'Polski/Polish', value: 'pl' },
+        { name: 'Svenska/Swedish', value: 'sv-SE' }
+      ]
+    }
+  ],
   type: ApplicationCommandType.ChatInput,
   contexts: [ InteractionContextType.Guild ],
   cooldown: 1000,
   run: async ( client, interaction ) => {
-    await interaction.deferReply();
-    const { channel, guild, options } = interaction;
-    const author = interaction.user;
-    const { botOwner, isBotMod, isBlacklisted, isGlobalWhitelisted, guildOwner, isGuildBlacklisted } = await userPerms( client, author, guild );
-    if ( isBlacklisted && !isGlobalWhitelisted ) {
-      let contact = ( isGuildBlacklisted ? guildOwner.id : botOwner.id );
-      return message.reply( { content: 'Oh no!  It looks like you have been blacklisted from using my commands' + ( isGuildBlacklisted ? ' in this server.' : '.' ) + '!  Please contact <@' + contact + '> to resolve the situation.' } );
-    }
-    else if ( isBotMod && isGuildBlacklisted ) {
-      author.send( 'You have been blacklisted from using commands in https://discord.com/channels/' + guild.id + '/' + channel.id + '! Use `/config remove` to remove yourself from the blacklist.' );
-    }
+    await interaction.deferReply( { ephemeral: true } );
+    const { channel, guild, options, user: author } = interaction;
+    const { content } = await userPerms( author, guild, true );
+    if ( content ) { return interaction.editReply( { content: content } ); }
 
     const msgID = options.getString( 'message-id' );
     const cmdInputUser = options.getUser( 'target' );
@@ -112,39 +99,41 @@ module.exports = {
       'sv-SE': 'Det gick inte att hitta ett specifikt meddelande att svara på.'
     };
 
-    var logChan = guildOwner;
-    var logErrorChan = guildOwner;
+    const { doLogs, chanDefault, chanError, strClosing } = await logChans( guild );
 
-    guildConfigDB.findOne( { Guild: interaction.guild.id } ).then( async data => {
-      if ( data ) {
-        if ( data.Logs.Chat ) { logChan = await guild.channels.cache.get( data.Logs.Default ); }
-        if ( data.Logs.Error ) { logErrorChan = guild.channels.cache.get( data.Logs.Error ); }
-      }
-      let setupPlease = ( logChan == guildOwner ? 'Please run `/config` to have these logs go to a channel in the server instead of your DMs.' : '----' );
-      if ( msgID && isNaN( msgID ) ) {
-        interaction.editReply( '`' + msgID + '` ' + i18InvalidMsgId[ locale ] );
-      } else if ( msgID ) {
-        channel.messages.fetch( msgID ).then( message => {
-          message.reply( '<@' + message.author.id + '>, ' + i18FTFinfo[ locale ] ).then( replied => {
-            logChan.send( 'I told <@' + message.author.id + '> about FTFs ' + strLocale + ' in <#' + channel.id + '> at <@' + author.id +'>\'s `/ftf` request in response to:\n```\n' +
-                   message.content + '\n```\n' + setupPlease )
-              .catch( noLogChan => { console.error( 'No msgID logChan.send error in ftf.js:\n%o', noLogChan ) } );
-          } ).catch( noMessage => {
-            interaction.editReply( i18NoMessage[ locale ] + ' ' + i18FTFinfo[ locale ] );
-            console.error( 'Unable to find message with ID:%o\n\t%o', msgID, noMessage );
-          } );
-        } );
-      } else if ( cmdInputUser ) {
-        interaction.editReply( '<@' + cmdInputUser.id + '>, ' + i18FTFinfo[ locale ] ).then( replied => {
-          logChan.send( 'I told <@' + cmdInputUser.id + '> about FTFs at <@' + author.id +'>\'s `/ftf` request.\n' + setupPlease )
-            .catch( noLogChan => { console.error( 'No cmdInputUser logChan.send error in ftf.js:\n%o', noLogChan ) } );
-        } );
-      } else {
-        interaction.editReply( i18FTFinfo[ locale ] ).then( replied => {
-          logChan.send( 'I told <@' + author.id + '> about FTFs via `/ftf` request.\n' + setupPlease )
-            .catch( noLogChan => { console.error( ' logChan.send error in ftf.js:\n%o', noLogChan ) } );
-        } );
-      }
-    } );
+    if ( msgID && !( /[\d]{18,19}/.test( msgID ) ) ) { return interaction.editReply( { content: '`' + msgID + '` ' + i18InvalidMsgId[ locale ] } ); }
+    else if ( msgID ) {
+      channel.messages.fetch( msgID )
+      .then( message => {
+        const { author: msgAuthor, content } = message;
+        message.reply( { content: '<@' + msgAuthor.id + '>, ' + i18FTFinfo[ locale ] } )
+        .then( replied => {
+          if ( doLogs && author.id != msgAuthor.id ) {
+            chanDefault.send( { content:
+              'I told <@' + msgAuthor.id + '> about FTFs ' + strLocale + ' in <#' + channel.id + '> at <@' + author.id +
+              '>\'s `/ftf` request in response to:\n```\n' + content + '\n```' + strClosing } )
+            .catch( async errLog => { await errHandler( errLog, { chanType: 'default', command: 'ftf', guild: guild, type: 'logLogs' } ); } );
+          }
+        } )
+        .catch( async errSend => { await errHandler( errSend, { command: 'ftf', doLog: doLogs, guild: guild, msgID: msgID, type: 'errSend' } ); } );
+      } )
+      .catch( async errFetch => { await errHandler( errFetch, { command: 'ftf', msgID: msgID, type: 'errFetch' } ); } );
+    }
+    else if ( cmdInputUser ) {
+      interaction.editReply( { content: '<@' + cmdInputUser.id + '>, ' + i18FTFinfo[ locale ] } ).then( replied => {
+        if ( doLogs && cmdInputUser.id != author.id ) {
+          chanDefault.send( { content: 'I told <@' + cmdInputUser.id + '> about FTFs at <@' + author.id +'>\'s `/ftf` request.' + strClosing } )
+          .catch( async errLog => { await errHandler( errLog, { chanType: 'default', command: 'ftf', guild: guild, type: 'logLogs' } ); } );
+        }
+      } );
+    }
+    else {
+      interaction.editReply( { content: i18FTFinfo[ locale ] } ).catch( noReply => {
+        if ( doLogs ) {
+          chanError.send( { content: 'Encountered an error telling <@' + author.id + '> about FTFs via `/ftf` request.' + strClosing } )
+          .catch( async errLog => { await errHandler( errLog, { chanType: 'error', command: 'ftf', guild: guild, type: 'logLogs' } ); } );
+        }
+      } );
+    }
   }
 };

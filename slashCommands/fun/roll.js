@@ -30,16 +30,9 @@ module.exports = {
   } ],
   cooldown: 1000, // Set a cooldown of 1 second
   run: async ( client, interaction ) => {
-    const { options } = interaction;
-    const author = interaction.user;
-    const { botOwner, isBotMod, isBlacklisted, isGlobalWhitelisted, guildOwner, isGuildBlacklisted } = await userPerms( client, author, guild );
-    if ( isBlacklisted && !isGlobalWhitelisted ) {
-      let contact = ( isGuildBlacklisted ? guildOwner.id : botOwner.id );
-      return message.reply( { content: 'Oh no!  It looks like you have been blacklisted from using my commands' + ( isGuildBlacklisted ? ' in this server.' : '.' ) + '!  Please contact <@' + contact + '> to resolve the situation.' } );
-    }
-    else if ( isBotMod && isGuildBlacklisted ) {
-      author.send( 'You have been blacklisted from using commands in https://discord.com/channels/' + guild.id + '/' + channel.id + '! Use `/config remove` to remove yourself from the blacklist.' );
-    }
+    const { guild, options, user: author } = interaction;
+    const { content } = await userPerms( author, guild, true );
+    if ( content ) { return interaction.editReply( { content: content } ); }
 
     const intSets = ( options.get( 'sets' ) ? ( options.get( 'sets' ).value || 1 ) : 1 );
     const intDice = ( options.get( 'dice' ) ? ( options.get( 'dice' ).value || 1 ) : 1 );

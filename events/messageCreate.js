@@ -10,7 +10,7 @@ client.on( 'messageCreate', async message => {
   const { author, channel, content, guild, mentions } = message;
   if ( author.bot ) return;
   if ( channel.type !== 0 ) return;
-  const { clientId, botOwner, isDevGuild, prefix, isBotOwner, isBotMod, isGlobalWhitelisted, isBlacklisted, isGuildBlacklisted } = await userPerms( client, author, guild );
+  const { clientId, botOwner, isDevGuild, prefix, isBotOwner, isBotMod, isGlobalWhitelisted, isBlacklisted, isGuildBlacklisted } = await userPerms( author, guild );
   const bot = client.user;
   const objGuildMembers = guild.members.cache;
 

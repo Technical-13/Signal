@@ -10,7 +10,7 @@ module.exports = {
   cooldown: 1000,
   run: async ( client, message, args ) => {
     const { author, guild } = message;
-    const { botOwner, isBotOwner, isDevGuild } = await userPerms( client, author, guild );
+    const { botOwner, isBotOwner, isDevGuild } = await userPerms( author, guild );
     if ( isBotOwner && isDevGuild ) {
       message.delete();
       guildConfigDB.deleteMany().then( entries => {

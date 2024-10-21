@@ -1,7 +1,7 @@
 const { ApplicationCommandType, InteractionContextType } = require( 'discord.js' );
-const { model, Schema } = require( 'mongoose' );
-const guildConfigDB = require( '../../models/GuildConfig.js' );
 const userPerms = require( '../../functions/getPerms.js' );
+const logChans = require( '../../functions/getLogChans.js' );
+const errHandler = require( '../../functions/errorHandler.js' );
 
 module.exports = {
   name: 'profilestats',
@@ -43,17 +43,10 @@ module.exports = {
   contexts: [ InteractionContextType.Guild ],
   cooldown: 120000,
   run: async ( client, interaction ) => {
-    await interaction.deferReply();
-    const { channel, guild, options } = interaction;
-    const author = interaction.user;
-    const { botOwner, isBotMod, isBlacklisted, isGlobalWhitelisted, guildOwner, isGuildBlacklisted } = await userPerms( client, author, guild );
-    if ( isBlacklisted && !isGlobalWhitelisted ) {
-      let contact = ( isGuildBlacklisted ? guildOwner.id : botOwner.id );
-      return message.reply( { content: 'Oh no!  It looks like you have been blacklisted from using my commands' + ( isGuildBlacklisted ? ' in this server.' : '.' ) + '!  Please contact <@' + contact + '> to resolve the situation.' } );
-    }
-    else if ( isBotMod && isGuildBlacklisted ) {
-      author.send( 'You have been blacklisted from using commands in https://discord.com/channels/' + guild.id + '/' + channel.id + '! Use `/config remove` to remove yourself from the blacklist.' );
-    }
+    await interaction.deferReply( { ephemeral: true } );
+    const { channel, guild, options, user: author } = interaction;
+    const { content } = await userPerms( author, guild, true );
+    if ( content ) { return interaction.editReply( { content: content } ); }
 
     const today = ( new Date() );
     const intYear = today.getFullYear();
@@ -69,18 +62,27 @@ module.exports = {
     const strInputUserDisplayName = ( objInputUser ? objInputUser.displayName : strInputUser );
     const strUseName = ( strInputUserDisplayName ? strInputUserDisplayName : strAuthorDisplayName );
     const encName = encodeURI( strUseName ).replace( '&', '%26' );
-
-    var logChan = guildOwner;
-    var logErrorChan = guildOwner;    
     
-    guildConfigDB.findOne( { Guild: guild.id } ).then( async data => {
-      if ( data ) {
-        if ( data.Logs.Chat ) { logChan = await guild.channels.cache.get( data.Logs.Default ); }
-        if ( data.Logs.Error ) { logErrorChan = guild.channels.cache.get( data.Logs.Error ); }
-      }
-      let setupPlease = ( logChan == guildOwner ? 'Please run `/config` to have these logs go to a channel in the server instead of your DMs.' : '----' );
+    const { doLogs, chanDefault, chanError, strClosing } = await logChans( guild );    
 
-      interaction.editReply( { content: 'ProfileStats link for: ' + ( objInputUser == null ? strUseName : '<@' +  objInputUser + '>' ) + '\n<https://project-gc.com/Profile/ProfileStats?profile_name=' + encName + '>' } );
-    } );
+    channel.send( { content:
+      'ProfileStats link for: ' + ( objInputUser == null ? strUseName : '<@' +  objInputUser + '>' ) + '\n<https://project-gc.com/Profile/ProfileStats?profile_name=' + encName + '>'
+    } )
+    .then( sentMsg => {
+      if ( doLogs && strInputUserDisplayName && strInputUserDisplayName !== strAuthorDisplayName ) {
+        chanDefault.send( { content:
+          'I shared the `/profilestats` for ' + ( objInputUser ? '<@' +  objInputUser.id + '>' : strUseName ) + ' in <#' + channel.id + '>' +
+        ( strInputUserDisplayName !== strAuthorDisplayName ? ' as requested by <@' + author.id + '>' : '' ) + strClosing } )
+        .catch( async errLog => { await errHandler( errLog, { chanType: 'default', command: 'profilestats', guild: guild, type: 'logLogs' } ); } );
+      }
+      interaction.deleteReply();
+    } )
+    .catch( errSend => {
+      console.error( 'Error sending /profilestats result to %s#%s:\n%o', guild.name, channel.name, errSend );
+      if ( doLogs ) {
+        chanError.send( { content: 'Error sending `/profilestats` result to <#' + channel.id + '>' + strClosing } )
+        .catch( async errLog => { await errHandler( errLog, { chanType: 'error', command: 'profilestats', guild: guild, type: 'logLogs' } ); } );
+      }
+    } );    
   }
 };

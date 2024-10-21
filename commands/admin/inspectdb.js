@@ -10,7 +10,7 @@ module.exports = {
   cooldown: 1000,
   run: async ( client, message, args ) => {
     const { author, guild } = message;
-    const { isBotOwner } = await userPerms( client, author, guild );
+    const { isBotOwner } = await userPerms( author, guild );
     if ( isBotOwner ) {      
       const guildConfigs = await guildConfigDB.find();
       const guildConfigIds = [];

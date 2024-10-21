@@ -6,6 +6,7 @@ let guildSchema = new Schema( {
   Whitelist: [ String ],
   Invite: String,
   Logs: {
+    Active: Boolean,
     Chat: String,
     Default: String,
     Error: String

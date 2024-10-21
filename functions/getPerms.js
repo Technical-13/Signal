@@ -1,12 +1,14 @@
+const client = require( '..' );
 const thisBotName = process.env.BOT_USERNAME;
+const { model, Schema } = require( 'mongoose' );
 const botConfigDB = require( '../models/BotConfig.js' );
 const guildConfigDB = require( '../models/GuildConfig.js' );
-const { model, Schema } = require( 'mongoose' );
+const errHandler = require( './errorHandler.js' );
 
-module.exports = async ( client, user, guild ) => {
+module.exports = async ( user, guild, doBlacklist ) => {
   try {
     const botConfig = await botConfigDB.findOne( { BotName: thisBotName } )
-      .catch( errFindBot => { console.error( 'Unable to find botConfig:\n%o', errFindBot ); } );
+    .catch( async errFindBot => { await errorHandler( errFindBot, { command: 'getPerms', type: 'getBotDB' } ); } );
     const clientID = ( botConfig.ClientID || client.id );
     const isDevGuild = ( guild.id === botConfig.DevGuild ? true : false );
     const botUsers = client.users.cache;
@@ -19,10 +21,8 @@ module.exports = async ( client, user, guild ) => {
     const botMods = ( botConfig.Mods || [] );
     const isBotMod = ( ( isBotOwner || botMods.indexOf( user.id ) != -1 ) ? true : false );
 
-    const guildConfig = await guildConfigDB.findOne( { Guild: guild.id } ).catch( err => {
-      console.error( 'Encountered an error attempting to find %s(ID:%s) in my database for %s in getPerms.js:\n%s', guild.name, guild.id, user.displayName, err.stack );
-      botOwner.send( 'Encountered an error attempting to find `' + guild.name + '`(:id:' + guild.id + ') in my database for <@' + user.id + '>.  Please check console for details.' );
-    } );
+    const guildConfig = await guildConfigDB.findOne( { Guild: guild.id } )
+    .catch( async errFindGuild => { await errorHandler( errFindGuild, { author: user, command: 'getPerms', guild: guild, type: 'getGuildDB' } ); } );
     const guildBlacklist = ( guildConfig ? ( guildConfig.Blacklist || [] ) : [] );
     const isGuildBlacklisted = ( guildBlacklist.indexOf( user.id ) != -1 ? true : false );
     const guildWhitelist = ( guildConfig ? ( guildConfig.Whitelist || [] ) : [] );
@@ -41,8 +41,11 @@ module.exports = async ( client, user, guild ) => {
     const globalPrefix = botConfig.Prefix;
     const guildPrefix = ( guildConfig ? guildConfig.Prefix : globalPrefix ) ;
     const prefix = ( guildPrefix || globalPrefix || client.prefix );
-
-    return {
+    
+    const isBlacklisted = ( isGlobalBlacklisted || ( isGuildBlacklisted && !( isBotMod || isGlobalWhitelisted ) ) );
+    const isWhitelisted = ( isGlobalWhitelisted || ( isGuildWhitelisted && !isGlobalBlacklisted ) );
+    
+    const results = {
       clientId: clientID,
       globalPrefix: globalPrefix,
       guildPrefix: guildPrefix,
@@ -52,18 +55,27 @@ module.exports = async ( client, user, guild ) => {
       isDevGuild: isDevGuild,
       isBotOwner: isBotOwner,
       isBotMod: isBotMod,
-      isBlacklisted: ( isGlobalBlacklisted || ( isGuildBlacklisted && !( isBotMod || isGlobalWhitelisted ) ) ),
-      isGlobalBlacklisted: isGlobalBlacklisted,
-      isGuildBlacklisted: isGuildBlacklisted,
-      isWhitelisted: ( isGlobalWhitelisted || ( isGuildWhitelisted && !isGlobalBlacklisted ) ),
-      isGlobalWhitelisted: isGlobalWhitelisted,
-      isGuildWhitelisted: isGuildWhitelisted,
       isGuildOwner: isGuildOwner,
       hasAdministrator: hasAdministrator,
       hasManageGuild: hasManageGuild,
       hasManageRoles: hasManageRoles,
       isServerBooster: isServerBooster,
-      hasMentionEveryone: hasMentionEveryone
-      };
-  } catch ( errPerms ) { console.error( 'Error in getPerms.js: %s', errPerms.stack ); }
+      hasMentionEveryone: hasMentionEveryone,
+      isGuildBlacklisted: isGuildBlacklisted,
+      isGlobalBlacklisted: isGlobalBlacklisted,
+      isBlacklisted: isBlacklisted,
+      isGuildWhitelisted: isGuildWhitelisted,
+      isGlobalWhitelisted: isGlobalWhitelisted,
+      isWhitelisted: isWhitelisted,
+      content: false
+    }
+    if ( doBlacklist && isBlacklisted && !isGlobalWhitelisted ) {
+      let contact = ( isGuildBlacklisted ? guildOwner.id : botOwner.id );
+      results.content = 'Oh no!  It looks like you have been blacklisted from using my commands' + ( isGuildBlacklisted ? ' in this server!' : '!' ) + '  Please contact <@' + contact + '> to resolve the situation.';
+    }
+    else if ( doBlacklist && isBotMod && isGuildBlacklisted ) {
+      user.send( { content: 'You have been blacklisted from using commands in https://discord.com/channels/' + guild.id + '! Use `/config remove` to remove yourself from the blacklist.' } );
+    }
+    return results;
+  } catch ( errPerms ) { await errHandler( errPerms, { command: 'getPerms', type: 'tryFunction' } ); }
 };

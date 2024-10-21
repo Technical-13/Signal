@@ -1,7 +1,7 @@
 const { ApplicationCommandType, InteractionContextType } = require( 'discord.js' );
-const { model, Schema } = require( 'mongoose' );
-const guildConfigDB = require( '../../models/GuildConfig.js' );
 const userPerms = require( '../../functions/getPerms.js' );
+const logChans = require( '../../functions/getLogChans.js' );
+const errHandler = require( '../../functions/errorHandler.js' );
 
 module.exports = {
   name: 'statbar',
@@ -48,19 +48,11 @@ module.exports = {
   contexts: [ InteractionContextType.Guild ],
   cooldown: 3000,
   run: async ( client, interaction ) => {
-    await interaction.deferReply();
-    const { channel, guild, options } = interaction;
-    const author = interaction.user;
-    const { botOwner, isBotMod, isBlacklisted, isGlobalWhitelisted, guildOwner, isGuildBlacklisted } = await userPerms( client, author, guild );
-    if ( isBlacklisted && !isGlobalWhitelisted ) {
-      let contact = ( isGuildBlacklisted ? guildOwner.id : botOwner.id );
-      'Oh no!  It looks like you have been blacklisted from using my commands' + ( isGuildBlacklisted ? ' in this server.' : '.' ) + '!  Please contact <@' + contact + '> to resolve the situation.'
-      return message.reply( { content: 'You\'ve been blacklisted from using my commands' } );
-    }
-    else if ( isBotMod && isGuildBlacklisted ) {
-      author.send( 'You have been blacklisted from using commands in https://discord.com/channels/' + guild.id + '/' + channel.id + '! Use `/config remove` to remove yourself from the blacklist.' );
-    }
-
+    await interaction.deferReply( { ephemeral: true } );
+    const { channel, guild, options, user: author } = interaction;
+    const { content } = await userPerms( author, guild, true );
+    if ( content ) { return interaction.editReply( { content: content } ); }
+    
     const today = ( new Date() );
     const intYear = today.getFullYear();
     const intMonthNow = today.getMonth();
@@ -76,17 +68,27 @@ module.exports = {
     const strUseName = ( strInputUserDisplayName ? strInputUserDisplayName : strAuthorDisplayName );
     const encName = encodeURI( strUseName ).replace( '&', '%26' );
 		const strLabcaches = ( options.getBoolean( 'labcaches' ) ? '&includeLabcaches' : '' );
-    var logChan = guildOwner;
-    var logErrorChan = guildOwner;
-    let setupPlease = ( logChan == guildOwner ? 'Please run `/config` to have these logs go to a channel in the server instead of your DMs.' : '----' );
+    
+    const { doLogs, chanDefault, chanError, strClosing } = await logChans( guild );    
 
-    guildConfigDB.findOne( { Guild: guild.id } ).then( async data => {
-      if ( data.Logs ) {
-        if ( data.Logs.Chat ) { logChan = await guild.channels.cache.get( data.Logs.Chat ); }
-        if ( data.Logs.Error ) { logErrorChan = guild.channels.cache.get( data.Logs.Error ); }
+    channel.send( { content:
+      'StatBar for: ' + ( objInputUser == null ? strUseName : '<@' +  objInputUser + '>' ) + '\nhttps://cdn2.project-gc.com/statbar.php?quote=https://discord.me/Geocaching%20-%20' + intYear + '-' + intMonth + '-' + intDay + strLabcaches + '&user=' + encName
+    } )
+    .then( sentMsg => {
+      if ( doLogs && strInputUserDisplayName && strInputUserDisplayName !== strAuthorDisplayName ) {
+        chanDefault.send( { content:
+          'I shared the `/statbar` for ' + ( objInputUser ? '<@' +  objInputUser.id + '>' : strUseName ) + ' in <#' + channel.id + '>' +
+          ( strInputUserDisplayName !== strAuthorDisplayName ? ' as requested by <@' + author.id + '>' : '' ) + strClosing } )
+        .catch( async errLog => { await errHandler( errLog, { chanType: 'default', command: 'statbar', guild: guild, type: 'logLogs' } ); } );
       }
-
-      interaction.editReply( { content: 'StatBar for: ' + ( objInputUser == null ? strUseName : '<@' +  objInputUser + '>' ) + '\nhttps://cdn2.project-gc.com/statbar.php?quote=https://discord.me/Geocaching%20-%20' + intYear + '-' + intMonth + '-' + intDay + strLabcaches + '&user=' + encName } );
-    } );
+      interaction.deleteReply();
+    } )
+    .catch( errSend => {
+      console.error( 'Error sending /statbar result to %s#%s:\n%o', guild.name, channel.name, errSend );
+      if ( doLogs ) {
+        chanError.send( { content: 'Error sending `/statbar` result to <#' + channel.id + '>' + strClosing } )
+        .catch( async errLog => { await errHandler( errLog, { chanType: 'error', command: 'statbar', guild: guild, type: 'logLogs' } ); } );
+      }
+    } );    
   }
 };

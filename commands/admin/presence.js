@@ -11,7 +11,7 @@ module.exports = {
     message.delete();
     
     const { author, channel, guild } = message;
-    const { botOwner, isBotOwner, isDevGuild } = await userPerms( client, author, guild );
+    const { botOwner, isBotOwner, isDevGuild } = await userPerms( author, guild );
     const bot = client.user;
 
     const embedPresence = new EmbedBuilder()

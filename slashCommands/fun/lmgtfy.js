@@ -1,5 +1,7 @@
 const { ApplicationCommandType } = require( 'discord.js' );
 const userPerms = require( '../../functions/getPerms.js' );
+const logChans = require( '../../functions/getLogChans.js' );
+const errHandler = require( '../../functions/errorHandler.js' );
 
 module.exports = {
   name: 'lmgtfy',
@@ -21,24 +23,25 @@ module.exports = {
   } ],
   cooldown: 1000,
   run: async ( client, interaction ) => {
-    const { channel, guild, options } = interaction;
-    const author = interaction.user;
-    const { botOwner, isBotMod, isBlacklisted, isGlobalWhitelisted, guildOwner, isGuildBlacklisted } = await userPerms( client, author, guild );
-    if ( isBlacklisted && !isGlobalWhitelisted ) {
-      let contact = ( isGuildBlacklisted ? guildOwner.id : botOwner.id );
-      return message.reply( { content: 'Oh no!  It looks like you have been blacklisted from using my commands' + ( isGuildBlacklisted ? ' in this server.' : '.' ) + '!  Please contact <@' + contact + '> to resolve the situation.' } );
-    }
-    else if ( isBotMod && isGuildBlacklisted ) {
-      author.send( 'You have been blacklisted from using commands in https://discord.com/channels/' + guild.id + '/' + channel.id + '! Use `/config remove` to remove yourself from the blacklist.' );
-    }
+    const { channel, guild, options, user: author } = interaction;
+    const { content } = await userPerms( author, guild, true );
+    if ( content ) { return interaction.editReply( { content: content } ); }
+    
+    const { chanChat, doLogs, strClosing } = await logChans( guild );
 
     const cmdInputUser = options.getUser( 'target' );
-    const mentionUser = '<@' + ( cmdInputUser ? cmdInputUser.id : author.id ) + '>: ';
+    const mentionUserID = ( cmdInputUser ? cmdInputUser.id : author.id );
+    const mentionUser = '<@' + mentionUserID + '>';
     const beNice = ( options.getBoolean( 'nice' ) || ( cmdInputUser === author ? true : false ) );
     const service = ( beNice ? 'www.google.com/search' : 'letmegooglethat.com/' );
     const strInputQuery = options.getString( 'query' );
     const q = encodeURI( strInputQuery.replace( / /g, '+' ) );
+    
+    if ( doLogs && mentionUserID != author.id ) {
+      chanChat.send( { content: '<@' + author.id + '> sent ' + mentionUser + ' a `/lmgtfy` for [`' + strInputQuery + '`](<https://' + service + '?q=' + q + '>) in <#' + channel.id + '>, and they were ' + ( beNice ? '' : '**__not__** ' ) + 'nice.' } )
+      .catch( async noLogChan => { return interaction.editReply( await errHandler( noLogChan, { chanType: 'chat', command: 'lmgtfy', guild: guild, type: 'logLogs' } ) ); } );
+    }
 
-    interaction.reply( { content: mentionUser + '<https://' + service + '?q=' + q + '>' } );
+    return interaction.reply( { content: mentionUser + ': <https://' + service + '?q=' + q + '>' } );
   }
 };
