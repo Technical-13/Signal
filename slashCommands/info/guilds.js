@@ -1,8 +1,11 @@
-const botConfigDB = require( '../../models/BotConfig.js' );
-const guildConfigDB = require( '../../models/GuildConfig.js' );
-const { model, Schema } = require( 'mongoose' );
 const { ApplicationCommandType, EmbedBuilder } = require( 'discord.js' );
+const { model, Schema } = require( 'mongoose' );
+const guildConfigDB = require( '../../models/GuildConfig.js' );
+const errHandler = require( '../../functions/errorHandler.js' );
+const userPerms = require( '../../functions/getPerms.js' );
+const logChans = require( '../../functions/getLogChans.js' );
 const pagination = require( '../../functions/pagination.js' );
+
 
 module.exports = {
   name: 'guilds',
@@ -21,12 +24,9 @@ module.exports = {
     guildConfigs.forEach( ( entry, i ) => { guildConfigIds.push( entry.Guild ); } );
 
     const bot = client.user;
-    const { channel, guild, options } = interaction;
-    const author = interaction.user;
-    const botOwner = client.users.cache.get( process.env.OWNER_ID );
-    const isBotOwner = ( author.id === botOwner.id ? true : false );
-    const botMods = [];
-    const isBotMod = ( ( isBotOwner || botMods.indexOf( author.id ) != -1 ) ? true : false );
+    const { channel, guild, options, user: author } = interaction;
+    const { content } = await userPerms( author, guild, true );
+    if ( content ) { return interaction.editReply( { content: content } ); }
 
     const embedGuilds = [], myInvites = [];
     const guildIds = Array.from( client.guilds.cache.keys() );
@@ -37,8 +37,8 @@ module.exports = {
     const startGuild = ( inputGuild || currGuild || 0 );
 
     for ( const guildId of guildIds ) {
-      const guild = client.guilds.cache.get( guildId );
-      const objGuild = guild.toJSON();
+      const doGuild = client.guilds.cache.get( guildId );
+      const objGuild = doGuild.toJSON();
       const guildName = objGuild.name;
       const vanityURLCode = objGuild.vanityURLCode;
 if ( vanityURLCode ) { console.log( '%s has a vanityURLCode: %s', guildName, vanityURLCode ); }//don't know what this looks like in the API...
@@ -47,15 +47,15 @@ if ( vanityURLCode ) { console.log( '%s has a vanityURLCode: %s', guildName, van
       const chanPublicUpdates = objGuild.publicUpdatesChannelId;
       const chanSafetyAlerts = objGuild.safetyAlertsChannelId;
       const chanSystem = objGuild.systemChannelId;
-      const chanFirst = guild.channels.cache.filter( chan => { if ( !chan.nsfw && chan.viewable ) { return chan; } } ).first().id;
+      const chanFirst = doGuild.channels.cache.filter( chan => { if ( !chan.nsfw && chan.viewable ) { return chan; } } ).first().id;
       const doneConfig = ( guildConfigIds.indexOf( guildId ) != -1 ? true : false );
       const definedInvite = ( doneConfig ? guildConfigs[ guildConfigIds.indexOf( guildId ) ].Invite : null );
       const chanInvite = ( definedInvite || chanWidget || chanRules || chanPublicUpdates || chanSafetyAlerts || chanSystem || chanFirst );
       const chanLinkUrl = 'https://discordapp.com/channels/' + guildId + '/' + chanInvite;
       const ownerId = objGuild.ownerId;
-      const objGuildOwner = guild.members.cache.get( ownerId );
+      const objGuildOwner = doGuild.members.cache.get( ownerId );
       if ( !objGuildOwner ) {
-        await guild.leave()
+        await doGuild.leave()
           .then( left => { console.log( 'I left guild (%s) with no owner!\n\t%s', left.name, chanLinkUrl ); } )
           .catch( stayed => { console.error( 'I could NOT leave guild with no owner!\n%o', stayed ); } );
         continue;
@@ -67,33 +67,21 @@ if ( vanityURLCode ) { console.log( '%s has a vanityURLCode: %s', guildName, van
       if ( maximumMembers > 10**8 ) { maximumMembers = ( Math.trunc( maximumMembers / ( 10**8 ) ) / 100 ) + 'b'; }
       else if ( maximumMembers > 10**5 ) { maximumMembers = ( Math.trunc( maximumMembers / ( 10**5 ) ) / 10 ) + 'm'; }
       else if ( maximumMembers > 10**3 ) { maximumMembers = ( maximumMembers / ( 10**3 ) ).toFixed( 1 ) + 'k'; }
-      const intBotMembers = guild.members.cache.filter( mbr => { if ( mbr.user.bot ) { return mbr; } } ).size;
+      const intBotMembers = doGuild.members.cache.filter( mbr => { if ( mbr.user.bot ) { return mbr; } } ).size;
       const preferredLocale = ( objGuild.preferredLocale || 'en-US' );
       const description = objGuild.description;
       const arrVerificationLevels = [ 'None', 'Low (email)', 'Medium (5m on Discord)', 'High (10m in guild)', 'Very High (phone number)' ];
       const verificationLevel = arrVerificationLevels[ ( objGuild.verificationLevel || 0 ) ];
       const mfaLevel = objGuild.mfaLevel;
-      const guildInvite = await guild.invites.create( chanInvite, {
+      const guildInvite = await doGuild.invites.create( chanInvite, {
         maxAge: 900,
         reason: 'Invite created by ' + author.displayName + ' with `/guilds`.'
-      } ).then( invite => {
-        myInvites.push( { guildId: guild.id, invite: invite.code } );
+      } )
+      .then( invite => {
+        myInvites.push( { guildId: doGuild.id, invite: invite.code } );
         return 'https://discord.gg/invite/' + invite.code;
-      } ).catch( errCreateInvite => {
-        switch ( errCreateInvite.code ) {
-          case 10003://Unknown Channel
-            console.log( 'Unknown channel to create invite for %s:\n\tLink: %s', guildName, chanLinkUrl );
-            break;
-          case 50013://Missing permissions
-            objGuildOwner.send( 'Help!  Please give me `CreateInstantInvite` permission in ' + chanLinkUrl + '!' ).catch( errSendGuildOwner => {
-              console.error( 'Unable to DM guild owner, %s, for %s to get `CreateInstantInvite` permission:\n%o', objGuildOwner.displayName, guildName, errSendGuildOwner );
-            } );
-            break;
-          default:
-            console.error( 'Unable to create an invite for %s:\n%o', guildName, errCreateInvite );
-            return null;
-        }
-      } );
+      } )
+      .catch( async errInvite => { await errHandler( errInvite, { command: 'guilds', type: 'errInvite', channel: channel, guild: guild, inviteChanURL: chanInvite } ); } );
       const aboutInfo = '**Owner**: __' + ownerName + '__ (<@' + ownerId + '>)' +
           '\n**Members**: __' + memberCount + '/' + maximumMembers + '__ (' + intBotMembers + ' bots)' +
           '\n**Verification Level**: __' + verificationLevel + '__' + ( mfaLevel === 0 ? '' : ' (👮)' );
