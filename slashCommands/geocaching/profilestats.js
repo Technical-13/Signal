@@ -45,7 +45,7 @@ module.exports = {
   run: async ( client, interaction ) => {
     await interaction.deferReply( { ephemeral: true } );
     const { channel, guild, options, user: author } = interaction;
-    const { content } = await userPerms( author, guild, true );
+    const { content } = await userPerms( author, guild );
     if ( content ) { return interaction.editReply( { content: content } ); }
 
     const today = ( new Date() );

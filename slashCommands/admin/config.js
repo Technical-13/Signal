@@ -46,14 +46,8 @@ module.exports = {
     await interaction.deferReply( { ephemeral: true } );
     const { channel, guild, options } = interaction;
     const author = interaction.user;
-    const { botOwner, isBotOwner, isBotMod, isGlobalWhitelisted, globalPrefix, guildOwner, isGuildOwner, isGuildBlacklisted, hasAdministrator, hasManageGuild, hasManageRoles, isBlacklisted } = await userPerms( author, guild );
-    if ( isBlacklisted && !isGlobalWhitelisted ) {
-      let contact = ( isGuildBlacklisted ? guildOwner.id : botOwner.id );
-      return interaction.editReply( { content: 'Oh no!  It looks like you have been blacklisted from using my commands' + ( isGuildBlacklisted ? ' in this server!' : '!' ) + '  Please contact <@' + contact + '> to resolve the situation.' } );
-    }
-    else if ( isBotMod && isGuildBlacklisted ) {
-      author.send( 'You have been blacklisted from using commands in https://discord.com/channels/' + guild.id + '/' + channel.id + '! Use `/config remove` to remove yourself from the blacklist.' );
-    }
+    const { botOwner, globalPrefix, guildOwner, hasAdministrator, hasManageGuild, hasManageRoles, content } = await userPerms( author, guild );
+    if ( content ) { return interaction.editReply( { content: content } ); }
 
     const strAuthorTag = author.tag;
     const oldConfig = await guildConfigDB.findOne( { Guild: guild.id } ).catch( err => {
@@ -62,8 +56,8 @@ module.exports = {
     } );
     const arrBlackGuild = ( !oldConfig ? [] : ( oldConfig.Blacklist || [] ) );
     const arrWhiteGuild = ( !oldConfig ? [] : ( oldConfig.Whitelist || [] ) );
-    const chanDefaultLog = ( !oldConfig ? guildOwner : ( oldConfig.Logs ? guild.channels.cache.get( oldConfig.Logs.Default ) : guildOwner ) );
-    const chanErrorLog = ( !oldConfig ? guildOwner : ( oldConfig.Logs ? guild.channels.cache.get( oldConfig.Logs.Error ) : guildOwner ) );
+    const chanDefaultLog = ( oldConfig ? ( oldConfig.Logs ? ( oldConfig.Logs.Default ? guild.channels.cache.get( oldConfig.Logs.Default ) : guildOwner ) : guildOwner ) : guildOwner );
+    const chanErrorLog = ( oldConfig ? ( oldConfig.Logs ? ( oldConfig.Logs.Error ? guild.channels.cache.get( oldConfig.Logs.Error ) : guildOwner ) : guildOwner ) : guildOwner );
 
     const myTask = options.getSubcommand();
 

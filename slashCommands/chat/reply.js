@@ -29,7 +29,7 @@ module.exports = {
   run: async ( client, interaction ) => {
     await interaction.deferReply( { ephemeral: true } );
     const { channel, guild, options, user: author } = interaction;
-    const { isBotMod, isServerBooster, hasMentionEveryone, isWhitelisted, content } = await userPerms( author, guild, true );
+    const { isBotMod, isServerBooster, hasMentionEveryone, isWhitelisted, content } = await userPerms( author, guild );
     if ( content ) { return interaction.editReply( { content: content } ); }
 
     const canSpeak = ( isBotMod || isWhitelisted || isServerBooster ? true : false );    

@@ -24,7 +24,7 @@ module.exports = {
   cooldown: 1000,
   run: async ( client, interaction ) => {
     const { channel, guild, options, user: author } = interaction;
-    const { content } = await userPerms( author, guild, true );
+    const { content } = await userPerms( author, guild );
     if ( content ) { return interaction.editReply( { content: content } ); }
     
     const { chanChat, doLogs, strClosing } = await logChans( guild );

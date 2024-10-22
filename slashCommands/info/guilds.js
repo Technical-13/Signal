@@ -25,7 +25,7 @@ module.exports = {
 
     const bot = client.user;
     const { channel, guild, options, user: author } = interaction;
-    const { content } = await userPerms( author, guild, true );
+    const { content } = await userPerms( author, guild );
     if ( content ) { return interaction.editReply( { content: content } ); }
 
     const embedGuilds = [], myInvites = [];
