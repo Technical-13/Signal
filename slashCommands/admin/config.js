@@ -27,8 +27,9 @@ module.exports = {
     ] },
     { type: 1, name: 'reset', description: 'Reset all settings for the server to default.' },
     { type: 1, name: 'set', description: 'Set settings for the server.',/*Set options//*/
-      options: [/* invite, log-chat, log-default, log-error, welcome, welcome-message, welcome-dm, welcome-channel, welcome-role-give, welcome-role //*/
+      options: [/* invite, logs, log-chat, log-default, log-error, welcome, welcome-message, welcome-dm, welcome-channel, welcome-role-give, welcome-role //*/
         { type: 7, name: 'invite', description: 'Channel to make invites to. Will try to guess if not set.' }/*invite channel//*/,
+        { type: 5, name: 'logs', description: 'Send logs for uses of commands that may be devious in nature' }/*disable all logs//*/,
         { type: 7, name: 'log-chat', description: 'Channel to log chat command (`/edit`, `/react`, `/reply`, and `/say`) requests.' }/*chat channel//*/,
         { type: 7, name: 'log-default', description: 'Channel to log all requests not otherwise specified.' }/*default channel//*/,
         { type: 7, name: 'log-error', description: 'Channel to log errors.' }/*error channel//*/,
@@ -45,10 +46,10 @@ module.exports = {
     await interaction.deferReply( { ephemeral: true } );
     const { channel, guild, options } = interaction;
     const author = interaction.user;
-    const { botOwner, isBotOwner, isBotMod, isGlobalWhitelisted, globalPrefix, guildOwner, isGuildOwner, isGuildBlacklisted, hasAdministrator, hasManageGuild, hasManageRoles, isBlacklisted } = await userPerms( client, author, guild );
+    const { botOwner, isBotOwner, isBotMod, isGlobalWhitelisted, globalPrefix, guildOwner, isGuildOwner, isGuildBlacklisted, hasAdministrator, hasManageGuild, hasManageRoles, isBlacklisted } = await userPerms( author, guild );
     if ( isBlacklisted && !isGlobalWhitelisted ) {
       let contact = ( isGuildBlacklisted ? guildOwner.id : botOwner.id );
-      return message.reply( { content: 'Oh no!  It looks like you have been blacklisted from using my commands' + ( isGuildBlacklisted ? ' in this server.' : '.' ) + '!  Please contact <@' + contact + '> to resolve the situation.' } );
+      return interaction.editReply( { content: 'Oh no!  It looks like you have been blacklisted from using my commands' + ( isGuildBlacklisted ? ' in this server!' : '!' ) + '  Please contact <@' + contact + '> to resolve the situation.' } );
     }
     else if ( isBotMod && isGuildBlacklisted ) {
       author.send( 'You have been blacklisted from using commands in https://discord.com/channels/' + guild.id + '/' + channel.id + '! Use `/config remove` to remove yourself from the blacklist.' );
@@ -59,18 +60,16 @@ module.exports = {
       console.error( 'Encountered an error attempting to find %s(ID:%s) in my database in preforming %s for %s in config.js:\n%s', guild.name, guild.id, myTask, strAuthorTag, err.stack );
       botOwner.send( 'Encountered an error attempting to find `' + guild.name + '`(:id:' + guild.id + ') in my database in preforming ' + myTask + ' for <@' + author.id + '>.  Please check console for details.' );
     } );
-    const arrBlackGuild = ( oldConfig.Blacklist || [] );
-    const arrWhiteGuild = ( oldConfig.Whitelist || [] );
-    const chanDefaultLog = ( oldConfig.Logs ? guild.channels.cache.get( oldConfig.Logs.Default ) : guildOwner );
-    const chanErrorLog = ( oldConfig.Logs ? guild.channels.cache.get( oldConfig.Logs.Error ) : guildOwner );
+    const arrBlackGuild = ( !oldConfig ? [] : ( oldConfig.Blacklist || [] ) );
+    const arrWhiteGuild = ( !oldConfig ? [] : ( oldConfig.Whitelist || [] ) );
+    const chanDefaultLog = ( !oldConfig ? guildOwner : ( oldConfig.Logs ? guild.channels.cache.get( oldConfig.Logs.Default ) : guildOwner ) );
+    const chanErrorLog = ( !oldConfig ? guildOwner : ( oldConfig.Logs ? guild.channels.cache.get( oldConfig.Logs.Error ) : guildOwner ) );
 
     const myTask = options.getSubcommand();
 
-    if (
-      ( !hasAdministrator && ( myTask === 'add' || myTask === 'clear' || myTask === 'remove' ) ) ||
+    if ( ( !hasAdministrator && ( myTask === 'add' || myTask === 'clear' || myTask === 'remove' ) ) ||
       ( !hasManageGuild && ( myTask === 'reset' || myTask === 'set' ) ) ||
-      ( !hasManageRoles && myTask === 'get' )
-    ) {
+      ( !hasManageRoles && myTask === 'get' ) ) {
       guildOwner.send( '<@' + author.id + '> attempted to ' + ( myTask === 'get' ? 'view' : 'modify' ) + ' the configuration settings for `' + guild.name + '`.  Only yourself, those with the `ADMINISTRATOR`, `MANAGE_GUILD`, or `MANAGE_ROLES` permission, and my bot mods can do that.' );
       return interaction.editReply( { content: 'Sorry, you do not have permission to do that.  Please talk to <@' + guildOwner.id + '> or one of my masters if you think you shouldn\'t have gotten this error.' } );
     }
@@ -90,6 +89,7 @@ module.exports = {
             Whitelist: arrWhiteGuild,
             Invite: oldConfig.Invite,
             Logs: {
+              Active: oldConfig.Logs.Active,
               Default: oldConfig.Logs.Default,
               Error: oldConfig.Logs.Error,
               Chat: oldConfig.Logs.Chat
@@ -97,7 +97,9 @@ module.exports = {
             Prefix: oldConfig.Prefix,
             Welcome: {
               Active: oldConfig.Welcome.Active,
-              Msg: oldConfig.Welcome.Msg
+              Channel: oldConfig.Welcome.Channel,
+              Msg: oldConfig.Welcome.Msg,
+              Role: oldConfig.Welcome.Role
             }
           }, { upsert: true } )
           .then( addSuccess => {
@@ -131,6 +133,7 @@ module.exports = {
             Whitelist: arrWhiteGuild,
             Invite: oldConfig.Invite,
             Logs: {
+              Active: oldConfig.Logs.Active,
               Default: oldConfig.Logs.Default,
               Error: oldConfig.Logs.Error,
               Chat: oldConfig.Logs.Chat
@@ -138,7 +141,9 @@ module.exports = {
             Prefix: oldConfig.Prefix,
             Welcome: {
               Active: oldConfig.Welcome.Active,
-              Msg: oldConfig.Welcome.Msg
+              Channel: oldConfig.Welcome.Channel,
+              Msg: oldConfig.Welcome.Msg,
+              Role: oldConfig.Welcome.Role
             }
           }, { upsert: true } )
           .then( addSuccess => {
@@ -170,6 +175,7 @@ module.exports = {
           Whitelist: ( clearWhite ? [] : arrWhiteGuild ),
           Invite: oldConfig.Invite,
           Logs: {
+            Active: oldConfig.Logs.Active,
             Default: oldConfig.Logs.Default,
             Error: oldConfig.Logs.Error,
             Chat: oldConfig.Logs.Chat
@@ -177,7 +183,9 @@ module.exports = {
           Prefix: oldConfig.Prefix,
           Welcome: {
             Active: oldConfig.Welcome.Active,
-            Msg: oldConfig.Welcome.Msg
+            Channel: oldConfig.Welcome.Channel,
+            Msg: oldConfig.Welcome.Msg,
+            Role: oldConfig.Welcome.Role
           }
         }, { upsert: true } )
         .then( clearSuccess => {
@@ -214,6 +222,7 @@ module.exports = {
             Whitelist: arrWhiteGuild,
             Invite: oldConfig.Invite,
             Logs: {
+              Active: oldConfig.Logs.Active,
               Default: oldConfig.Logs.Default,
               Error: oldConfig.Logs.Error,
               Chat: oldConfig.Logs.Chat
@@ -221,7 +230,9 @@ module.exports = {
             Prefix: oldConfig.Prefix,
             Welcome: {
               Active: oldConfig.Welcome.Active,
-              Msg: oldConfig.Welcome.Msg
+              Channel: oldConfig.Welcome.Channel,
+              Msg: oldConfig.Welcome.Msg,
+              Role: oldConfig.Welcome.Role
             }
           }, { upsert: true } )
           .then( addSuccess => {
@@ -252,6 +263,7 @@ module.exports = {
             Whitelist: arrWhiteGuild,
             Invite: oldConfig.Invite,
             Logs: {
+              Active: oldConfig.Logs.Active,
               Default: oldConfig.Logs.Default,
               Error: oldConfig.Logs.Error,
               Chat: oldConfig.Logs.Chat
@@ -259,7 +271,9 @@ module.exports = {
             Prefix: oldConfig.Prefix,
             Welcome: {
               Active: oldConfig.Welcome.Active,
-              Msg: oldConfig.Welcome.Msg
+              Channel: oldConfig.Welcome.Channel,
+              Msg: oldConfig.Welcome.Msg,
+              Role: oldConfig.Welcome.Role
             }
           }, { upsert: true } )
           .then( addSuccess => {
@@ -329,7 +343,7 @@ module.exports = {
             Blacklist: [],
             Whitelist: [],
             Invite: null,
-            Logs: { Chat: null, Default: null, Error: null },
+            Logs: { Active: true, Chat: null, Default: null, Error: null },
             Prefix: globalPrefix,
             Welcome: { Active: false, Channel: null, Msg: null, Role: null }
           },
@@ -354,10 +368,11 @@ module.exports = {
       }
       else if ( hasManageGuild && myTask === 'set' ) {
         var setInvite = ( options.getChannel( 'invite' ) ? options.getChannel( 'invite' ).id : null );
+        var boolLogs = ( options.getBoolean( 'logs' ) ? options.getBoolean( 'logs' ) : true );
         var setChat = ( options.getChannel( 'log-chat' ) ? options.getChannel( 'log-chat' ).id : null );
         var setDefault = ( options.getChannel( 'log-default' ) ? options.getChannel( 'log-default' ).id : null );
         var setError = ( options.getChannel( 'log-error' ) ? options.getChannel( 'log-error' ).id : null );
-        var setPrefix = ( options.getString( 'prefix' ) ? options.getString( 'prefix' ) : null );
+        var setPrefix = ( options.getString( 'prefix' ) ? options.getString( 'prefix' ) : globalPrefix );
         var boolWelcome = ( options.getBoolean( 'welcome' ) ? options.getBoolean( 'welcome' ) : false );
         var strWelcome = ( options.getString( 'welcome-message' ) ? options.getString( 'welcome-message' ) : null );
         var setWelcome = ( options.getChannel( 'welcome-channel' ) ? options.getChannel( 'welcome-channel' ).id : null );
@@ -366,17 +381,16 @@ module.exports = {
         var giveRole = ( options.getBoolean( 'welcome-role-give' ) ? options.getBoolean( 'welcome-role-give' ) : ( joinWelcome ? true : false ) );
 
         if ( !oldConfig ) {
-          if ( !setInvite ) { setInvite = channel.id; }
-          if ( !setDefault ) { setDefault = channel.id; }
-          if ( !setChat ) { setChat = setDefault; }
-          if ( !setError ) { setError = setDefault; }
-          if ( !setPrefix ) { setPrefix = globalPrefix; }
+          if ( setDefault ) {
+            if ( !setChat ) { setChat = setDefault; }
+            if ( !setError ) { setError = setDefault; }
+          }
           await guildConfigDB.create( {
             Guild: guild.id,
             Blacklist: [],
             Whitelist: [],
             Invite: setInvite,
-            Logs: { Default: setDefault, Error: setError, Chat: setChat },
+            Logs: { Active: boolLogs, Default: setDefault, Error: setError, Chat: setChat },
             Prefix: setPrefix,
             Welcome: { Active: boolWelcome, Channel: ( !sendDM ? setWelcome : null ), Msg: strWelcome, Role: giveRole }
           } )
@@ -389,18 +403,22 @@ module.exports = {
         }
         else {
           let oldInvite = oldConfig.Invite;
+          let oldLogs = oldConfig.Logs.Active;
           let oldDefault = oldConfig.Logs.Default;
           let oldError = oldConfig.Logs.Error;
           let oldChat = oldConfig.Logs.Chat;
           let oldPrefix = oldConfig.Prefix;
           let oldWelcome = oldConfig.Welcome.Active;
-          let oldWelcomeMsg = oldConfig.Welcome.Message;
+          let oldWelcomeChan = oldConfig.Welcome.Channel;
+          let oldWelcomeMsg = oldConfig.Welcome.Msg;
+          let oldWelcomeRole = oldConfig.Welcome.Role
           await guildConfigDB.updateOne( { Guild: guild.id }, {
             Guild: guild.id,
             Blacklist: arrBlackGuild,
             Whitelist: arrWhiteGuild,
             Invite: setInvite || oldInvite,
             Logs: {
+              Active: boolLogs || oldLogs,
               Default: setDefault || oldDefault,
               Error: setError || oldError,
               Chat: setChat || oldChat
@@ -408,7 +426,9 @@ module.exports = {
             Prefix: setPrefix || oldPrefix,
             Welcome: {
               Active: boolWelcome || oldWelcome,
-              Message: strWelcome || oldWelcomeMsg
+              Channel: setWelcome || oldWelcomeChan,
+              Msg: strWelcome || oldWelcomeMsg,
+              Role: joinWelcome || oldWelcomeRole
             }
           } )
           .then( updateSuccess => {
