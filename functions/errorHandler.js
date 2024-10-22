@@ -4,25 +4,27 @@ const chalk = require( 'chalk' );
 const config = require( '../config.json' );
 const logChans = require( './getLogChans.js' );
 
-module.exports = async ( objError, options = { command: 'undefined', type: 'undefined' } ) => {
-  const { command, type } = options;
+module.exports = async ( objError, options = { command: 'undefined', debug: false, type: 'undefined' } ) => {
+  const { command, debug, type } = options;
   
-  const preAuthor = ( !options ? 'NO `options`!' : ( options.author ? options.author.id : options.author ) );
-  const preChan = ( !options ? 'NO `options`!' : ( options.channel ? options.channel.id : options.channel ) );
-  const prechanType = ( !options ? 'NO `options`!' : options.chanType );
-  const preclearLists = ( !options ? 'NO `options`!' : options.clearLists );
-  const preGuild = ( !options ? 'NO `options`!' : ( options.guild ? options.guild.id : options.guild ) );
-  const preinviteChanURL = ( !options ? 'NO `options`!' : options.inviteChanURL );
-  const preinviteGuild = ( !options ? 'NO `options`!' : ( options.inviteGuild ? options.inviteGuild.id : options.inviteGuild ) );
-  const premodBlack = ( !options ? 'NO `options`!' : options.modBlack );
-  const premodMod = ( !options ? 'NO `options`!' : options.modMod );
-  const premodType = ( !options ? 'NO `options`!' : options.modType );
-  const premodWhite = ( !options ? 'NO `options`!' : options.modWhite );
-  const premsgID = ( !options ? 'NO `options`!' : options.msgID );
-  const prerawReaction = ( !options ? 'NO `options`!' : options.rawReaction );
-  const preEmoji = ( !options ? 'NO `options`!' : ( options.emoji ? options.emoji.id : options.emoji ) );
-  const preProcessed = { command: command, type: type, author: preAuthor, channel: preChan, chanType: prechanType, clearLists: preclearLists, guild: preGuild, inviteChanURL: preinviteChanURL, inviteGuild: preinviteGuild, modBlack: premodBlack, modMod: premodMod, modWhite: premodWhite, msgID: premsgID, rawReaction: prerawReaction, reaction: preEmoji };
-  console.warn( 'errorHandler recieved options:%o', preProcessed );//*/
+  if ( debug ) {
+    const preAuthor = ( !options ? 'NO `options`!' : ( options.author ? options.author.id : options.author ) );
+    const preChan = ( !options ? 'NO `options`!' : ( options.channel ? options.channel.id : options.channel ) );
+    const prechanType = ( !options ? 'NO `options`!' : options.chanType );
+    const preclearLists = ( !options ? 'NO `options`!' : options.clearLists );
+    const preGuild = ( !options ? 'NO `options`!' : ( options.guild ? options.guild.id : options.guild ) );
+    const preinviteChanURL = ( !options ? 'NO `options`!' : options.inviteChanURL );
+    const preinviteGuild = ( !options ? 'NO `options`!' : ( options.inviteGuild ? options.inviteGuild.id : options.inviteGuild ) );
+    const premodBlack = ( !options ? 'NO `options`!' : options.modBlack );
+    const premodMod = ( !options ? 'NO `options`!' : options.modMod );
+    const premodType = ( !options ? 'NO `options`!' : options.modType );
+    const premodWhite = ( !options ? 'NO `options`!' : options.modWhite );
+    const premsgID = ( !options ? 'NO `options`!' : options.msgID );
+    const prerawReaction = ( !options ? 'NO `options`!' : options.rawReaction );
+    const preEmoji = ( !options ? 'NO `options`!' : ( options.emoji ? options.emoji.id : options.emoji ) );
+    const preProcessed = { command: command, type: type, author: preAuthor, channel: preChan, chanType: prechanType, clearLists: preclearLists, guild: preGuild, inviteChanURL: preinviteChanURL, inviteGuild: preinviteGuild, modBlack: premodBlack, modMod: premodMod, modWhite: premodWhite, msgID: premsgID, rawReaction: prerawReaction, reaction: preEmoji };
+    console.warn( 'errorHandler recieved options:%o', preProcessed );
+  }
   
   const cmd = ( typeof command === 'string' ? command : 'undefined' );
   const myTask = ( typeof type === 'string' ? type : 'undefined' );
@@ -41,13 +43,15 @@ module.exports = async ( objError, options = { command: 'undefined', type: 'unde
   const rawReaction = ( options.rawReaction ? options.rawReaction : null );
   const emoji = ( options.reaction ? options.reaction : null );
   
-  const prcAuthor = ( author ? author.id : author );
-  const prcChan = ( channel ? channel.id : channel );
-  const prcGuild = ( guild ? guild.id : guild );
-  const prcInviteGuild = ( inviteGuild ? inviteGuild.id : inviteGuild );
-  const prcEmoji = ( emoji ? emoji.id : emoji );
-  const processed = { cmd: cmd, myTask: myTask, author: prcAuthor, channel: prcChan, chanType: chanType, clearLists: clearLists, guild: prcGuild, inviteChanURL: inviteChanURL, inviteGuild: prcInviteGuild, modBlack: modBlack, modMod: modMod, modType: modType, modWhite: modWhite, msgID: msgID, rawReaction: rawReaction, reaction: prcEmoji };
-  console.warn( 'errorHandler processed options:%o', processed );//*/
+  if ( debug ) {
+    const prcAuthor = ( author ? author.id : author );
+    const prcChan = ( channel ? channel.id : channel );
+    const prcGuild = ( guild ? guild.id : guild );
+    const prcInviteGuild = ( inviteGuild ? inviteGuild.id : inviteGuild );
+    const prcEmoji = ( emoji ? emoji.id : emoji );
+    const processed = { cmd: cmd, myTask: myTask, author: prcAuthor, channel: prcChan, chanType: chanType, clearLists: clearLists, guild: prcGuild, inviteChanURL: inviteChanURL, inviteGuild: prcInviteGuild, modBlack: modBlack, modMod: modMod, modType: modType, modWhite: modWhite, msgID: msgID, rawReaction: rawReaction, reaction: prcEmoji };
+    console.warn( 'errorHandler processed options:%o', processed );
+  }
 
   const { chanChat, chanDefault, chanError, doLogs, strClosing } = ( guild ? await logChans( guild ) : { chanChat: null, chanDefault: null, chanError: null, doLogs: false, strClosing: null } );
   const { chanError: chanInviteError, doLogs: doInviteLogs, strClosing: strInviteClosing } = ( inviteGuild ? await logChans( inviteGuild ) : { chanError: chanError, doLogs: doLogs, strClosing: strClosing } );
@@ -107,6 +111,7 @@ module.exports = async ( objError, options = { command: 'undefined', type: 'unde
       case 'errInvite':
         switch ( objError.code ) {
           case 10003://Unknown Channel
+            console.log( 'Unknown channel to create invite for %s:\n\tLink: %s', guild.name, inviteChanURL );
             if ( doInviteLogs ) { chanInviteError.send( 'I couldn\'t figure out which channel to make an invite to for a `/' + cmd + '` request.  Please use `/config set invite` to define which channel you\'d like invites to go to.' + strLogged + strInviteClosing ); }
             break;
           case 50013://Missing permissions

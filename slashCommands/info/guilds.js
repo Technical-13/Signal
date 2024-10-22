@@ -81,7 +81,7 @@ if ( vanityURLCode ) { console.log( '%s has a vanityURLCode: %s', guildName, van
         myInvites.push( { guildId: doGuild.id, invite: invite.code } );
         return 'https://discord.gg/invite/' + invite.code;
       } )
-      .catch( async errInvite => { await errHandler( errInvite, { command: 'guilds', type: 'errInvite', channel: channel, guild: guild, inviteChanURL: chanInvite } ); } );
+      .catch( async errInvite => { await errHandler( errInvite, { command: 'guilds', type: 'errInvite', channel: channel, guild: doGuild, inviteChanURL: chanInvite } ); } );
       const aboutInfo = '**Owner**: __' + ownerName + '__ (<@' + ownerId + '>)' +
           '\n**Members**: __' + memberCount + '/' + maximumMembers + '__ (' + intBotMembers + ' bots)' +
           '\n**Verification Level**: __' + verificationLevel + '__' + ( mfaLevel === 0 ? '' : ' (👮)' );
