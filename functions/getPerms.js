@@ -58,7 +58,7 @@ module.exports = async ( user, guild, doBlacklist = true ) => {
       objGuildMembers = guild.members.cache;
       guildOwner = objGuildMembers.get( guild.ownerId );
       isGuildOwner = ( user.id === guildOwner.id ? true : false );
-      isServerBooster = ( guild.roles.premiumSubscriberRole.members.get( user.id ) ? true : false );
+      isServerBooster = ( !guild.roles.premiumSubscriberRole ? false : ( guild.roles.premiumSubscriberRole.members.get( user.id ) ? true : false ) );
       arrAuthorPermissions = ( objGuildMembers.get( user.id ).permissions.toArray() || [] );
     }
     
