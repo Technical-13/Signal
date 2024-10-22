@@ -71,6 +71,7 @@ module.exports = {
       if ( hasAdministrator && myTask === 'add' ) {
         let addBlack = ( options.getUser( 'blacklist' ) ? options.getUser( 'blacklist' ).id : null );
         let addWhite = ( options.getUser( 'whitelist' ) ? options.getUser( 'whitelist' ).id : null );
+        if ( !addBlack && !addWhite ) { return interaction.editReply( { content: 'You forgot to tell me who to add.' } ); }
         if ( addBlack ) {
           if ( arrBlackGuild.indexOf( addBlack ) != -1 ) { return interaction.editReply( { content: '<@' + addBlack + '> is already on the blacklist!' } ) }
           else {
@@ -163,6 +164,7 @@ module.exports = {
       else if ( hasAdministrator && myTask === 'clear' ) {
         let clearBlack = options.getBoolean( 'blacklist' );
         let clearWhite = options.getBoolean( 'whitelist' );
+        if ( !clearBlack && !clearWhite ) { return interaction.editReply( { content: 'You forgot to tell me which list to clear.' } ); }
         await guildConfigDB.updateOne( { Guild: oldConfig.Guild }, {
           Guild: oldConfig.Guild,
           Blacklist: ( clearBlack ? [] : arrBlackGuild ),
@@ -207,6 +209,7 @@ module.exports = {
       else if ( hasAdministrator && myTask === 'remove' ) {
         let remBlack = ( options.getUser( 'blacklist' ) ? options.getUser( 'blacklist' ).id : null );
         let remWhite = ( options.getUser( 'whitelist' ) ? options.getUser( 'whitelist' ).id : null );
+        if ( !remBlack && !remWhite ) { return interaction.editReply( { content: 'You forgot to tell me who to remove.' } ); }
         if ( remBlack ) {
           if ( arrBlackGuild.indexOf( remBlack ) === -1 ) { return interaction.editReply( { content: '<@' + remBlack + '> wasn\'t on the blacklist!' } ) }
           else { arrBlackGuild.splice( arrBlackGuild.indexOf( remBlack ), 1 ); }
