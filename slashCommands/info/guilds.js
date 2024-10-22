@@ -38,6 +38,7 @@ module.exports = {
 
     for ( const guildId of guildIds ) {
       const doGuild = client.guilds.cache.get( guildId );
+      interaction.editReply( { content: 'Getting information for guild ' + doGuild.name + '(' + guildIds.indexOf( doGuild.id ) + '/' + guildIds.length + ')' } );
       const objGuild = doGuild.toJSON();
       const guildName = objGuild.name;
       const vanityURLCode = objGuild.vanityURLCode;
