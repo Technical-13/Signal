@@ -43,8 +43,9 @@ module.exports = async ( gcCode ) => {
       case 404:
         return { code: gcCode, failed: true, error: 'Cache page not found!', status: 404 };
       default:
-        console.error( 'Error attempting to get page for - https://coord.info/%s - :\n%o', gcCode, errGetPage );
-        return { code: gcCode, failed: true, error: errGetPage.statusText, status: errGetPage.status };
+        console.error( errGetPage );
+        console.error( 'Error attempting to get page for - https://coord.info/%s - :\n%o', gcCode, errGetPage.stack );
+        return { code: gcCode, failed: true, error: errGetPage.message, status: errGetPage.status };
     }
   } );
   return info;
