@@ -28,12 +28,11 @@ client.on( 'messageCreate', async message => {
   const arrOtherCodes = [];
   const arrContent = content.trim().split( ' ' );
   const arrOtherTypeCodes = [ 'GC', 'TB', 'WM', 'GL', 'TL', 'PR', 'BM', 'GT' ];
-  for ( let word of arrContent ) {
-    word = word.trim();
-    let wordPrefix = word.slice( 0, 2 );
-    word = word.match( /^((?:GC|TB|WM|GL|TL|PR|BM|GT)[A-Z0-9]{2,6})/gi );
-    let code = ( word ? word[ 0 ].toUpperCase() : '' );
-    if ( code.startsWith( 'GC' ) ) {
+  for ( let word of arrContent ) {console.log('word: %o',word);
+    let arrWord = word.trim().match( /^((GC|TB|WM|GL|TL|PR|BM|GT)[a-zA-Z0-9]{2,6})/ );console.log('arrWord: %o',arrWord);
+    let code = ( arrWord ? arrWord[ 1 ].toUpperCase() : '' );console.log('code: %o',code);
+    let wordPrefix = ( arrWord ? arrWord[ 2 ] : '' );console.log('wordPrefix: %o',wordPrefix);
+    if ( wordPrefix === 'GC' ) {
       arrGcCodes.push( code );
       hasCodes.GC = true;
     }
