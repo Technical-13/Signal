@@ -14,7 +14,8 @@ client.on( 'messageCreate', async message => {
   const bot = client.user;
   const objGuildMembers = guild.members.cache;
 
-  var hasCodes = {
+  const gcExceptions = [ 'GCD' ];
+  const hasCodes = {
     GC: false,// Geocache
     TB: false,// Trackable
     WM: false,// Waymark
@@ -29,9 +30,10 @@ client.on( 'messageCreate', async message => {
   const arrContent = content.trim().split( ' ' );
   const arrOtherTypeCodes = [ 'GC', 'TB', 'WM', 'GL', 'TL', 'PR', 'BM', 'GT' ];
   for ( let word of arrContent ) {
-    let arrWord = word.trim().match( /^((GC|TB|WM|GL|TL|PR|BM|GT)[a-zA-Z0-9]{2,6})/ );
-    let code = ( arrWord ? arrWord[ 1 ].toUpperCase() : '' );
-    let wordPrefix = ( arrWord ? arrWord[ 2 ] : '' );
+    word = ( word ? word.trim().toUpperCase() : '' );
+    let arrWord = word.match( /^((?:GC|TB|WM|GL|TL|PR|BM|GT)[A-Z0-9]{2,6})/g );
+    let code = ( arrWord ? arrWord[ 0 ] : ( gcExceptions.indexOf( word ) != -1 ? word : '' ) );
+    let wordPrefix = code.slice( 0, 2 );
     if ( wordPrefix === 'GC' ) {
       arrGcCodes.push( code );
       hasCodes.GC = true;
