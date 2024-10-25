@@ -91,6 +91,7 @@ module.exports = async ( user, guild, doBlacklist = true, debug = false ) => {
     const hasAdministrator = ( ( isBotMod || isGuildOwner || arrAuthorPermissions.indexOf( 'Administrator' ) !== -1 ) ? true : false );
     const hasManageGuild = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'ManageGuild' ) !== -1 ) ? true : false );
     const hasManageRoles = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'ManageRoles' ) !== -1 ) ? true : false );
+    const hasManageMessages = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'ManageMessages' ) !== -1 ) ? true : false );
     const hasMentionEveryone = ( ( hasAdministrator || arrAuthorPermissions.indexOf( 'MentionEveryone' ) !== -1 ) ? true : false );
 
     const guildBlacklist = ( guildConfig.Blacklist ? ( guildConfig.Blacklist.Roles || [] ) : [] );
@@ -136,6 +137,7 @@ module.exports = async ( user, guild, doBlacklist = true, debug = false ) => {
       hasAdministrator: hasAdministrator,
       hasManageGuild: hasManageGuild,
       hasManageRoles: hasManageRoles,
+      hasManageMessages: hasManageMessages,
       guildAllowsPremium: guildAllowsPremium,
       roleServerBooster: roleServerBooster,
       isServerBooster: isServerBooster,

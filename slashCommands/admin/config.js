@@ -462,7 +462,6 @@ module.exports = {
             break;
         }
       }
-      console.log( 'Updating %s guild config with: %o', guild.name, newConfig );
 
       await guildConfigDB.updateOne( { Guild: oldConfig.Guild }, newConfig, { upsert: true } )
       .then( updateSuccess => {

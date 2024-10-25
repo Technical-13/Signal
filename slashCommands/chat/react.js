@@ -29,21 +29,21 @@ module.exports = {
   run: async ( client, interaction ) => {
     await interaction.deferReply( { ephemeral: true } );
     const { channel, guild, options, user: author } = interaction;
-    const { content } = await userPerms( author, guild, true, true );
+    const { content } = await userPerms( author, guild );
     if ( content ) { return interaction.editReply( { content: content } ); }
 
     const msgID = options.getString( 'message-id' );
     if ( !( /[\d]{18,19}/.test( msgID ) ) ) { return interaction.editReply( { content: '`' + msgID + '` is not a valid `message-id`. Please try again.' } ); }
     const theReaction = options.getString( 'reaction' );
     const strAuthorTag = author.tag;
-    
+
     const { chanChat, doLogs, strClosing } = await logChans( guild );
 
     var myReaction = theReaction;
     var rxp = /<:(.*)?:([\d]*)>/;
     if ( rxp.test( myReaction ) ) { myReaction = myReaction.match( rxp )[ 2 ]; }
     else { myReaction = encodeURI( myReaction ); }
-    
+
     channel.messages.fetch( msgID ).then( async message => {
       let { author: msgAuthor, channel: msgChan, guild: msgGuild } = message;
       await message.react( myReaction ).then( reacted => {

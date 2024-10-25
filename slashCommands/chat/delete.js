@@ -13,10 +13,10 @@ module.exports = {
   run: async ( client, interaction ) => {
     await interaction.deferReply( { ephemeral: true } );
     const { channel, guild, options, user: author } = interaction;
-    const { isBotMod, hasManageGuild, guildAllowsPremium, isServerBooster, isWhitelisted, content } = await userPerms( author, guild, true, true );
+    const { isBotMod, hasManageGuild, hasManageMessages, isWhitelisted, content } = await userPerms( author, guild, true, true );
     if ( content ) { return interaction.editReply( { content: content } ); }
 
-    const canDelete = ( isBotMod || hasManageGuild || isWhitelisted || ( guildAllowsPremium && isServerBooster ) ? true : false );
+    const canDelete = ( isBotMod || hasManageGuild || hasManageMessages || isWhitelisted ? true : false );
     const msgID = options.getString( 'message-id' );
     if ( !( /[\d]{18,19}/.test( msgID ) ) ) { return interaction.editReply( { content: '`' + msgID + '` is not a valid `message-id`. Please try again.' } ); }
     const { chanChat, doLogs, strClosing } = await logChans( guild );
