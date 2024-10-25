@@ -7,11 +7,13 @@ const botConfigDB = require( '../models/BotConfig.js' );
 const guildConfigDB = require( '../models/GuildConfig.js' );
 const errHandler = require( './errorHandler.js' );
 
-module.exports = async ( user, guild, doBlacklist = true ) => {
-/*  const preUser = ( user ? user.id : user );
-  const preGuild = ( guild ? guild.id : guild );
-  const preProcessed = { user: preUser, guild: preGuild, doBlacklist: doBlacklist };
-  console.log( 'getPerms received inputs:%o', preProcessed );//*/
+module.exports = async ( user, guild, doBlacklist = true, debug: false ) => {
+  if ( debug ) {
+    const preUser = ( user ? user.id : user );
+    const preGuild = ( guild ? guild.id : guild );
+    const preProcessed = { user: preUser, guild: preGuild, doBlacklist: doBlacklist };
+    console.log( 'getPerms received inputs:%o', preProcessed );
+  }
   
   try {
     const botConfig = await botConfigDB.findOne( { BotName: thisBotName } )
@@ -30,6 +32,7 @@ module.exports = async ( user, guild, doBlacklist = true ) => {
 
     var isDevGuild = false;
     var guildOwner = null;
+    var guildAllowsPremium = false;
     var isGuildOwner = false;
     var roleServerBooster = null;
     var isServerBooster = false;
@@ -79,6 +82,7 @@ module.exports = async ( user, guild, doBlacklist = true ) => {
       objGuildMembers = guild.members.cache;
       guildOwner = objGuildMembers.get( guild.ownerId );
       isGuildOwner = ( user.id === guildOwner.id ? true : false );
+      guildAllowsPremium = guildConfig.Premium;
       roleServerBooster = ( guild.roles.premiumSubscriberRole || null );
       isServerBooster = ( !roleServerBooster ? false : ( roleServerBooster.members.get( user.id ) ? true : false ) );
       arrAuthorPermissions = ( objGuildMembers.get( user.id ).permissions.toArray() || [] );
@@ -99,7 +103,7 @@ module.exports = async ( user, guild, doBlacklist = true ) => {
       }
     }
     if ( arrBlackMembers.length > 0 ) { arrBlackGuild = arrBlackGuild.concat( arrBlackMembers ); }
-    const isGuildBlacklisted = ( guildBlacklist.indexOf( user.id ) != -1 ? true : false );
+    const isGuildBlacklisted = ( arrBlackGuild.indexOf( user.id ) != -1 ? true : false );
 
     const guildWhitelist = ( guildConfig.Whitelist ? ( guildConfig.Whitelist.Roles || [] ) : [] );
     const arrWhiteMembers = ( guildConfig.Whitelist ? ( guildConfig.Whitelist.Members || [] ) : [] );
@@ -111,7 +115,7 @@ module.exports = async ( user, guild, doBlacklist = true ) => {
       }
     }
     if ( arrWhiteMembers.length > 0 ) { arrWhiteGuild = arrWhiteGuild.concat( arrWhiteMembers ); }    
-    const isGuildWhitelisted = ( guildWhitelist.indexOf( user.id ) != -1 ? true : false );
+    const isGuildWhitelisted = ( arrWhiteGuild.indexOf( user.id ) != -1 ? true : false );
     
     const guildPrefix = ( guildConfig.Prefix || globalPrefix );
     const prefix = ( guildPrefix || globalPrefix || client.prefix );    
@@ -132,6 +136,7 @@ module.exports = async ( user, guild, doBlacklist = true ) => {
       hasAdministrator: hasAdministrator,
       hasManageGuild: hasManageGuild,
       hasManageRoles: hasManageRoles,
+      guildAllowsPremium: guildAllowsPremium,
       roleServerBooster: roleServerBooster,
       isServerBooster: isServerBooster,
       hasMentionEveryone: hasMentionEveryone,

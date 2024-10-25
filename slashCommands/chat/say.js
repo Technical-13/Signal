@@ -28,10 +28,10 @@ module.exports = {
   run: async ( client, interaction ) => {
     await interaction.deferReply( { ephemeral: true } );
     const { channel, guild, options, user: author } = interaction;
-    const { botOwner, isBotMod, guildOwner, isServerBooster, hasMentionEveryone, isWhitelisted, content } = await userPerms( author, guild );
+    const { botOwner, isBotMod, guildOwner, hasManageGuild, guildAllowsPremium, isServerBooster, hasMentionEveryone, isWhitelisted, content } = await userPerms( author, guild );
     if ( content ) { return interaction.editReply( { content: content } ); }
 
-    const canSpeak = ( isBotMod || isWhitelisted || isServerBooster ? true : false );    
+    const canSpeak = ( isBotMod || hasManageGuild || isWhitelisted || ( guildAllowsPremium && isServerBooster ) ? true : false );    
     const speakChannel = options.getChannel( 'channel' ) || channel;
     const mySaying = options.getString( 'saying' );
     const mentionsEveryone = /@(everyone|here)/g.test( mySaying );

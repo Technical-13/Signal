@@ -214,35 +214,47 @@ module.exports = {
             successResultReply = 'Guild settings reset.';
             break;
           case 'set':
-            let setInvite = ( options.getChannel( 'invite' ) ? options.getChannel( 'invite' ).id : null );
-            let setPrefix = ( options.getString( 'prefix' ) ? options.getString( 'prefix' ) : globalPrefix );
-            let changedPrefix = ( setPrefix === oldPrefix ? true : false );
-            let setPremium = ( options.getBoolean( 'premium' ) ? options.getBoolean( 'premium' ) : true );
-            let changedPremium = ( setPremium === oldPremium ? true : false );
-            if ( !setInvite && !changedPrefix && !changedPremium ) { return interaction.editReply( { content: 'You forgot to tell me what to set.' } ); }
+            let changedInvite = options.getChannel( 'invite' );
+            let changedPrefix = options.getString( 'prefix' );
+            let changedPremium = ( options.getBoolean( 'premium' ) !== null ? true : false );
+            let setInvite = ( changedInvite ? options.getChannel( 'invite' ).id : null );
+            let setPrefix = ( changedPrefix ? options.getString( 'prefix' ) : globalPrefix );
+            let setPremium = ( changedPremium ? options.getBoolean( 'premium' ) : true );
+            if ( !changedInvite && !changedPrefix && !changedPremium ) { return interaction.editReply( { content: 'You forgot to tell me what to set.' } ); }
             let setDone = [];
+            let alreadyDone = [];
             if ( setInvite ) {
               newConfig.Invite = setInvite;
               setDone.push( 'Invite' );
             }
             if ( setPrefix != oldPrefix ) {
               newConfig.Prefix = setPrefix;
-              setDone.push( 'Prefix' );
-            }
+              setDone.push( 'Prefix to **`' + setPrefix + '`**' );
+            } else if ( changedPrefix ) { alreadyDone.push( 'Prefix was already `' + setPrefix + '`' ); }
             if ( setPremium != oldPremium ) {
               newConfig.Premium = setPremium;
-              setDone.push( 'Premium' );
-            }
+              setDone.push( 'Premium to **' + ( setPremium ? 'EN' : 'DIS' ) + 'ABLED**' );
+            } else if ( changedPremium ) { alreadyDone.push( 'Premium was already **' + ( setPremium ? 'EN' : 'DIS' ) + 'ABLED**' ); }
             let setsDone;
             switch ( setDone.length ) {
+              case 0: setsDone = '**NOTHING**'; break;
               case 1: setsDone = setDone[ 0 ]; break;
               case 2: setsDone = setDone.join( ' and ' ); break;
               default:
                 let lastDone = setDone.pop();
                 setsDone = setDone.join( ', ' ) + ', and ' + lastDone;
             }
-            successResultLog = setsDone + ( setDone.length === 1 ? ' was' : ' were' ) + ' set by <@' + author.id + '>.';
-            successResultReply = 'You have set ' + setsDone + '.';
+            let allsDone;
+            switch ( alreadyDone.length ) {
+              case 0: allsDone = ''; break;
+              case 1: allsDone = alreadyDone[ 0 ]; break;
+              case 2: allsDone = alreadyDone.join( ' and ' ); break;
+              default:
+                let lastDone = alreadyDone.pop();
+                allsDone = alreadyDone.join( ', ' ) + ', and ' + lastDone;
+            }
+            successResultLog = ( setDone.length === 0 ? '' : setsDone + ( setDone.length === 1 ? ' was' : ' were' ) + ' set by <@' + author.id + '>.' );
+            successResultReply = 'You have set ' + setsDone + ( alreadyDone.length === 0 ? '' : ' (' + allsDone + ')' ) + '.';
             break;
         }
       }
@@ -323,18 +335,23 @@ module.exports = {
             successResult = addDone.join( ' and ' ) + ' for this server.';
             break;
           case 'logs':
-            var boolLogs = ( options.getBoolean( 'logs' ) ? options.getBoolean( 'logs' ) : true );
-            let changedLogsActive = ( boolLogs != oldLogActive ? true : false );
-            var setDefault = ( options.getChannel( 'log-default' ) ? options.getChannel( 'log-default' ).id : null );
-            var setChat = ( options.getChannel( 'log-chat' ) ? options.getChannel( 'log-chat' ).id : ( setDefault ? setDefault : null ) );
-            var setError = ( options.getChannel( 'log-error' ) ? options.getChannel( 'log-error' ).id : ( setDefault ? setDefault : null ) );
-            var clearLogChans = ( options.getBoolean( 'log-reset' ) ? options.getBoolean( 'log-reset' ) : false );
-            if ( !changedLogsActive && !setDefault && !setChat && !setError && !clearLogChans ) { return interaction.editReply( { content: 'You forgot to tell me what logs to change.' } ); }
+            let changedLogsActive = ( options.getBoolean( 'do-logs' ) !== null ? true : false );
+            let changedLogsDefault = options.getChannel( 'log-default' );
+            let changedLogsChat = options.getChannel( 'log-chat' );
+            let changedLogsError = options.getChannel( 'log-error' );
+            let changedLogsRESET = ( options.getBoolean( 'log-reset' ) !== null ? true : false );
+            var boolLogs = ( changedLogsActive ? options.getBoolean( 'do-logs' ) : true );
+            var setDefault = ( changedLogsDefault ? options.getChannel( 'log-default' ).id : null );
+            var setChat = ( changedLogsChat ? options.getChannel( 'log-chat' ).id : ( setDefault ? setDefault : null ) );
+            var setError = ( changedLogsError ? options.getChannel( 'log-error' ).id : ( setDefault ? setDefault : null ) );
+            var clearLogChans = ( changedLogsRESET ? options.getBoolean( 'log-reset' ) : false );
+            if ( !changedLogsActive && !setDefault && !setChat && !setError && !changedLogsRESET ) { return interaction.editReply( { content: 'You forgot to tell me what logs to change.' } ); }
             let setDone = [];
-            if ( changedLogsActive ) {
+            let alreadyDone = [];
+            if ( boolLogs != oldLogActive ) {
               newConfig.Logs.Active = boolLogs;
-              setDone.push( 'Logs active' );
-            }
+              setDone.push( 'Logs active to **' + ( boolLogs ? 'EN' : 'DIS' ) + 'ABLED**' );
+            } else if ( changedLogsActive ) { alreadyDone.push( 'Logs were already **' + ( boolLogs ? 'EN' : 'DIS' ) + 'ABLED**' ); }
             if ( setChat ) {
               newConfig.Logs.Chat = setChat;
               setDone.push( 'Chat log' );
@@ -356,15 +373,24 @@ module.exports = {
             }
             let setsDone;
             switch ( setDone.length ) {
-              case 0: setsDone = 'All Log Settings'; break;
+              case 0: setsDone = '**NOTHING**'; break;
               case 1: setsDone = setDone[ 0 ]; break;
               case 2: setsDone = setDone.join( ' and ' ); break;
               default:
                 let lastDone = setDone.pop();
                 setsDone = setDone.join( ', ' ) + ', and ' + lastDone;
             }
-            successResultLog = setsDone + ( setDone.length === 0 ? ' were re' : ( setDone.length === 1 ? ' was ' : ' were ' ) ) + 'set by <@' + author.id + '>.';
-            successResultReply = 'You have ' + ( setDone.length === 0 ? 'reset ' : 'set the ' ) + setsDone + '.';
+            let allsDone;
+            switch ( alreadyDone.length ) {
+              case 0: allsDone = ''; break;
+              case 1: allsDone = alreadyDone[ 0 ]; break;
+              case 2: allsDone = alreadyDone.join( ' and ' ); break;
+              default:
+                let lastDone = alreadyDone.pop();
+                allsDone = alreadyDone.join( ', ' ) + ', and ' + lastDone;
+            }
+            successResultLog = ( setDone.length === 0 ? '' : setsDone + ( setDone.length === 1 ? ' was' : ' were' ) + ' set by <@' + author.id + '>.' );
+            successResultReply = 'You have set ' + setsDone + ( alreadyDone.length === 0 ? '' : ' (' + allsDone + ')' ) + '.';
             break;
           case 'remove':
             let remBlack = ( options.getMentionable( 'blacklist' ) ? options.getMentionable( 'blacklist' ) : null );
@@ -438,15 +464,16 @@ module.exports = {
       }
       await guildConfigDB.updateOne( { Guild: oldConfig.Guild }, newConfig, { upsert: true } )
       .then( updateSuccess => {
-        if ( newConfig.Logs.Active ) {
+        if ( newConfig.Logs.Active && successResultLog ) {
           chanDefaultLog.send( { content: successResultLog } )
           .catch( async noLogChan => { return interaction.editReply( await errHandler( noLogChan, { chanType: 'default', command: 'config', guild: guild, type: 'logLogs' } ) ); } );
         }
         if ( successResultReply ) { interaction.editReply( { content: successResultReply } ); }
-        else {// deleteReply & return channel.send
+        else if ( successResult ) {// deleteReply & return channel.send
           interaction.deleteReply();
           return channel.send( { content: successResult } );
         }
+        else { interaction.editReply( { content: 'No result provided!' } ); }
       } )
       .catch( async updateError => { return interaction.editReply( { content: await errHandler( updateError, errHandlerOptions ) } ); } );
     }
