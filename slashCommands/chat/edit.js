@@ -32,7 +32,7 @@ module.exports = {
     const { isBotMod, hasManageGuild, hasManageMessages, hasMentionEveryone, isWhitelisted, content } = await userPerms( author, guild, true, true );
     if ( content ) { return interaction.editReply( { content: content } ); }
 
-    const canSpeak = ( isBotMod || hasManageGuild || hasManageMessages || isWhitelisted || ? true : false );
+    const canSpeak = ( isBotMod || hasManageGuild || hasManageMessages || isWhitelisted ? true : false );
     const msgID = options.getString( 'message-id' );
     if ( !( /[\d]{18,19}/.test( msgID ) ) ) { return interaction.editReply( { content: '`' + msgID + '` is not a valid `message-id`. Please try again.' } ); }
     const mySaying = options.getString( 'saying' );
