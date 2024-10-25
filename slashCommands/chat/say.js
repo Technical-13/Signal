@@ -28,7 +28,7 @@ module.exports = {
   run: async ( client, interaction ) => {
     await interaction.deferReply( { ephemeral: true } );
     const { channel, guild, options, user: author } = interaction;
-    const { botOwner, isBotMod, guildOwner, hasManageGuild, hasManageMessages, guildAllowsPremium, isServerBooster, hasMentionEveryone, isWhitelisted, content } = await userPerms( author, guild, true, true );
+    const { isBotMod, hasManageGuild, hasManageMessages, guildAllowsPremium, isServerBooster, hasMentionEveryone, isWhitelisted, content } = await userPerms( author, guild, true, true );
     if ( content ) { return interaction.editReply( { content: content } ); }
 
     const canSpeak = ( isBotMod || hasManageGuild || hasManageMessages || isWhitelisted || ( guildAllowsPremium && isServerBooster ) ? true : false );

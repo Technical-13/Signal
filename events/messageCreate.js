@@ -30,9 +30,9 @@ client.on( 'messageCreate', async message => {
   const arrContent = content.trim().split( ' ' );
   const arrOtherTypeCodes = [ 'GC', 'TB', 'WM', 'GL', 'TL', 'PR', 'BM', 'GT' ];
   for ( let word of arrContent ) {
-    word = ( word ? word.trim().toUpperCase() : '' );
-    let arrWord = word.match( /^((?:GC|TB|WM|GL|TL|PR|BM|GT)[A-Z0-9]{2,6})/g );
-    let code = ( arrWord ? arrWord[ 0 ] : ( gcExceptions.indexOf( word ) != -1 ? word : '' ) );
+    word = ( word ? word.trim() : '' );
+    let arrWord = word.match( /^((?:GC|TB|WM|GL|TL|PR|BM|GT)[a-zA-Z0-9]{2,6})/g );
+    let code = ( arrWord ? arrWord[ 0 ].toUpperCase() : ( gcExceptions.indexOf( word ) != -1 ? word.toUpperCase() : '' ) );
     let wordPrefix = code.slice( 0, 2 );
     if ( wordPrefix === 'GC' ) {
       arrGcCodes.push( code );
