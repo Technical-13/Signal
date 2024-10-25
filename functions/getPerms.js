@@ -7,7 +7,7 @@ const botConfigDB = require( '../models/BotConfig.js' );
 const guildConfigDB = require( '../models/GuildConfig.js' );
 const errHandler = require( './errorHandler.js' );
 
-module.exports = async ( user, guild, doBlacklist = true, debug: false ) => {
+module.exports = async ( user, guild, doBlacklist = true, debug = false ) => {
   if ( debug ) {
     const preUser = ( user ? user.id : user );
     const preGuild = ( guild ? guild.id : guild );
@@ -148,6 +148,9 @@ module.exports = async ( user, guild, doBlacklist = true, debug: false ) => {
       isWhitelisted: isWhitelisted,
       content: false
     }
+    
+    if ( debug ) { console.log( 'getPerms is returning: ' + results ); }
+      
     if ( doBlacklist && isBlacklisted && !isGlobalWhitelisted ) {
       let contact = ( isGuildBlacklisted ? guildOwner.id : botOwner.id );
       results.content = 'Oh no!  It looks like you have been blacklisted from using my commands' + ( isGuildBlacklisted ? ' in this server!' : '!' ) + '  Please contact <@' + contact + '> to resolve the situation.';
