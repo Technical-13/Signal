@@ -9,43 +9,62 @@ module.exports = async ( guild ) => {
   const botOwner = client.users.cache.get( ownerId );
   const strConsole = '  Please check the console for details.';
   
+  const globalPrefix = ( botConfig.Prefix || config.prefix || '!' );
+  
   try {
-    const guildConfig = await guildConfigDB.findOne( { Guild: guild.id } ).catch( async objError => {
-      console.error( 'Encountered an error attempting to find %s(ID:%s) in my database in getLogChans.js:\n%s', guild.name, guild.id, objError.stack );
-      botOwner.send( 'Encountered an error attempting to find `' + guild.name + '`(:id:' + guild.id + ') in my database in getLogChans.' + strConsole )
-      .catch( errNotSent => { console.error( 'Error attempting to DM you about the above error: %o', errNotSent ); } );
-      return { doLogs: false, chanDefault: null, chanError: null, chanChat: null, strClosing: null };
-    } );
+    var guildConfig = { Logs: { Active: true, Chat: null, Default: null, Error: null } };
+    var doLogs = false;
+    var chanDefault = null;
+    var chanError = null;
+    var chanChat = null;
+    var strClosing = '';
     
-    if ( !guildConfig ) {
-      console.error( 'Encountered an error %s (ID:%s) returned empty in my database in getLogChans.js:\n%s', guild.name, guild.id, guildConfig );
-      await guildConfigDB.create( {
+    if ( guild ) {
+      const createConfig = {
         Guild: guild.id,
-        Blacklist: [],
-        Whitelist: [],
+        Blacklist: { Members: [], Roles: [] },
+        Commands: [],
         Invite: null,
-        Logs: { Active: true, Default: null, Error: null, Chat: null },
+        Logs: { Active: true, Chat: null, Default: null, Error: null },
         Prefix: globalPrefix,
-        Welcome: { Active: false, Channel: null, Msg: null, Role: null }
-      } )
-      .then( createSuccess => {
-        console.log( 'Created a default DB entry for %s that was not set up.', guild.name );
-      } )
-      .catch( setError => {
-        console.error( 'Encountered an error attempting to create %s(ID:%s) guild configuration in my database for %s in getPerms.js:\n%o', guild.name, guild.id, strAuthorTag, setError );
-        botOwner.send( 'Encountered an error attempting to create `' + guild.name + '`(:id:' + guild.id + ') guild configuration that returned empty in my database for <@' + author.id + '>.' + strConsole )
-        .catch( errNotSent => { console.error( 'Error attempting to DM you about the above error: %o', errNotSent ); } );
+        Premium: true,
+        Welcome: { Active: false, Channel: null, Msg: null, Role: null },
+        Whitelist: { Members: [], Roles: [] }
+      };
+      guildConfig = await guildConfigDB.findOne( { Guild: guild.id } ).catch( async errFind => {
+        console.error( 'Error attempting to find %s (ID:%s) in my database in config.js:\n%s', guild.name, guild.id, errFind.stack );
+        await guildConfigDB.create( createConfig )
+        .then( createSuccess => {
+          console.log( 'Created a default DB entry for %s that was not set up.', guild.name );
+          botOwner.send( 'Error attempting to find `' + guild.name + '`(:id:' + guild.id + ') in my database, so I created it with default config.' );
+        } )
+        .catch( createError => {
+          console.error( 'Error attempting to create %s (ID:%s) guild configuration in my database in config.js:\n%s', guild.name, guild.id, createError.stack );
+          botOwner.send( 'Error attempting to create `' + guild.name + '`(:id:' + guild.id + ') guild configuration in my database.  Please check console for details.' );
+        } );
+        return createConfig;
       } );
-      
-      guildConfig = { doLogs: true, chanDefault: null, chanError: null, chanChat: null };
-    }
-    const doLogs = ( guildConfig.Logs.Active || true );
-    const guildOwner = guild.members.cache.get( guild.ownerId );
-    const chanDefault = ( guildConfig.Logs.Default ? guild.channels.cache.get( guildConfig.Logs.Default ) : guildOwner );
-    const chanError = ( guildConfig.Logs.Error ? guild.channels.cache.get( guildConfig.Logs.Error ) : chanDefault );
-    const chanChat = ( guildConfig.Logs.Chat ? guild.channels.cache.get( guildConfig.Logs.Chat ) : chanDefault );
+      if ( !guildConfig ) {
+        await guildConfigDB.create( createConfig )
+        .then( createSuccess => {
+          console.log( 'Created a default DB entry for %s that was not set up.', guild.name );
+          botOwner.send( 'Error attempting to find `' + guild.name + '`(:id:' + guild.id + ') in my database, so I created it with default config.' );
+        } )
+        .catch( createError => {
+          console.error( 'Error attempting to create %s (ID:%s) guild configuration in my database in config.js:\n%s', guild.name, guild.id, createError.stack );
+          botOwner.send( 'Error attempting to create `' + guild.name + '`(:id:' + guild.id + ') guild configuration in my database.  Please check console for details.' );
+        } );
+        guildConfig = createConfig;
+      }
     
-    const strClosing = '\n' + ( chanDefault == guildOwner ? 'Please run `/config set` to have these logs go to a channel in the [' + guild.name + '](<https://discord.com/channels/' + guild.id + '>) server or deactivate them instead of to your DMs.' : '----' );
+      doLogs = ( guildConfig.Logs.Active || true );
+      guildOwner = guild.members.cache.get( guild.ownerId );
+      chanDefault = ( guildConfig.Logs.Default ? guild.channels.cache.get( guildConfig.Logs.Default ) : guildOwner );
+      chanError = ( guildConfig.Logs.Error ? guild.channels.cache.get( guildConfig.Logs.Error ) : chanDefault );
+      chanChat = ( guildConfig.Logs.Chat ? guild.channels.cache.get( guildConfig.Logs.Chat ) : chanDefault );
+      
+      strClosing = '\n' + ( chanDefault == guildOwner ? '\nPlease run `/config set` to have these logs go to a channel in the [' + guild.name + '](<https://discord.com/channels/' + guild.id + '>) server or deactivate them instead of to your DMs.' : '\n----' );
+    }
   
     return {
       doLogs: doLogs,

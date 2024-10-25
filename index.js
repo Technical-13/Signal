@@ -5,36 +5,43 @@ const { Client, GatewayIntentBits, Partials, Collection } = require( 'discord.js
 const config = require( './config.json' );
 require( 'dotenv' ).config();
 
+initDatabase();
+
 const client = new Client( {
-	intents: [
-		GatewayIntentBits.Guilds, 
-		GatewayIntentBits.GuildMessages, 
-		GatewayIntentBits.GuildPresences, 
-		GatewayIntentBits.GuildMessageReactions, 
-		GatewayIntentBits.DirectMessages,
-		GatewayIntentBits.GuildMembers,
-		GatewayIntentBits.MessageContent,
-	], 
-	partials: [ Partials.Channel, Partials.Message, Partials.User, Partials.GuildMember, Partials.Reaction ]
+  intents: [
+    GatewayIntentBits.Guilds, 
+    GatewayIntentBits.GuildMessages, 
+    GatewayIntentBits.GuildPresences, 
+    GatewayIntentBits.GuildMessageReactions, 
+    GatewayIntentBits.DirectMessages,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.MessageContent,
+  ], 
+  partials: [ Partials.Channel, Partials.Message, Partials.User, Partials.GuildMember, Partials.Reaction ]
 } );
 
-/* ------------------ COLLECTIONS ------------------ */
-client.commands = new Collection();
+/* -------------------- COLLECTIONS -------------------- */
 client.aliases = new Collection();
+client.commands = new Collection();
+client.groups = new Collection();
 client.events = new Collection();
-client.slashCommands = new Collection();
 client.prefix = config.prefix;
+client.slashCommands = new Collection();
+
+/* ------------------ STATIC COMMANDS ------------------ */
+var staticCmds = [];
+if ( config.staticCmds ) { staticCmds.concat( config.staticCmds ); }
+staticCmds.push( 'admin' );
+client.groups.set( 'staticCmds', staticCmds );
 
 module.exports = client;
 
-initDatabase();
-
 fs.readdirSync( './handlers' ).forEach( ( handler ) => {
-	require( `./handlers/${handler}` )( client );
+  require( `./handlers/${handler}` )( client );
 } );
 
 client.login( process.env.token )
-  .then( async loggedIn => { console.log( 'Successfully connected!' ); } )
-  .catch( errLogin => { console.error( 'There was an error logging in:\n%s', errLogin.stack ); } );
+.then( async loggedIn => { console.log( 'Successfully connected!' ); } )
+.catch( errLogin => { console.error( 'There was an error logging in:\n%s', errLogin.stack ); } );
 
 keepAlive();

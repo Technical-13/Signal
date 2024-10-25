@@ -18,46 +18,60 @@ module.exports = ( client ) => {
   const devOnlyCmds = [];
   const buildTable = {};
 
+  const cmdGroups = {};
   fs.readdirSync( './slashCommands/' ).forEach( async dir => {
     const files = fs.readdirSync( `./slashCommands/${dir}/` ).filter( file => file.endsWith( '.js' ) );
-
-    for ( const file of files ) {
-      let arrCmdRow = [ dir, file ];
-      const cmdName = file.split( '.js' )[ 0 ];
-      const slashCommand = require( `../slashCommands/${dir}/${file}` );
-      if ( slashCommand.disable ) {
-        arrCmdRow.push( '⭕' );
-      } else if ( slashCommand.modCmd && slashCommand.name ) {
-        devOnlyCmds.push( {
-          name: slashCommand.name,
-          name_localizations: slashCommand.name_localizations ? slashCommand.name_localizations : null,
-          description: slashCommand.description,
-          description_localizations: slashCommand.description_localizations ? slashCommand.description_localizations : null,
-          type: slashCommand.type,
-          options: slashCommand.options ? slashCommand.options : null,
-          default_permission: slashCommand.default_permission ? slashCommand.default_permission : null,
-          default_member_permissions: slashCommand.default_member_permissions ? PermissionsBitField.resolve( slashCommand.default_member_permissions ).toString() : null
-        } );
-        client.slashCommands.set( slashCommand.name, slashCommand );
-        arrCmdRow[ 1 ] = cmdName;
-        arrCmdRow.push( '➰' );
-      } else if ( slashCommand.name ) {
-        slashCommands.push( {
-          name: slashCommand.name,
-          name_localizations: slashCommand.name_localizations ? slashCommand.name_localizations : null,
-          description: slashCommand.description,
-          description_localizations: slashCommand.description_localizations ? slashCommand.description_localizations : null,
-          type: slashCommand.type,
-          options: slashCommand.options ? slashCommand.options : null,
-          default_permission: slashCommand.default_permission ? slashCommand.default_permission : null,
-          default_member_permissions: slashCommand.default_member_permissions ? PermissionsBitField.resolve( slashCommand.default_member_permissions ).toString() : null
-        } );
-        client.slashCommands.set( slashCommand.name, slashCommand );
-        arrCmdRow[ 1 ] = cmdName;
-        arrCmdRow.push( '✅' );
-      } else { arrCmdRow.push( '⛔' ); }
-      buildTable[ cmdName ] = arrCmdRow;
+    if ( !files || files.length <= 0 ) { console.log( chalk.red( `SlashCommand directory, ${dir}, is empty!` ) );}
+    else {
+      const cmdGroup = [];
+      for ( const file of files ) {
+        let arrCmdRow = [ dir, file ];
+        const cmdName = file.split( '.js' )[ 0 ];
+        const slashCommand = require( `../slashCommands/${dir}/${file}` );
+        if ( slashCommand.disable ) {
+          arrCmdRow.push( '⭕' );
+        }
+        else if ( slashCommand.devOnly && slashCommand.name ) {
+          devOnlyCmds.push( {
+            name: slashCommand.name,
+            name_localizations: slashCommand.name_localizations ? slashCommand.name_localizations : null,
+            group: slashCommand.group || dir,
+            description: slashCommand.description,
+            description_localizations: slashCommand.description_localizations ? slashCommand.description_localizations : null,
+            type: slashCommand.type,
+            options: slashCommand.options ? slashCommand.options : null,
+            default_permission: slashCommand.default_permission ? slashCommand.default_permission : null,
+            default_member_permissions: slashCommand.default_member_permissions ? PermissionsBitField.resolve( slashCommand.default_member_permissions ).toString() : null
+          } );
+          cmdGroup.push( slashCommand.name );
+          client.slashCommands.set( slashCommand.name, slashCommand );
+          arrCmdRow[ 1 ] = cmdName;
+          arrCmdRow.push( '➰' );
+        }
+        else if ( slashCommand.name ) {
+          slashCommands.push( {
+            name: slashCommand.name,
+            name_localizations: slashCommand.name_localizations ? slashCommand.name_localizations : null,
+            group: slashCommand.group || dir,
+            description: slashCommand.description,
+            description_localizations: slashCommand.description_localizations ? slashCommand.description_localizations : null,
+            type: slashCommand.type,
+            options: slashCommand.options ? slashCommand.options : null,
+            default_permission: slashCommand.default_permission ? slashCommand.default_permission : null,
+            default_member_permissions: slashCommand.default_member_permissions ? PermissionsBitField.resolve( slashCommand.default_member_permissions ).toString() : null
+          } );
+//          cmdGroup.push( slashCommand.name );
+          client.slashCommands.set( slashCommand.name, slashCommand );
+          arrCmdRow[ 1 ] = cmdName;
+          arrCmdRow.push( '✅' );
+        }
+        else { arrCmdRow.push( '⛔' ); }
+        buildTable[ cmdName ] = arrCmdRow;
+      }
+      cmdGroup.sort();
+      cmdGroups[ dir ] = cmdGroup;
     }
+    client.groups.set( 'slashCmds', cmdGroups );
   } );
 
   let statusPut = chalk.yellow( 'Slash Commands' ) + ':\n\t';

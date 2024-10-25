@@ -130,7 +130,7 @@ module.exports = {
     else {
       interaction.editReply( { content: i18FTFinfo[ locale ] } ).catch( noReply => {
         if ( doLogs ) {
-          chanError.send( { content: 'Encountered an error telling <@' + author.id + '> about FTFs via `/ftf` request.' + strClosing } )
+          chanError.send( { content: 'Error telling <@' + author.id + '> about FTFs via `/ftf` request.' + strClosing } )
           .catch( async errLog => { await errHandler( errLog, { chanType: 'error', command: 'ftf', guild: guild, type: 'logLogs' } ); } );
         }
       } );

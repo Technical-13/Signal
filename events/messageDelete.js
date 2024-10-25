@@ -68,5 +68,5 @@ client.on( 'messageDelete', async message => {
         files: ( attachments.length === 0 ? null : attachments )
       } ).catch( noLogChan => { console.error( 'logChan.send error:\n%o', noLogChan ) } );
     }
-  } ).catch( err => { console.error( 'Encountered an error running messageDelete.js from %s:\n\t%o', guild.name, err ); } );
+  } ).catch( err => { console.error( 'Error running messageDelete.js from %s:\n\t%o', guild.name, err ); } );
 } );

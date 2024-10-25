@@ -16,29 +16,36 @@ mongoose.set( 'strictQuery', false );
 module.exports = async () => {
   await mongoose.disconnect().then( dbDisconnected => console.log( chalk.yellow( 'MongoDB closed.' ) ) );
   await mongoose.connect( strConnectDB )
-    .then( async dbConnected => {
-      console.log( chalk.greenBright( 'Connected to MongoDB.' ) );
-      const newBot = ( await botConfig.countDocuments( { BotName: thisBotName } ) === 0 ? true : false );
-      if ( newBot && thisBotName && botOwnerID && clientId && devGuildId ) {
-        await botConfig.create( {
-          BotName: thisBotName,
-          ClientID: clientId,
-          Owner: botOwnerID,
-          Prefix: ( config.prefix || '!' ),
-          Blacklist: [],
-          Whitelist: [],
-          Mods: ( config.moderatorIds || [] ),
-          DevGuild: devGuildId
-        } )
-        .then( initSuccess => { console.log( chalk.bold.greenBright( 'Bot configuration initialized in my database.' ) ); } )
-        .catch( initError => { console.error( chalk.bold.red.bgYellowBright( `Encountered an error attempting to initialize bot configuration in my database:\n${initError}` ) ); } );
-      }
-      else {
-        if ( !thisBotName ) { console.error( chalk.bold.redBright( 'BotName missing attempting to initialize bot configuration in my database.' ) ); }
-        if ( !botOwnerID ) { console.error( chalk.bold.redBright( 'ClientID missing attempting to initialize bot configuration in my database.' ) ); }
-        if ( !clientId ) { console.error( chalk.bold.redBright( 'Owner missing attempting to initialize bot configuration in my database.' ) ); }
-        if ( !devGuildId ) { console.error( chalk.bold.redBright( 'DevGuild missing attempting to initialize bot configuration in my database.' ) ); }
-      }
-    } )
-    .catch( dbConnectErr => { console.error( chalk.bold.red( `Failed to connect to MongoDB:\n${dbConnectErr}` ) ); } );
+  .then( async dbConnected => {
+    console.log( chalk.greenBright( 'Connected to MongoDB.' ) );
+    const newBot = ( await botConfig.countDocuments( { BotName: thisBotName } ) === 0 ? true : false );
+    if ( newBot && thisBotName && botOwnerID && clientId && devGuildId ) {
+      console.log( 'Creating new bot database.' );
+      const newBotConfig = {
+        BotName: thisBotName,
+        Blacklist: [],
+        ClientID: clientId,
+        DevGuild: devGuildId,
+        Mods: ( config.moderatorIds || [] ),
+        Owner: botOwnerID,
+        Prefix: ( config.prefix || '!' ),
+        Whitelist: []
+      };
+      await botConfig.create( newBotConfig )
+      .then( initSuccess => { console.log( chalk.bold.greenBright( 'Bot configuration initialized in my database.' ) ); return newBotConfig; } )
+      .catch( initError => { throw new Error( chalk.bold.red.bgYellowBright( `Error attempting to initialize bot configuration in my database:\n${initError}` ) ); } );
+    }
+    else if ( !thisBotName || !botOwnerID || !clientId || !devGuildId ) {
+      if ( !thisBotName ) { throw new Error( chalk.bold.redBright( 'BotName missing attempting to initialize bot configuration in my database.' ) ); }
+      if ( !botOwnerID ) { throw new Error( chalk.bold.redBright( 'ClientID missing attempting to initialize bot configuration in my database.' ) ); }
+      if ( !clientId ) { throw new Error( chalk.bold.redBright( 'Owner missing attempting to initialize bot configuration in my database.' ) ); }
+      if ( !devGuildId ) { throw new Error( chalk.bold.redBright( 'DevGuild missing attempting to initialize bot configuration in my database.' ) ); }
+    }
+    else {
+      const myConfig = await botConfig.findOne( { BotName: thisBotName } );
+      console.log( 'Returning configuration from database:\n%o', myConfig );
+      return myConfig;
+    }
+  } )
+  .catch( dbConnectErr => { console.error( chalk.bold.red( `Failed to connect to MongoDB:\n${dbConnectErr}` ) ); } );
 }

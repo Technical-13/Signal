@@ -166,12 +166,12 @@ module.exports = async ( objError, options = { command: 'undefined', debug: fals
         break;
       case 'getBotDB':
         console.error( 'Unable to find botConfig:\n%o', objError );
-        botOwner.send( 'Encountered an error attempting to find botConfig.' + strConsole )
+        botOwner.send( 'Error attempting to find botConfig.' + strConsole )
         .catch( errNotSent => { console.error( 'Error attempting to DM you about the above error: %o', errNotSent ); } );
         break;
       case 'getGuildDB':
-        console.error( 'Encountered an error attempting to find %s(ID:%s) in my database in %s.js:\n%s', guild.name, guild.id, cmd, objError.stack );
-        botOwner.send( 'Encountered an error attempting to find `' + guild.name + '`(:id:' + guild.id + ') in my database in ' + cmd + '.' + strConsole )
+        console.error( 'Error attempting to find %s(ID:%s) in my database in %s.js:\n%s', guild.name, guild.id, cmd, objError.stack );
+        botOwner.send( 'Error attempting to find `' + guild.name + '`(:id:' + guild.id + ') in my database in ' + cmd + '.' + strConsole )
         .catch( errNotSent => { console.error( 'Error attempting to DM you about the above error: %o', errNotSent ); } );
         break;
       case 'logLogs':
@@ -189,31 +189,51 @@ module.exports = async ( objError, options = { command: 'undefined', debug: fals
         switch ( modType ) {
           case 'clear':
             console.error( 'Error attempting to clear my %s for %s: %o', clearLists, author.displayName, guild.name, objError );
-            botOwner.send( 'Error attempting to clear my ' + clearLists + ' with `/system clear`.' + strConsole )
+            botOwner.send( 'Error attempting to clear my ' + clearLists + ' with `/' + command + ' clear`.' + strConsole )
             .then( sentOwner => {
-              return { content: 'Error attempting to clear my ' + clearLists + ' for this server!' + strNotified };
+              return { content: 'Error attempting to clear my ' + clearLists + ( command === 'system' ? '' : ' for this server' ) + '!' + strNotified };
             } )
             .catch( errSend => {
               console.error( 'Error attempting to DM you about above error: %o', errSend );
-              return { content: 'Error attempting to clear my ' + clearLists + ' for this server!' + strLogged };
+              return { content: 'Error attempting to clear my ' + clearLists + ( command === 'system' ? '' : ' for this server' ) + '!' + strLogged };
             } );
             break;
           case 'add':
           case 'remove':
-            const fromInTo = ( modType === 'remove' ? 'from the database ' + ( modMod ? 'bot moderator list' : ( modBlack ? 'black' : 'white' ) + 'list' ) : ( modMod ? 'to' : 'in' ) + ' the database' );
-            const doList = ( modMod ? modType : ( modType === 'add' ? '' : 'de-' ) ) + ( modMod ? ' a moderator' : ( modBlack ? 'blacklist' : 'whitelist' ) );
-            const modTarget = ( modMod || modBlack || modWhite );
-            console.error( chalk.bold.red.bgYellowBright( `Encountered an error attempting to ${doList} ${modTarget} (${botUsers.get( modTarget ).displayName}) ${fromInTo}:\n${objError}` ) );
-            return { content: 'Encountered an error attempting to ' + doList + ' <@' + modTarget + '> ' + fromInTo + '.' + strConsole };
+            if ( command === 'config' ) {
+              const fromIn = ( modType === 'remove' ? 'from the database ' + ( modBlack ? 'black' : 'white' ) + 'list' : ' in the database' );
+              const doList = ( modType === 'add' ? '' : 'de-' ) + ( modBlack ? 'blacklist' : 'whitelist' );
+              const modTarget = ( modBlack || modWhite );
+              var modTargetName;
+              switch ( modTargetType ) {
+                case 'GuildMember':
+                  modTargetName = '@' + botUsers.get( modTarget ).displayName;
+                  break;
+                case 'Role':
+                  modTargetName = '&' + guild.roles.cache.get( modTarget ).name;
+              }
+              console.error( 'Error attempting to %s %s (%s) %s:\n%o', doList, modTarget, modTargetName, fromIn, objError );
+              return { content: 'Error attempting to ' + doList + ' <@' + modTarget + '> ' + fromIn + '.' + strConsole };
+            }
+            if ( command === 'system' ) {
+              const fromInTo = ( modType === 'remove' ? 'from the database ' + ( modMod ? 'bot moderator list' : ( modBlack ? 'black' : 'white' ) + 'list' ) : ( modMod ? 'to' : 'in' ) + ' the database' );
+              const doList = ( modMod ? modType : ( modType === 'add' ? '' : 'de-' ) ) + ( modMod ? ' a moderator' : ( modBlack ? 'blacklist' : 'whitelist' ) );
+              const modTarget = ( modMod || modBlack || modWhite );
+              console.error( chalk.bold.red.bgYellowBright( `Error attempting to ${doList} ${modTarget} (${botUsers.get( modTarget ).displayName}) ${fromInTo}:\n${objError}` ) );
+              return { content: 'Error attempting to ' + doList + ' <@' + modTarget + '> ' + fromInTo + '.' + strConsole };
+            }
             break;
           case 'reset':
-            console.error( chalk.bold.red.bgYellowBright( 'Encountered an error attempting to reset configuration with `/system reset`:\n%o' ), objError );
-            return { content: 'Encountered an error attempting to reset configuration with `/system reset`.' + strConsole };
+            console.error( chalk.bold.red.bgYellowBright( 'Error attempting to reset %s configuration with `/%s reset`:\n%o' ), ( command === 'config' ? 'guild' : 'bot' ), command, objError );
+            return { content: 'Error attempting to reset ' + ( command === 'config' ? 'guild' : 'bot' ) + ' configuration with `/' + command + ' reset`.' + strConsole };
             break;
           case 'set':
-            console.error( chalk.bold.red.bgYellowBright( 'Encountered an error attempting to modify bot configuration in my database:\n%o' ), objError );
-            return { content: 'Encountered an error attempting to modify bot configuration in my database.' + strConsole };
+            console.error( 'Error attempting to modify %s configuration in my database:\n%o', ( command === 'config' ? 'guild' : 'bot' ), objError );
+            return { content: 'Error attempting to modify ' + ( command === 'config' ? 'guild' : 'bot' ) + ' configuration in my database.' + strConsole };
             break;
+          default:
+            console.error( chalk.bold.red.bgYellowBright( 'Unknown error attempting to modify %s configuration in my database:\n%o' ), ( command === 'config' ? 'guild' : 'bot' ), objError );
+            return { content: 'Unknown error attempting to modify ' + ( command === 'config' ? 'guild' : 'bot' ) + ' configuration in my database.' + strConsole };
         }
         break;
       case 'setPresence':
