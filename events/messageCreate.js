@@ -31,17 +31,15 @@ client.on( 'messageCreate', async message => {
   for ( let word of arrContent ) {
     word = word.trim();
     let wordPrefix = word.slice( 0, 2 );
-    word = word.match( /^(GC|TB|WM|GL|TL|PR|BM|GT)[A-Z0-9]*$/ );
-    word = ( word ? word[ 0 ] : [] );
-    if ( word.length >= 4 && word.length <= 8 ) {
-      if ( word.startsWith( 'GC' ) ) {
-        arrGcCodes.push( word.toUpperCase() );
-        hasCodes.GC = true;
-      }
-      else if ( arrOtherTypeCodes.indexOf( wordPrefix ) != -1 ) {
-        arrOtherCodes.push( word.toUpperCase() );
-        hasCodes[ wordPrefix ] = true;
-      }
+    word = word.match( /^((?:GC|TB|WM|GL|TL|PR|BM|GT)[A-Z0-9]{2,6})/gi );
+    let code = ( word ? word[ 0 ].toUpperCase() : '' );
+    if ( code.startsWith( 'GC' ) ) {
+      arrGcCodes.push( code );
+      hasCodes.GC = true;
+    }
+    else if ( arrOtherTypeCodes.indexOf( wordPrefix ) != -1 ) {
+      arrOtherCodes.push( code );
+      hasCodes[ wordPrefix ] = true;
     }
   }
 
