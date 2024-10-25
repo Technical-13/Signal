@@ -115,7 +115,7 @@ module.exports = {
       }
     }
     if ( oldWhiteMembers.length > 0 ) { oldWhiteGuild = oldWhiteGuild.concat( oldWhiteMembers ); }
-    
+
     const chanDefaultLog = ( oldLogDefault ? guild.channels.cache.get( oldLogDefault ) : guildOwner );
     const chanErrorLog = ( oldLogError ? guild.channels.cache.get( oldLogError ) : guildOwner );
 
@@ -190,7 +190,7 @@ module.exports = {
         modType: myTask,
         type: 'modifyDB'
       };
-      
+
       if ( canAdmin ) {// clear, commands, reset, set
         switch ( myTask ) {
           case 'clear':
@@ -271,7 +271,7 @@ module.exports = {
               let blackActions;
               switch ( addBlack.constructor.name ) {
                 case 'GuildMember':
-                  if ( oldBlackMembers.indexOf( addBlack.id ) != -1 ) { return interaction.editReply( { content: '<@' + addBlack.id + '> is already on the blacklist!' } ) }                  
+                  if ( oldBlackMembers.indexOf( addBlack.id ) != -1 ) { return interaction.editReply( { content: '<@' + addBlack.id + '> is already on the blacklist!' } ) }
                   newConfig.Blacklist.Members = oldBlackMembers.concat( [ addBlack.id ] );
                   blackActions = '<@' + addBlack.id + '> was added';
                   if ( oldWhiteMembers.indexOf( addBlack.id ) != -1 ) {
@@ -462,6 +462,8 @@ module.exports = {
             break;
         }
       }
+      console.log( 'Updating %s guild config with: %o', guild.name, newConfig );
+
       await guildConfigDB.updateOne( { Guild: oldConfig.Guild }, newConfig, { upsert: true } )
       .then( updateSuccess => {
         if ( newConfig.Logs.Active && successResultLog ) {

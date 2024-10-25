@@ -154,7 +154,13 @@ module.exports = async ( user, guild, doBlacklist = true, debug = false ) => {
       let debugResults = {};
       for ( const key of resultKeys ) {
         if ( typeof( results[ key ] ) != 'object' ) { debugResults[ key ] = results[ key ]; }
-        else { debugResults[ key ] = '{ ' + results[ key ].constructor.name + ': ' + results[ key ].id + ' }'; }
+        else {
+          let resultObj = results[ key ];
+          let objType = resultObj.constructor.name;
+          let objId = resultObj.id;
+          let objName = ( resultObj.displayName || resultObj.globalName || resultObj.name );
+          debugResults[ key ] = '{ ' + objType + ': ' + objId + ' }';
+        }
       }
       console.log( 'getPerms is returning: %o', debugResults );
     }
