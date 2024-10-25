@@ -29,7 +29,7 @@ module.exports = {
   run: async ( client, interaction ) => {
     await interaction.deferReply( { ephemeral: true } );
     const { channel, guild, options, user: author } = interaction;
-    const { isBotMod, hasManageGuild, guildAllowsPremium, isServerBooster, hasMentionEveryone, isWhitelisted, content } = await userPerms( author, guild );
+    const { isBotMod, hasManageGuild, guildAllowsPremium, isServerBooster, hasMentionEveryone, isWhitelisted, content } = await userPerms( author, guild, true, true );
     if ( content ) { return interaction.editReply( { content: content } ); }
 
     const canSpeak = ( isBotMod || hasManageGuild || isWhitelisted || ( guildAllowsPremium && isServerBooster ) ? true : false );
@@ -39,7 +39,7 @@ module.exports = {
     const mentionsEveryone = /@(everyone|here)/g.test( mySaying );
     const strEveryoneHere = ( mentionsEveryone ? '`@' + ( /@everyone/g.test( mySaying ) ? 'everyone' : 'here' ) + '`' : null );
     const strAuthorTag = author.tag;
-    
+
     const { chanChat, doLogs, strClosing } = await logChans( guild );
 
     if ( mySaying ) {

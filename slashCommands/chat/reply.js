@@ -29,17 +29,17 @@ module.exports = {
   run: async ( client, interaction ) => {
     await interaction.deferReply( { ephemeral: true } );
     const { channel, guild, options, user: author } = interaction;
-    const { isBotMod, hasManageGuild, guildAllowsPremium, isServerBooster, hasMentionEveryone, isWhitelisted, content } = await userPerms( author, guild );
+    const { isBotMod, hasManageGuild, guildAllowsPremium, isServerBooster, hasMentionEveryone, isWhitelisted, content } = await userPerms( author, guild, true, true );
     if ( content ) { return interaction.editReply( { content: content } ); }
 
-    const canSpeak = ( isBotMod || hasManageGuild || isWhitelisted || ( guildAllowsPremium && isServerBooster ) ? true : false );    
+    const canSpeak = ( isBotMod || hasManageGuild || isWhitelisted || ( guildAllowsPremium && isServerBooster ) ? true : false );
     const msgID = options.getString( 'message-id' );
     if ( !( /[\d]{18,19}/.test( msgID ) ) ) { return interaction.editReply( { content: '`' + msgID + '` is not a valid `message-id`. Please try again.' } ); }
     const myResponse = options.getString( 'response' );
     const mentionsEveryone = /@(everyone|here)/g.test( myResponse );
     const strEveryoneHere = ( mentionsEveryone ? '`@' + ( /@everyone/g.test( myResponse ) ? 'everyone' : 'here' ) + '`' : null );
     const strAuthorTag = author.tag;
-    
+
     const { chanChat, doLogs, strClosing } = await logChans( guild );
 
     if ( myResponse ) {

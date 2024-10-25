@@ -28,15 +28,15 @@ module.exports = {
   run: async ( client, interaction ) => {
     await interaction.deferReply( { ephemeral: true } );
     const { channel, guild, options, user: author } = interaction;
-    const { botOwner, isBotMod, guildOwner, hasManageGuild, guildAllowsPremium, isServerBooster, hasMentionEveryone, isWhitelisted, content } = await userPerms( author, guild );
+    const { botOwner, isBotMod, guildOwner, hasManageGuild, guildAllowsPremium, isServerBooster, hasMentionEveryone, isWhitelisted, content } = await userPerms( author, guild, true, true );
     if ( content ) { return interaction.editReply( { content: content } ); }
 
-    const canSpeak = ( isBotMod || hasManageGuild || isWhitelisted || ( guildAllowsPremium && isServerBooster ) ? true : false );    
+    const canSpeak = ( isBotMod || hasManageGuild || isWhitelisted || ( guildAllowsPremium && isServerBooster ) ? true : false );
     const speakChannel = options.getChannel( 'channel' ) || channel;
     const mySaying = options.getString( 'saying' );
     const mentionsEveryone = /@(everyone|here)/g.test( mySaying );
     const strEveryoneHere = ( mentionsEveryone ? '`@' + ( /@everyone/g.test( mySaying ) ? 'everyone' : 'here' ) + '`' : null );
-    
+
     const { chanChat, doLogs, strClosing } = await logChans( guild );
 
     if ( mySaying ) {

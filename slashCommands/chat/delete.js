@@ -13,14 +13,14 @@ module.exports = {
   run: async ( client, interaction ) => {
     await interaction.deferReply( { ephemeral: true } );
     const { channel, guild, options, user: author } = interaction;
-    const { isBotMod, hasManageGuild, guildAllowsPremium, isServerBooster, isWhitelisted, content } = await userPerms( author, guild );
+    const { isBotMod, hasManageGuild, guildAllowsPremium, isServerBooster, isWhitelisted, content } = await userPerms( author, guild, true, true );
     if ( content ) { return interaction.editReply( { content: content } ); }
 
     const canDelete = ( isBotMod || hasManageGuild || isWhitelisted || ( guildAllowsPremium && isServerBooster ) ? true : false );
     const msgID = options.getString( 'message-id' );
     if ( !( /[\d]{18,19}/.test( msgID ) ) ) { return interaction.editReply( { content: '`' + msgID + '` is not a valid `message-id`. Please try again.' } ); }
     const { chanChat, doLogs, strClosing } = await logChans( guild );
-    
+
     if ( !canDelete ) {
       if ( doLogs ) {
         chanChat.send( { content: '<@' + author.id + '> tried to get me to delete a message and doesn\'t have permission to do that.' } )
