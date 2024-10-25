@@ -152,6 +152,7 @@ client.on( 'messageCreate', async message => {
         let arrCName = cacheName.split( ' ' );
         cacheName = cacheName.replace( /\p{Emoji_Presentation}/gu, '�' );
         let cacheTypeIcon = ( Object.keys( gcCacheTypeIcons ).indexOf( objCache.type ) != -1 ? gcCacheTypeIcons[ objCache.type ] : '⁉' );
+        if ( cacheTypeIcon === '⁉' ) { botOwner.send( { content: '`' + objCache.type + '` is not a known type of cache.' } ) }
         strCodes += '\n';
         if ( objCache.pmo ) { strCodes += '<:PMO:1293693055127519315>'; }
         if ( objCache.archived || objCache.locked ) { strCodes += '<:archived:467385636173905942>'; }
