@@ -9,7 +9,7 @@ module.exports = async ( guild ) => {
   const botOwner = client.users.cache.get( ownerId );
   const strConsole = '  Please check the console for details.';
   
-  const globalPrefix = ( botConfig.Prefix || config.prefix || '!' );
+  const globalPrefix = ( client.prefix || config.prefix || '!' );
   
   try {
     var guildConfig = { Logs: { Active: true, Chat: null, Default: null, Error: null } };
