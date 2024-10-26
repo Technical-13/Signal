@@ -52,7 +52,7 @@ module.exports = {
   run: async ( client, interaction ) => {
     await interaction.deferReply( { ephemeral: true } );
     const { channel, guild, options, user: author } = interaction;
-    const { botOwner, content, globalPrefix, guildOwner, hasAdministrator, hasManageGuild, isGuildWhitelisted, roleServerBooster } = await userPerms( author, guild );
+    const { botOwner, globalPrefix, guildOwner, hasAdministrator, checkPermission, isGuildWhitelisted, roleServerBooster, content } = await userPerms( author, guild );
     if ( content ) { return interaction.editReply( { content: content } ); }
 
     const createConfig = {
@@ -119,7 +119,7 @@ module.exports = {
     const chanDefaultLog = ( oldLogDefault ? guild.channels.cache.get( oldLogDefault ) : guildOwner );
     const chanErrorLog = ( oldLogError ? guild.channels.cache.get( oldLogError ) : guildOwner );
 
-    const canAdmin = ( hasAdministrator || ( hasManageGuild && isGuildWhitelisted ) );
+    const canAdmin = ( hasAdministrator || ( checkPermission( 'ManageGuild' ) && isGuildWhitelisted ) );
     const objTasks = {
       admin: [ 'clear', 'reset', 'set' ],//, 'commands'
       manager: [ 'add', 'logs', 'remove' ],//, 'welcome'
@@ -157,7 +157,7 @@ module.exports = {
         'Blacklist: ' + showBlackList + '\n\t' +
         'Whitelist: ' + showWhiteList;
 
-      if ( options.getBoolean( 'share' ) && ( hasAdministrator || ( hasManageGuild && isGuildWhitelisted ) ) ) {
+      if ( options.getBoolean( 'share' ) && ( hasAdministrator || ( checkPermission( 'ManageGuild' ) && isGuildWhitelisted ) ) ) {
         channel.send( showConfigs )
         .then( sent => { return interaction.editReply( { content: 'I shared the settings in the channel.' } ); } )
         .catch( errSend => { return interaction.editReply( { content: 'Error sharing the settings in the channel.' } ); } );
@@ -165,7 +165,7 @@ module.exports = {
       else if ( options.getBoolean( 'share' ) ) { return interaction.editReply( { content: '**Only server administrators can share the configuration.**\n' + showConfigs } ); }
       else { return interaction.editReply( { content: showConfigs } ); }
     }
-    else if ( ( !canAdmin && isAdminTask ) || ( !hasManageGuild && isManagerTask ) ) {
+    else if ( ( !canAdmin && isAdminTask ) || ( !checkPermission( 'ManageGuild' ) && isManagerTask ) ) {
       guildOwner.send( '<@' + author.id + '> attempted to ' + ( myTask === 'get' ? 'view' : 'modify' ) + ' the configuration settings for `' + guild.name + '`.  Only yourself, those with the `ADMINISTRATOR`, `MANAGE_GUILD`, or `MANAGE_ROLES` permission, and my bot mods can do that.' );
       return interaction.editReply( { content: 'Sorry, you do not have permission to do that.  Please talk to <@' + guildOwner.id + '> or one of my masters if you think you shouldn\'t have gotten this error.' } );
     }
@@ -258,7 +258,7 @@ module.exports = {
             break;
         }
       }
-      if ( hasManageGuild ) {// add, logs, remove, welcome
+      if ( checkPermission( 'ManageGuild' ) ) {// add, logs, remove, welcome
         let addDone = [];
         switch ( myTask ) {
           case 'add':
@@ -462,7 +462,6 @@ module.exports = {
             break;
         }
       }
-
       await guildConfigDB.updateOne( { Guild: oldConfig.Guild }, newConfig, { upsert: true } )
       .then( updateSuccess => {
         if ( newConfig.Logs.Active && successResultLog ) {

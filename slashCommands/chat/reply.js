@@ -29,10 +29,10 @@ module.exports = {
   run: async ( client, interaction ) => {
     await interaction.deferReply( { ephemeral: true } );
     const { channel, guild, options, user: author } = interaction;
-    const { isBotMod, hasManageGuild, hasManageMessages, guildAllowsPremium, isServerBooster, hasMentionEveryone, isWhitelisted, content } = await userPerms( author, guild, true, true );
+    const { isBotMod, checkPermission, guildAllowsPremium, isServerBooster, isWhitelisted, content } = await userPerms( author, guild );
     if ( content ) { return interaction.editReply( { content: content } ); }
 
-    const canSpeak = ( isBotMod || hasManageGuild || hasManageMessages || isWhitelisted || ( guildAllowsPremium && isServerBooster ) ? true : false );
+    const canSpeak = ( isBotMod || checkPermission( 'ManageGuild' ) || checkPermission( 'ManageMessages' ) || isWhitelisted || ( guildAllowsPremium && isServerBooster ) ? true : false );
     const msgID = options.getString( 'message-id' );
     if ( !( /[\d]{18,19}/.test( msgID ) ) ) { return interaction.editReply( { content: '`' + msgID + '` is not a valid `message-id`. Please try again.' } ); }
     const myResponse = options.getString( 'response' );
@@ -43,7 +43,7 @@ module.exports = {
     const { chanChat, doLogs, strClosing } = await logChans( guild );
 
     if ( myResponse ) {
-      if ( canSpeak && ( !mentionsEveryone || hasMentionEveryone ) ) {
+      if ( canSpeak && ( !mentionsEveryone || checkPermission( 'MentionEveryone' ) ) ) {
         channel.messages.fetch( msgID ).then( async message => {
           await message.reply( myResponse ).then( async responded => {
             if ( doLogs ) {
@@ -59,7 +59,7 @@ module.exports = {
         } )
         .catch( async errFetch => { return interaction.editReply( await errHandler( errFetch, { command: 'reply', msgID: msgID, type: 'errFetch' } ) ); } );
       }
-      else if ( mentionsEveryone && !hasMentionEveryone ) {
+      else if ( mentionsEveryone && !checkPermission( 'MentionEveryone' ) ) {
         if ( doLogs ) {
           chanChat.send( { content: '<@' + author.id + '> has no permission to get me to ' + strEveryoneHere + ' in <#' + channel.id + '>. They tried to get me to reply to a message I didn\'t bother to retrieve with:\n```\n' + myResponse + '\n```' + strClosing } )
           .catch( async noLogChan => { return interaction.editReply( await errHandler( noLogChan, { chanType: 'chat', command: 'reply', guild: guild, type: 'logLogs' } ) ); } );

@@ -29,10 +29,10 @@ module.exports = {
   run: async ( client, interaction ) => {
     await interaction.deferReply( { ephemeral: true } );
     const { channel, guild, options, user: author } = interaction;
-    const { isBotMod, hasManageGuild, hasManageMessages, hasMentionEveryone, isWhitelisted, content } = await userPerms( author, guild, true, true );
+    const { isBotMod, checkPermission, guildAllowsPremium, isServerBooster, isWhitelisted, content } = await userPerms( author, guild, true, true );
     if ( content ) { return interaction.editReply( { content: content } ); }
 
-    const canSpeak = ( isBotMod || hasManageGuild || hasManageMessages || isWhitelisted ? true : false );
+    const canSpeak = ( isBotMod || checkPermission( 'ManageGuild' ) || checkPermission( 'ManageMessages' ) || isWhitelisted || ( guildAllowsPremium && isServerBooster ) ? true : false );
     const msgID = options.getString( 'message-id' );
     if ( !( /[\d]{18,19}/.test( msgID ) ) ) { return interaction.editReply( { content: '`' + msgID + '` is not a valid `message-id`. Please try again.' } ); }
     const mySaying = options.getString( 'saying' );
@@ -43,7 +43,7 @@ module.exports = {
     const { chanChat, doLogs, strClosing } = await logChans( guild );
 
     if ( mySaying ) {
-      if ( canSpeak && ( !mentionsEveryone || hasMentionEveryone ) ) {
+      if ( canSpeak && ( !mentionsEveryone || checkPermission( 'MentionEveryone' ) ) ) {
         channel.messages.fetch( msgID ).then( async message => {
           let oldContent = message.content;
           await message.edit( { content: mySaying } ).then( edited => {
@@ -59,7 +59,7 @@ module.exports = {
         } )
         .catch( async errFetch => { return interaction.editReply( await errHandler( errFetch, { command: 'edit', msgID: msgID, type: 'errFetch' } ) ); } );
       }
-      else if ( mentionsEveryone && !hasMentionEveryone ) {
+      else if ( mentionsEveryone && !checkPermission( 'MentionEveryone' ) ) {
         if ( doLogs ) {
           chanChat.send( { content: '<@' + author.id + '> has no permission to get me to ' + strEveryoneHere + ' in <#' + channel.id + '>. They tried to get me to change my message from:\n```\n' + oldContent + '\n```\nTo:\n```\n' + edited.content + '\n```' + strClosing } )
           .catch( async noLogChan => { return interaction.editReply( await errHandler( noLogChan, { chanType: 'chat', command: 'edit', guild: guild, type: 'logLogs' } ) ); } );
