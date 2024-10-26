@@ -135,7 +135,6 @@ module.exports = async ( user, guild, doBlacklist = true, debug = false ) => {
       guildAllowsPremium: guildAllowsPremium,
       roleServerBooster: roleServerBooster,
       isServerBooster: isServerBooster,
-      hasMentionEveryone: hasMentionEveryone,
       isGuildBlacklisted: isGuildBlacklisted,
       isGlobalBlacklisted: isGlobalBlacklisted,
       isBlacklisted: isBlacklisted,
