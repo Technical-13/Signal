@@ -9,14 +9,14 @@ initDatabase();
 
 const client = new Client( {
   intents: [
-    GatewayIntentBits.Guilds, 
-    GatewayIntentBits.GuildMessages, 
-    GatewayIntentBits.GuildPresences, 
-    GatewayIntentBits.GuildMessageReactions, 
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildPresences,
+    GatewayIntentBits.GuildMessageReactions,
     GatewayIntentBits.DirectMessages,
     GatewayIntentBits.GuildMembers,
     GatewayIntentBits.MessageContent,
-  ], 
+  ],
   partials: [ Partials.Channel, Partials.Message, Partials.User, Partials.GuildMember, Partials.Reaction ]
 } );
 
@@ -33,6 +33,8 @@ var staticCmds = [];
 if ( config.staticCmds ) { staticCmds.concat( config.staticCmds ); }
 staticCmds.push( 'admin' );
 client.groups.set( 'staticCmds', staticCmds );
+
+client.ownerId = ( config.botOwnerId || process.env.OWNER_ID );
 
 module.exports = client;
 

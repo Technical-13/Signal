@@ -1,4 +1,5 @@
 {
+  "activities": [ { "type": "Custom", "name": "https://discord.me/Geocaching" } ],
   "botName": "Signal",
   "botOwnerId": "440752068509040660",
   "clientId": "445799905177632768",

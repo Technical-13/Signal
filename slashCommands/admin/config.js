@@ -52,7 +52,7 @@ module.exports = {
   run: async ( client, interaction ) => {
     await interaction.deferReply( { ephemeral: true } );
     const { channel, guild, options, user: author } = interaction;
-    const { botOwner, globalPrefix, guildOwner, hasAdministrator, checkPermission, isGuildWhitelisted, roleServerBooster, content } = await userPerms( author, guild );
+    const { isBotOwner, botOwner, content, globalPrefix, guildOwner, hasAdministrator, checkPermission, isGuildWhitelisted, roleServerBooster } = await userPerms( author, guild );
     if ( content ) { return interaction.editReply( { content: content } ); }
 
     const createConfig = {
@@ -147,13 +147,13 @@ module.exports = {
 
       showConfigs = 'Guild configuration:\n\t' +
         'Invite channel is: ' + showInvite + '\n\t' +
-        'Available command groups: ' + showCommands + '\n\t' +
+//        'Available command groups: ' + showCommands + '\n\t' +
         'Default log channel is: ' + showDefault + '\n\t' +
         'Error message logs go to: ' + showError + '\n\t' +
         'Chat command requests log to: ' + showChat + '\n\t' +
         'Nitro Server Booster permissions: ' + showPremium + '\n\t' +
         'Command prefix is set to: ' + showPrefix + '\n\t' +
-        'On join welcomes are ' + showWelcome + '\n\t' +
+//        'On join welcomes are ' + showWelcome + '\n\t' +
         'Blacklist: ' + showBlackList + '\n\t' +
         'Whitelist: ' + showWhiteList;
 
@@ -166,7 +166,7 @@ module.exports = {
       else { return interaction.editReply( { content: showConfigs } ); }
     }
     else if ( ( !canAdmin && isAdminTask ) || ( !checkPermission( 'ManageGuild' ) && isManagerTask ) ) {
-      guildOwner.send( '<@' + author.id + '> attempted to ' + ( myTask === 'get' ? 'view' : 'modify' ) + ' the configuration settings for `' + guild.name + '`.  Only yourself, those with the `ADMINISTRATOR`, `MANAGE_GUILD`, or `MANAGE_ROLES` permission, and my bot mods can do that.' );
+      guildOwner.send( '<@' + author.id + '> attempted to ' + ( myTask === 'get' ? 'view' : 'modify' ) + ' the configuration settings for `' + guild.name + '`.  Only yourself, those with the `ADMINISTRATOR` permission or `MANAGE_GUILD` permission and is whitelisted in the server, and my bot mods can do that.' );
       return interaction.editReply( { content: 'Sorry, you do not have permission to do that.  Please talk to <@' + guildOwner.id + '> or one of my masters if you think you shouldn\'t have gotten this error.' } );
     }
     else {
@@ -205,8 +205,8 @@ module.exports = {
             successResultLog = 'My ' + clearLists + ' for this server ' + haveHas + ' been cleared.';
             successResult = 'My ' + clearLists + ' for this server ' + haveHas + ' been cleared.';
             break;
-          case 'commands':
-            return interaction.editReply( { content: 'Coming **SOON:tm:**' } );// SOON SOON SOON SOON SOON SOON SOON SOON SOON SOON
+          case 'commands': if ( !isBotOwner ) {
+            return interaction.editReply( { content: 'Coming **SOON:tm:**' } ); }// SOON SOON SOON SOON SOON SOON SOON SOON SOON SOON
             break;
           case 'reset':
             newConfig = createConfig;
@@ -449,7 +449,8 @@ module.exports = {
             successResultLog = addDone.join( ' and ' ) + ' for this server.';
             successResult = addDone.join( ' and ' ) + ' for this server.';
             break;
-          case 'welcome':
+          case 'welcome': if ( !isBotOwner ) {
+            return interaction.editReply( { content: 'Coming **SOON:tm:**' } ); }// SOON SOON SOON SOON SOON SOON SOON SOON SOON SOON
             var boolWelcome = ( options.getBoolean( 'do-welcome' ) ? options.getBoolean( 'do-welcome' ) : false );
             let changedWelcomeActive = ( boolWelcome === oldWelcomeActive ? true : false );
             var setWelcome = ( options.getChannel( 'welcome-channel' ) ? options.getChannel( 'welcome-channel' ).id : null );
@@ -458,7 +459,6 @@ module.exports = {
             var joinWelcome = ( options.getRole( 'welcome-role' ) ? options.getRole( 'welcome-role' ).id : null );
             var giveRole = ( options.getBoolean( 'welcome-role-give' ) ? options.getBoolean( 'welcome-role-give' ) : ( joinWelcome ? true : false ) );
             if ( !changedWelcomeActive && !strWelcome && !setWelcome && !joinWelcome ) { return interaction.editReply( { content: 'You forgot to tell me what welcoming stuff to change.' } ); }
-            return interaction.editReply( { content: 'Coming **SOON:tm:**' } );// SOON SOON SOON SOON SOON SOON SOON SOON SOON SOON
             break;
         }
       }
