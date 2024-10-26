@@ -1,8 +1,11 @@
 const client = require( '..' );
 
-module.exports = async ( ms, getUnits = { getWeeks: false, getDays: true, getHours: true, getMinutes: true, getSeconds: false } ) => {
+module.exports = async ( ms, getUnits = { getDecades: false, getYears: false, getMonths: false, getWeeks: false, getDays: true, getHours: true, getMinutes: true, getSeconds: false } ) => {
   if ( isNaN( ms ) ) { return '∅ms'; }
   const objUnits = {
+    xs: ( typeof getUnits.getDecades != 'boolean' ? false : getUnits.getDecades ),
+    yrs: ( typeof getUnits.getYears != 'boolean' ? false : getUnits.getYears ),
+    mos: ( typeof getUnits.getMonths != 'boolean' ? false : getUnits.getMonths ),
     wks: ( typeof getUnits.getWeeks != 'boolean' ? false : getUnits.getWeeks ),
     days: ( typeof getUnits.getDays != 'boolean' ? true : getUnits.getDays ),
     hrs: ( typeof getUnits.getHours != 'boolean' ? true : getUnits.getHours ),
@@ -10,10 +13,22 @@ module.exports = async ( ms, getUnits = { getWeeks: false, getDays: true, getHou
     secs: ( typeof getUnits.getSeconds != 'boolean' ? false : getUnits.getSeconds ),
   };
 
-  if ( objUnits.wks || objUnits.days || objUnits.hrs || objUnits.min || objUnits.secs ) {
-    var intWeeks, intDays, intHours, intMinutes, intSeconds;
+  if ( objUnits.xs || objUnits.yrs || objUnits.mos || objUnits.wks || objUnits.days || objUnits.hrs || objUnits.min || objUnits.secs ) {
+    var intDecades, intYears, intMonths, intWeeks, intDays, intHours, intMinutes, intSeconds;
     var totalSeconds = ( ms / 1000 );
-    if ( objUnits.wks ) {
+    if ( objUnits.xs ) {
+      intDecades = Math.floor( totalSeconds / 315569520000 );
+      totalSeconds %= 315569520000;
+    }
+    if ( objUnits.yrs ) {
+      intYears = Math.floor( totalSeconds / 31556952000 );
+      totalSeconds %= 31556952000;
+    }
+    if ( objUnits.mos ) {
+      intMonths = Math.floor( totalSeconds / 2629746000 );
+      totalSeconds %= 2629746000;
+    }
+    if ( objUnits.wks && ( intDecades + intYears + intMonths ) === 0 ) {
       intWeeks = Math.floor( totalSeconds / 604800 );
       totalSeconds %= 604800;
     }
@@ -29,13 +44,16 @@ module.exports = async ( ms, getUnits = { getWeeks: false, getDays: true, getHou
     if ( objUnits.secs ) { intSeconds = Math.floor( totalSeconds % 60 ); }
 
     const result = [];
-    if ( objUnits.wks && intWeeks != 0 ) { result.push( intWeeks + ' week' + ( intWeeks === 1 ? '' : 's' ) + ',' ); }
-    if ( objUnits.days && intDays != 0 ) { result.push( intDays + ' day' + ( intDays === 1 ? '' : 's' ) + ',' ); }
-    if ( objUnits.hrs && intHours != 0 ) { result.push( intHours + ' hour' + ( intHours === 1 ? '' : 's' ) + ',' ); }
-    if ( objUnits.min && intMinutes != 0 ) { result.push( intMinutes + ' minute' + ( intMinutes === 1 ? '' : 's' ) + ',' ); }
-    if ( objUnits.secs && intSeconds != 0 ) { result.push( intSeconds + ' second' + ( intSeconds === 1 ? '' : 's' ) + ',' ); }
+    if ( objUnits.xs && intDecades != 0 ) { result.push( intDecades + ' decade' + ( intDecades === 1 ? '' : 's' ) ); }
+    if ( objUnits.yrs && intYears != 0 ) { result.push( intYears + ' year' + ( intYears === 1 ? '' : 's' ) ); }
+    if ( objUnits.mos && intMonths != 0 ) { result.push( intMonths + ' month' + ( intMonths === 1 ? '' : 's' ) ); }
+    if ( objUnits.wks && intWeeks != 0 && ( intDecades + intYears + intMonths ) === 0 ) { result.push( intWeeks + ' week' + ( intWeeks === 1 ? '' : 's' ) ); }
+    if ( objUnits.days && intDays != 0 ) { result.push( intDays + ' day' + ( intDays === 1 ? '' : 's' ) ); }
+    if ( objUnits.hrs && intHours != 0 ) { result.push( intHours + ' hour' + ( intHours === 1 ? '' : 's' ) ); }
+    if ( objUnits.min && intMinutes != 0 ) { result.push( intMinutes + ' minute' + ( intMinutes === 1 ? '' : 's' ) ); }
+    if ( objUnits.secs && intSeconds != 0 ) { result.push( intSeconds + ' second' + ( intSeconds === 1 ? '' : 's' ) ); }
 
-    return ( result.join( ' ' ) ? result.join( ' ' ) : ms + 'ms' );
+    return ( result.join() ? result.join( ', ' ) : ms + 'ms' );
   }
   else { return ms + 'ms'; }
 };
