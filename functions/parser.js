@@ -14,8 +14,8 @@ module.exports = async ( rawString, obj = { guild: null, member: null, uptime: n
     '{{bot.name}}': bot.displayName,
     '{{bot.owner.name}}': client.users.cache.get( client.ownerId ).displayName,
     '{{bot.owner.ping}}': '<@' + client.ownerId + '>',
-    '{{bot.servers}}': client.guilds.cache.size,
-    '{{bot.users}}': client.users.cache.size,
+    '{{bot.servers}}': client.guilds.cache.size.toLocaleString(),
+    '{{bot.users}}': client.users.cache.size.toLocaleString(),
     '{{bot.uptime}}': currUptime
   };
   const notAvailable = {};
@@ -23,7 +23,7 @@ module.exports = async ( rawString, obj = { guild: null, member: null, uptime: n
   if ( guild ) {
     transclusions[ '{{guild.owner.name}}' ] = guild.members.cache.get( guild.ownerId ).displayName;
     transclusions[ '{{guild.owner.ping}}' ] = '<@' + guild.ownerId + '>';
-    transclusions[ '{{guild.members}}' ] = guild.members.cache.size;
+    transclusions[ '{{guild.members}}' ] = guild.members.cache.size.toLocaleString();
     transclusions[ '{{guild.name}}' ] = guild.name;
   } else {
     notAvailable[ '{{guild.owner.name}}' ] = 'guild';
