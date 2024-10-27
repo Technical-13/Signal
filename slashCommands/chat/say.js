@@ -35,7 +35,7 @@ module.exports = {
 
     const chanSpeak = options.getChannel( 'channel' ) || channel;
     const speakInChan = ( guild.members.cache.get( author.id ).permissionsIn( chanSpeak ).has( 'SendMessages' ) ? true : false );
-    const canSpeak = ( ( isBotMod || checkPermission( 'ManageGuild' ) || isWhitelisted || ( guildAllowsPremium && isServerBooster ) ) && speakInChan ? true : false );
+    const canSpeak = ( ( isBotMod || checkPermission( 'ManageGuild' ) || checkPermission( 'ManageMessages' ) || isWhitelisted || ( guildAllowsPremium && isServerBooster ) ) && speakInChan ? true : false );
     const mySaying = options.getString( 'saying' );
     const mentionsEveryone = /@(everyone|here)/g.test( mySaying );
     const strEveryoneHere = ( mentionsEveryone ? '`@' + ( /@everyone/g.test( mySaying ) ? 'everyone' : 'here' ) + '`' : null );
