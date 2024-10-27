@@ -2,6 +2,7 @@ const { ApplicationCommandType, InteractionContextType } = require( 'discord.js'
 const userPerms = require( '../../functions/getPerms.js' );
 const logChans = require( '../../functions/getLogChans.js' );
 const errHandler = require( '../../functions/errorHandler.js' );
+const parse = require( '../../functions/parser.js' );
 
 module.exports = {
   name: 'reply',
@@ -29,6 +30,7 @@ module.exports = {
   run: async ( client, interaction ) => {
     await interaction.deferReply( { ephemeral: true } );
     const { channel, guild, options, user: author } = interaction;
+    const authorMember = await guild.members.cache.get( author.id );
     const { isBotMod, checkPermission, guildAllowsPremium, isServerBooster, isWhitelisted, content } = await userPerms( author, guild );
     if ( content ) { return interaction.editReply( { content: content } ); }
 
@@ -45,10 +47,12 @@ module.exports = {
     if ( myResponse ) {
       if ( canSpeak && ( !mentionsEveryone || checkPermission( 'MentionEveryone' ) ) ) {
         channel.messages.fetch( msgID ).then( async message => {
-          await message.reply( myResponse ).then( async responded => {
+          const guildMember = await message.guild.members.cache.get( message.author.id );
+          const parsedSaying = await parse( myResponse, { author: authorMember, member: guildMember } );
+          await message.reply( parsedSaying ).then( async responded => {
             if ( doLogs ) {
               chanChat.send( {
-                content: 'At <@' + author.id + '>\'s request, I replied to <@' + message.author.id + '>\'s message https://discord.com/channels/' + message.guild.id + '/' + message.channel.id + '/' + message.id + '\n' + ( message.content ? '```\n' + message.content + '\n```' : '*`Attachment Only`*' ) + '\nWith https://discord.com/channels/' + responded.guild.id + '/' + responded.channel.id + '/' + responded.id + ':\n```\n' + myResponse + '\n```' + strClosing,
+                content: 'At <@' + author.id + '>\'s request, I replied to <@' + message.author.id + '>\'s message https://discord.com/channels/' + message.guild.id + '/' + message.channel.id + '/' + message.id + '\n' + ( message.content ? '```\n' + message.content + '\n```' : '*`Attachment Only`*' ) + '\nWith https://discord.com/channels/' + responded.guild.id + '/' + responded.channel.id + '/' + responded.id + ':\n```\n' + parsedSaying + '\n```' + strClosing,
                 files: ( message.attachments.size === 0 ? null : [ message.attachments.first().attachment ] )
               } )
               .catch( async noLogChan => { return interaction.editReply( await errHandler( noLogChan, { chanType: 'chat', command: 'reply', guild: guild, type: 'logLogs' } ) ); } );
