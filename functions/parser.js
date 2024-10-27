@@ -102,7 +102,7 @@ module.exports = async ( rawString, obj = { author: null, guild: null, member: n
     notAvailable[ '{{member.user.since}}' ] = 'member';
   }
 
-  arrTemplates = rawString.match( /\{\{((?:author|bot|guild|member)\.[a-z\.]*)\}\}/g );
+  arrTemplates = rawString.match( /\{\{((?:author|bot|guild|member|server)\.[a-z\.]*)\}\}/g );
   var parsed = rawString;
   if ( arrTemplates ) {
     arrTemplates.forEach( template => {
