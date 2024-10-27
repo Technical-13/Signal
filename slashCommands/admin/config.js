@@ -225,7 +225,7 @@ module.exports = {
             let alreadyDone = [];
             if ( setInvite ) {
               newConfig.Invite = setInvite;
-              setDone.push( 'Invite' );
+              setDone.push( 'Invite to <#' + setInvite + '>' );
             }
             if ( setPrefix != oldPrefix ) {
               newConfig.Prefix = setPrefix;
