@@ -2,6 +2,7 @@ const { ApplicationCommandType, InteractionContextType } = require( 'discord.js'
 const userPerms = require( '../../functions/getPerms.js' );
 const logChans = require( '../../functions/getLogChans.js' );
 const errHandler = require( '../../functions/errorHandler.js' );
+const parse = require( '../../functions/parser.js' );
 
 module.exports = {
   name: 'say',
@@ -28,12 +29,13 @@ module.exports = {
   run: async ( client, interaction ) => {
     await interaction.deferReply( { ephemeral: true } );
     const { channel, guild, options, user: author } = interaction;
-    const { isBotMod, checkPermission, guildAllowsPremium, isServerBooster, isWhitelisted, content } = await userPerms( author, guild );
+    const guildMember = await guild.members.cache.get( author.id );
+    const { botOwner, isBotMod, guildOwner, checkPermission, guildAllowsPremium, isServerBooster, isWhitelisted, content } = await userPerms( author, guild );
     if ( content ) { return interaction.editReply( { content: content } ); }
 
     const chanSpeak = options.getChannel( 'channel' ) || channel;
     const speakInChan = ( guild.members.cache.get( author.id ).permissionsIn( chanSpeak ).has( 'SendMessages' ) ? true : false );
-    const canSpeak = ( ( isBotMod || checkPermission( 'ManageGuild' ) || checkPermission( 'ManageMessages' ) || isWhitelisted || ( guildAllowsPremium && isServerBooster ) ) && speakInChan ? true : false );
+    const canSpeak = ( ( isBotMod || checkPermission( 'ManageGuild' ) || isWhitelisted || ( guildAllowsPremium && isServerBooster ) ) && speakInChan ? true : false );
     const mySaying = options.getString( 'saying' );
     const mentionsEveryone = /@(everyone|here)/g.test( mySaying );
     const strEveryoneHere = ( mentionsEveryone ? '`@' + ( /@everyone/g.test( mySaying ) ? 'everyone' : 'here' ) + '`' : null );
@@ -41,10 +43,11 @@ module.exports = {
     const { chanChat, doLogs, strClosing } = await logChans( guild );
 
     if ( mySaying ) {
+      const parsedSaying = await parse( mySaying, { member: guildMember } );
       if ( canSpeak && ( !mentionsEveryone || checkPermission( 'MentionEveryone' ) ) ) {
-        chanSpeak.send( { content: mySaying } ).then( async spoke => {
+        chanSpeak.send( { content: parsedSaying } ).then( async spoke => {
           if ( doLogs ) {
-            chanChat.send( { content: 'I spoke in https://discord.com/channels/' + spoke.guild.id + '/' + spoke.channel.id + '/' + spoke.id + ' at <@' + author.id + '>\'s request:\n```' + mySaying + '\n```' + strClosing } )
+            chanChat.send( { content: 'I spoke in https://discord.com/channels/' + spoke.guild.id + '/' + spoke.channel.id + '/' + spoke.id + ' at <@' + author.id + '>\'s request:\n```' + parsedSaying + '\n```' + strClosing } )
             .catch( async noLogChan => { return interaction.editReply( await errHandler( noLogChan, { chanType: 'chat', command: 'say', guild: guild, type: 'logLogs' } ) ); } );
           }
           return interaction.editReply( { content: 'I said the thing!' } );
