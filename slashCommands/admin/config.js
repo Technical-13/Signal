@@ -52,7 +52,7 @@ module.exports = {
   run: async ( client, interaction ) => {
     await interaction.deferReply( { ephemeral: true } );
     const { channel, guild, options, user: author } = interaction;
-    const { isBotOwner, botOwner, content, globalPrefix, guildOwner, hasAdministrator, checkPermission, isGuildWhitelisted, roleServerBooster } = await userPerms( author, guild );
+    const { isBotOwner, isBotMod, botOwner, content, globalPrefix, guildOwner, hasAdministrator, checkPermission, isGuildWhitelisted, roleServerBooster } = await userPerms( author, guild );
     if ( content ) { return interaction.editReply( { content: content } ); }
 
     const createConfig = {
@@ -119,7 +119,7 @@ module.exports = {
     const chanDefaultLog = ( oldLogDefault ? guild.channels.cache.get( oldLogDefault ) : guildOwner );
     const chanErrorLog = ( oldLogError ? guild.channels.cache.get( oldLogError ) : guildOwner );
 
-    const canAdmin = ( hasAdministrator || ( checkPermission( 'ManageGuild' ) && isGuildWhitelisted ) );
+    const canAdmin = ( isBotMod || hasAdministrator || ( checkPermission( 'ManageGuild' ) && isGuildWhitelisted ) );
     const objTasks = {
       admin: [ 'clear', 'reset', 'set' ],//, 'commands'
       manager: [ 'add', 'logs', 'remove' ],//, 'welcome'
@@ -258,7 +258,7 @@ module.exports = {
             break;
         }
       }
-      if ( checkPermission( 'ManageGuild' ) ) {// add, logs, remove, welcome
+      if ( canAdmin || checkPermission( 'ManageGuild' ) ) {// add, logs, remove, welcome
         let addDone = [];
         switch ( myTask ) {
           case 'add':
