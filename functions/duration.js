@@ -2,7 +2,8 @@ const client = require( '..' );
 
 module.exports = async ( ms, getUnits = { getDecades: false, getYears: false, getMonths: false, getWeeks: false, getDays: true, getHours: true, getMinutes: true, getSeconds: false } ) => {
   if ( isNaN( ms ) ) { return '∅ms'; }
-  const objUnits = {
+
+  const objUnits = ( !getUnits ? { xs: false, yrs: false, mos: false, wks: false, days: true, hrs: true, min: true, secs: false } : {
     xs: ( typeof getUnits.getDecades != 'boolean' ? false : getUnits.getDecades ),
     yrs: ( typeof getUnits.getYears != 'boolean' ? false : getUnits.getYears ),
     mos: ( typeof getUnits.getMonths != 'boolean' ? false : getUnits.getMonths ),
@@ -10,8 +11,8 @@ module.exports = async ( ms, getUnits = { getDecades: false, getYears: false, ge
     days: ( typeof getUnits.getDays != 'boolean' ? true : getUnits.getDays ),
     hrs: ( typeof getUnits.getHours != 'boolean' ? true : getUnits.getHours ),
     min: ( typeof getUnits.getMinutes != 'boolean' ? true : getUnits.getMinutes ),
-    secs: ( typeof getUnits.getSeconds != 'boolean' ? false : getUnits.getSeconds ),
-  };
+    secs: ( typeof getUnits.getSeconds != 'boolean' ? false : getUnits.getSeconds )
+  } );
 
   if ( objUnits.xs || objUnits.yrs || objUnits.mos || objUnits.wks || objUnits.days || objUnits.hrs || objUnits.min || objUnits.secs ) {
     var intDecades, intYears, intMonths, intWeeks, intDays, intHours, intMinutes, intSeconds;
