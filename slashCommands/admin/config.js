@@ -52,7 +52,7 @@ module.exports = {
   run: async ( client, interaction ) => {
     await interaction.deferReply( { ephemeral: true } );
     const { channel, guild, options, user: author } = interaction;
-    const { isBotOwner, isBotMod, botOwner, content, globalPrefix, guildOwner, hasAdministrator, checkPermission, isGuildWhitelisted, roleServerBooster } = await userPerms( author, guild );
+    const { isBotOwner, botOwner, globalPrefix, guildOwner, hasAdministrator, checkPermission, isGuildWhitelisted, roleServerBooster, content } = await userPerms( author, guild );
     if ( content ) { return interaction.editReply( { content: content } ); }
 
     const createConfig = {
@@ -119,7 +119,7 @@ module.exports = {
     const chanDefaultLog = ( oldLogDefault ? guild.channels.cache.get( oldLogDefault ) : guildOwner );
     const chanErrorLog = ( oldLogError ? guild.channels.cache.get( oldLogError ) : guildOwner );
 
-    const canAdmin = ( isBotMod || hasAdministrator || ( checkPermission( 'ManageGuild' ) && isGuildWhitelisted ) );
+    const canAdmin = ( hasAdministrator || ( checkPermission( 'ManageGuild' ) && isGuildWhitelisted ) );
     const objTasks = {
       admin: [ 'clear', 'reset', 'set' ],//, 'commands'
       manager: [ 'add', 'logs', 'remove' ],//, 'welcome'
@@ -157,7 +157,7 @@ module.exports = {
         'Blacklist: ' + showBlackList + '\n\t' +
         'Whitelist: ' + showWhiteList;
 
-      if ( options.getBoolean( 'share' ) && ( hasAdministrator || ( checkPermission( 'ManageGuild' ) && isGuildWhitelisted ) ) ) {
+      if ( options.getBoolean( 'share' ) && ( canAdmin || ( checkPermission( 'ManageGuild' ) && isGuildWhitelisted ) ) ) {
         channel.send( showConfigs )
         .then( sent => { return interaction.editReply( { content: 'I shared the settings in the channel.' } ); } )
         .catch( errSend => { return interaction.editReply( { content: 'Error sharing the settings in the channel.' } ); } );

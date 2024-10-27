@@ -131,6 +131,7 @@ module.exports = async ( user, guild, doBlacklist = true, debug = false ) => {
       isBotOwner: isBotOwner,
       isBotMod: isBotMod,
       isGuildOwner: isGuildOwner,
+      hasAdministrator: hasAdministrator,
       checkPermission: checkPermission,
       guildAllowsPremium: guildAllowsPremium,
       roleServerBooster: roleServerBooster,
@@ -168,5 +169,6 @@ module.exports = async ( user, guild, doBlacklist = true, debug = false ) => {
       user.send( { content: 'You have been blacklisted from using commands in https://discord.com/channels/' + guild.id + '! Use `/config remove` to remove yourself from the blacklist.' } );
     }
     return results;
-  } catch ( errPerms ) { await errHandler( errPerms, { command: 'getPerms', type: 'tryFunction' } ); }
+  }
+  catch ( errPerms ) { await errHandler( errPerms, { command: 'getPerms', type: 'tryFunction' } ); }
 };
