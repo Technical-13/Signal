@@ -18,16 +18,16 @@ module.exports = async ( ms, getUnits = { getDecades: false, getYears: false, ge
     var intDecades, intYears, intMonths, intWeeks, intDays, intHours, intMinutes, intSeconds;
     var totalSeconds = ( ms / 1000 );
     if ( objUnits.xs ) {
-      intDecades = Math.floor( totalSeconds / 315569520000 );
-      totalSeconds %= 315569520000;
+      intDecades = Math.floor( totalSeconds / 315569520 );
+      totalSeconds %= 315569520;
     }
     if ( objUnits.yrs ) {
-      intYears = Math.floor( totalSeconds / 31556952000 );
-      totalSeconds %= 31556952000;
+      intYears = Math.floor( totalSeconds / 31556952 );
+      totalSeconds %= 31556952;
     }
     if ( objUnits.mos ) {
-      intMonths = Math.floor( totalSeconds / 2629746000 );
-      totalSeconds %= 2629746000;
+      intMonths = Math.floor( totalSeconds / 2629746 );
+      totalSeconds %= 2629746;
     }
     if ( objUnits.wks && ( intDecades + intYears + intMonths ) === 0 ) {
       intWeeks = Math.floor( totalSeconds / 604800 );
