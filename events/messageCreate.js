@@ -32,7 +32,7 @@ client.on( 'messageCreate', async message => {
     const arrContent = content.trim().split( ' ' );
     const arrOtherTypeCodes = [ 'GC', 'TB', 'WM', 'GL', 'TL', 'PR', 'BM', 'GT' ];
     const oldRegex = new RegExp('^((GC|TB|WM|GL|TL|PR|BM|GT)[a-fA-F0-9]{2,3})', 'g' );
-    const newRegex = new RegExp('^((GC|TB|WM|GL|TL|PR|BM|GT)[^ilosu\W]{4,7})', 'g' );
+    const newRegex = new RegExp('^((GC|TB|WM|GL|TL|PR|BM|GT)[^iIlLoOsSuU\W]{4,7})', 'g' );
     for ( let word of arrContent ) {
       let arrWord = word.trim().match( word.length <= 5 ? oldRegex : newRegex );
       let code = ( arrWord ? arrWord[ 0 ].toUpperCase() : ( gcWhitelist.indexOf( word ) != -1 ? word.toUpperCase() : '' ) );
