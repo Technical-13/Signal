@@ -2,6 +2,7 @@ const mongoose = require( 'mongoose' );
 const chalk = require( 'chalk' );
 const guildConfig = require( './models/GuildConfig.js' );
 const config = require( './config.json' );
+require( 'dotenv' ).config();
 const ENV = process.env;
 const strConnectDB = ( ENV.mongodb || '' );
 mongoose.set( 'strictQuery', false );
@@ -55,8 +56,8 @@ try {
         .catch( createFailed => { console.error( 'Failed to create updatedEntry for %s: %o', dbGuild._id, createFailed ); } );
       }
     } )
-    .catch( dbConnectErr => { console.error( chalk.bold.red( 'Failed to connect to MongoDB:\n%o' ), dbConnectErr ); } );
+    .catch( dbConnectErr => { console.error( chalk.bold.red( 'Failed to connect to MongoDB:\n%s' ), dbConnectErr.stack ); } );
   } )
-  .catch( dbDisconnectErr => { console.error( chalk.bold.red( 'Failed to disconnect from MongoDB:\n%o' ), dbDisconnectErr ); } );
+  .catch( dbDisconnectErr => { console.error( chalk.bold.red( 'Failed to disconnect from MongoDB:\n%s' ), dbDisconnectErr.stack ); } );
 }
 catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './FixDB.js' ), errObject.stack ); }
