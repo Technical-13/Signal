@@ -1,0 +1,51 @@
+{
+  "ALWAYS AVAILABLE": {
+    "{{bot.age}}": "Age of the bot on Discord.",
+    "{{bot.members}}": "Number of unique users across all servers.",
+    "{{bot.name}}": "Name of the bot.",
+    "{{bot.owner.name}}": "Name of the bot owner.",
+    "{{bot.owner.ping}}": "Name of the bot owner as a local mention.",
+    "{{bot.since}}": "When the bot was added to Discord.",
+    "{{bot.servers}}": "Number of servers the bot is in.",
+    "{{bot.users}}": "Number of unique users across all servers.",
+    "{{bot.uptime}}": "How long it's been since the last restart."
+  },
+  "IF AUTHOR IS DEFINED": {
+    "{{author.age}}": "Age of the author on Discord.",
+    "{{author.guild.age}}": "How long the author has been in the server.",
+    "{{author.name}}": "Name of the author.",
+    "{{author.member.since}}": "When the author was added to Discord.",
+    "{{author.ping}}": "Name of the author as a local mention.",
+    "{{author.server.age}}": "How long the author has been in the server.",
+    "{{author.since}}": "When the author was added to Discord."
+  },
+  "IF MEMBER IS DEFINED": {
+    "{{member.age}}": "Age of the member on Discord.",
+    "{{member.guild.age}}": "How long the member has been in the server.",
+    "{{member.name}}": "Name of the member.",
+    "{{member.ping}}": "Name of the member as a local mention.",
+    "{{member.server.age}}": "How long the member has been in the server.",
+    "{{member.since}}": "When the member joined the server.",
+    "{{member.user.since}}": "When the member was added to Discord."
+  },
+  "IF GUILD, AUTHOR, OR MEMBER IS DEFINED (in that order)": {
+    "{{bot.guild.age}}": "How long the bot has been in the server.",
+    "{{bot.guild.since}}": "When the bot joined the server.",
+    "{{bot.member.age}}": "How long the bot has been in the server.",
+    "{{bot.member.since}}": "When the bot joined the server.",
+    "{{bot.server.age}}": "How long the bot has been in the server.",
+    "{{bot.server.since}}": "When the bot joined the server.",
+    "{{guild.age}}": "Age of the server on Discord.",
+    "{{guild.owner.name}}": "Name of the server owner.",
+    "{{guild.owner.ping}}": "Name of the server owner as a local mention.",
+    "{{guild.members}}": "Number of unique members in the server.",
+    "{{guild.name}}": "Name of the server.",
+    "{{guild.since}}": "When the server was created.",
+    "{{server.age}}": "Age of the server.",
+    "{{server.owner.name}}": "Name of the server owner.",
+    "{{server.owner.ping}}": "Name of the server owner as a local mention.",
+    "{{server.members}}": "Number of unique members in the server.",
+    "{{server.name}}": "Name of the server.",
+    "{{server.since}}": "When the server was created."
+  }
+}

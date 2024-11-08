@@ -1,6 +1,6 @@
 const express = require( 'express' );
 const expressServer = express();
-const objTimeString = require( '../time.json' );
+const objTimeString = require( '../jsonObjects/time.json' );
 var strNow = () => { return ( new Date() ).toLocaleDateString( 'en-us', objTimeString ) };
 
 expressServer.all( '/', ( req, res ) => { res.send( bot + ' was last restarted: ' + strNow() ); } );

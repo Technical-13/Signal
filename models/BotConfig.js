@@ -1,13 +1,20 @@
 const { model, Schema } = require( 'mongoose' );
 
 let botSchema = new Schema( {
-  BotName: String,
+  _id: String,
   Blacklist: [ String ],
-  ClientID: String,
   DevGuild: String,
+  IssueRepo: String,
+  Logs: {
+    Default: String,
+    Error: String,
+    JoinPart: String
+  },
   Mods: [ String ],
+  Name: String,
   Owner: String,
   Prefix: String,
+  Version: Number,
   Whitelist: [ String ]
 } );
 

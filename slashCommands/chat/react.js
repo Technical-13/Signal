@@ -1,6 +1,6 @@
 const { ApplicationCommandType, InteractionContextType } = require( 'discord.js' );
 const userPerms = require( '../../functions/getPerms.js' );
-const logChans = require( '../../functions/getLogChans.js' );
+const getGuildConfig = require( '../../functions/getGuildDB.js' );
 const errHandler = require( '../../functions/errorHandler.js' );
 
 module.exports = {
@@ -27,33 +27,37 @@ module.exports = {
   contexts: [ InteractionContextType.Guild ],
   cooldown: 1000,
   run: async ( client, interaction ) => {
-    await interaction.deferReply( { ephemeral: true } );
-    const { channel, guild, options, user: author } = interaction;
-    const { content } = await userPerms( author, guild );
-    if ( content ) { return interaction.editReply( { content: content } ); }
+    try {
+      await interaction.deferReply( { ephemeral: true } );
+      const { channel, guild, options, user: author } = interaction;
+      const { content } = await userPerms( author, guild );
+      if ( content ) { return interaction.editReply( { content: content } ); }
 
-    const msgID = options.getString( 'message-id' );
-    if ( !( /[\d]{18,19}/.test( msgID ) ) ) { return interaction.editReply( { content: '`' + msgID + '` is not a valid `message-id`. Please try again.' } ); }
-    const theReaction = options.getString( 'reaction' );
-    const strAuthorTag = author.tag;
+      const msgID = options.getString( 'message-id' );
+      if ( !( /[\d]{18,19}/.test( msgID ) ) ) { return interaction.editReply( { content: '`' + msgID + '` is not a valid `message-id`. Please try again.' } ); }
+      const theReaction = options.getString( 'reaction' );
+      const strAuthorTag = author.tag;
 
-    const { chanChat, doLogs, strClosing } = await logChans( guild );
+      const logChans = await getGuildConfig( guild );
+      const { Active: doLogs, Chat: chanChat, strClosing } = logChans.Logs;
 
-    var myReaction = theReaction;
-    var rxp = /<:(.*)?:([\d]*)>/;
-    if ( rxp.test( myReaction ) ) { myReaction = myReaction.match( rxp )[ 2 ]; }
-    else { myReaction = encodeURI( myReaction ); }
+      var myReaction = theReaction;
+      var rxp = /<:(.*)?:([\d]*)>/;
+      if ( rxp.test( myReaction ) ) { myReaction = myReaction.match( rxp )[ 2 ]; }
+      else { myReaction = encodeURI( myReaction ); }
 
-    channel.messages.fetch( msgID ).then( async message => {
-      let { author: msgAuthor, channel: msgChan, guild: msgGuild } = message;
-      await message.react( myReaction ).then( reacted => {
-        if ( doLogs ) {
-          chanChat.send( 'I reacted to https://discord.com/channels/' + msgGuild.id + '/' + msgChan.id + '/' + message.id + ' by <@' + msgAuthor.id + '> with ' + theReaction + ' at <@' + author.id + '>\'s request' + strClosing )
-          .catch( async noLogChan => { interaction.editReply( await errHandler( noLogChan, { chanType: 'chat', command: 'react', guild: guild, type: 'logLogs' } ) ); } );
-        }
-        return interaction.editReply( { content: 'Reacted!' } );
-      } ).catch( async errReact => { interaction.editReply( await errHandler( errReact, { channel: msgChan, command: 'react', guild: msgGuild, msgID: msgID, rawReaction: theReaction, reaction: myReaction, type: 'errReact' } ) ); } );
-    } )
-    .catch( async errFetch => { interaction.editReply( await errHandler( errFetch, { command: 'react', msgID: msgID, type: 'errFetch' } ) ); } );
+      channel.messages.fetch( msgID ).then( async message => {
+        let { author: msgAuthor, channel: msgChan, guild: msgGuild } = message;
+        await message.react( myReaction ).then( reacted => {
+          if ( doLogs ) {
+            chanChat.send( 'I reacted to https://discord.com/channels/' + msgGuild.id + '/' + msgChan.id + '/' + message.id + ' by <@' + msgAuthor.id + '> with ' + theReaction + ' at <@' + author.id + '>\'s request' + strClosing )
+            .catch( async noLogChan => { interaction.editReply( await errHandler( noLogChan, { chanType: 'chat', command: 'react', guild: guild, type: 'logLogs' } ) ); } );
+          }
+          return interaction.editReply( { content: 'Reacted!' } );
+        } ).catch( async errReact => { interaction.editReply( await errHandler( errReact, { channel: msgChan, command: 'react', guild: msgGuild, msgID: msgID, rawReaction: theReaction, reaction: myReaction, type: 'errReact' } ) ); } );
+      } )
+      .catch( async errFetch => { interaction.editReply( await errHandler( errFetch, { command: 'react', msgID: msgID, type: 'errFetch' } ) ); } );
+    }
+    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( 'react.js' ), errObject.stack ); }
   }
 };

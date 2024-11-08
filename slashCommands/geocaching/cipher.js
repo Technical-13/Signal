@@ -18,11 +18,14 @@ module.exports = {
   devOnly: true,
   cooldown: 1000,
   run: async ( client, interaction ) => {
-    await interaction.deferReply( { ephemeral: true } );
-    const { channel, guild, options, user: author } = interaction;
-    const { content } = await userPerms( author, guild );
-    if ( content ) { return interaction.editReply( { content: content } ); }
+    try {
+      await interaction.deferReply( { ephemeral: true } );
+      const { channel, guild, options, user: author } = interaction;
+      const { content } = await userPerms( author, guild );
+      if ( content ) { return interaction.editReply( { content: content } ); }
 
-    return interaction.editReply( { content: 'Comming **SOON**:tm:' } );
+      return interaction.editReply( { content: 'Comming **SOON**:tm:' } );
+    }
+    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( 'cipher.js' ), errObject.stack ); }
   }
 };

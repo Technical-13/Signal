@@ -30,47 +30,50 @@ module.exports = {
   } ],
   cooldown: 1000, // Set a cooldown of 1 second
   run: async ( client, interaction ) => {
-    const { guild, options, user: author } = interaction;
-    const { content } = await userPerms( author, guild );
-    if ( content ) { return interaction.editReply( { content: content } ); }
+    try {
+      const { guild, options, user: author } = interaction;
+      const { content } = await userPerms( author, guild );
+      if ( content ) { return interaction.editReply( { content: content } ); }
 
-    const intSets = ( options.get( 'sets' ) ? ( options.get( 'sets' ).value || 1 ) : 1 );
-    const intDice = ( options.get( 'dice' ) ? ( options.get( 'dice' ).value || 1 ) : 1 );
-    const intSides = ( options.get( 'sides' ) ? ( options.get( 'sides' ).value || 6 ) : 6 );
-    const intMod = ( options.get( 'modifier' ) ? ( options.get( 'modifier' ).value || null ) : null );
+      const intSets = ( options.get( 'sets' ) ? ( options.get( 'sets' ).value || 1 ) : 1 );
+      const intDice = ( options.get( 'dice' ) ? ( options.get( 'dice' ).value || 1 ) : 1 );
+      const intSides = ( options.get( 'sides' ) ? ( options.get( 'sides' ).value || 6 ) : 6 );
+      const intMod = ( options.get( 'modifier' ) ? ( options.get( 'modifier' ).value || null ) : null );
 
-    //  var objSets = {};
-    var intRollTotal = 0;
-    var strRollTotal = ( intSets > 1 ? intSets + '#' : '' ) + ( intDice > 1 ? intDice : '' ) + 'd' + intSides + ( intMod != null ? ( intMod < 0 ? ' ' : ' +' ) + intMod : '' ) + ':';
+      //  var objSets = {};
+      var intRollTotal = 0;
+      var strRollTotal = ( intSets > 1 ? intSets + '#' : '' ) + ( intDice > 1 ? intDice : '' ) + 'd' + intSides + ( intMod != null ? ( intMod < 0 ? ' ' : ' +' ) + intMod : '' ) + ':';
 
-    for ( var set = 1; set <= intSets; set++ ) {
-      //    var arrRolls = [];
-      var intRollSubtotal = 0;
-      var strRollSubtotal = '\n\t(';
+      for ( var set = 1; set <= intSets; set++ ) {
+        //    var arrRolls = [];
+        var intRollSubtotal = 0;
+        var strRollSubtotal = '\n\t(';
 
-      for ( var die = 1; die <= intDice; die++ ) {
-        var result = Math.floor( Math.random() * intSides ) + 1;
-        intRollSubtotal += result;
-        if ( die < intDice ) { strRollSubtotal += result + ') + ('; }
-        else { strRollTotal += strRollSubtotal + result + ')'; }
-        //    arrRolls.push( result );
+        for ( var die = 1; die <= intDice; die++ ) {
+          var result = Math.floor( Math.random() * intSides ) + 1;
+          intRollSubtotal += result;
+          if ( die < intDice ) { strRollSubtotal += result + ') + ('; }
+          else { strRollTotal += strRollSubtotal + result + ')'; }
+          //    arrRolls.push( result );
+        }
+
+        if ( intMod != null && intMod !== 0 ) {
+          intRollSubtotal += intMod;
+          strRollTotal += ( intMod < 0 ? ' ' : ' +' ) + intMod;
+        }
+        strRollTotal += ' = ' + intRollSubtotal;
+
+        intRollTotal += intRollSubtotal;
+
+        //    objSets[ set ] = { rolls: arrRolls, mod: intMod, sum: intRollSubtotal };
       }
 
-      if ( intMod != null && intMod !== 0 ) {
-        intRollSubtotal += intMod;
-        strRollTotal += ( intMod < 0 ? ' ' : ' +' ) + intMod;
+      if ( intSets > 1 ) {
+        strRollTotal += '\nTotal: ' + intRollTotal;
       }
-      strRollTotal += ' = ' + intRollSubtotal;
 
-      intRollTotal += intRollSubtotal;
-
-      //    objSets[ set ] = { rolls: arrRolls, mod: intMod, sum: intRollSubtotal };
+      interaction.reply( { content: strRollTotal } );
     }
-
-    if ( intSets > 1 ) {
-      strRollTotal += '\nTotal: ' + intRollTotal;
-    }
-
-    interaction.reply( { content: strRollTotal } );
+    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( 'roll.js' ), errObject.stack ); }
   }
 }
