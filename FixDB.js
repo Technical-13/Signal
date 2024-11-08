@@ -1,4 +1,5 @@
 const mongoose = require( 'mongoose' );
+const chalk = require( 'chalk' );
 const guildConfig = require( './models/GuildConfig.js' );
 const config = require( './config.json' );
 const ENV = process.env;
