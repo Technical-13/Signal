@@ -3,6 +3,7 @@ const userPerms = require( '../../functions/getPerms.js' );
 const getGuildConfig = require( '../../functions/getGuildDB.js' );
 const errHandler = require( '../../functions/errorHandler.js' );
 const parse = require( '../../functions/parser.js' );
+const chalk = require( 'chalk' );
 
 module.exports = {
   name: 'say',
@@ -73,6 +74,6 @@ module.exports = {
       }
       else { return interaction.editReply( { content: 'I don\'t know what to say.' } ); }
     }
-    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( 'say.js' ), errObject.stack ); }
+    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './slashCommands/chat/say.js' ), errObject.stack ); }
   }
 };

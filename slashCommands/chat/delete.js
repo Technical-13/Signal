@@ -2,6 +2,7 @@ const { ApplicationCommandType, InteractionContextType } = require( 'discord.js'
 const userPerms = require( '../../functions/getPerms.js' );
 const getGuildConfig = require( '../../functions/getGuildDB.js' );
 const errHandler = require( '../../functions/errorHandler.js' );
+const chalk = require( 'chalk' );
 
 module.exports = {
   name: 'delete',
@@ -49,6 +50,6 @@ module.exports = {
         .catch( async errFetch => { return interaction.editReply( await errHandler( errFetch, { command: 'delete', msgID: msgID, type: 'errFetch' } ) ); } );
       }
     }
-    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( 'delete.js' ), errObject.stack ); }
+    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './slashCommands/chat/delete.js' ), errObject.stack ); }
   }
 };

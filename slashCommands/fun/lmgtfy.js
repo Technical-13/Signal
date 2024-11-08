@@ -2,6 +2,7 @@ const { ApplicationCommandType } = require( 'discord.js' );
 const userPerms = require( '../../functions/getPerms.js' );
 const getGuildConfig = require( '../../functions/getGuildDB.js' );
 const errHandler = require( '../../functions/errorHandler.js' );
+const chalk = require( 'chalk' );
 
 module.exports = {
   name: 'lmgtfy',
@@ -46,6 +47,6 @@ module.exports = {
 
       return interaction.reply( { content: mentionUser + ': <https://' + service + '?q=' + q + '>' } );
     }
-    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( 'lmgtfy.js' ), errObject.stack ); }
+    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './slashCommands/fun/lmgtfy.js' ), errObject.stack ); }
   }
 };

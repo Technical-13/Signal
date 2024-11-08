@@ -2,6 +2,7 @@ const { ApplicationCommandType, InteractionContextType } = require( 'discord.js'
 const userPerms = require( '../../functions/getPerms.js' );
 const getGuildConfig = require( '../../functions/getGuildDB.js' );
 const errHandler = require( '../../functions/errorHandler.js' );
+const chalk = require( 'chalk' );
 
 module.exports = {
   name: 'statbar',
@@ -89,6 +90,6 @@ module.exports = {
         }
       } );
     }
-    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( 'statbar.js' ), errObject.stack ); }
+    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './slashCommands/geocaching/statbar.js' ), errObject.stack ); }
   }
 };

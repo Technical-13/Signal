@@ -1,5 +1,6 @@
 const { ApplicationCommandType } = require( 'discord.js' );
 const userPerms = require( '../../functions/getPerms.js' );
+const chalk = require( 'chalk' );
 
 module.exports = {
   name: 'roll',
@@ -74,6 +75,6 @@ module.exports = {
 
       interaction.reply( { content: strRollTotal } );
     }
-    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( 'roll.js' ), errObject.stack ); }
+    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './slashCommands/fun/roll.js' ), errObject.stack ); }
   }
 }

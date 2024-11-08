@@ -3,6 +3,7 @@ const { model, Schema } = require( 'mongoose' );
 const guildConfigDB = require( '../../models/GuildConfig.js' );
 const userPerms = require( '../../functions/getPerms.js' );
 const errHandler = require( '../../functions/errorHandler.js' );
+const chalk = require( 'chalk' );
 
 module.exports = {
   name: 'config',
@@ -527,6 +528,6 @@ module.exports = {
         .catch( async updateError => { return interaction.editReply( { content: await errHandler( updateError, errHandlerOptions ) } ); } );
       }
     }
-    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( 'config.js' ), errObject.stack ); }
+    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './slashCommands/admin/config.js' ), errObject.stack ); }
   }
 };

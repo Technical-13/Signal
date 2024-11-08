@@ -3,6 +3,7 @@ const userPerms = require( '../../functions/getPerms.js' );
 const getGuildConfig = require( '../../functions/getGuildDB.js' );
 const errHandler = require( '../../functions/errorHandler.js' );
 const parse = require( '../../functions/parser.js' );
+const chalk = require( 'chalk' );
 
 module.exports = {
   name: 'reply',
@@ -82,6 +83,6 @@ module.exports = {
       }
       else { return interaction.editReply( { content: 'I don\'t know what to respond.' } ); }
     }
-    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( 'reply.js' ), errObject.stack ); }
+    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './slashCommands/chat/reply.js' ), errObject.stack ); }
   }
 };
