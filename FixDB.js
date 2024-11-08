@@ -27,10 +27,10 @@ try {
           Commands: dbGuild.Commands,
           Expires: dbGuild.Expires,
           Guild: {
-            Name: guild.name,
-            Members: guild.members.cache.size,
-            OwnerID: guild.ownerId,
-            OwnerName: guildOwner.displayName
+            Name: '',
+            Members: 0,
+            OwnerID: '',
+            OwnerName: ''
           },
           Invite: dbGuild.Invite,
           Logs: Logs,
