@@ -1,6 +1,6 @@
 const mongoose = require( 'mongoose' );
-const guildConfig = require( '../models/GuildConfig.js' );
-const config = require( '../config.json' );
+const guildConfig = require( './models/GuildConfig.js' );
+const config = require( './config.json' );
 const ENV = process.env;
 const strConnectDB = ( ENV.mongodb || '' );
 mongoose.set( 'strictQuery', false );
