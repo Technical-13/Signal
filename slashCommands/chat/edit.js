@@ -44,9 +44,7 @@ module.exports = {
       const strEveryoneHere = ( mentionsEveryone ? '`@' + ( /@everyone/g.test( mySaying ) ? 'everyone' : 'here' ) + '`' : null );
       const strAuthorTag = author.tag;
 
-      const logChans = await getGuildConfig( guild );
-      const { Active: doLogs, Chat: chanChat, strClosing } = logChans.Logs;
-
+      const { Active: doLogs, chanChat, strClosing } = await getGuildConfig( guild );
       if ( mySaying ) {
         const parsedSaying = await parse( mySaying, { member: guildMember } );
         if ( canSpeak && ( !mentionsEveryone || checkPermission( 'MentionEveryone' ) ) ) {
@@ -57,7 +55,7 @@ module.exports = {
                 chanChat.send( { content:
                   'I edited what I said in https://discord.com/channels/' + edited.guild.id + '/' + edited.channel.id + '/' + edited.id + ' at <@' + author.id + '>\'s request from:\n```\n' + oldContent + '\n```\nTo:\n```\n' + edited.content + '\n```' + strClosing
                 } )
-                .catch( async noLogChan => { return interaction.editReply( await errHandler( noLogChan, { chanType: 'chat', command: 'edit', guild: guild, type: 'logLogs' } ) ); } );
+                .catch( async noLogChan => { return interaction.editReply( await errHandler( noLogChan, { chanType: 'chat', command: 'edit', channel: channel, type: 'logLogs' } ) ); } );
               }
               return interaction.editReply( { content: 'I edited my message for you!' } );
             } )
@@ -68,14 +66,14 @@ module.exports = {
         else if ( mentionsEveryone && !checkPermission( 'MentionEveryone' ) ) {
           if ( doLogs ) {
             chanChat.send( { content: '<@' + author.id + '> has no permission to get me to ' + strEveryoneHere + ' in <#' + channel.id + '>. They tried to get me to change my message from:\n```\n' + oldContent + '\n```\nTo:\n```\n' + edited.content + '\n```' + strClosing } )
-            .catch( async noLogChan => { return interaction.editReply( await errHandler( noLogChan, { chanType: 'chat', command: 'edit', guild: guild, type: 'logLogs' } ) ); } );
+            .catch( async noLogChan => { return interaction.editReply( await errHandler( noLogChan, { chanType: 'chat', command: 'edit', channel: channel, type: 'logLogs' } ) ); } );
           }
           return interaction.editReply( { content: 'You have no permission to get me to ' + strEveryoneHere + ' in <#' + channel.id + '>!' } );
         }
         else {
           if ( doLogs ) {
             chanChat.send( { content:  '<@' + author.id + '> has no permission to use my `/edit` command from <#' + channel.id + '>. They tried to get me to change my message from:\n```\n' + oldContent + '\n```\nTo:\n```\n' + edited.content + '\n```' + strClosing } )
-            .catch( async noLogChan => { return interaction.editReply( await errHandler( noLogChan, { chanType: 'chat', command: 'edit', guild: guild, type: 'logLogs' } ) ); } );
+            .catch( async noLogChan => { return interaction.editReply( await errHandler( noLogChan, { chanType: 'chat', command: 'edit', channel: channel, type: 'logLogs' } ) ); } );
           }
           return interaction.editReply( { content: 'You have no permission to use my `/edit` command in <#' + channel.id + '>!' } );
         }

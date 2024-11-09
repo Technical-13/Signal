@@ -101,9 +101,7 @@ module.exports = {
         'sv-SE': 'Det gick inte att hitta ett specifikt meddelande att svara på.'
       };
 
-      const logChans = await getGuildConfig( guild );
-      const { Active: doLogs, Default: chanDefault, Error: chanError, strClosing } = logChans.Logs;
-
+      const { Active: doLogs, chanDefault, chanError, strClosing } = await getGuildConfig( guild );
       if ( msgID && !( /[\d]{18,19}/.test( msgID ) ) ) { return interaction.editReply( { content: '`' + msgID + '` ' + i18InvalidMsgId[ locale ] } ); }
       else if ( msgID ) {
         channel.messages.fetch( msgID )
@@ -115,7 +113,7 @@ module.exports = {
               chanDefault.send( { content:
                 'I told <@' + msgAuthor.id + '> about FTFs ' + strLocale + ' in <#' + channel.id + '> at <@' + author.id +
                 '>\'s `/ftf` request in response to:\n```\n' + content + '\n```' + strClosing } )
-              .catch( async errLog => { await errHandler( errLog, { chanType: 'default', command: 'ftf', guild: guild, type: 'logLogs' } ); } );
+              .catch( async errLog => { await errHandler( errLog, { chanType: 'default', command: 'ftf', channel: channel, type: 'logLogs' } ); } );
             }
           } )
           .catch( async errSend => { await errHandler( errSend, { command: 'ftf', doLog: doLogs, guild: guild, msgID: msgID, type: 'errSend' } ); } );
@@ -126,7 +124,7 @@ module.exports = {
         interaction.editReply( { content: '<@' + cmdInputUser.id + '>, ' + i18FTFinfo[ locale ] } ).then( replied => {
           if ( doLogs && cmdInputUser.id != author.id ) {
             chanDefault.send( { content: 'I told <@' + cmdInputUser.id + '> about FTFs at <@' + author.id +'>\'s `/ftf` request.' + strClosing } )
-            .catch( async errLog => { await errHandler( errLog, { chanType: 'default', command: 'ftf', guild: guild, type: 'logLogs' } ); } );
+            .catch( async errLog => { await errHandler( errLog, { chanType: 'default', command: 'ftf', channel: channel, type: 'logLogs' } ); } );
           }
         } );
       }
@@ -134,7 +132,7 @@ module.exports = {
         interaction.editReply( { content: i18FTFinfo[ locale ] } ).catch( noReply => {
           if ( doLogs ) {
             chanError.send( { content: 'Error telling <@' + author.id + '> about FTFs via `/ftf` request.' + strClosing } )
-            .catch( async errLog => { await errHandler( errLog, { chanType: 'error', command: 'ftf', guild: guild, type: 'logLogs' } ); } );
+            .catch( async errLog => { await errHandler( errLog, { chanType: 'error', command: 'ftf', channel: channel, type: 'logLogs' } ); } );
           }
         } );
       }

@@ -61,13 +61,11 @@ module.exports = {
       const strAuthorDisplayName = members.get( author.id ).displayName;
       const strInputUser = ( options.getString( 'gc-name' ) || null );
       const objInputUser = ( options.getUser( 'discord-user' ) || null );
-      const strInputUserDisplayName = ( objInputUser ? objInputUser.displayName : strInputUser );
+      const strInputUserDisplayName = ( objInputUser ? members.get( objInputUser.id ).displayName : strInputUser );
       const strUseName = ( strInputUserDisplayName ? strInputUserDisplayName : strAuthorDisplayName );
       const encName = encodeURI( strUseName ).replace( '&', '%26' );
 
-      const logChans = await getGuildConfig( guild );
-      const { Active: doLogs, Default: chanDefault, Error: chanError, strClosing } = logChans.Logs;
-
+      const { Active: doLogs, chanDefault, chanError, strClosing } = await getGuildConfig( guild );
       channel.send( { content:
         'ProfileStats link for: ' + ( objInputUser == null ? strUseName : '<@' +  objInputUser.id + '>' ) + '\n<https://project-gc.com/Profile/ProfileStats?profile_name=' + encName + '>'
       } )
@@ -76,7 +74,7 @@ module.exports = {
           chanDefault.send( { content:
             'I shared the `/profilestats` for ' + ( objInputUser ? '<@' +  objInputUser.id + '>' : strUseName ) + ' in <#' + channel.id + '>' +
           ( strInputUserDisplayName !== strAuthorDisplayName ? ' as requested by <@' + author.id + '>' : '' ) + strClosing } )
-          .catch( async errLog => { await errHandler( errLog, { chanType: 'default', command: 'profilestats', guild: guild, type: 'logLogs' } ); } );
+          .catch( async errLog => { await errHandler( errLog, { chanType: 'default', command: 'profilestats', channel: channel, type: 'logLogs' } ); } );
         }
         interaction.deleteReply();
       } )
@@ -84,7 +82,7 @@ module.exports = {
         console.error( 'Error sending /profilestats result to %s#%s:\n%o', guild.name, channel.name, errSend );
         if ( doLogs ) {
           chanError.send( { content: 'Error sending `/profilestats` result to <#' + channel.id + '>' + strClosing } )
-          .catch( async errLog => { await errHandler( errLog, { chanType: 'error', command: 'profilestats', guild: guild, type: 'logLogs' } ); } );
+          .catch( async errLog => { await errHandler( errLog, { chanType: 'error', command: 'profilestats', channel: channel, type: 'logLogs' } ); } );
         }
       } );
     }

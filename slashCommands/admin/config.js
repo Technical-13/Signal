@@ -516,7 +516,7 @@ module.exports = {
         .then( updateSuccess => {
           if ( newConfig.Logs.Active && successResultLog ) {
             chanDefaultLog.send( { content: successResultLog } )
-            .catch( async noLogChan => { return interaction.editReply( await errHandler( noLogChan, { chanType: 'default', command: 'config', guild: guild, type: 'logLogs' } ) ); } );
+            .catch( async noLogChan => { return interaction.editReply( await errHandler( noLogChan, { chanType: 'default', command: 'config', channel: channel, type: 'logLogs' } ) ); } );
           }
           if ( successResultReply ) { interaction.editReply( { content: successResultReply } ); }
           else if ( successResult ) {// deleteReply & return channel.send

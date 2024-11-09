@@ -1,6 +1,7 @@
 const fs = require( 'fs' );
 const chalk = require( 'chalk' );
 var AsciiTable = require( 'ascii-table' );
+const strScript = chalk.hex( '#FFA500' ).bold( './handlers/events.js' );
 
 module.exports = ( client ) => {
   try {
@@ -11,5 +12,5 @@ module.exports = ( client ) => {
     } );
     console.log( chalk.greenBright( table.toString() ) );
   }
-  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './handlers/events.js' ), errObject.stack ); }
+  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
 };

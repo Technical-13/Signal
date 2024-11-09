@@ -39,9 +39,7 @@ module.exports = {
       const theReaction = options.getString( 'reaction' );
       const strAuthorTag = author.tag;
 
-      const logChans = await getGuildConfig( guild );
-      const { Active: doLogs, Chat: chanChat, strClosing } = logChans.Logs;
-
+      const { Active: doLogs, chanChat, strClosing } = await getGuildConfig( guild );
       var myReaction = theReaction;
       var rxp = /<:(.*)?:([\d]*)>/;
       if ( rxp.test( myReaction ) ) { myReaction = myReaction.match( rxp )[ 2 ]; }
@@ -52,7 +50,7 @@ module.exports = {
         await message.react( myReaction ).then( reacted => {
           if ( doLogs ) {
             chanChat.send( 'I reacted to https://discord.com/channels/' + msgGuild.id + '/' + msgChan.id + '/' + message.id + ' by <@' + msgAuthor.id + '> with ' + theReaction + ' at <@' + author.id + '>\'s request' + strClosing )
-            .catch( async noLogChan => { interaction.editReply( await errHandler( noLogChan, { chanType: 'chat', command: 'react', guild: guild, type: 'logLogs' } ) ); } );
+            .catch( async noLogChan => { interaction.editReply( await errHandler( noLogChan, { chanType: 'chat', command: 'react', channel: channel, type: 'logLogs' } ) ); } );
           }
           return interaction.editReply( { content: 'Reacted!' } );
         } ).catch( async errReact => { interaction.editReply( await errHandler( errReact, { channel: msgChan, command: 'react', guild: msgGuild, msgID: msgID, rawReaction: theReaction, reaction: myReaction, type: 'errReact' } ) ); } );
