@@ -27,6 +27,7 @@ module.exports = async ( errObject, options = { command: 'undefined', debug: fal
       const preGuild = ( !options ? 'NO `options`!' : getDebugString( options.guild ) );
       const preinviteChanURL = ( !options ? 'NO `options`!' : getDebugString( options.inviteChanURL ) );
       const preinviteGuild = ( !options ? 'NO `options`!' : getDebugString( options.inviteGuild ) );
+      const premember = ( !options ? 'NO `options`!' : getDebugString( options.member ) );
       const premodBlack = ( !options ? 'NO `options`!' : getDebugString( options.modBlack ) );
       const premodMod = ( !options ? 'NO `options`!' : getDebugString( options.modMod ) );
       const premodType = ( !options ? 'NO `options`!' : getDebugString( options.modType ) );
@@ -34,7 +35,7 @@ module.exports = async ( errObject, options = { command: 'undefined', debug: fal
       const premsgID = ( !options ? 'NO `options`!' : getDebugString( options.msgID ) );
       const prerawReaction = ( !options ? 'NO `options`!' : getDebugString( options.rawReaction ) );
       const preEmoji = ( !options ? 'NO `options`!' : getDebugString( options.emoji ) );
-      const preProcessed = { command: '{ typeof: ' + typeof( command ) + ', value: ' + command + ' }', type: '{ typeof: ' + typeof( type ) + ', value: ' + type + ' }', author: preAuthor, channel: preChan, chanType: prechanType, clearLists: preclearLists, guild: preGuild, inviteChanURL: preinviteChanURL, inviteGuild: preinviteGuild, modBlack: premodBlack, modMod: premodMod, modWhite: premodWhite, msgID: premsgID, rawReaction: prerawReaction, reaction: preEmoji };
+      const preProcessed = { command: '{ typeof: ' + typeof( command ) + ', value: ' + command + ' }', type: '{ typeof: ' + typeof( type ) + ', value: ' + type + ' }', author: preAuthor, channel: preChan, chanType: prechanType, clearLists: preclearLists, guild: preGuild, inviteChanURL: preinviteChanURL, inviteGuild: preinviteGuild, member: premember, modBlack: premodBlack, modMod: premodMod, modWhite: premodWhite, msgID: premsgID, rawReaction: prerawReaction, reaction: preEmoji };
       console.warn( 'functions/errorHandler.js recieved options:%o', preProcessed );
     }
 
@@ -44,9 +45,9 @@ module.exports = async ( errObject, options = { command: 'undefined', debug: fal
     const channel = ( options.channel ? options.channel : null );
     const chanType = ( options.chanType ? options.chanType : null );
     const clearLists = ( options.clearLists ? options.clearLists : null );
-    const guild = ( options.guild ? options.guild : ( channel ? channel.guild : ( author ? author.guild : null ) ) );
     const inviteChanURL = ( options.inviteChanURL ? options.inviteChanURL : null );
     const inviteGuild = ( options.inviteGuild ? options.inviteGuild : null );
+    const member = ( options.member ? options.member : null );
     const modBlack = ( options.modBlack ? options.modBlack : null );
     const modMod = ( options.modMod ? options.modMod : null );
     const modType = ( options.modType ? options.modType : null );
@@ -54,6 +55,7 @@ module.exports = async ( errObject, options = { command: 'undefined', debug: fal
     const msgID = ( options.msgID ? options.msgID : null );
     const rawReaction = ( options.rawReaction ? options.rawReaction : null );
     const emoji = ( options.reaction ? options.reaction : null );
+    const guild = ( options.guild ? options.guild : ( channel ? channel.guild : ( member ? member.guild : ( author ? author.guild : null ) ) ) );
 
     if ( debug ) {
       const prcAuthor = getDebugString( author );
@@ -61,7 +63,8 @@ module.exports = async ( errObject, options = { command: 'undefined', debug: fal
       const prcGuild = getDebugString( guild );
       const prcInviteGuild = getDebugString( inviteGuild );
       const prcEmoji = getDebugString( emoji );
-      const processed = { cmd: cmd, myTask: myTask, author: prcAuthor, channel: prcChan, chanType: chanType, clearLists: clearLists, guild: prcGuild, inviteChanURL: inviteChanURL, inviteGuild: prcInviteGuild, modBlack: modBlack, modMod: modMod, modType: modType, modWhite: modWhite, msgID: msgID, rawReaction: rawReaction, reaction: prcEmoji };
+      const prcMember = getDebugString( options.member );
+      const processed = { cmd: cmd, myTask: myTask, author: prcAuthor, channel: prcChan, chanType: chanType, clearLists: clearLists, guild: prcGuild, inviteChanURL: inviteChanURL, inviteGuild: prcInviteGuild, member: prcMember, modBlack: modBlack, modMod: modMod, modType: modType, modWhite: modWhite, msgID: msgID, rawReaction: rawReaction, reaction: prcEmoji };
       console.warn( 'functions/errorHandler.js processed options:%o', processed );
     }
 
@@ -204,6 +207,25 @@ module.exports = async ( errObject, options = { command: 'undefined', debug: fal
             } ).catch( errNotSent => {
               console.error( 'Error attempting to DM you about the above error: %o', errNotSent );
               if ( doLogs ) { chanError.send( 'Encounted an error with a `/' + cmd + '` request.' + strLogged + strClosing ); }
+              return { content: 'Unknown Error reacting to message.' + strLogged };
+            } );
+        }
+        break;
+      case 'errRole':// .catch( async errRole => { await errHandler( errRole, { command: '', member: member, type: 'errRole' } )
+        switch ( errObject.code ) {
+          case 50013://Missing Permissions
+            if ( debug ) { console.error( 'I do not have permission to change roles to %s in %s at %s request:\n\t%s', member.displayName, guild.name, cmd, errObject.stack ); }
+            if ( doLogs ) { chanError.send( 'Please give me permission to change roles to members.' + strClosing ); }
+            return { content: 'I do not have permission to change roles to members.' };
+          default:
+            console.error( 'errRole in %s: %s', guild.name, errObject.stack );
+            botOwner.send( 'Unknown errRole.' + strConsole )
+            .then( errSent => {
+              if ( doLogs ) { chanError.send( 'Encounted an error with a `' + cmd + '` request.' + strNotified + strClosing ); }
+              return { content: 'Unknown Error reacting to message.' + strNotified };
+            } ).catch( errNotSent => {
+              console.error( 'Error attempting to DM you about the above error: %o', errNotSent );
+              if ( doLogs ) { chanError.send( 'Encounted an error with a `' + cmd + '` request.' + strLogged + strClosing ); }
               return { content: 'Unknown Error reacting to message.' + strLogged };
             } );
         }
