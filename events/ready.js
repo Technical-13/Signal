@@ -11,7 +11,7 @@ const addUserGuild = require( '../functions/addUserGuild.js' );
 const getBotConfig = require( '../functions/getBotDB.js' );
 const duration = require( '../functions/duration.js' );
 const parse = require( '../functions/parser.js' );
-const botVerbosity = 3;//( config.verbosity || 1 );
+const botVerbosity = ( config.verbosity || 1 );
 const verGuildDB = config.verGuildDB;
 const verUserDB = config.verUserDB;
 Array.prototype.getDiff = function( arrOld ) { return this.filter( o => !arrOld.includes( o ) ) };
@@ -322,7 +322,7 @@ client.on( 'ready', async rdy => {
           for ( let guildId of add ) {// createNewGuild
             let uGuildIndex = add.indexOf( guildId );
             let addGuild = await botGuilds.get( guildId );
-            if ( botVerbosity >= 1 ) { console.log( '\tAdding G:%s to my database...%s', chalk.bold.green( addGuild.name ), ( add.length === 1 ? '' : ' ( ' + ( uGuildIndex + 1 ) + ' of ' + add.length + ' )' ) ); }
+            if ( botVerbosity >= 2 ) { console.log( '\tAdding G:%s to my database...%s', chalk.bold.green( addGuild.name ), ( add.length === 1 ? '' : ' ( ' + ( uGuildIndex + 1 ) + ' of ' + add.length + ' )' ) ); }
             let newGuild = await createNewGuild( addGuild );
             data.guilds.db.push( newGuild );
             a.push( guildId );
@@ -371,7 +371,7 @@ client.on( 'ready', async rdy => {
 
       return data;
     } )
-    .then( async ( data ) => {
+    .then( async ( data ) => {// console.log results based on botVerbosity level
       if ( botVerbosity == 1 ) { console.log( 'All done catching up!' ); }
       else if ( botVerbosity >= 2 ) {
         let { guilds, users } = data;

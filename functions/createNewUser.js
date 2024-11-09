@@ -25,7 +25,7 @@ module.exports = async ( user ) => {
         return await new Promise( async ( resolve, reject ) => {
           for ( let guildId of newUserGuilds ) {// addUserGuild
             let guild = await botGuilds.get( guildId );
-            if ( botVerbosity >= 1 ) { console.log( '\t\tAdding G:%s to U:%s.', chalk.bold.green( guild.name ), chalk.bold.green( user.displayName ) ); }
+            if ( botVerbosity >= 2 ) { console.log( '\t\tAdding G:%s to U:%s.', chalk.bold.green( guild.name ), chalk.bold.green( user.displayName ) ); }
             resolve( await addUserGuild( user.id, guild ) );
           }
         } );

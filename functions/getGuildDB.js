@@ -9,10 +9,11 @@ const ENV = process.env;
 const chalk = require( 'chalk' );
 const verGuildDB = config.verGuildDB;
 
-module.exports = async ( guild ) => {
+module.exports = async ( guild, raw = false ) => {
   try {
     if ( !guild ) { throw new Error( 'No guild to get.' ); }
     const guildOwner = await guild.members.cache.get( guild.ownerId );
+    const guildChannels = guild.channels.cache;
     if ( !guildOwner ) {
       await guild.leave()
       .then( left => { throw new Error( 'I left guild %s (id: %s) because its owner with id: %s, is invalid.', guild.name, guild.id, guild.ownerId ); } )
@@ -22,7 +23,12 @@ module.exports = async ( guild ) => {
 
     if ( await guildConfig.countDocuments( { _id: guild.id } ) === 0 ) { await createNewGuild( guild ); }
     const currConfig = await guildConfig.findOne( { _id: guild.id } );
-    currConfig.Logs.strClosing = await logClosing( currConfig.Logs.Default );
+    if ( !raw ) {
+      currConfig.chanDefault = ( !currConfig.Logs.Default ? guildOwner : guildChannels.get( currConfig.Logs.Default ) );
+      currConfig.chanError = ( !currConfig.Logs.Error ? guildOwner : guildChannels.get( currConfig.Logs.Error ) );
+      currConfig.chanChat = ( !currConfig.Logs.Chat ? guildOwner : guildChannels.get( currConfig.Logs.Chat ) );
+      currConfig.strClosing = await logClosing( currConfig.Logs.Default );
+    }
     return currConfig;
   }
   catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './functions/getGuildDB.js' ), errObject.stack ); }

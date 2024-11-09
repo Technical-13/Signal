@@ -7,7 +7,9 @@ const userPerms = require( '../functions/getPerms.js' );
 const getGuildConfig = require( '../functions/getGuildDB.js' );
 const createNewUser = require( '../functions/createNewUser.js' );
 const addUserGuild = require( '../functions/addUserGuild.js' );
+const botVerbosity = 3;//( config.verbosity || 1 );
 const verUserDB = config.verUserDB;
+const strScript = chalk.hex( '#FFA500' ).bold( './events/guildMemberUpdate.js' );
 
 client.on( 'guildMemberUpdate', async ( oldMember, newMember ) => {
   try {
@@ -52,5 +54,5 @@ client.on( 'guildMemberUpdate', async ( oldMember, newMember ) => {
       }
     }
   }
-  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.bold.hex( '#FFA500' )( './events/guildMemberUpdate.js' ), errObject.stack ); }
+  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
 } );

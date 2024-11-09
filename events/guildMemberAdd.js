@@ -8,7 +8,9 @@ const createNewUser = require( '../functions/createNewUser.js' );
 const addUserGuild = require( '../functions/addUserGuild.js' );
 const errHandler = require( '../functions/errorHandler.js' );
 const parse = require( '../functions/parser.js' );
+const botVerbosity = 3;//( config.verbosity || 1 );
 const verUserDB = config.verUserDB;
+const strScript = chalk.hex( '#FFA500' ).bold( './events/guildMemberAdd.js' );
 
 client.on( 'guildMemberAdd', async ( member ) => {
   try {
@@ -19,16 +21,25 @@ client.on( 'guildMemberAdd', async ( member ) => {
     const currUser = await userConfig.findOne( { _id: user.id } );
     const storedUserGuilds = [];
     currUser.Guilds.forEach( ( entry, i ) => { storedUserGuilds.push( entry._id ); } );
-    if ( storedUserGuilds.indexOf( guild.id ) === -1 ) { await addUserGuild( user.id, guild ); }
+    let ndxUserGuild = storedUserGuilds.indexOf( guild.id );
+    if ( ndxUserGuild === -1 ) {
+      if ( botVerbosity >= 2 ) { console.log( '\t\tAdding G:%s to U:%s.', chalk.bold.green( guild.name ), chalk.bold.green( user.displayName ) ); }
+      await addUserGuild( user.id, guild );
+    }
+    else {
+      if ( botVerbosity >= 2 ) { console.log( '\t\tClearing %s Date from G:%s for U:%s.', chalk.bold.red( 'Expires' ), chalk.bold.green( guild.name ), chalk.bold.green( user.displayName ) ); }
+      let currUserGuild = currUser.Guilds[ ndxUserGuild ];
+      currUserGuild.Expires = null;
+      userConfig.updateOne( { _id: memberId }, currUser, { upsert: true } )
+      .catch( updateError => { throw new Error( chalk.bold.cyan.inverse( 'Error attempting to update G:%s for U:%s to expire %o in my database in %s:\n%o' ), guild.name, currUser.UserName, dbExpires, strScript, updateError ); } );
+    }
 
     const currGuildConfig = await getGuildConfig( guild );
     currGuildConfig.Guild.Members = guild.members.cache.size;
     await guildConfig.updateOne( { _id: guild.id }, currGuildConfig, { upsert: true } )
     .catch( updateError => { throw new Error( chalk.bold.cyan.inverse( 'Error attempting to update %s (id: %s) to my database:\n%o' ), guild.name, guild.id, updateError ); } );
 
-    const doLog = ( !currGuildConfig ? false : ( !currGuildConfig.Logs ? false : ( currGuildConfig.Logs.Active || false ) ) );
-    const chanDefaultLog = ( !doLog ? null : member.guild.channels.cache.get( currGuildConfig.Logs.Default ) );
-    const chanErrorLog = ( !doLog ? null : member.guild.channels.cache.get( currGuildConfig.Logs.Error ) );
+    const { Active: doLog, chanDefault, chanError } = currGuildConfig;
     const doWelcome = ( !currGuildConfig ? false : ( !currGuildConfig.Welcome ? false : ( currGuildConfig.Welcome.Active || false ) ) );
     if ( doWelcome ) {
       const welcomeChan = ( !currGuildConfig.Welcome.Channel ? member : member.guild.channels.cache.get( currGuildConfig.Welcome.Channel ) );
@@ -39,26 +50,26 @@ client.on( 'guildMemberAdd', async ( member ) => {
         if ( welcomeRole ) {
           member.roles.add( welcomeRole, 'New member! - use `/config welcome` to change.' )
           .then( roleAdded => {
-            if ( doLog && chanDefaultLog ) {
-              chanDefaultLog.send( { content: 'Successfully welcomed <@' + member.id + '> to the server and gave them the <@&' + welcomeRole + '> role.' } );
+            if ( doLog && chanDefault ) {
+              chanDefault.send( { content: 'Successfully welcomed <@' + member.id + '> to the server and gave them the <@&' + welcomeRole + '> role.' } );
             }
           } )
           .catch( async errRole => {
-            if ( doLog && chanErrorLog ) {
-              chanErrorLog.send( await errHandler( errRole, { command: 'guildMemberAdd', type: 'errRole' } ) );
+            if ( doLog && chanError ) {
+              chanError.send( await errHandler( errRole, { command: 'guildMemberAdd', type: 'errRole' } ) );
             }
           } );
         }
-        if ( !welcomeRole && doLog && chanDefaultLog ) {
-          chanDefaultLog.send( { content: 'Successfully welcomed <@' + member.id + '> to the server.' } );
+        if ( !welcomeRole && doLog && chanDefault ) {
+          chanDefault.send( { content: 'Successfully welcomed <@' + member.id + '> to the server.' } );
         }
       } )
       .catch( async errSend => {
-        if ( doLog && chanErrorLog ) {
-          chanErrorLog.send( await errHandler( errSend, { command: 'guildMemberAdd', type: 'errSend' } ) );
+        if ( doLog && chanError ) {
+          chanError.send( await errHandler( errSend, { command: 'guildMemberAdd', type: 'errSend' } ) );
         }
       } );
     }
   }
-  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './events/guildMemberAdd.js' ), errObject.stack ); }
+  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
 } );

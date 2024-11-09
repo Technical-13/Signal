@@ -1,4 +1,5 @@
 const client = require( '..' );
+const config = require( '../config.json' );
 const chalk = require( 'chalk' );
 const { OAuth2Scopes, PermissionFlagsBits } = require( 'discord.js' );
 const getGuildConfig = require( '../functions/getGuildDB.js' );
@@ -7,7 +8,9 @@ const addUserGuild = require( '../functions/addUserGuild.js' );
 const duration = require( '../functions/duration.js' );
 const guildConfig = require( '../models/GuildConfig.js' );
 const userConfig = require( '../models/BotUser.js' );
+const botVerbosity = ( config.verbosity || 1 );
 const objTimeString = require( '../jsonObjects/time.json' );
+const strScript = chalk.hex( '#FFA500' ).bold( './events/guildDelete.js' );
 
 client.on( 'guildDelete', async ( guild ) => {
   try {
@@ -34,7 +37,7 @@ client.on( 'guildDelete', async ( guild ) => {
         OAuth2Scopes.ApplicationsCommands
       ],
     } );
-    const newGuildConfig = await getGuildConfig( guild );
+    const newGuildConfig = await getGuildConfig( guild, true );
     const roleEveryone = guild.roles.cache.find( role => role.name === '@everyone' );
     const chanWidget = ( guild.widgetEnabled ? guild.widgetChannelId : null );
     const chanRules = guild.rulesChannelId;
@@ -48,7 +51,7 @@ client.on( 'guildDelete', async ( guild ) => {
     newGuildConfig.Expires = dbExpires;
     await guildConfig.updateOne( { _id: guild.id }, newGuildConfig, { upsert: true } )
     .then( updateSuccess => {
-      console.log( 'Set expriation of DB entry for %s (id: %s) upon leaving guild to: %o', chalk.bold.red( guild.name ), guild.id, dbExpires.toLocaleTimeString( 'en-US', objTimeString ) );
+      if ( botVerbosity >=2 ) { console.log( 'Set expriation of DB entry for G:%s in %s to: %o', chalk.bold.red( guild.name ), strScript, dbExpires ); }
       guildOwner.send( { content: 'Hello! You or someone has removed me from https://discord.com/channels/' + guild.id + '/' + chanInvite + '!  You can get me back at any time by [re-adding](<' + inviteUrl + '>) me.\nI think this might have been an error, so I\'ll save your server\'s configuration settings for a month until `' + dbExpires.toLocaleTimeString( 'en-US', objTimeString ) + '` in case you want me back.' } )
       .catch( errSendDM => {
         if ( doChanError ) {
@@ -69,20 +72,20 @@ client.on( 'guildDelete', async ( guild ) => {
     const memberIds = Array.from( guildMembers.keys() );
     memberIds.forEach( async ( memberId ) => {// Update users for this guild to expire.
       let member = guild.members.cache.get( memberId );
-      if ( await userConfig.countDocuments( { _id: userId } ) === 0 ) { await createNewUser( user ); }
-      await addUserGuild( userId, guild );
-      let currUser = await userConfig.findOne( { _id: userId } );
+      if ( await userConfig.countDocuments( { _id: memberId } ) === 0 ) { await createNewUser( user ); }
+      await addUserGuild( memberId, guild );
+      let currUser = await userConfig.findOne( { _id: memberId } );
       let storedUserGuilds = [];
       currUser.Guilds.forEach( ( entry, i ) => { storedUserGuilds.push( entry._id ); } );
       let ndxUserGuild = storedUserGuilds.indexOf( guild.id );
       if ( ndxUserGuild != -1 ) {
         let currUserGuild = currUser.Guilds[ ndxUserGuild ];
+        if ( botVerbosity >=2 ) { console.log( 'U:%s G:%s Expires: %o', chalk.bold.redBright( currUser.UserName ), chalk.bold.redBright( currUserGuild.GuildName ), dbExpires ); }
         currUserGuild.Expires = dbExpires;
-        console.log( 'Guild %s (%s) expires from %s (%s) in %s on: %o', guild.id, chalk.red( currUserGuild.GuildName ), currUser._id, chalk.red( currUser.UserName ), chalk.bold.redBright( await duration( dbExpires - ( new Date() ), { getWeeks: true } ) ), dbExpires );
-        userConfig.updateOne( { _id: userId }, currUser, { upsert: true } )
-        .catch( updateError => { throw new Error( chalk.bold.cyan.inverse( 'Error attempting to update guild %s (id: %s) for user %s (id: %s) to expire %o in my database in guildDelete.js:\n%o' ), guild.name, guild.id, currUser.UserName, userId, dbExpires, updateError ); } );
+        userConfig.updateOne( { _id: memberId }, currUser, { upsert: true } )
+        .catch( updateError => { throw new Error( chalk.bold.cyan.inverse( 'Error attempting to update G:%s for U:%s to expire %o in my database in ./events/guildDelete.js:\n%o' ), guild.name, currUser.UserName, dbExpires, updateError ); } );
       }
     } );
   }
-  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './events/guildDelete.js' ), errObject.stack ); }
+  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
 } );

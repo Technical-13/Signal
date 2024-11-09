@@ -67,8 +67,8 @@ module.exports = async ( errObject, options = { command: 'undefined', debug: fal
 
     const botConfig = await getBotConfig();
     const guildConfig = await getGuildConfig( guild );
-    const { Active: doLogs, Error: chanError, strClosing } = guildConfig.Logs;
-    const { Active: doInviteLogs,Error: chanInviteError,  strClosing: strInviteClosing } = ( inviteGuild ? await guildConfig( inviteGuild ).Logs : { Active: doLogs, Error: chanError, strClosing: strClosing } );
+    const { Active: doLogs, chanError, strClosing } = guildConfig.Logs;
+    const { Active: doInviteLogs, chanError: chanInviteError, strClosing: strInviteClosing } = ( inviteGuild ? await guildConfig( inviteGuild ) : { Active: doLogs, Error: chanError, strClosing: strClosing } );
 
     const botUsers = client.users.cache;
     const ownerId = ( botConfig.Owner || client.ownerId || config.botOwnerId || process.env.OWNER_ID );
@@ -208,7 +208,7 @@ module.exports = async ( errObject, options = { command: 'undefined', debug: fal
             } );
         }
         break;
-      case 'logLogs':// .catch( async errLog => { await errHandler( errLog, { command: '', chanType: 'chat|default|error', guild: guild, type: 'logLogs' } ); } );
+      case 'logLogs':// .catch( async errLog => { await errHandler( errLog, { command: '', chanType: 'chat|default|error', channel: channel, type: 'logLogs' } ); } );
         let logChan = ( chanType === 'chat' ? chanChat : ( chanType === 'error' ? chanError : chanDefault ) );
         console.error( 'Unable to log to %s channel: %s#%s\n%s', chanType, guild.name, logChan.name, errObject.stack );
         botOwner.send( { content: 'Unable to log to ' + chanType + ' channel <#' + logChan.id + '>.' + strConsole } )
