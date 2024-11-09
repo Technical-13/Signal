@@ -39,7 +39,7 @@ module.exports = async () => {
         };
         return await botConfig.updateOne( { _id: clientId }, updatedBotConfig, { upsert: true } )
         .then( updateSuccess => { return updatedBotConfig; } )
-        .catch( updateError => { throw new Error( chalk.bold.black.bgCyan( 'Error attempting to update bot config in my database:\n%o' ), updateError ); } );
+        .catch( updateError => { throw new Error( chalk.bold.cyan.inverse( 'Error attempting to update bot config in my database:\n%o' ), updateError ); } );
       }
     }
     else if ( newBot && ( !clientId || !botOwnerID || !devGuildId ) ) {
@@ -69,8 +69,8 @@ module.exports = async () => {
       };
       return await botConfig.create( newBotConfig )
       .then( initSuccess => { console.log( chalk.bold.greenBright( 'Bot configuration initialized in my database.' ) ); return newBotConfig; } )
-      .catch( initError => { throw new Error( chalk.bold.black.bgCyan( `Error attempting to initialize bot configuration in my database:\n${initError}` ) ); } );
+      .catch( initError => { throw new Error( chalk.bold.cyan.inverse( `Error attempting to initialize bot configuration in my database:\n${initError}` ) ); } );
     }
   }
-  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( 'getBotDB.js' ), errObject.stack ); }
+  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './functions/getBotDB.js' ), errObject.stack ); }
 };

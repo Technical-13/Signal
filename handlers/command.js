@@ -37,5 +37,5 @@ module.exports = ( client ) => {
     } );
     console.log( chalk.blue( table.toString() ) );
   }
-  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( 'command.js' ), errObject.stack ); }
+  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './handlers/command.js' ), errObject.stack ); }
 };

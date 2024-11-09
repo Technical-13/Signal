@@ -239,10 +239,10 @@ client.on( 'ready', async rdy => {
             let updatedUser = db.find( g => g._id === userId );
             await userConfig.updateOne( { _id:  userId }, updatedUser, { upsert: true } )
             .then( updateSuccess => {
-              console.log( '\tSuccesfully updated U:%s in my database%s.', chalk.bold.green( updatedUser.UserName ), ( update.length === 1 ? '' : ' ( ' + uUserIndex + ' of ' + update.length + ' )' ) );
+              console.log( '\tSuccesfully updated U:%s in my database%s.', chalk.bold.green( updatedUser.UserName ), ( update.length === 1 ? '' : ' ( ' + ( uUserIndex + 1 ) + ' of ' + update.length + ' )' ) );
               u.push( userId );
             } )
-            .catch( updateError => { throw new Error( chalk.bold.black.bgCyan( `\tError attempting to update user ${updatedUser.UserName} in my database:\n${updateError}` ) ); } );
+            .catch( updateError => { throw new Error( chalk.bold.cyan.inverse( `\tError attempting to update user ${updatedUser.UserName} in my database:\n${updateError}` ) ); } );
           }
         }
         resolve( u );
@@ -262,7 +262,7 @@ client.on( 'ready', async rdy => {
           for ( let userId of add ) {// createNewUser
             let uUserIndex = add.indexOf( userId );
             let addUser = await botUsers.get( userId );
-            if ( botVerbosity >= 1 ) { console.log( '\tAdding U:%s to my database...%s', chalk.bold.green( addUser.displayName ), ( add.length === 1 ? '' : ' ( ' + uUserIndex + ' of ' + add.length + ' )' ) ); }
+            if ( botVerbosity >= 1 ) { console.log( '\tAdding U:%s to my database...%s', chalk.bold.green( addUser.displayName ), ( add.length === 1 ? '' : ' ( ' + ( uUserIndex + 1 ) + ' of ' + add.length + ' )' ) ); }
             data.users.db.push( await createNewUser( addUser ) );
             a.push( userId );
           }
@@ -299,10 +299,10 @@ client.on( 'ready', async rdy => {
             let updatedGuild = db.find( g => g._id === guildId );
             await guildConfig.updateOne( { _id:  guildId }, updatedGuild, { upsert: true } )
             .then( updateSuccess => {
-              console.log( '\tSuccesfully updated G:%s in my database%s.', chalk.bold.green( updatedGuild.Guild.Name ), ( update.length === 1 ? '' : ' ( ' + uGuildIndex + ' of ' + update.length + ' )' ) );
+              console.log( '\tSuccesfully updated G:%s in my database%s.', chalk.bold.green( updatedGuild.Guild.Name ), ( update.length === 1 ? '' : ' ( ' + ( uGuildIndex + 1 ) + ' of ' + update.length + ' )' ) );
               u.push( guildId );
             } )
-            .catch( updateError => { throw new Error( chalk.bold.black.bgCyan( `\tError attempting to update guild ${updatedGuild.Guild.Name} in my database${update.length === 1 ? '' : ' ( ' + uGuildIndex + ' of ' + update.length + ' )'}:\n${updateError}` ) ); } );
+            .catch( updateError => { throw new Error( chalk.bold.cyan.inverse( `\tError attempting to update guild ${updatedGuild.Guild.Name} in my database${update.length === 1 ? '' : ' ( ' + ( uGuildIndex + 1 ) + ' of ' + update.length + ' )'}:\n${updateError}` ) ); } );
           }
         }
         resolve( u );
@@ -322,7 +322,7 @@ client.on( 'ready', async rdy => {
           for ( let guildId of add ) {// createNewGuild
             let uGuildIndex = add.indexOf( guildId );
             let addGuild = await botGuilds.get( guildId );
-            if ( botVerbosity >= 1 ) { console.log( '\tAdding G:%s to my database...%s', chalk.bold.green( addGuild.name ), ( add.length === 1 ? '' : ' ( ' + uGuildIndex + ' of ' + add.length + ' )' ) ); }
+            if ( botVerbosity >= 1 ) { console.log( '\tAdding G:%s to my database...%s', chalk.bold.green( addGuild.name ), ( add.length === 1 ? '' : ' ( ' + ( uGuildIndex + 1 ) + ' of ' + add.length + ' )' ) ); }
             let newGuild = await createNewGuild( addGuild );
             data.guilds.db.push( newGuild );
             a.push( guildId );
@@ -350,7 +350,7 @@ client.on( 'ready', async rdy => {
           let ownerName = ( guildOwner ? '<@' + guildOwner.id + '>' : '`' + delGuild.Guild.OwnerName + '`' );
           await guildConfig.deleteOne( { _id: guildId } )
           .then( delExpired => {
-            if ( botVerbosity >= 1 ) { console.log( '\tSuccesfully removed expired G:%s from my database%s.', chalk.bold.red( guildName ), ( remove.length === 1 ? '' : ' ( ' + uGuildIndex + ' of ' + remove.length + ' )' ) ); }
+            if ( botVerbosity >= 1 ) { console.log( '\tSuccesfully removed expired G:%s from my database%s.', chalk.bold.red( guildName ), ( remove.length === 1 ? '' : ' ( ' + ( uGuildIndex + 1 ) + ' of ' + remove.length + ' )' ) ); }
             if ( guildOwner ) {
               guildOwner.send( { content: 'Hello! It has been a month since someone has removed me from ' + guildLink + ', and I\'ve cleaned out your configuration settings!\n\nYou can still get me back in your server at any time by [re-adding](<' + inviteUrl + '>) me.' } )
               .catch( errSendDM => {
@@ -363,7 +363,7 @@ client.on( 'ready', async rdy => {
             }
             removedGuilds.push( guildId );
           } )
-          .catch( errDelete => { throw new Error( chalk.bold.black.bgCyan( `\tError attempting to delete ${guildName} (id: ${guildId}) from my database${remove.length === 1 ? '' : ' ( ' + uGuildIndex + ' of ' + remove.length + ' )'}:\n${errDelete.stack}` ) ); } );
+          .catch( errDelete => { throw new Error( chalk.bold.cyan.inverse( `\tError attempting to delete ${guildName} (id: ${guildId}) from my database${remove.length === 1 ? '' : ' ( ' + ( uGuildIndex + 1 ) + ' of ' + remove.length + ' )'}:\n${errDelete.stack}` ) ); } );
         }
       }
       data.guilds.remove = remove.length;
@@ -441,5 +441,5 @@ client.on( 'ready', async rdy => {
     } )
     .catch( ( rejected ) => { console.error( rejected.message ); } );
   }
-  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( 'ready.js' ), errObject.stack ); }
+  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './events/ready.js' ), errObject.stack ); }
 } );

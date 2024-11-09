@@ -25,5 +25,5 @@ module.exports = async ( guild ) => {
     currConfig.Logs.strClosing = await logClosing( currConfig.Logs.Default );
     return currConfig;
   }
-  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( 'getGuildDB.js' ), errObject.stack ); }
+  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './functions/getGuildDB.js' ), errObject.stack ); }
 };

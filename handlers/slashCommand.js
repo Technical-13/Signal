@@ -130,5 +130,5 @@ module.exports = ( client ) => {
       console.log( statusPut );
     } )();
   }
-  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( 'slashCommand.js' ), errObject.stack ); }
+  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './handlers/slashCommand.js' ), errObject.stack ); }
 };

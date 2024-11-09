@@ -11,5 +11,5 @@ module.exports = ( client ) => {
     } );
     console.log( chalk.greenBright( table.toString() ) );
   }
-  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( 'events.js' ), errObject.stack ); }
+  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './handlers/events.js' ), errObject.stack ); }
 };

@@ -1,4 +1,5 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } = require( 'discord.js' );
+const chalk = require( 'chalk' );
 
 module.exports = async ( interaction, pages, options = { intPageNumber: 0, time: 30 } ) => {
   try {
@@ -7,7 +8,7 @@ module.exports = async ( interaction, pages, options = { intPageNumber: 0, time:
 
     if ( !interaction ) { throw new Error( '[PAGINATION] no interaction.' ); }
     if( !pages || !pages > 0 ) { throw new Error( '[PAGINATION] no pages.' ); }
-    
+
     if ( !interaction.deferred ) { await interaction.deferReply(); }
 
     if ( pages.length === 1 ) { return await interaction.editReply( { embeds: pages, components: [], fetchReply: true } ); }
@@ -50,7 +51,7 @@ module.exports = async ( interaction, pages, options = { intPageNumber: 0, time:
     } );
 
     collector.on( 'end', async () => { await msg.delete(); } );
-    
+
   }
-  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( 'pagination.js' ), errObject.stack ); }
+  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './functions/pagination.js' ), errObject.stack ); }
 };

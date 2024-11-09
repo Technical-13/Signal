@@ -1,5 +1,6 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder } = require( 'discord.js' );
 const userPerms = require( '../../functions/getPerms.js' );
+const chalk = require( 'chalk' );
 
 module.exports = {
 	name: 'help',
@@ -34,6 +35,6 @@ module.exports = {
       } );
       message.reply( { embeds: [ helpEmbed ] } );
     }
-    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( 'commands/info/help.js' ), errObject.stack ); }
+    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './commands/info/help.js' ), errObject.stack ); }
   }
 };

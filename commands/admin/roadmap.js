@@ -1,4 +1,5 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder } = require( 'discord.js' );
+const chalk = require( 'chalk' );
 
 module.exports = {
   name: 'roadmap',
@@ -33,6 +34,6 @@ module.exports = {
       } );
       message.reply( { embeds: [ embedToDo ] } );
     }
-    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( 'commands/admin/roadmap.js' ), errObject.stack ); }
+    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './commands/admin/roadmap.js' ), errObject.stack ); }
   }
 };

@@ -63,7 +63,11 @@ module.exports = {
       const intDayNow = today.getDate();
       const intDay = ( intDayNow <= 9 ? '0' : '' ) + intDayNow.toString();
 
-      const strUseName = ( options.getString( 'gc-name' ) || members.get( options.getUser( 'discord-user' ).id || author.id ).displayName );
+      const strAuthorDisplayName = members.get( author.id ).displayName;
+      const strInputUser = ( options.getString( 'gc-name' ) || null );
+      const objInputUser = ( options.getUser( 'discord-user' ) || null );
+      const strInputUserDisplayName = ( objInputUser ? objInputUser.displayName : strInputUser );
+      const strUseName = ( strInputUserDisplayName ? strInputUserDisplayName : strAuthorDisplayName );
       const encName = encodeURI( strUseName ).replace( '&', '%26' );
       const strLabcaches = ( options.getBoolean( 'labcaches' ) ? '&includeLabcaches' : '' );
 
@@ -71,7 +75,7 @@ module.exports = {
       const { Active: doLogs, Default: chanDefault, Error: chanError, strClosing } = logChans.Logs;
 
       channel.send( { content:
-        'StatBar for: ' + ( objInputUser == null ? strUseName : '<@' +  objInputUser + '>' ) + '\nhttps://cdn2.project-gc.com/statbar.php?quote=https://discord.me/Geocaching%20-%20' + intYear + '-' + intMonth + '-' + intDay + strLabcaches + '&user=' + encName
+        'StatBar for: ' + ( objInputUser == null ? strUseName : '<@' +  objInputUser.id + '>' ) + '\nhttps://cdn2.project-gc.com/statbar.php?quote=https://discord.me/Geocaching%20-%20' + intYear + '-' + intMonth + '-' + intDay + strLabcaches + '&user=' + encName
       } )
       .then( sentMsg => {
         if ( doLogs && strInputUserDisplayName && strInputUserDisplayName !== strAuthorDisplayName ) {

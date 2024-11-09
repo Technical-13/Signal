@@ -58,7 +58,11 @@ module.exports = {
       const intDayNow = today.getDate();
       const intDay = ( intDayNow <= 9 ? '0' + intDayNow.toString() : intDayNow.toString() );
 
-      const strUseName = ( options.getString( 'gc-name' ) || members.get( options.getUser( 'discord-user' ).id || author.id ).displayName );
+      const strAuthorDisplayName = members.get( author.id ).displayName;
+      const strInputUser = ( options.getString( 'gc-name' ) || null );
+      const objInputUser = ( options.getUser( 'discord-user' ) || null );
+      const strInputUserDisplayName = ( objInputUser ? objInputUser.displayName : strInputUser );
+      const strUseName = ( strInputUserDisplayName ? strInputUserDisplayName : strAuthorDisplayName );
       const encName = encodeURI( strUseName ).replace( '&', '%26' );
 
       const logChans = await getGuildConfig( guild );
@@ -66,7 +70,7 @@ module.exports = {
 
       channel.send( { content:
         'BadgeBar for ' + ( objInputUser ? '<@' +  objInputUser.id + '>' : strUseName ) +
-        ( strInputUserDisplayName && strInputUserDisplayName !== strAuthorDisplayName ? ' as requested by <@' + author.id + '>' : '' ) +
+        ( strInputUserDisplayName !== strAuthorDisplayName ? ' as requested by <@' + author.id + '>' : '' ) +
         ':\nhttps://cdn2.project-gc.com/BadgeBar/' + encName + '.png#' + intYear + '-' + intMonth + '-' + intDay
       } )
       .then( sentMsg => {

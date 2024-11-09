@@ -30,9 +30,9 @@ module.exports = async ( user ) => {
           }
         } );
       } )
-      .catch( initError => { throw new Error( chalk.bold.black.bgCyan( `Error attempting to add ${user.displayName} (id: ${user.id}) to my user database in createNewUser.js:\n` ) + initError ); } );
+      .catch( initError => { throw new Error( chalk.bold.cyan.inverse( `Error attempting to add ${user.displayName} (id: ${user.id}) to my user database in createNewUser.js:\n` ) + initError ); } );
     }
     else { console.error( 'User %s (%s) already exists in my database.', user.id, user.displayName ); }
   }
-  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( 'createNewUser.js' ), errObject.stack ); }
+  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './functions/createNewUser.js' ), errObject.stack ); }
 };

@@ -72,5 +72,5 @@ client.on( 'messageDelete', async message => {
       }
     } ).catch( err => { console.error( 'Error running messageDelete.js from %s:\n\t%o', guild.name, err ); } );
   }
-  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.bold.hex( '#FFA500' )( 'messageDelete.js' ), errObject.stack ); }
+  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './events/messageDelete.js' ), errObject.stack ); }
 } );

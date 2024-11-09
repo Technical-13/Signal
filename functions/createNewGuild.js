@@ -56,9 +56,9 @@ module.exports = async ( guild ) => {
       };
       return await guildConfig.create( newGuildConfig )
       .then( initSuccess => { return newGuildConfig; } )
-      .catch( initError => { throw new Error( chalk.bold.black.bgCyan( `Error attempting to add guild ${guild.name} (id: ${guild.id}) to my database:\n${initError}` ) ); } );
+      .catch( initError => { throw new Error( chalk.bold.cyan.inverse( `Error attempting to add guild ${guild.name} (id: ${guild.id}) to my database:\n${initError}` ) ); } );
     }
     else { console.error( 'Guild %s (%s) already exists in my database.', user.id, user.displayName ); }
   }
-  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( 'createNewGuild.js' ), errObject.stack ); }
+  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './functions/createNewGuild.js' ), errObject.stack ); }
 };

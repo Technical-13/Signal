@@ -52,5 +52,5 @@ module.exports = async ( gcCode ) => {
     } );
     return info;
   }
-  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( 'cacheinfo.js' ), errObject.stack ); }
+  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './functions/cacheinfo.js' ), errObject.stack ); }
 };
