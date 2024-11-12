@@ -1,9 +1,10 @@
 const chalk = require( 'chalk' );
-const getBotConfig = require( '../functions/getBotDB.js' );
-const guildConfig = require( '../models/GuildConfig.js' );
 const config = require( '../config.json' );
+const guildConfig = require( '../models/GuildConfig.js' );
+const getBotConfig = require( '../functions/getBotDB.js' );
 const botVerbosity = ( config.verbosity || 1 );
 const verGuildDB = config.verGuildDB;
+const strScript = chalk.hex( '#FFA500' ).bold( './functions/createNewGuild.js' );
 
 module.exports = async ( guild ) => {
   try {
@@ -60,5 +61,5 @@ module.exports = async ( guild ) => {
     }
     else { console.error( 'Guild %s (%s) already exists in my database.', user.id, user.displayName ); }
   }
-  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './functions/createNewGuild.js' ), errObject.stack ); }
+  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
 };

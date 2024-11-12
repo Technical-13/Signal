@@ -1,6 +1,7 @@
 const { ApplicationCommandType } = require( 'discord.js' );
-const userPerms = require( '../../functions/getPerms.js' );
 const chalk = require( 'chalk' );
+const userPerms = require( '../../functions/getPerms.js' );
+const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/geocaching/cipher.js' );
 
 module.exports = {
   name: 'cipher',
@@ -27,6 +28,6 @@ module.exports = {
 
       return interaction.editReply( { content: 'Comming **SOON**:tm:' } );
     }
-    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './slashCommands/geocaching/cipher.js' ), errObject.stack ); }
+    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
   }
 };

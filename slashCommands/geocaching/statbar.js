@@ -1,8 +1,9 @@
 const { ApplicationCommandType, InteractionContextType } = require( 'discord.js' );
+const chalk = require( 'chalk' );
+const errHandler = require( '../../functions/errorHandler.js' );
 const userPerms = require( '../../functions/getPerms.js' );
 const getGuildConfig = require( '../../functions/getGuildDB.js' );
-const errHandler = require( '../../functions/errorHandler.js' );
-const chalk = require( 'chalk' );
+const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/geocaching/statbar.js' );
 
 module.exports = {
   name: 'statbar',
@@ -52,7 +53,7 @@ module.exports = {
     try {
       await interaction.deferReply( { ephemeral: true } );
       const { channel, guild, options, user: author } = interaction;
-      const { cache: members } = guild.members;
+      const members = guild.members.cache;
       const { content } = await userPerms( author, guild );
       if ( content ) { return interaction.editReply( { content: content } ); }
 
@@ -64,35 +65,33 @@ module.exports = {
       const intDay = ( intDayNow <= 9 ? '0' : '' ) + intDayNow.toString();
 
       const strAuthorDisplayName = members.get( author.id ).displayName;
-      const strInputUser = ( options.getString( 'gc-name' ) || null );
+      const strInputString = ( options.getString( 'gc-name' ) || null );
+      const objInputString = ( members.find( mbr => mbr.displayName === strInputString ) || null );
       const objInputUser = ( options.getUser( 'discord-user' ) || null );
-      const strInputUserDisplayName = ( objInputUser ? members.get( objInputUser.id ).displayName : strInputUser );
+      const strInputUserDisplayName = ( objInputUser ? members.get( objInputUser.id ).displayName : strInputString );
+      const isAuthor = ( ( !strInputString && !objInputUser ) || author.id === objInputString?.id || strInputUserDisplayName === strAuthorDisplayName ? true : false );
       const strUseName = ( strInputUserDisplayName ? strInputUserDisplayName : strAuthorDisplayName );
       const encName = encodeURI( strUseName ).replace( '&', '%26' );
       const strLabcaches = ( options.getBoolean( 'labcaches' ) ? '&includeLabcaches' : '' );
-
-      const { Active: doLogs, chanDefault, chanError, strClosing } = await getGuildConfig( guild );
+      const { doLogs, chanDefault, chanError, strClosing } = await getGuildConfig( guild );
 
       channel.send( { content:
-        'StatBar for: ' + ( objInputUser == null ? strUseName : '<@' +  objInputUser.id + '>' ) + '\nhttps://cdn2.project-gc.com/statbar.php?quote=https://discord.me/Geocaching%20-%20' + intYear + '-' + intMonth + '-' + intDay + strLabcaches + '&user=' + encName
+        'StatBar for: ' + ( !objInputUser ? ( !objInputString ? ( !isAuthor ? '`' + strUseName + '`' : '<@' + author.id + '>' ) : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
+        ( isAuthor ? '' : ' as requested by <@' + author.id + '>' ) +
+        '\nhttps://cdn2.project-gc.com/statbar.php?quote=https://discord.me/Geocaching%20-%20' + intYear + '-' + intMonth + '-' + intDay + strLabcaches + '&user=' + encName
       } )
       .then( sentMsg => {
-        if ( doLogs && strInputUserDisplayName && strInputUserDisplayName !== strAuthorDisplayName ) {
+        if ( doLogs && !isAuthor ) {
           chanDefault.send( { content:
-            'I shared the `/statbar` for ' + ( objInputUser ? '<@' +  objInputUser.id + '>' : strUseName ) + ' in <#' + channel.id + '>' +
-            ( strInputUserDisplayName !== strAuthorDisplayName ? ' as requested by <@' + author.id + '>' : '' ) + strClosing } )
+            'I shared the `/statbar` for ' + ( !objInputUser ? ( !objInputString ? '`' + strUseName + '`' : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
+            ' in <#' + channel.id + '> as requested by <@' + author.id + '>' + strClosing } )
+          .then( sentLog => { interaction.deleteReply(); } )
           .catch( async errLog => { await errHandler( errLog, { chanType: 'default', command: 'statbar', channel: channel, type: 'logLogs' } ); } );
         }
-        interaction.deleteReply();
+        else { interaction.deleteReply(); }
       } )
-      .catch( errSend => {
-        console.error( 'Error sending /statbar result to %s#%s:\n%o', guild.name, channel.name, errSend );
-        if ( doLogs ) {
-          chanError.send( { content: 'Error sending `/statbar` result to <#' + channel.id + '>' + strClosing } )
-          .catch( async errLog => { await errHandler( errLog, { chanType: 'error', command: 'statbar', channel: channel, type: 'logLogs' } ); } );
-        }
-      } );
+      .catch( async errSend => { interaction.editReply( await errHandler( errSend, { command: 'statbar', channel: channel, type: 'errSend' } ) ); } );
     }
-    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './slashCommands/geocaching/statbar.js' ), errObject.stack ); }
+    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
   }
 };

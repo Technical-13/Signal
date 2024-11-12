@@ -1,9 +1,10 @@
 const client = require( '..' );
-const chalk = require( 'chalk' );
 const config = require( '../config.json' );
+const chalk = require( 'chalk' );
 const userConfig = require( '../models/BotUser.js' );
 const createNewUser = require( './createNewUser.js' );
 const botVerbosity = ( config.verbosity || 1 );
+const strScript = chalk.hex( '#FFA500' ).bold( './functions/addUserGuild.js' );
 
 module.exports = async ( id, guild ) => {
   try {
@@ -31,5 +32,5 @@ module.exports = async ( id, guild ) => {
     .then( updatedUser => { return currUser; } )
     .catch( updateError => { throw new Error( chalk.bold.cyan.inverse( `Error attempting to add guild ${guild.name} (id: ${guild.id}) to user ${user.displayName} (id: ${id}) in my database in addUserGuild.js:\n${updateError}` ) ); } );
   }
-  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './functions/addUserGuild.js' ), errObject.stack ); }
+  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
 };

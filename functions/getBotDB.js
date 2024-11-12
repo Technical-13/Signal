@@ -1,10 +1,11 @@
 const client = require( '..' );
 require( 'dotenv' ).config();
+const ENV = process.env;
 const config = require( '../config.json' );
 const chalk = require( 'chalk' );
 const botConfig = require( '../models/BotConfig.js' );
-const ENV = process.env;
 const verBotDB = config.verBotDB;
+const strScript = chalk.hex( '#FFA500' ).bold( './functions/getBotDB.js' );
 
 module.exports = async () => {
   try {
@@ -72,5 +73,5 @@ module.exports = async () => {
       .catch( initError => { throw new Error( chalk.bold.cyan.inverse( `Error attempting to initialize bot configuration in my database:\n${initError}` ) ); } );
     }
   }
-  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './functions/getBotDB.js' ), errObject.stack ); }
+  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
 };

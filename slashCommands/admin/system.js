@@ -1,11 +1,14 @@
-const { ApplicationCommandType, InteractionContextType } = require( 'discord.js' );
+require( 'dotenv' ).config();
+const ENV = process.env;
 const config = require( '../../config.json' );
 const chalk = require( 'chalk' );
+const { ApplicationCommandType, InteractionContextType } = require( 'discord.js' );
+const ActivityTypes = { Playing: 0, Streaming: 1, Listening: 2, Watching: 3, Custom: 4, Competing: 5 };
 const botConfig = require( '../../models/BotConfig.js' );
 const errHandler = require( '../../functions/errorHandler.js' );
-const thisBotName = process.env.BOT_USERNAME;
-const botOwnerID = process.env.OWNER_ID;
-const ActivityTypes = { Playing: 0, Streaming: 1, Listening: 2, Watching: 3, Custom: 4, Competing: 5 };
+const thisBotName = ENV.BOT_USERNAME;
+const botOwnerID = ENV.OWNER_ID;
+const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/admin/system.js' );
 
 module.exports = {
   name: 'system',
@@ -318,10 +321,10 @@ module.exports = {
             }
             break;
           case 'reset':
-            const thisBotName = ( config.botName || process.env.BOT_USERNAME || null );
-            const botOwnerID = ( config.botOwnerId || process.env.OWNER_ID || null );
-            const clientId = ( config.clientID || process.env.CLIENT_ID || client.id || null );
-            const devGuildId = ( config.devGuildId || process.env.DEV_GUILD_ID || null );
+            const thisBotName = ( config.botName || ENV.BOT_USERNAME || null );
+            const botOwnerID = ( config.botOwnerId || ENV.OWNER_ID || null );
+            const clientId = ( config.clientID || ENV.CLIENT_ID || client.id || null );
+            const devGuildId = ( config.devGuildId || ENV.DEV_GUILD_ID || null );
             if ( thisBotName && botOwnerID && clientId && devGuildId ) {
               await botConfigDB.updateOne( { BotName: thisBotName }, {
                 BotName: thisBotName,
@@ -384,6 +387,6 @@ module.exports = {
         }
       }
     }
-    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './slashCommands/admin/system.js' ), errObject.stack ); }
+    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
   }
 };

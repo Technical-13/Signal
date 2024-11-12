@@ -1,10 +1,11 @@
 const client = require( '..' );
-const chalk = require( 'chalk' );
 const config = require( '../config.json' );
+const chalk = require( 'chalk' );
 const userConfig = require( '../models/BotUser.js' );
 const addUserGuild = require( '../functions/addUserGuild.js' );
 const botVerbosity = ( config.verbosity || 1 );
 const verUserDB = config.verUserDB;
+const strScript = chalk.hex( '#FFA500' ).bold( './functions/createNewUser.js' );
 
 module.exports = async ( user ) => {
   try {
@@ -34,5 +35,5 @@ module.exports = async ( user ) => {
     }
     else { console.error( 'User %s (%s) already exists in my database.', user.id, user.displayName ); }
   }
-  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './functions/createNewUser.js' ), errObject.stack ); }
+  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
 };

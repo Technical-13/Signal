@@ -1,13 +1,13 @@
 const client = require( '..' );
-require( 'dotenv' ).config();
-const chalk = require( 'chalk' );
 const config = require( '../config.json' );
+const chalk = require( 'chalk' );
+const userConfig = require( '../models/BotUser.js' );
 const getBotConfig = require( './getBotDB.js' );
 const getGuildConfig = require( './getGuildDB.js' );
-const userConfig = require( '../models/BotUser.js' );
 const createNewUser = require( './createNewUser.js' );
 const addUserGuild = require( './addUserGuild.js' );
 const verUserDB = config.verUserDB;
+const strScript = chalk.hex( '#FFA500' ).bold( './functions/getPerms.js' );
 
 module.exports = async ( user, guild, doBlacklist = true, debug = false ) => {
   try {
@@ -133,5 +133,5 @@ module.exports = async ( user, guild, doBlacklist = true, debug = false ) => {
 
     return results;
   }
-  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './functions/getPerms.js' ), errObject.stack ); }
+  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
 };

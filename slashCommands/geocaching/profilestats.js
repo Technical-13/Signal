@@ -1,8 +1,9 @@
 const { ApplicationCommandType, InteractionContextType } = require( 'discord.js' );
+const chalk = require( 'chalk' );
+const errHandler = require( '../../functions/errorHandler.js' );
 const userPerms = require( '../../functions/getPerms.js' );
 const getGuildConfig = require( '../../functions/getGuildDB.js' );
-const errHandler = require( '../../functions/errorHandler.js' );
-const chalk = require( 'chalk' );
+const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/geocaching/profilestats.js' );
 
 module.exports = {
   name: 'profilestats',
@@ -47,7 +48,7 @@ module.exports = {
     try {
       await interaction.deferReply( { ephemeral: true } );
       const { channel, guild, options, user: author } = interaction;
-      const { cache: members } = guild.members;
+      const members = guild.members.cache;
       const { content } = await userPerms( author, guild );
       if ( content ) { return interaction.editReply( { content: content } ); }
 
@@ -59,33 +60,32 @@ module.exports = {
       const intDay = ( intDayNow <= 9 ? '0' + intDayNow.toString() : intDayNow.toString() );
 
       const strAuthorDisplayName = members.get( author.id ).displayName;
-      const strInputUser = ( options.getString( 'gc-name' ) || null );
+      const strInputString = ( options.getString( 'gc-name' ) || null );
+      const objInputString = ( members.find( mbr => mbr.displayName === strInputString ) || null );
       const objInputUser = ( options.getUser( 'discord-user' ) || null );
-      const strInputUserDisplayName = ( objInputUser ? members.get( objInputUser.id ).displayName : strInputUser );
+      const strInputUserDisplayName = ( objInputUser ? members.get( objInputUser.id ).displayName : strInputString );
+      const isAuthor = ( ( !strInputString && !objInputUser ) || author.id === objInputString?.id || strInputUserDisplayName === strAuthorDisplayName ? true : false );
       const strUseName = ( strInputUserDisplayName ? strInputUserDisplayName : strAuthorDisplayName );
       const encName = encodeURI( strUseName ).replace( '&', '%26' );
 
-      const { Active: doLogs, chanDefault, chanError, strClosing } = await getGuildConfig( guild );
+      const { doLogs, chanDefault, chanError, strClosing } = await getGuildConfig( guild );
       channel.send( { content:
-        'ProfileStats link for: ' + ( objInputUser == null ? strUseName : '<@' +  objInputUser.id + '>' ) + '\n<https://project-gc.com/Profile/ProfileStats?profile_name=' + encName + '>'
+        'ProfileStats link for: ' +
+        ( !objInputUser ? ( !objInputString ? ( !isAuthor ? '`' + strUseName + '`' : '<@' + author.id + '>' ) : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
+        ( isAuthor ? '' : ' as requested by <@' + author.id + '>' ) + '\n<https://project-gc.com/Profile/ProfileStats?profile_name=' + encName + '>'
       } )
       .then( sentMsg => {
-        if ( doLogs && strInputUserDisplayName && strInputUserDisplayName !== strAuthorDisplayName ) {
+        if ( doLogs && !isAuthor ) {
           chanDefault.send( { content:
-            'I shared the `/profilestats` for ' + ( objInputUser ? '<@' +  objInputUser.id + '>' : strUseName ) + ' in <#' + channel.id + '>' +
-          ( strInputUserDisplayName !== strAuthorDisplayName ? ' as requested by <@' + author.id + '>' : '' ) + strClosing } )
+            'I shared the `/profilestats` for ' + ( !objInputUser ? ( !objInputString ? '`' + strUseName + '`' : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
+            ' in <#' + channel.id + '> as requested by <@' + author.id + '>' + strClosing } )
+          .then( sentLog => { interaction.deleteReply(); } )
           .catch( async errLog => { await errHandler( errLog, { chanType: 'default', command: 'profilestats', channel: channel, type: 'logLogs' } ); } );
         }
-        interaction.deleteReply();
+        else { interaction.deleteReply(); }
       } )
-      .catch( errSend => {
-        console.error( 'Error sending /profilestats result to %s#%s:\n%o', guild.name, channel.name, errSend );
-        if ( doLogs ) {
-          chanError.send( { content: 'Error sending `/profilestats` result to <#' + channel.id + '>' + strClosing } )
-          .catch( async errLog => { await errHandler( errLog, { chanType: 'error', command: 'profilestats', channel: channel, type: 'logLogs' } ); } );
-        }
-      } );
+      .catch( async errSend => { interaction.editReply( await errHandler( errSend, { command: 'profilestats', channel: channel, type: 'errSend' } ) ); } );
     }
-    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './slashCommands/geocaching/profilestats.js' ), errObject.stack ); }
+    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
   }
 };

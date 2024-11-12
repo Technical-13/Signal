@@ -1,5 +1,6 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } = require( 'discord.js' );
 const chalk = require( 'chalk' );
+const strScript = chalk.hex( '#FFA500' ).bold( './functions/pagination.js' );
 
 module.exports = async ( interaction, pages, options = { intPageNumber: 0, time: 30 } ) => {
   try {
@@ -53,5 +54,5 @@ module.exports = async ( interaction, pages, options = { intPageNumber: 0, time:
     collector.on( 'end', async () => { await msg.delete(); } );
 
   }
-  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './functions/pagination.js' ), errObject.stack ); }
+  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
 };

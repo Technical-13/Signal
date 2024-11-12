@@ -1,9 +1,9 @@
 const { ApplicationCommandType, InteractionContextType } = require( 'discord.js' );
-const { model, Schema } = require( 'mongoose' );
-const guildConfigDB = require( '../../models/GuildConfig.js' );
-const userPerms = require( '../../functions/getPerms.js' );
-const errHandler = require( '../../functions/errorHandler.js' );
 const chalk = require( 'chalk' );
+const guildConfigDB = require( '../../models/GuildConfig.js' );
+const errHandler = require( '../../functions/errorHandler.js' );
+const userPerms = require( '../../functions/getPerms.js' );
+const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/admin/config.js' );
 
 module.exports = {
   name: 'config',
@@ -528,6 +528,6 @@ module.exports = {
         .catch( async updateError => { return interaction.editReply( { content: await errHandler( updateError, errHandlerOptions ) } ); } );
       }
     }
-    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './slashCommands/admin/config.js' ), errObject.stack ); }
+    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
   }
 };

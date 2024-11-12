@@ -1,6 +1,7 @@
 const axios = require( 'axios' );
 const cheerio = require( 'cheerio' );
 const chalk = require( 'chalk' );
+const strScript = chalk.hex( '#FFA500' ).bold( './functions/cacheinfo.js' );
 
 module.exports = async ( gcCode ) => {
   try {
@@ -52,5 +53,5 @@ module.exports = async ( gcCode ) => {
     } );
     return info;
   }
-  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './functions/cacheinfo.js' ), errObject.stack ); }
+  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
 };

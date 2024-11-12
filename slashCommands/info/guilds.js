@@ -1,10 +1,11 @@
-const { ApplicationCommandType, EmbedBuilder } = require( 'discord.js' );
+const { ApplicationCommandType, EmbedBuilder, InteractionContextType } = require( 'discord.js' );
+const chalk = require( 'chalk' );
 const guildConfigDB = require( '../../models/GuildConfig.js' );
 const errHandler = require( '../../functions/errorHandler.js' );
 const userPerms = require( '../../functions/getPerms.js' );
 //const getGuildConfig = require( '../../functions/getGuildDB.js' );
 const pagination = require( '../../functions/pagination.js' );
-const chalk = require( 'chalk' );
+const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/info/guilds.js' );
 
 
 module.exports = {
@@ -102,6 +103,6 @@ if ( vanityURLCode ) { console.log( '%s has a vanityURLCode: %s', guildName, van
       }
       await pagination( interaction, embedGuilds, { intPageNumber: startGuild } );
     }
-    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './slashCommands/info/guilds.js' ), errObject.stack ); }
+    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
   }
 };

@@ -1,8 +1,9 @@
 const { ApplicationCommandType, InteractionContextType } = require( 'discord.js' );
+const chalk = require( 'chalk' );
+const errHandler = require( '../../functions/errorHandler.js' );
 const userPerms = require( '../../functions/getPerms.js' );
 const getGuildConfig = require( '../../functions/getGuildDB.js' );
-const errHandler = require( '../../functions/errorHandler.js' );
-const chalk = require( 'chalk' );
+const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/chat/delete.js' );
 
 module.exports = {
   name: 'delete',
@@ -21,7 +22,7 @@ module.exports = {
       const canDelete = ( isBotMod || checkPermission( 'ManageGuild' ) || isWhitelisted ? true : false );
       const msgID = options.getString( 'message-id' );
       if ( !( /[\d]{18,19}/.test( msgID ) ) ) { return interaction.editReply( { content: '`' + msgID + '` is not a valid `message-id`. Please try again.' } ); }
-      const { Active: doLogs, chanChat, strClosing } = await getGuildConfig( guild );
+      const { doLogs, chanChat, strClosing } = await getGuildConfig( guild );
       if ( !canDelete ) {
         if ( doLogs ) {
           chanChat.send( { content: '<@' + author.id + '> tried to get me to delete a message and doesn\'t have permission to do that.' } )
@@ -48,6 +49,6 @@ module.exports = {
         .catch( async errFetch => { return interaction.editReply( await errHandler( errFetch, { command: 'delete', msgID: msgID, type: 'errFetch' } ) ); } );
       }
     }
-    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './slashCommands/chat/delete.js' ), errObject.stack ); }
+    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
   }
 };

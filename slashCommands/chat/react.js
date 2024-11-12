@@ -1,8 +1,9 @@
 const { ApplicationCommandType, InteractionContextType } = require( 'discord.js' );
+const chalk = require( 'chalk' );
+const errHandler = require( '../../functions/errorHandler.js' );
 const userPerms = require( '../../functions/getPerms.js' );
 const getGuildConfig = require( '../../functions/getGuildDB.js' );
-const errHandler = require( '../../functions/errorHandler.js' );
-const chalk = require( 'chalk' );
+const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/chat/react.js' );
 
 module.exports = {
   name: 'react',
@@ -39,7 +40,7 @@ module.exports = {
       const theReaction = options.getString( 'reaction' );
       const strAuthorTag = author.tag;
 
-      const { Active: doLogs, chanChat, strClosing } = await getGuildConfig( guild );
+      const { doLogs, chanChat, strClosing } = await getGuildConfig( guild );
       var myReaction = theReaction;
       var rxp = /<:(.*)?:([\d]*)>/;
       if ( rxp.test( myReaction ) ) { myReaction = myReaction.match( rxp )[ 2 ]; }
@@ -57,6 +58,6 @@ module.exports = {
       } )
       .catch( async errFetch => { interaction.editReply( await errHandler( errFetch, { command: 'react', msgID: msgID, type: 'errFetch' } ) ); } );
     }
-    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './slashCommands/chat/react.js' ), errObject.stack ); }
+    catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
   }
 };

@@ -1,5 +1,6 @@
 const client = require( '..' );
 const chalk = require( 'chalk' );
+const strScript = chalk.hex( '#FFA500' ).bold( './functions/duraction.js' );
 
 module.exports = async ( ms, getUnits = { getDecades: false, getYears: false, getMonths: false, getWeeks: false, getDays: true, getHours: true, getMinutes: true, getSeconds: false }, debug = false ) => {
   try {
@@ -77,5 +78,5 @@ module.exports = async ( ms, getUnits = { getDecades: false, getYears: false, ge
     }
     else { return ms + 'ms'; }
   }
-  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './functions/duraction.js' ), errObject.stack ); }
+  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
 };

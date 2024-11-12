@@ -1,13 +1,13 @@
 const client = require( '..' );
 require( 'dotenv' ).config();
+const ENV = process.env;
 const config = require( '../config.json' );
 const chalk = require( 'chalk' );
 const mongoose = require( 'mongoose' );
 const getBotConfig = require( './getBotDB.js' );
-
-const ENV = process.env;
 const strConnectDB = ( ENV.mongodb || '' );
 mongoose.set( 'strictQuery', false );
+const strScript = chalk.hex( '#FFA500' ).bold( './functions/database.js' );
 
 module.exports = async () => {
   try {
@@ -19,5 +19,5 @@ module.exports = async () => {
     } )
     .catch( dbConnectErr => { console.error( chalk.bold.red( 'Failed to connect to MongoDB:\n%o' ), dbConnectErr ); } );
   }
-  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './functions/database.js' ), errObject.stack ); }
+  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
 }
