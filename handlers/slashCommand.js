@@ -1,15 +1,18 @@
+require( 'dotenv' ).config();
+const ENV = process.env;
 const fs = require( 'fs' );
 const chalk = require( 'chalk' );
 const AsciiTable = require( 'ascii-table' );
 const { PermissionsBitField } = require( 'discord.js' );
 const { Routes } = require( 'discord-api-types/v10' );
 const { REST } = require( '@discordjs/rest' );
-const TOKEN = process.env.token;
+const TOKEN = ENV.token;
 const rest = new REST( { version: '10' } ).setToken( TOKEN );
-const CLIENT_ID = process.env.CLIENT_ID;
-const DEV_MODE = process.env.DEV_MODE.toLowerCase() === 'true';
-const DEV_GUILD_ID = process.env.DEV_GUILD_ID;
-const UPDATE_SLASH_COMMANDS = process.env.UPDATE_SLASH_COMMANDS.toLowerCase() === 'true';
+const CLIENT_ID = ENV.CLIENT_ID;
+const DEV_MODE = ENV.DEV_MODE.toLowerCase() === 'true';
+const DEV_GUILD_ID = ENV.DEV_GUILD_ID;
+const UPDATE_SLASH_COMMANDS = ENV.UPDATE_SLASH_COMMANDS.toLowerCase() === 'true';
+const strScript = chalk.hex( '#FFA500' ).bold( './handlers/slashCommand.js' );
 
 module.exports = ( client ) => {
   try {
@@ -130,5 +133,5 @@ module.exports = ( client ) => {
       console.log( statusPut );
     } )();
   }
-  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './handlers/slashCommand.js' ), errObject.stack ); }
+  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
 };
