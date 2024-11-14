@@ -4,7 +4,7 @@ const config = require( '../../config.json' );
 const chalk = require( 'chalk' );
 const { ApplicationCommandType, InteractionContextType } = require( 'discord.js' );
 const ActivityTypes = { Playing: 0, Streaming: 1, Listening: 2, Watching: 3, Custom: 4, Competing: 5 };
-const botConfig = require( '../../models/BotConfig.js' );
+const botConfigDB = require( '../../models/BotConfig.js' );
 const errHandler = require( '../../functions/errorHandler.js' );
 const thisBotName = ENV.BOT_USERNAME;
 const botOwnerID = ENV.OWNER_ID;
@@ -54,7 +54,7 @@ module.exports = {
     try {
       await interaction.deferReply( { ephemeral: true } );
       const { channel, guild, options, user: author } = interaction;
-      const botConfig = await botConfig.findOne( { _id: client.id } ).catch( async errFindBot => { await errHandler( errFindBot, { command: 'system', type: 'getBotDB' } ); } );
+      const botConfig = await botConfigDB.findOne( { _id: client.id } ).catch( async errFindBot => { await errHandler( errFindBot, { command: 'system', type: 'getBotDB' } ); } );
       const { guilds, user: bot, users } = client;
       const botUsers = users.cache;
       const botGuilds = guilds.cache;
