@@ -25,8 +25,8 @@ client.on( 'messageCreate', async ( message ) => {
     const { applicationId, authorId, webhookId } = message.toJSON();
     if ( !applicationId && webhookId === authorId ) return;//It's a webhook
     const { author, channel, content, guild, mentions } = message;
-    if ( author.bot ) return;
     if ( channel.type !== 0 ) return;//Not a text channel within a guild
+    if ( author.bot ) return;//It's a bot
     const { clientId, botOwner, isDevGuild, prefix, isBotOwner, isBotMod, isGlobalWhitelisted, isBlacklisted, isGuildBlacklisted } = await userPerms( author, guild );
     const bot = client.user;
     const objGuildMembers = guild.members.cache;
