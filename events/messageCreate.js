@@ -3,15 +3,30 @@ const { EmbedBuilder, Collection, PermissionsBitField } = require( 'discord.js' 
 const ms = require( 'ms' );
 const chalk = require( 'chalk' );
 const cooldown = new Collection();
-const cacheinfo = require( '../functions/cacheinfo.js' );
 const gcCacheTypeIcons = require( '../jsonObjects/eventTypes.json' );
+const cacheinfo = require( '../functions/cacheinfo.js' );
 const userPerms = require( '../functions/getPerms.js' );
+const botVerbosity = client.verbosity;
+const strScript = chalk.hex( '#FFA500' ).bold( './events/messageCreate.js' );
+const getDebugString = ( thing ) => {
+  if ( Array.isArray( thing ) ) { return '{ object-Array: { length: ' + thing.length + ' } }'; }
+  else if ( Object.prototype.toString.call( thing ) === '[object Date]' ) { return '{ object-Date: { ISOstring: ' + thing.toISOString() + ', value: ' + thing.valueOf() + ' } }'; }
+  else if ( typeof( thing ) != 'object' ) { return thing; }
+  else {
+    let objType = ( thing ? 'object-' + thing.constructor.name : typeof( thing ) );
+    let objId = ( thing ? thing.id : 'no.id' );
+    let objName = ( thing ? ( thing.displayName || thing.globalName || thing.name ) : 'no.name' );
+    return '{ ' + objType + ': { id: ' + objId + ', name: ' + objName + ' } }';
+  }
+};
 
-client.on( 'messageCreate', async message => {
+client.on( 'messageCreate', async ( message ) => {
   try {
+    const { applicationId, authorId, webhookId } = message.toJSON();
+    if ( !applicationId && webhookId === authorId ) return;//It's a webhook
     const { author, channel, content, guild, mentions } = message;
     if ( author.bot ) return;
-    if ( channel.type !== 0 ) return;
+    if ( channel.type !== 0 ) return;//Not a text channel within a guild
     const { clientId, botOwner, isDevGuild, prefix, isBotOwner, isBotMod, isGlobalWhitelisted, isBlacklisted, isGuildBlacklisted } = await userPerms( author, guild );
     const bot = client.user;
     const objGuildMembers = guild.members.cache;
@@ -31,8 +46,8 @@ client.on( 'messageCreate', async message => {
     var arrOtherCodes = [];
     const arrContent = content.trim().split( ' ' );
     const arrOtherTypeCodes = [ 'GC', 'TB', 'WM', 'GL', 'TL', 'PR', 'BM', 'GT' ];
-    const oldRegex = new RegExp('^((GC|TB|WM|GL|TL|PR|BM|GT)[a-fA-F0-9]{2,3})', 'g' );
-    const newRegex = new RegExp('^((GC|TB|WM|GL|TL|PR|BM|GT)[a-hjkmnp-rtv-zA-HJKMNP-RTV-Z0-9]{4,7})', 'g' );
+    const oldRegex = new RegExp('^((?:GC|TB|WM|GL|TL|PR|BM|GT)[a-fA-F0-9]{2,3})', 'g' );
+    const newRegex = new RegExp('^((?:GC|TB|WM|GL|TL|PR|BM|GT)[a-hjkmnp-rtv-zA-HJKMNP-RTV-Z0-9]{4,7})', 'g' );
     for ( let word of arrContent ) {
       let arrWord = word.trim().match( word.length <= 5 ? oldRegex : newRegex );
       let code = ( arrWord ? arrWord[ 0 ].toUpperCase() : ( gcWhitelist.indexOf( word ) != -1 ? word.toUpperCase() : '' ) );
@@ -170,5 +185,9 @@ client.on( 'messageCreate', async message => {
       codesResponse.edit( strCodes );
     }
   }
-  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './events/messageCreate.js' ), errObject.stack ); }
+  catch ( errObject ) {
+    const { author, channel, content, guild } = message;
+    console.error( 'Uncaught error in %s:\n\t%s\n\tI was processing a message from %s in https://discord.com/channels/%s/%s\n%s\n-----',
+    strScript, errObject.stack, getDebugString( author ), guild.id, channel.id, content );
+  }
 } );
