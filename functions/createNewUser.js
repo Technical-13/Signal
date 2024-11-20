@@ -3,7 +3,7 @@ const config = require( '../config.json' );
 const chalk = require( 'chalk' );
 const userConfig = require( '../models/BotUser.js' );
 const addUserGuild = require( '../functions/addUserGuild.js' );
-const botVerbosity = ( config.verbosity || 1 );
+const botVerbosity = client.verbosity;
 const verUserDB = config.verUserDB;
 const strScript = chalk.hex( '#FFA500' ).bold( './functions/createNewUser.js' );
 
@@ -13,6 +13,7 @@ module.exports = async ( user ) => {
     if ( await userConfig.countDocuments( { _id: user.id } ) === 0 ) {
       const newBotUser = {
         _id: user.id,
+        Bot: user.bot,
         Guilds: [],
         Guildless: null,
         UserName: user.displayName,

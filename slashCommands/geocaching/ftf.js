@@ -7,6 +7,7 @@ const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/geocaching/ftf.j
 
 module.exports = {
   name:'ftf',
+  group: 'geocaching',
   description: 'Tell someone how to get their FTF (First To Find) noticed on Project-GC.',
   options: [// message-id, target, language
     { type: 3, name: 'message-id', description: 'Paste message ID here' },

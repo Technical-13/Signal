@@ -4,6 +4,7 @@ const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/info/ping.js' );
 
 module.exports = {
   name: 'Ping!',
+  group: 'info',
 //  description: 'Check bot\'s ping.',// No description for ApplicationCommandType.User commands
   type: ApplicationCommandType.User,
   contexts: [ InteractionContextType.Guild, InteractionContextType.BotDM ],

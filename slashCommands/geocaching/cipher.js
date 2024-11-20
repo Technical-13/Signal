@@ -5,6 +5,7 @@ const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/geocaching/ciphe
 
 module.exports = {
   name: 'cipher',
+  group: 'geocaching',
   description: 'Cipher (de|en)coder.',
   type: ApplicationCommandType.ChatInput,
   options: [

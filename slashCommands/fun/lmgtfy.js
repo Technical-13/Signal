@@ -8,6 +8,7 @@ const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/fun/lmgtfy.js' )
 
 module.exports = {
   name: 'lmgtfy',
+  group: 'fun',
   description: 'Let Me Google That For You!',
   type: ApplicationCommandType.ChatInput,
   options: [// query, target, nice

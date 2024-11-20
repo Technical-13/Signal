@@ -5,6 +5,7 @@ const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/fun/roll.js' );
 
 module.exports = {
   name: 'roll',
+  group: 'fun',
   name_localizations: {
     de: 'würfeln',
     fr: 'lancer-les-dés',

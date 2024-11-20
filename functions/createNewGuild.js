@@ -1,8 +1,9 @@
+const client = require( '..' );
 const chalk = require( 'chalk' );
 const config = require( '../config.json' );
 const guildConfig = require( '../models/GuildConfig.js' );
 const getBotConfig = require( '../functions/getBotDB.js' );
-const botVerbosity = ( config.verbosity || 1 );
+const botVerbosity = client.verbosity;
 const verGuildDB = config.verGuildDB;
 const strScript = chalk.hex( '#FFA500' ).bold( './functions/createNewGuild.js' );
 

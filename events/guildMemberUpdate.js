@@ -7,10 +7,10 @@ const userPerms = require( '../functions/getPerms.js' );
 const getGuildConfig = require( '../functions/getGuildDB.js' );
 const createNewUser = require( '../functions/createNewUser.js' );
 const addUserGuild = require( '../functions/addUserGuild.js' );
-Array.prototype.getDiff = function( arrOld ) { return this.filter( o => !arrOld.includes( o ) ) };
-const botVerbosity = 3;//( config.verbosity || 1 );
+const botVerbosity = client.verbosity;
 const verUserDB = config.verUserDB;
 const strScript = chalk.hex( '#FFA500' ).bold( './events/guildMemberUpdate.js' );
+Array.prototype.getDiff = function( arrOld ) { return this.filter( o => !arrOld.includes( o ) ) };
 
 client.on( 'guildMemberUpdate', async ( oldMember, newMember ) => {
   try {
@@ -53,7 +53,7 @@ client.on( 'guildMemberUpdate', async ( oldMember, newMember ) => {
     }
 
     if ( isGuildOwner ) {
-      const currGuildConfig = await getGuildConfig( guild );
+      const currGuildConfig = await getGuildConfig( guild, true );
       const newOwnerName = ( newMember.displayName !== currGuildConfig.Guild.OwnerName ? true : false );
       var doGuildUpdate = false;
       if ( newOwnerName ) {

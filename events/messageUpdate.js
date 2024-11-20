@@ -2,6 +2,7 @@ const client = require( '..' );
 const chalk = require( 'chalk' );
 const { EmbedBuilder, Collection, PermissionsBitField } = require( 'discord.js' );
 const strScript = chalk.hex( '#FFA500' ).bold( './events/messageUpdate.js' );
+const botVerbosity = client.verbosity;
 
 client.on( 'messageUpdate', async ( oldMessage, newMessage ) => {
   try {

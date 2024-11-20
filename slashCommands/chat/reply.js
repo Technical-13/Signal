@@ -8,6 +8,7 @@ const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/chat/reply.js' )
 
 module.exports = {
   name: 'reply',
+  group: 'chat',
   name_localizations: {
     de: 'antwort',
     fr: 'répondre',

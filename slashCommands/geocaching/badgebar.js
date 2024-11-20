@@ -7,6 +7,7 @@ const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/geocaching/badge
 
 module.exports = {
   name: 'badgebar',
+  group: 'geocaching',
   description: 'Show Project-GC BadgeBar for user.',
   description_localizations: {
     de: 'Project-GC BadgeBar für Benutzer anzeigen.',

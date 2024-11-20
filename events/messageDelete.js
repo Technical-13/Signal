@@ -4,6 +4,8 @@ const chalk = require( 'chalk' );
 const thisBotName = process.env.BOT_USERNAME;
 const { model, Schema } = require( 'mongoose' );
 const guildConfigDB = require( '../models/GuildConfig.js' );
+const botVerbosity = client.verbosity;
+const strScript = chalk.hex( '#FFA500' ).bold( './events/messageDelete.js' );
 
 client.on( 'messageDelete', async message => {
   try {
@@ -72,5 +74,5 @@ client.on( 'messageDelete', async message => {
       }
     } ).catch( err => { console.error( 'Error running messageDelete.js from %s:\n\t%o', guild.name, err ); } );
   }
-  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './events/messageDelete.js' ), errObject.stack ); }
+  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
 } );

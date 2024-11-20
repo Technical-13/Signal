@@ -7,6 +7,7 @@ const strScript = chalk.hex( '#FFA500' ).bold( './commands/info/invite.js' );
 
 module.exports = {
 	name: 'invite',
+  group: 'info',
 	description: 'Get the bot\'s invite link.',
 	cooldown: 3000,
 	run: async ( client, message, args ) => {

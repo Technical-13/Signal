@@ -7,6 +7,7 @@ const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/admin/config.js'
 
 module.exports = {
   name: 'config',
+  group: 'admin',
   description: 'Configure bot for this server.',
   type: ApplicationCommandType.ChatInput,
   contexts: [ InteractionContextType.Guild ],

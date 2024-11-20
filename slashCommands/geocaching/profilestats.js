@@ -7,6 +7,7 @@ const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/geocaching/profi
 
 module.exports = {
   name: 'profilestats',
+  group: 'geocaching',
   description: 'Show link to Project-GC ProfileStats for user.',
   description_localizations: {
     de: 'Link zu Project-GC ProfileStats für Benutzer anzeigen.',

@@ -7,6 +7,7 @@ const strScript = chalk.hex( '#FFA500' ).bold( './commands/admin/part.js' );
 
 module.exports = {
   name: 'part',
+  group: 'admin',
   description: 'Leave the current guild.\n\t§part [guild.id (default: current guild)] [\`reason\`] [allowRejoin (default: `TRUE`)]',
   modOnly: true,
   cooldown: 1000,

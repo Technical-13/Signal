@@ -8,6 +8,7 @@ const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/chat/edit.js' );
 
 module.exports = {
   name: 'edit',
+  group: 'chat',
   name_localizations: {
     de: 'bearbeiten',
     fr: 'modifier',

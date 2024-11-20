@@ -7,6 +7,7 @@ const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/chat/react.js' )
 
 module.exports = {
   name: 'react',
+  group: 'chat',
   name_localizations: {
     de: 'reagieren',
     fr: 'réagir',

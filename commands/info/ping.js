@@ -3,6 +3,7 @@ const strScript = chalk.hex( '#FFA500' ).bold( './commands/info/ping.js' );
 
 module.exports = {
 	name: 'ping',
+  group: 'info',
 	description: 'Check bot\'s ping.',
 	cooldown: 3000,
 	run: async ( client, message, args ) => {

@@ -14,6 +14,29 @@ let guildSchema = new Schema( {
     Members: [ String ],
     Roles: [ String ]
   },
+  BotBumpers: {
+    DISBOARD: {
+      ChannelId: String,
+      Enabled: Boolean,
+      LastBumpAt: Date,
+      LastBumpBy: String,
+      RoleId: String
+    },
+    DiscordMe: {
+      ChannelId: String,
+      Enabled: Boolean,
+      LastBumpAt: Date,
+      LastBumpBy: String,
+      RoleId: String
+    },
+    DiscordServers: {
+      ChannelId: String,
+      Enabled: Boolean,
+      LastBumpAt: Date,
+      LastBumpBy: String,
+      RoleId: String
+    }
+  },
   Commands: [ String ],
   Expires: Date,
   Guild: {
@@ -49,6 +72,6 @@ let guildSchema = new Schema( {
     Members: [ String ],
     Roles: [ String ]
   }
-} );
+}, { timestamps: true } );
 
 module.exports = model( 'GuildConfig', guildSchema );

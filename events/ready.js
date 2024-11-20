@@ -1,7 +1,11 @@
 const client = require( '..' );
+require( 'dotenv' ).config();
+const ENV = process.env;
 const { OAuth2Scopes, PermissionFlagsBits } = require( 'discord.js' );
 const chalk = require( 'chalk' );
 const config = require( '../config.json' );
+const verbosityColors = require( '../jsonObjects/verbosityColors.json' );
+const botConfigDB = require( '../models/BotConfig.js' );
 const guildConfig = require( '../models/GuildConfig.js' );
 const userConfig = require( '../models/BotUser.js' );
 const getGuildConfig = require( '../functions/getGuildDB.js' );
@@ -11,26 +15,42 @@ const addUserGuild = require( '../functions/addUserGuild.js' );
 const getBotConfig = require( '../functions/getBotDB.js' );
 const duration = require( '../functions/duration.js' );
 const parse = require( '../functions/parser.js' );
-const botVerbosity = ( config.verbosity || 1 );
 const verGuildDB = config.verGuildDB;
 const verUserDB = config.verUserDB;
+const strScript = chalk.hex( '#FFA500' ).bold( './events/ready.js' );
 Array.prototype.getDiff = function( arrOld ) { return this.filter( o => !arrOld.includes( o ) ) };
-Array.prototype.getDistinct = function() { return this.filter( ( val, i, arr ) => i == arr.indexOf( val ) ) }
-Object.prototype.valMatch = function( that ) { return this == that }
+Array.prototype.getDistinct = function() { return this.filter( ( val, i, arr ) => i == arr.indexOf( val ) ) };
+Object.prototype.valMatch = function( that ) { return this == that };
 
 client.on( 'ready', async rdy => {
   try {
-    var verbosityColor;
-    switch ( botVerbosity ) {
-      case 5: verbosityColor = '#D61F1F'; break;
-      case 4: verbosityColor = '#E03C32'; break;
-      case 3: verbosityColor = '#FFD301'; break;
-      case 2: verbosityColor = '#7BB662'; break;
-      case 1: verbosityColor = '#639754'; break;
-      case 0: verbosityColor = '#006B3D'; break;
-      default: verbosityColor = '#0000FF'; break;
+    const vColors = verbosityColors.verbosityScale;
+    const clientId = ( config.clientID || ENV.CLIENT_ID || client.id || null );
+    const botConfig = await getBotConfig();
+    if ( ENV.VERBOSITY != botConfig.Verbosity ) {
+      var verbosityColor = vColors[ ( ( isNaN( ENV.VERBOSITY ) || ENV.VERBOSITY < 0 || ENV.VERBOSITY > 5 ) ? 6 : ENV.VERBOSITY ) ];
+      console.warn( '%s %s', chalk.bold.red( 'Bot verbosity being reset on restart to process.env value of:' ), chalk.underline.hex( verbosityColor ).bold( '_ ' + ENV.VERBOSITY + ' _' ) );
     }
-    console.log( '%s set to: %s', chalk.blue( 'Verbosity level' ), chalk.underline.hex( verbosityColor ).bold( botVerbosity ) );
+    var botVerbosity = parseInt( ENV.VERBOSITY || botConfig.Verbosity || -1 );
+    if ( isNaN( botVerbosity ) || botVerbosity < 0 || botVerbosity > 5 ) {
+      console.log( 'Bot Verbosity level not valid, defaulting to max verbosity level 5!\n\t' +
+        'To fix this, please add %s to your %s file.\n\t' +
+        'Valid values are:\n\t\t%s\n\t\t%s\n\t\t%s\n\t\t%s\n\t\t%s\n\t\t%s',
+        chalk.green.bold( 'VERBOSITY=#' ), chalk.green.bold( '.env' ),
+        chalk.hex( '#D61F1F' ).bold( '5 - All messages' ),
+        chalk.hex( '#E03C32' ).bold( '4 - Major debugging messages' ),
+        chalk.hex( '#FFD301' ).bold( '3 - Moderate debugging messages' ),
+        chalk.hex( '#7BB662' ).bold( '2 - Minor debugging messages' ),
+        chalk.hex( '#639754' ).bold( '1 - Basic system messages' ),
+        chalk.hex( '#006B3D' ).bold( '0 - Required system messages' )
+      );
+      botVerbosity = 5;
+    }
+    botConfig.Verbosity = botVerbosity;
+    await botConfigDB.updateOne( { _id: clientId }, botConfig, { upsert: true } );
+    client.verbosity = botVerbosity;
+    verbosityColor = vColors[ botVerbosity ];
+    console.log( '%s set to: %s', chalk.blue( 'Verbosity level' ), chalk.underline.hex( verbosityColor ).bold( '_ ' + botVerbosity + ' _' ) );
     const botOwner = client.users.cache.get( client.ownerId );
     const activityTypes = { 'Playing': 0, 'Streaming': 1, 'Listening': 2, 'Watching': 3, 'Custom': 4, 'Competing': 5 };
     const inviteUrl = client.generateInvite( {
@@ -196,18 +216,18 @@ client.on( 'ready', async rdy => {
         }
       }
 
-      if ( botVerbosity >= 4 ) { console.log( 'botUserIds: %o', botUserIds ); }
-      if ( botVerbosity >= 4 ) { console.log( 'storedUserIds: %o', storedUserIds ); }
-      if ( botVerbosity >= 2 ) { console.log( 'addedUserIds: %o', addedUserIds.getDistinct() ); }
-      if ( botVerbosity >= 2 ) { console.log( 'removedUserIds: %o', removedUserIds.getDistinct() ); }//Should always be empty by this point -- until I add purging function
-      if ( botVerbosity >= 4 ) { console.log( 'unchangedUserIds: %o', unchangedUserIds ); }
-      if ( botVerbosity >= 2 ) { console.log( 'updateUserIds: %o', updateUserIds.getDistinct() ); }
-      if ( botVerbosity >= 4 ) { console.log( 'botGuildIds: %o', botGuildIds ); }
-      if ( botVerbosity >= 4 ) { console.log( 'storedGuildIds: %o', storedGuildIds ); }
-      if ( botVerbosity >= 2 ) { console.log( 'addedGuildIds: %o', addedGuildIds.getDistinct() ); }
-      if ( botVerbosity >= 2 ) { console.log( 'removedGuildIds: %o', removedGuildIds.getDistinct() ); }
-      if ( botVerbosity >= 4 ) { console.log( 'unchangedGuildIds: %o', unchangedGuildIds ); }
-      if ( botVerbosity >= 2 ) { console.log( 'updateGuildIds: %o', updateGuildIds.getDistinct() ); }
+      if ( botVerbosity >= 4 ) { console.log( 'botUserIds: %o', botUserIds.sort() ); }
+      if ( botVerbosity >= 4 ) { console.log( 'storedUserIds: %o', storedUserIds.sort() ); }
+      if ( botVerbosity >= 2 ) { console.log( 'addedUserIds: %o', addedUserIds.getDistinct().sort() ); }
+      if ( botVerbosity >= 2 ) { console.log( 'removedUserIds: %o', removedUserIds.getDistinct().sort() ); }//Should always be empty by this point -- until I add purging function
+      if ( botVerbosity >= 4 ) { console.log( 'unchangedUserIds: %o', unchangedUserIds.sort() ); }
+      if ( botVerbosity >= 2 ) { console.log( 'updateUserIds: %o', updateUserIds.getDistinct().sort() ); }
+      if ( botVerbosity >= 4 ) { console.log( 'botGuildIds: %o', botGuildIds.sort() ); }
+      if ( botVerbosity >= 4 ) { console.log( 'storedGuildIds: %o', storedGuildIds.sort() ); }
+      if ( botVerbosity >= 2 ) { console.log( 'addedGuildIds: %o', addedGuildIds.getDistinct().sort() ); }
+      if ( botVerbosity >= 2 ) { console.log( 'removedGuildIds: %o', removedGuildIds.getDistinct().sort() ); }
+      if ( botVerbosity >= 4 ) { console.log( 'unchangedGuildIds: %o', unchangedGuildIds.sort() ); }
+      if ( botVerbosity >= 2 ) { console.log( 'updateGuildIds: %o', updateGuildIds.getDistinct().sort() ); }
 
       resolve( {
         guilds: {
@@ -381,23 +401,33 @@ client.on( 'ready', async rdy => {
         else if ( users.updated > users.update ) { strUserUpdate = chalk.bold.red( 'ERROR: Updated more users than there were to update!!!' ); }
         else if ( users.updated < users.update ) { strUserUpdate = 'Updated ' + chalk.bold.yellow( users.updated + ' of ' + users.update ) + ' user' + ( users.update === 1 ? '' : 's' ) + ' needing an update.'; }
         else { strUserUpdate = 'Updated ' + chalk.bold.green( users.update ) + ' user' + ( users.update === 1 ? '' : 's' ) + '.'; }
-        if ( botVerbosity >= 3 ) {// List Guildless users
-          let expiringUsers = ( users.db.filter( u => Object.prototype.toString.call( u.Guildless ) === '[object Date]' ) || [] );
-          if ( expiringUsers.length != 0 ) {
-            let expiringUserIds = Array.from( expiringUsers.map( val => val._id ) );
-            for ( let userId of expiringUserIds ) {
-              let expiringUser = expiringUsers.find( u => u._id === userId );
-              strUserUpdate += '\n\t\t' + userId + ' - ' + chalk.bold.red( expiringUser.UserName ) + ' has been Guildless for ' + chalk.bold.red( await duration( ( new Date() ) - expiringUser.Guildless , { getMonths: true, getWeeks: true } ) ) + ' since: ' + chalk.hex( '#84618E' ).bold( expiringUser.Guildless.toISOString() );
-            }
-          }
-        }
         if ( botVerbosity >= 4 && users.expired != 0 ) {// List users with Guilds that Expires
+          let expiredUserList = [];
           for ( let userId of users.expired ) {
             let expiredUser = users.db.find( u => u._id === userId );
             for ( let botGuild of expiredUser.Guilds ) {
               if ( Object.prototype.toString.call( botGuild.Expires ) === '[object Date]' ) {
-                strUserUpdate += '\n\t\t' + userId + ' - In ' + chalk.bold.red( await duration( botGuild.Expires - ( new Date() ), { getMonths: true, getWeeks: true } ) ) + ', ' + chalk.underline( botGuild.GuildName ) + ' Expires from ' + chalk.bold.red( expiredUser.UserName ) + ' on: ' + chalk.hex( '#84618E' ).bold( botGuild.Expires.toISOString() );
+                expiredUserList.push( [ botGuild.Expires.valueOf(), { _id: expiredUser._id, GuildName: botGuild.GuildName, Expires: botGuild.Expires, UserName: expiredUser.UserName } ] );
               }
+            }
+          }
+          if ( expiredUserList.length >= 1 ) {
+            expiredUserList = expiredUserList.sort().reverse().map( u => u[ 1 ] );
+            for ( let userExpires of expiredUserList ) {
+              strUserUpdate += '\n\t\tIn ' + chalk.bold.red( await duration( userExpires.Expires - ( new Date() ), { getMonths: true, getWeeks: true } ) ) + ', G:' + chalk.underline( userExpires.GuildName ) + ' Expires from U:' + chalk.bold.red( userExpires.UserName ) + ' on: ' + chalk.hex( '#84618E' ).bold( userExpires.Expires.toISOString() );
+            }
+          }
+        }
+        if ( botVerbosity >= 3 ) {// List Guildless users
+          let expiringUsers = ( users.db.filter( u => Object.prototype.toString.call( u.Guildless ) === '[object Date]' )
+          .map( u => { return [ u.Guildless.valueOf(), { _id: u._id, Guildless: u.Guildless, UserName: u.UserName } ]; } )
+          .sort()
+          .map( u => u[ 1 ] ) || [] );
+          if ( expiringUsers.length != 0 ) {
+            let expiringUserIds = Array.from( expiringUsers.map( val => val._id ) );
+            for ( let guildlessUser of expiringUserIds ) {
+              let expiringUser = expiringUsers.find( u => u._id === guildlessUser );
+              strUserUpdate += '\n\t\tU:' + chalk.bold.red( expiringUser.UserName ) + ' has been Guildless for ' + chalk.bold.red( await duration( ( new Date() ) - expiringUser.Guildless , { getMonths: true, getWeeks: true } ) ) + ' since: ' + chalk.hex( '#84618E' ).bold( expiringUser.Guildless.toISOString() );
             }
           }
         }
@@ -441,5 +471,5 @@ client.on( 'ready', async rdy => {
     } )
     .catch( ( rejected ) => { console.error( rejected.message ); } );
   }
-  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './events/ready.js' ), errObject.stack ); }
+  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
 } );

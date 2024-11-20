@@ -5,7 +5,13 @@ let userSchema = new Schema( {
   Bot: Boolean,
   Guilds: [ {
     _id: String,
-    Bans: [ String ],
+    Corrections: [ {
+      ByID: String,
+      ByName: String,
+      Duration: String,
+      StartedAt: Date,
+      Type: String
+    } ],
     Expires: Date,
     GuildName: String,
     MemberName: String,
@@ -15,7 +21,7 @@ let userSchema = new Schema( {
   Guildless: Date,
   Score: Number,
   UserName: String,
-  Version: Number
-} );
+  Version: Number//,WikiAuthentication: { String }
+}, { timestamps: true } );
 
 module.exports = model( 'BotUser', userSchema );

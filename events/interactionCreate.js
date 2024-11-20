@@ -3,6 +3,7 @@ const { EmbedBuilder, Collection, PermissionsBitField } = require( 'discord.js' 
 const cooldown = new Collection();
 const chalk = require( 'chalk' );
 const ms = require( 'ms' );
+const strScript = chalk.hex( '#FFA500' ).bold( './events/messageCreate.js' );
 
 client.on( 'interactionCreate', async interaction => {
   try {
@@ -57,5 +58,5 @@ client.on( 'interactionCreate', async interaction => {
       await slashCommand.run( client, interaction );
     }
   }
-  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', chalk.hex( '#FFA500' ).bold( './events/messageCreate.js' ), errObject.stack ); }
+  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
 } );

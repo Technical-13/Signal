@@ -7,6 +7,7 @@ const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/geocaching/statb
 
 module.exports = {
   name: 'statbar',
+  group: 'geocaching',
   description: 'Show Project-GC StatBar for user.',
   description_localizations: {
     de: 'Project-GC StatBar für Benutzer anzeigen.',

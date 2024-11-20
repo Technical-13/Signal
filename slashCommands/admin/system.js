@@ -12,6 +12,7 @@ const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/admin/system.js'
 
 module.exports = {
   name: 'system',
+  group: 'admin',
   description: 'Change bot configs.',
   type: ApplicationCommandType.ChatInput,
   contexts: [ InteractionContextType.Guild ],

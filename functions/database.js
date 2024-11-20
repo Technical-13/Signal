@@ -15,9 +15,9 @@ module.exports = async () => {
     await mongoose.connect( strConnectDB )
     .then( async dbConnected => {
       await getBotConfig();
-      console.log( chalk.greenBright( 'Connected to MongoDB.' ) );
+      console.log( chalk.greenBright( 'Connected bot to MongoDB.' ) );
     } )
-    .catch( dbConnectErr => { console.error( chalk.bold.red( 'Failed to connect to MongoDB:\n%o' ), dbConnectErr ); } );
+    .catch( dbConnectErr => { console.error( chalk.bold.red( 'Failed to connect bot to MongoDB:\n%o' ), dbConnectErr ); } );
   }
   catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
 }

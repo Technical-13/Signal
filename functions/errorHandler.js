@@ -74,8 +74,9 @@ module.exports = async ( errObject, options = { command: 'undefined', debug: fal
     const botUsers = client.users.cache;
     const ownerId = ( botConfig.Owner || client.ownerId || config.botOwnerId || process.env.OWNER_ID );
     const botOwner = botUsers.get( ownerId );
-    const chanName = ( !channel ? 'guild#channel: undefined' : guild.name + '#' + channel.name );
-    const chanLink = ( !channel ? 'guild#channel: undefined' : 'https://discord.com/channels/' + guild.id + '/' + channel.id );
+    const chanName = ( !channel ? 'undefined@guild#channel' : guild.name + '#' + channel.name );
+    const chanLinkMessage = ( !channel ? '`guild#channel: undefined`' : '[' + chanName + '](<https://discord.com/channels/' + guild.id + '/' + channel.id + '>)' );
+    const chanLinkConsole = ( !channel ? 'undefined@guild#channel' : 'https://discord.com/channels/' + guild.id + '/' + channel.id );
     const strConsole = '  Please check the console for details.';
     const strNotified = '  Error has been logged and my owner, <@' + botOwner.id + '>, has been notified.';
     const strLogged = '  Error has been logged and my owner, <@' + botOwner.id + '>, couldn\'t be notified.';
@@ -89,7 +90,7 @@ module.exports = async ( errObject, options = { command: 'undefined', debug: fal
             break;
           default:
             console.error( 'Unable to `MANAGE_MESSAGES` for /' + cmd + ' request: %s', errObject.stack );
-            botOwner.send( { content: 'Unable to `MANAGE_MESSAGES` for `/' + cmd + '` request.' + strConsole } )
+            botOwner.send( { content: 'Unable to `MANAGE_MESSAGES` for `/' + cmd + '` request in ' + chanLinkMessage + '.' + strConsole } )
             .then( errSent => {
               if ( doLogs ) { chanError.send( 'Encounted an error with a `/' + cmd + '` request.' + strNotified + strClosing ); }
               return { content: 'Encounted an error with your `/' + cmd + '` request.' + strNotified };
@@ -102,24 +103,25 @@ module.exports = async ( errObject, options = { command: 'undefined', debug: fal
         }
         break;
       case 'errEdit':// .catch( async errEdit => { interaction.editReply( await errHandler( errEdit, { command: '', channel: channel, type: 'errEdit' } ) ); } );
+      case 'errReply':// .catch( async errReply => { author.send( await errHandler( errReply, { author: author, command: '', type: 'errReply' } ) ); } );
       case 'errSend':// .catch( async errSend => { interaction.editReply( await errHandler( errSend, { command: '', channel: channel, type: 'errSend' } ) ); } );
         switch ( errObject.code ) {
           case 50001 :// No SEND_MESSAGE permission in channel
-            if ( debug ) { console.error( 'I do not have permission to send messages to %s for /%s request: %s\n\t%s', chanName, cmd, chanLink, errObject.stack ); }
+            if ( debug ) { console.error( 'I do not have permission to send messages to %s for /%s request: %s\n\t%s', chanName, cmd, chanLinkConsole, errObject.stack ); }
             if ( doLogs ) { chanError.send( 'Please give me permission to send to <#' + channel.id + '>.' + strClosing ); }
             return { content: 'I do not have permission to send messages to <#' + channel.id + '>.' };
             break;
           case 50006:// Cannot send an empty message
-            if ( debug ) { console.error( 'Cannot send empty message to %s in /%s request: %s\n\t%s', chanName, cmd, chanLink, errObject.stack ); }
+            if ( debug ) { console.error( 'Cannot send empty message to %s in /%s request: %s\n\t%s', chanName, cmd, chanLinkConsole, errObject.stack ); }
             return { content: 'Message you tried to send was empty.' };
             break;
           case 50035:// Message > 2,000 character limit
-            if ( debug ) { console.error( 'Cannot send message > 2,000 characters to %s in /%s request: %s\n\t%s', chanName, cmd, chanLink, errObject.stack ); }
+            if ( debug ) { console.error( 'Cannot send message > 2,000 characters to %s in /%s request: %s\n\t%s', chanName, cmd, chanLinkConsole, errObject.stack ); }
             return { content: 'Message you tried to send was longer than the 2,000 character limit.' };
             break;
           default:
-            console.error( 'Unable to send message to %s for /%s request: %s\n\t%s', chanName, cmd, chanLink, errObject.stack );
-            botOwner.send( { content: 'Unable to send message to ' + chanLink + ' for `/' + cmd + '` request.' + strConsole } )
+            console.error( 'Unable to send message to %s for /%s request: %s\n\t%s', chanName, cmd, chanLinkConsole, errObject.stack );
+            botOwner.send( { content: 'Unable to send message to ' + chanLinkMessage + ' for `/' + cmd + '` request.' + strConsole } )
             .then( errSent => {
               if ( doLogs ) { chanError.send( 'Encounted an error with a `/' + cmd + '` request.' + strNotified + strClosing ); }
               return { content: 'Encounted an error with your `/' + cmd + '` request.' + strNotified };
@@ -141,7 +143,7 @@ module.exports = async ( errObject, options = { command: 'undefined', debug: fal
             break;
           default:
             console.error( 'Unable to find message 🆔`' + msgID + '` for /' + cmd + ' request: %s', errObject.stack );
-            botOwner.send( { content: 'Unable to find message 🆔`' + msgID + '` for `/' + cmd + '` request.' + strConsole } )
+            botOwner.send( { content: 'Unable to find message 🆔`' + msgID + '` for `/' + cmd + '` request in ' + chanLinkMessage + '.' + strConsole } )
             .then( errSent => {
               if ( doLogs ) { chanError.send( 'Encounted an error with a `/' + cmd + '` request.' + strNotified + strClosing ); }
               return { content: 'Encounted an error with your `/' + cmd + '` request.' + strNotified };
@@ -168,7 +170,7 @@ module.exports = async ( errObject, options = { command: 'undefined', debug: fal
                   break;
                 default:
                   console.error( 'Unable to send message for /' + cmd + ' request: %s', errSend.stack );
-                  botOwner.send( { content: 'Unable to send message for `/' + cmd + '` request.' + strConsole } )
+                  botOwner.send( { content: 'Unable to send message for `/' + cmd + '` request in ' + chanLinkMessage + '.' + strConsole } )
                   .then( errSent => {
                     if ( doInviteLogs ) { chanInviteError.send( 'Encounted an error with a `/' + cmd + '` request.' + strNotified + strInviteClosing ); }
                   } )
@@ -181,7 +183,7 @@ module.exports = async ( errObject, options = { command: 'undefined', debug: fal
             break;
           default:
             console.error( 'Unable to create an invite for %s:\n%s', inviteGuild.name, errObject.stack );
-            botOwner.send( { content: 'Unable to create an invite to ' + inviteGuild.name + ' for `/' + cmd + '` request.' + strConsole } )
+            botOwner.send( { content: 'Unable to create an invite to ' + inviteGuild.name + ' for `/' + cmd + '` request in ' + chanLinkMessage + '.' + strConsole } )
             .then( errSent => {
               if ( doInviteLogs ) { chanInviteError.send( 'Encounted an error with a `/' + cmd + '` request.' + strNotified + strInviteClosing ); }
             } )
@@ -194,11 +196,11 @@ module.exports = async ( errObject, options = { command: 'undefined', debug: fal
       case 'errReact':// .catch( async errFetch => { interaction.editReply( await errHandler( errFetch, { command: '', channel: channel, emoji: emoji, msgID: msgID, type: 'errFetch', rawReaction: rawReaction } ) ); } );
         switch ( errObject.code ) {
           case 10014://Reaction invalid
-            if ( doLogs ) { chanError.send( 'Failed to react to message ' + chanLink + '/' + msgID + ' with `' + rawReaction + '`.' + strClosing ); }
+            if ( doLogs ) { chanError.send( 'Failed to react to message ' + chanLinkConsole + '/' + msgID + ' with `' + rawReaction + '`.' + strClosing ); }
             return { content: '`' + rawReaction + '` is not a valid `reaction` to react with. Please try again; the emoji picker is helpful in getting valid reactions.' };
           default:
             console.error( '%s: Reaction to #%o with %s (%s) failed:\n\tMsg: %s\n\tErr: %s', errObject.code, msgID, prcEmoji, rawReaction, errObject.message, errObject.stack );
-            botOwner.send( 'Reaction to ' + chanLink + '/' + msgID + ' with `' + rawReaction + '` failed.' + strConsole )
+            botOwner.send( 'Reaction to ' + chanLinkConsole + '/' + msgID + ' with `' + rawReaction + '` failed in ' + chanLinkMessage + '.' + strConsole )
             .then( errSent => {
               if ( doLogs ) { chanError.send( 'Encounted an error with a `/' + cmd + '` request.' + strNotified + strClosing ); }
               return { content: 'Unknown Error reacting to message.' + strNotified };
@@ -217,7 +219,7 @@ module.exports = async ( errObject, options = { command: 'undefined', debug: fal
             return { content: 'I do not have permission to change roles to members.' };
           default:
             console.error( 'errRole in %s: %s', guild.name, errObject.stack );
-            botOwner.send( 'Unknown errRole.' + strConsole )
+            botOwner.send( 'Unknown errRole in ' + chanLinkMessage + '.' + strConsole )
             .then( errSent => {
               if ( doLogs ) { chanError.send( 'Encounted an error with a `' + cmd + '` request.' + strNotified + strClosing ); }
               return { content: 'Unknown Error reacting to message.' + strNotified };
@@ -231,7 +233,7 @@ module.exports = async ( errObject, options = { command: 'undefined', debug: fal
       case 'logLogs':// .catch( async errLog => { interaction.editReply( await errHandler( errLog, { command: '', chanType: 'chat|default|error', channel: channel, type: 'logLogs' } ) ); } );
         let logChan = ( chanType === 'chat' ? chanChat : ( chanType === 'error' ? chanError : chanDefault ) );
         console.error( 'Unable to log to %s channel: %s#%s\n%s', chanType, guild.name, logChan.name, errObject.stack );
-        botOwner.send( { content: 'Unable to log to ' + chanType + ' channel <#' + logChan.id + '>.' + strConsole } )
+        botOwner.send( { content: 'Unable to log to ' + chanType + ' channel <#' + logChan.id + '> in ' + chanLinkMessage + '.' + strConsole } )
         .then( errSent => { return { content: 'Encounted an error with your `/' + cmd + '` request.' + strNotified } } )
         .catch( errNotSent => {
           console.error( 'Error attempting to DM you about the above error: %o', errNotSent );
@@ -243,7 +245,7 @@ module.exports = async ( errObject, options = { command: 'undefined', debug: fal
         switch ( modType ) {
           case 'clear':
             console.error( 'Error attempting to clear my %s for %s: %s', clearLists, author.displayName, guild.name, errObject.stack );
-            botOwner.send( 'Error attempting to clear my ' + clearLists + ' with `/' + cmd + ' clear`.' + strConsole )
+            botOwner.send( 'Error attempting to clear my ' + clearLists + ' with `/' + cmd + ' clear` in ' + chanLinkMessage + '.' + strConsole )
             .then( sentOwner => {
               return { content: 'Error attempting to clear my ' + clearLists + ( cmd === 'system' ? '' : ' for this server' ) + '!' + strNotified };
             } )
@@ -298,7 +300,7 @@ module.exports = async ( errObject, options = { command: 'undefined', debug: fal
         break;
       default:
         console.error( 'Unknown type (%s) to resolve error for: %s', myTask, errObject.stack );
-        botOwner.send( { content: 'Unknown type (' + myTask + ') to resolve error for.' + strConsole } )
+        botOwner.send( { content: 'Unknown type (' + myTask + ') to resolve error for in ' + chanLinkMessage + '.' + strConsole } )
         .then( errSent => {
           if ( doLogs ) { chanError.send( 'Encounted an error with a `/' + cmd + '` request.' + strNotified + strClosing ); }
           return { content: 'Encounted an error with your `/' + cmd + '` request.' + strNotified };

@@ -7,6 +7,7 @@ const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/chat/delete.js' 
 
 module.exports = {
   name: 'delete',
+  group: 'chat',
   description: 'Delete a bot message.',
   options: [ { type: 3, name: 'message-id', description: 'Paste message ID here:', required: true } ],
   type: ApplicationCommandType.ChatInput,

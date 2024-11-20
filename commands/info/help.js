@@ -5,6 +5,7 @@ const strScript = chalk.hex( '#FFA500' ).bold( './commands/info/help.js' );
 
 module.exports = {
 	name: 'help',
+  group: 'info',
 	description: 'Get the bot\'s commands',
 	cooldown: 600000,
 	run: async ( client, message, args ) => {

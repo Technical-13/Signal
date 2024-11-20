@@ -26,10 +26,20 @@ client.on( 'messageCreate', async ( message ) => {
     if ( !applicationId && webhookId === authorId ) return;//It's a webhook
     const { author, channel, content, guild, mentions } = message;
     if ( channel.type !== 0 ) return;//Not a text channel within a guild
-    if ( author.bot ) return;//It's a bot
     const { clientId, botOwner, isDevGuild, prefix, isBotOwner, isBotMod, isGlobalWhitelisted, isBlacklisted, isGuildBlacklisted } = await userPerms( author, guild );
     const bot = client.user;
     const objGuildMembers = guild.members.cache;
+
+    if ( Array.from( objGuildMembers.keys() ).indexOf( '302050872383242240' ) != -1 ){//DISBOARD [APP]
+      if ( author.id === '302050872383242240' && message.embeds[ 0 ]?.data.image?.url === 'https://disboard.org/images/bot-command-image-bump.png' ) {// Someone bumped the server!
+        const bumperId = message.interactionMetadata.user.id;
+        channel.send( { content: '<@' + bumperId + '>, thanks for the `/bump` on [' + guild.name + ' | DISBOARD: Discord Server List](<https://disboard.org/server/' + guild.id + '>)!' } );
+        setTimeout( () => {// Send a reminder to bump in two hours.
+          channel.send( { content: 'Hey <@302050872383242240> bump buddies!  It has been two hours since the server was last bumped by <@' + bumperId + '> for [' + guild.name + ' | DISBOARD: Discord Server List](<https://disboard.org/server/' + guild.id + '>)!' } )
+          .catch( async errSend => { interaction.editReply( await errHandler( errSend, { command: 'messageCreate/bbDISBOARD', channel: channel, type: 'errSend' } ) ); } );
+        }, 7200000 );
+      }
+    } else if ( author.bot ) { return; }
 
     const gcWhitelist = [ 'GCD' ];
     var hasCodes = {
