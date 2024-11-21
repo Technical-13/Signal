@@ -22,6 +22,11 @@ const getDebugString = ( thing ) => {
 
 client.on( 'messageCreate', async ( message ) => {
   try {
+    const allowedBots = [
+      '302050872383242240'//DISBOARD [APP]
+    ];
+    const isAllowedBot = ( allowedBots.indexOf( author.id ) != -1 ? true : false );
+    if ( author.bot && !allowedBots ) return;//It's a bot that is not allowed
     const { applicationId, authorId, webhookId } = message.toJSON();
     if ( !applicationId && webhookId === authorId ) return;//It's a webhook
     const { author, channel, content, guild, mentions } = message;
@@ -43,7 +48,6 @@ client.on( 'messageCreate', async ( message ) => {
         }, 7200000 );
       }
     }
-    else if ( author.bot ) { return; }//It's a bot
 
     const gcWhitelist = [ 'GCD' ];
     var hasCodes = {
