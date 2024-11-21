@@ -22,6 +22,7 @@ const getDebugString = ( thing ) => {
 
 client.on( 'messageCreate', async ( message ) => {
   try {
+    const { author, channel, content, guild, mentions } = message;
     const allowedBots = [
       '302050872383242240'//DISBOARD [APP]
     ];
@@ -29,16 +30,15 @@ client.on( 'messageCreate', async ( message ) => {
     if ( author.bot && !allowedBots ) return;//It's a bot that is not allowed
     const { applicationId, authorId, webhookId } = message.toJSON();
     if ( !applicationId && webhookId === authorId ) return;//It's a webhook
-    const { author, channel, content, guild, mentions } = message;
     if ( channel.type !== 0 ) return;//Not a text channel within a guild
     const { clientId, botOwner, isDevGuild, prefix, isBotOwner, isBotMod, isGlobalWhitelisted, isBlacklisted, isGuildBlacklisted, errors } = await userPerms( author, guild );
     if ( errors.hasNoMember ) {
       throw new Error( errors.noMember.console + '\n\tisBot: ' + ( author.bot ? 'true' : 'false' ) + '\n\tapplicationId: ' + applicationId + '\n\twebhookId: ' + webhookId );
     }
     const bot = client.user;
-    const objGuildMembers = guild.members.cache;
+    const members = guild.members.cache;
 
-    if ( Array.from( objGuildMembers.keys() ).indexOf( '302050872383242240' ) != -1 ){//DISBOARD [APP]
+    if ( Array.from( members.keys() ).indexOf( '302050872383242240' ) != -1 ){//DISBOARD [APP]
       if ( author.id === '302050872383242240' && message.embeds[ 0 ]?.data.image?.url === 'https://disboard.org/images/bot-command-image-bump.png' ) {// Someone bumped the server!
         const bumperId = message.interactionMetadata.user.id;
         channel.send( { content: '<@' + bumperId + '>, thanks for the `/bump` on [' + guild.name + ' | DISBOARD: Discord Server List](<https://disboard.org/server/' + guild.id + '>)!' } );
@@ -123,7 +123,7 @@ client.on( 'messageCreate', async ( message ) => {
                 .setColor( 'Red' )
                 return message.reply( { embeds: [ userPerms ] } );
               }
-              if ( !objGuildMembers.get( bot.id ).permissions.has( PermissionsBitField.resolve( command.botPerms || [] ) ) ) {
+              if ( !members.get( bot.id ).permissions.has( PermissionsBitField.resolve( command.botPerms || [] ) ) ) {
                 const botPerms = new EmbedBuilder()
                 .setDescription( `🚫 ${author}, I don't have \`${command.botPerms}\` permissions to use this command!` )
                 .setColor( 'Red' )
@@ -144,7 +144,7 @@ client.on( 'messageCreate', async ( message ) => {
                 return message.reply( { embeds: [userPerms] } );
               }
 
-              if ( !objGuildMembers.get( bot.id ).permissions.has( PermissionsBitField.resolve( command.botPerms || [] ) ) ) {
+              if ( !members.get( bot.id ).permissions.has( PermissionsBitField.resolve( command.botPerms || [] ) ) ) {
                 const botPerms = new EmbedBuilder()
                 .setDescription( `🚫 ${author}, I don't have \`${command.botPerms}\` permissions to use this command!` )
                 .setColor( 'Red' )
