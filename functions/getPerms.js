@@ -55,7 +55,7 @@ module.exports = async ( user, guild, doBlacklist = true, debug = false ) => {
     const botConfig = await getBotConfig();
     results.clientId = ( botConfig.ClientID || config.clientId || client.id );
     results.botOwner = users.get( botConfig.Owner );
-    results.isBotOwner = ( user.id === botOwner.id ? true : false );
+    results.isBotOwner = ( user.id === results.botOwner.id ? true : false );
     const globalBlacklist = ( botConfig.Blacklist || [] );
     results.isGlobalBlacklisted = ( globalBlacklist.indexOf( user.id ) != -1 ? true : false );
     const globalWhitelist = ( botConfig.Whitelist || [] );
@@ -67,10 +67,10 @@ module.exports = async ( user, guild, doBlacklist = true, debug = false ) => {
     const guildConfig = await getGuildConfig( guild );
     results.isDevGuild = ( guild.id === botConfig.DevGuild ? true : false );
     results.guildOwner = members.get( guild.ownerId );
-    results.isGuildOwner = ( user.id === guildOwner.id ? true : false );
+    results.isGuildOwner = ( user.id === results.guildOwner.id ? true : false );
     results.guildAllowsPremium = guildConfig.Premium;
     results.roleServerBooster = ( guild.roles.premiumSubscriberRole || null );
-    results.isServerBooster = ( !roleServerBooster ? false : ( roleServerBooster.members.get( user.id ) ? true : false ) );
+    results.isServerBooster = ( !results.roleServerBooster ? false : ( results.roleServerBooster.members.get( user.id ) ? true : false ) );
     const arrAuthorPermissions = ( member?.permissions.toArray() || [] );
     if ( !arrAuthorPermissions.length ) {
       results.errors.hasNoPerms = true;
@@ -81,8 +81,8 @@ module.exports = async ( user, guild, doBlacklist = true, debug = false ) => {
       };
     }
 
-    results.hasAdministrator = ( ( isBotMod || isGuildOwner || arrAuthorPermissions.indexOf( 'Administrator' ) !== -1 ) ? true : false );
-    results.checkPermission = ( permission ) => { return ( ( hasAdministrator || arrAuthorPermissions.indexOf( permission ) !== -1 ) ? true : false ); };
+    results.hasAdministrator = ( ( results.isBotMod || results.isGuildOwner || arrAuthorPermissions.indexOf( 'Administrator' ) !== -1 ) ? true : false );
+    results.checkPermission = ( permission ) => { return ( ( results.hasAdministrator || arrAuthorPermissions.indexOf( permission ) !== -1 ) ? true : false ); };
 
     const guildBlacklist = ( guildConfig.Blacklist ? ( guildConfig.Blacklist.Roles || [] ) : [] );
     const arrBlackMembers = ( guildConfig.Blacklist ? ( guildConfig.Blacklist.Members || [] ) : [] );
@@ -108,10 +108,10 @@ module.exports = async ( user, guild, doBlacklist = true, debug = false ) => {
     if ( arrWhiteMembers.length > 0 ) { arrWhiteGuild = arrWhiteGuild.concat( arrWhiteMembers ); }
     results.isGuildWhitelisted = ( arrWhiteGuild.indexOf( user.id ) != -1 ? true : false );
 
-    results.guildPrefix = ( guildConfig.Prefix || globalPrefix );
-    results.prefix = ( guildPrefix || globalPrefix || client.prefix );
-    results.isBlacklisted = ( isGlobalBlacklisted || ( isGuildBlacklisted && !( isBotMod || isGlobalWhitelisted ) ) );
-    results.isWhitelisted = ( isGlobalWhitelisted || ( isGuildWhitelisted && !isGlobalBlacklisted ) );
+    results.guildPrefix = ( guildConfig.Prefix || results.globalPrefix );
+    results.prefix = ( results.guildPrefix || results.globalPrefix || client.prefix );
+    results.isBlacklisted = ( results.isGlobalBlacklisted || ( results.isGuildBlacklisted && !( results.isBotMod || results.isGlobalWhitelisted ) ) );
+    results.isWhitelisted = ( results.isGlobalWhitelisted || ( results.isGuildWhitelisted && !results.isGlobalBlacklisted ) );
 
     results.content = false;
 
@@ -125,11 +125,11 @@ module.exports = async ( user, guild, doBlacklist = true, debug = false ) => {
       .then( debugResults => { console.log( 'getPerms is returning: %o', debugResults ); } );
     }
 
-    if ( doBlacklist && isBlacklisted && !isGlobalWhitelisted ) {
-      let contact = ( isGuildBlacklisted ? guildOwner.id : botOwner.id );
-      results.content = 'Oh no!  It looks like you have been blacklisted from using my commands' + ( isGuildBlacklisted ? ' in this server!' : '!' ) + '  Please contact <@' + contact + '> to resolve the situation.';
+    if ( doBlacklist && results.isBlacklisted && !results.isGlobalWhitelisted ) {
+      let contact = ( results.isGuildBlacklisted ? results.guildOwner.id : results.botOwner.id );
+      results.content = 'Oh no!  It looks like you have been blacklisted from using my commands' + ( results.isGuildBlacklisted ? ' in this server!' : '!' ) + '  Please contact <@' + contact + '> to resolve the situation.';
     }
-    else if ( doBlacklist && isBotMod && isGuildBlacklisted ) {
+    else if ( doBlacklist && results.isBotMod && results.isGuildBlacklisted ) {
       user.send( { content: 'You have been blacklisted from using commands in https://discord.com/channels/' + guild.id + '! Use `/config remove` to remove yourself from the blacklist.' } );
     }
 
