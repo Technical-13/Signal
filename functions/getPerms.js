@@ -61,7 +61,7 @@ module.exports = async ( user, guild, doBlacklist = true, debug = false ) => {
     const globalWhitelist = ( botConfig.Whitelist || [] );
     results.isGlobalWhitelisted = ( globalWhitelist.indexOf( user.id ) != -1 ? true : false );
     const botMods = ( botConfig.Mods || [] );
-    results.isBotMod = ( ( isBotOwner || botMods.indexOf( user.id ) != -1 ) ? true : false );
+    results.isBotMod = ( ( results.isBotOwner || botMods.indexOf( user.id ) != -1 ) ? true : false );
     results.globalPrefix = ( botConfig.Prefix || config.prefix || '!' );
 
     const guildConfig = await getGuildConfig( guild );
