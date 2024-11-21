@@ -26,7 +26,10 @@ client.on( 'messageCreate', async ( message ) => {
     if ( !applicationId && webhookId === authorId ) return;//It's a webhook
     const { author, channel, content, guild, mentions } = message;
     if ( channel.type !== 0 ) return;//Not a text channel within a guild
-    const { clientId, botOwner, isDevGuild, prefix, isBotOwner, isBotMod, isGlobalWhitelisted, isBlacklisted, isGuildBlacklisted } = await userPerms( author, guild );
+    const { clientId, botOwner, isDevGuild, prefix, isBotOwner, isBotMod, isGlobalWhitelisted, isBlacklisted, isGuildBlacklisted, errors } = await userPerms( author, guild );
+    if ( errors.hasNoMember ) {
+      throw new Error( errors.noMember.console + '\n\tisBot: ' + ( author.bot ? 'true' : 'false' ) + '\n\tapplicationId: ' + applicationId + '\n\twebhookId: ' + webhookId );
+    }
     const bot = client.user;
     const objGuildMembers = guild.members.cache;
 
@@ -39,7 +42,8 @@ client.on( 'messageCreate', async ( message ) => {
           .catch( async errSend => { interaction.editReply( await errHandler( errSend, { command: 'messageCreate/bbDISBOARD', channel: channel, type: 'errSend' } ) ); } );
         }, 7200000 );
       }
-    } else if ( author.bot ) { return; }
+    }
+    else if ( author.bot ) { return; }//It's a bot
 
     const gcWhitelist = [ 'GCD' ];
     var hasCodes = {
@@ -181,7 +185,7 @@ client.on( 'messageCreate', async ( message ) => {
           let arrCName = cacheName.split( ' ' );
           cacheName = cacheName.replace( /\p{Emoji_Presentation}/gu, '�' );
           let cacheTypeIcon = ( Object.keys( gcCacheTypeIcons ).indexOf( objCache.type ) != -1 ? gcCacheTypeIcons[ objCache.type ] : '⁉' );
-          if ( cacheTypeIcon === '⁉' ) { botOwner.send( { content: '`' + objCache.type + '` is not a known type of cache.' } ) }
+          if ( cacheTypeIcon === '⁉' ) { botOwner.send( { content: '`' + objCache.type + '` for __[' + gcCode + '](<https://coord.info/' + gcCode + '>)__ in https://discord.com/channels/' + guild.id + '/' + channel.id + ' is not a known type of cache.' } ) }
           strCodes += '\n';
           if ( objCache.pmo ) { strCodes += '<:PMO:1293693055127519315>'; }
           if ( objCache.archived || objCache.locked ) { strCodes += '<:archived:467385636173905942>'; }
