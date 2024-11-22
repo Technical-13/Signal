@@ -23,31 +23,18 @@ const getDebugString = ( thing ) => {
 client.on( 'messageCreate', async ( message ) => {
   try {
     const { author, channel, content, guild, mentions } = message;
-    const allowedBots = [
-      '302050872383242240'//DISBOARD [APP]
-    ];
-    const isAllowedBot = ( allowedBots.indexOf( author.id ) != -1 ? true : false );
-    if ( author.bot && !allowedBots ) return;//It's a bot that is not allowed
+    if ( channel.type !== 0 ) return;//Not a text channel within a guild
     const { applicationId, authorId, webhookId } = message.toJSON();
     if ( !applicationId && webhookId === authorId ) return;//It's a webhook
-    if ( channel.type !== 0 ) return;//Not a text channel within a guild
+    const allowedBots = [];
+    const isAllowedBot = ( allowedBots.indexOf( author.id ) != -1 ? true : false );
+    if ( author.bot && !allowedBots ) return;//It's a bot that is not allowed
     const { clientId, botOwner, isDevGuild, prefix, isBotOwner, isBotMod, isGlobalWhitelisted, isBlacklisted, isGuildBlacklisted, errors } = await userPerms( author, guild );
     if ( errors.hasNoMember ) {
       throw new Error( errors.noMember.console + '\n\tisBot: ' + ( author.bot ? 'true' : 'false' ) + '\n\tapplicationId: ' + applicationId + '\n\twebhookId: ' + webhookId );
     }
     const bot = client.user;
     const members = guild.members.cache;
-
-    if ( Array.from( members.keys() ).indexOf( '302050872383242240' ) != -1 ){//DISBOARD [APP]
-      if ( author.id === '302050872383242240' && message.embeds[ 0 ]?.data.image?.url === 'https://disboard.org/images/bot-command-image-bump.png' ) {// Someone bumped the server!
-        const bumperId = message.interactionMetadata.user.id;
-        channel.send( { content: '<@' + bumperId + '>, thanks for the `/bump` on [' + guild.name + ' | DISBOARD: Discord Server List](<https://disboard.org/server/' + guild.id + '>)!' } );
-        setTimeout( () => {// Send a reminder to bump in two hours.
-          channel.send( { content: 'Hey <@302050872383242240> bump buddies!  It has been two hours since the server was last bumped by <@' + bumperId + '> for [' + guild.name + ' | DISBOARD: Discord Server List](<https://disboard.org/server/' + guild.id + '>)!' } )
-          .catch( async errSend => { interaction.editReply( await errHandler( errSend, { command: 'messageCreate/bbDISBOARD', channel: channel, type: 'errSend' } ) ); } );
-        }, 7200000 );
-      }
-    }
 
     const gcWhitelist = [ 'GCD' ];
     var hasCodes = {
