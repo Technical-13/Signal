@@ -1,4 +1,5 @@
 const client = require( '..' );
+const config = require( '../config.json' );
 const objTimeString = require( '../jsonObjects/time.json' );
 const chalk = require( 'chalk' );
 const duration = require( './duration.js' );
@@ -10,16 +11,19 @@ module.exports = async ( rawString, obj = { author: null, guild: null, member: n
     const member = ( obj.member ? obj.member : null );
     const guild = ( obj.guild ? obj.guild : ( author ? author.guild : ( member ? member.guild : null ) ) );
     const uptime = ( obj.uptime ? obj.uptime : null );
-    const ageUnits = { getDecades: true, getYears: true, getMonths: true, getDays: true, getHours: false, getMinutes: false };
+    const ageUnits = { getDecades: true, getYears: true, getMonths: true, getWeeks: true, getDays: true, getHours: false, getMinutes: false };
     const bot = client.user;
 
     const currUptime = await duration( client.uptime, uptime );
     const transclusions = {
       '{{bot.age}}': await duration( Date.now() - bot.createdTimestamp, ageUnits ),
+      '{{bot.guilds}}': client.guilds.cache.size.toLocaleString(),
+      '{{bot.latency}}': process.ws.ping(),
       '{{bot.members}}': client.users.cache.size.toLocaleString(),
       '{{bot.name}}': bot.displayName,
       '{{bot.owner.name}}': client.users.cache.get( client.ownerId ).displayName,
       '{{bot.owner.ping}}': '<@' + client.ownerId + '>',
+      '{{bot.ping}}': '<@' + client.id + '>',
       '{{bot.since}}': bot.createdAt.toLocaleTimeString( 'en-US', objTimeString ),
       '{{bot.servers}}': client.guilds.cache.size.toLocaleString(),
       '{{bot.users}}': client.users.cache.size.toLocaleString(),
@@ -35,7 +39,9 @@ module.exports = async ( rawString, obj = { author: null, guild: null, member: n
       transclusions[ '{{author.ping}}' ] = '<@' + author.id + '>';
       transclusions[ '{{author.server.age}}' ] = await duration( Date.now() - author.joinedTimestamp, ageUnits );
       transclusions[ '{{author.since}}' ] = author.user.createdAt.toLocaleTimeString( 'en-US', objTimeString );
-    } else {
+      transclusions[ '{{author.user.since}}' ] = author.user.createdAt.toLocaleTimeString( 'en-US', objTimeString );
+    }
+    else {
       notAvailable[ '{{author.age}}' ] = 'author';
       notAvailable[ '{{author.guild.age}}' ] = 'author';
       notAvailable[ '{{author.name}}' ] = 'author';
@@ -43,6 +49,7 @@ module.exports = async ( rawString, obj = { author: null, guild: null, member: n
       notAvailable[ '{{author.ping}}' ] = 'author';
       notAvailable[ '{{author.server.age}}' ] = 'author';
       notAvailable[ '{{author.since}}' ] = 'author';
+      notAvailable[ '{{author.user.since}}' ] = 'author';
     }
 
     if ( guild ) {
@@ -64,7 +71,8 @@ module.exports = async ( rawString, obj = { author: null, guild: null, member: n
       transclusions[ '{{server.members}}' ] = guild.members.cache.size.toLocaleString();
       transclusions[ '{{server.name}}' ] = guild.name;
       transclusions[ '{{server.since}}' ] = guild.createdAt.toLocaleTimeString( 'en-US', objTimeString );
-    } else {
+    }
+    else {
       notAvailable[ '{{bot.guild.age}}' ] = 'guild';
       notAvailable[ '{{bot.guild.since}}' ] = 'guild';
       notAvailable[ '{{bot.member.age}}' ] = 'guild';
@@ -93,7 +101,8 @@ module.exports = async ( rawString, obj = { author: null, guild: null, member: n
       transclusions[ '{{member.server.age}}' ] = await duration( Date.now() - member.joinedTimestamp, ageUnits );
       transclusions[ '{{member.since}}' ] = guild.members.cache.get( member.id ).joinedAt.toLocaleTimeString( 'en-US', objTimeString );
       transclusions[ '{{member.user.since}}' ] = member.user.createdAt.toLocaleTimeString( 'en-US', objTimeString );
-    } else {
+    }
+    else {
       notAvailable[ '{{member.age}}' ] = 'member';
       notAvailable[ '{{member.guild.age}}' ] = 'member';
       notAvailable[ '{{member.name}}' ] = 'member';
@@ -110,8 +119,8 @@ module.exports = async ( rawString, obj = { author: null, guild: null, member: n
         if ( transclusions[ template ] ) { parsed = parsed.replace( template, transclusions[ template ] ); }
         else if ( notAvailable[ template ] ) { parsed = parsed.replace( template, '*(unknown ' + notAvailable[ template ] + ')*' ); }
         else {
-          parsed = parsed.replace( template, '[*' + template + '*](<https://github.com/Technical-13/' + bot.username + '/issues/new?labels=enhancement&template=feature_request.md&title=' + encodeURI( 'Please add ' + template + ' to transclude.js' ) + '>)' );
-          console.log( 'Someone tried to transclude %s, search for a GitHub feature request:\n https://github.com/Technical-13/%s/issues?q=%s', chalk.bold.red( template ), bot.username, encodeURI( 'Please add ' + template + ' to transclude.js' ) );
+          parsed = parsed.replace( template, '[*' + template + '*](<' + config.issueRepo + '/issues/new?labels=enhancement&template=feature_request.md&title=' + encodeURI( 'Please add ' + template + ' to parser.js' ) + '>)' );
+          console.log( 'Someone tried to transclude %s, search for a GitHub feature request:\n %s/issues?q=%s', chalk.bold.red( template ), config.issueRepo, encodeURI( 'Please add ' + template + ' to parser.js' ) );
         }
       } );
     }
