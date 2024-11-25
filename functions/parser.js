@@ -18,7 +18,7 @@ module.exports = async ( rawString, obj = { author: null, guild: null, member: n
     const transclusions = {
       '{{bot.age}}': await duration( Date.now() - bot.createdTimestamp, ageUnits ),
       '{{bot.guilds}}': client.guilds.cache.size.toLocaleString(),
-      '{{bot.latency}}': process.ws.ping(),
+      '{{bot.latency}}': client.ws.ping,
       '{{bot.members}}': client.users.cache.size.toLocaleString(),
       '{{bot.name}}': bot.displayName,
       '{{bot.owner.name}}': client.users.cache.get( client.ownerId ).displayName,
