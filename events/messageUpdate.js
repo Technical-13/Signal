@@ -13,8 +13,8 @@ client.on( 'messageUpdate', async ( oldMessage, newMessage ) => {
 
     if ( newMessage.embeds.length >= 1 ) {
       const arrJunkEmbedTitles = [
-        'Geocaching: Join the world\'s largest treasure hunt.',
-        'Get the free Official Geocaching app and join the world\'s largest t...'
+        ( new RegExp( 'Geocaching: Join the world\'s largest treasure hunt.' ) ),
+        ( new RegExp( 'Get the free Official Geocaching app and join the world\'s largest t...' ) )
       ];
       const arrJunkEmbedURLs = [ ( new RegExp( 'https?://(www\.)?ddowiki.com/(.*)', 'i' ) ) ];
       var strLastFoundJunk = '';
@@ -25,7 +25,7 @@ client.on( 'messageUpdate', async ( oldMessage, newMessage ) => {
             return embed;
           }
         }
-        for ( const title of arrJunkEmbedTitles ) {/* TRON */console.log( 'title: %o', title );/* TROFF */
+        for ( const title of arrJunkEmbedTitles ) {
           if ( title.test( embed.title ) ) {
             strLastFoundJunk = embed.url;
             return embed;
