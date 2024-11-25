@@ -25,7 +25,7 @@ client.on( 'messageUpdate', async ( oldMessage, newMessage ) => {
             return embed;
           }
         }
-        for ( const title of arrJunkEmbedTitles ) {
+        for ( const title of arrJunkEmbedTitles ) {/* TRON */console.log( 'title: %o', title );/* TROFF */
           if ( title.test( embed.title ) ) {
             strLastFoundJunk = embed.url;
             return embed;
