@@ -13,6 +13,7 @@ module.exports = {
   cooldown: 1000,
 	run: async ( client, message, args ) => {
     try {
+      message.delete();
       var delResponse;
       if ( args.length === 0 || !( /[\d]{17,19}/.test( args[ 0 ] ) ) ) { delResponse = await message.reply( { content: 'You forgot to tell me what message to edit.' } ); }
       else if ( args.length === 1 && ( /[\d]{17,19}/.test( args[ 0 ] ) ) ) { delResponse = await message.reply( { content: 'You forgot to tell me what the new message should be.' } ); }
