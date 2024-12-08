@@ -20,7 +20,7 @@ module.exports = {
       const { isBotMod, checkPermission, guildAllowsPremium, isServerBooster, isWhitelisted, content } = await userPerms( author, guild );
       if ( content ) { return interaction.editReply( { content: content } ); }
 
-      const canPin = ( isBotMod || checkPermission( 'ManageGuild' ) || ( guildAllowsPremium && isServerBooster ) || isWhitelisted ? true : false );
+      const canPin = ( isBotMod || checkPermission( 'ManageMessages' ) || ( guildAllowsPremium && isServerBooster ) || isWhitelisted ? true : false );
       const msgID = options.getString( 'message-id' );
       if ( !( /[\d]{18,19}/.test( msgID ) ) ) { return interaction.editReply( { content: '`' + msgID + '` is not a valid `message-id`. Please try again.' } ); }
       const { doLogs, chanChat, strClosing } = await getGuildConfig( guild );
