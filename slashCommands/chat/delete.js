@@ -20,7 +20,7 @@ module.exports = {
       const { isBotMod, checkPermission, guildAllowsPremium, isServerBooster, isWhitelisted, content } = await userPerms( author, guild );
       if ( content ) { return interaction.editReply( { content: content } ); }
 
-      const canDelete = ( isBotMod || checkPermission( 'ManageGuild' ) || isWhitelisted ? true : false );
+      const canDelete = ( isBotMod || checkPermission( 'ManageMessages' ) || isWhitelisted ? true : false );
       const msgID = options.getString( 'message-id' );
       if ( !( /[\d]{18,19}/.test( msgID ) ) ) { return interaction.editReply( { content: '`' + msgID + '` is not a valid `message-id`. Please try again.' } ); }
       const { doLogs, chanChat, strClosing } = await getGuildConfig( guild );
@@ -29,17 +29,17 @@ module.exports = {
           chanChat.send( { content: '<@' + author.id + '> tried to get me to delete a message and doesn\'t have permission to do that.' } )
           .catch( async noLogChan => { return interaction.editReply( await errHandler( noLogChan, { chanType: 'chat', command: 'delete', channel: channel, type: 'logLogs' } ) ); } );
         }
-        return interaction.editReply( { content: 'You don\'t have permission to have me delete my messages.' } );
+        return interaction.editReply( { content: 'You don\'t have permission to have me delete messages.' } );
       }
       else {
         channel.messages.fetch( msgID ).then( async message => {
           const { guildId, channelId } = message;
-          if ( message.author.id != client.user.id ) {
+          if ( message.author.id != client.user.id && message.author.id != author.id && !( isBotMod || checkPermission( 'ManageMessages' ) ) ) {
             if ( doLogs ) {
-              chanChat.send( { content: '<@' + author.id + '> tried to get me to delete https://discord.com/channels/' + guildId + '/' + channelId + '/' + msgID + ' that belongs to <@' + message.author.id + '>.  I am only allowed to delete my own messages.' } )
+              chanChat.send( { content: '<@' + author.id + '> tried to get me to delete https://discord.com/channels/' + guildId + '/' + channelId + '/' + msgID + ' that belongs to <@' + message.author.id + '>.  I am only allowed to delete my own messages and messages from the author.' } )
               .catch( async noLogChan => { return interaction.editReply( await errHandler( noLogChan, { chanType: 'chat', command: 'delete', channel: channel, type: 'logLogs' } ) ); } );
             }
-            return interaction.editReply( { content: 'That message belongs to <@' + message.author.id + '>.  I am only allowed to delete my own messages.' } );
+            return interaction.editReply( { content: 'That message belongs to <@' + message.author.id + '>.  I am only allowed to delete messages for you from myself or you.' } );
           }
           else {
             message.delete()
