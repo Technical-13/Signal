@@ -33,14 +33,16 @@ module.exports = {
       }
       else {
         channel.messages.fetch( msgID ).then( async message => {
-          const { guildId, channelId } = message;
-          if ( message.author.id != client.user.id && message.author.id != author.id && !( isBotMod || checkPermission( 'ManageGuild' ) ) ) {
+          const { channelId, guildId, pinnable, pinned } = message;
+          if ( message.author.id != client.user.id && message.author.id != author.id && !( isBotMod || checkPermission( 'ManageMessages' ) ) ) {
             if ( doLogs ) {
               chanChat.send( { content: '<@' + author.id + '> tried to get me to pin https://discord.com/channels/' + guildId + '/' + channelId + '/' + msgID + ' that belongs to <@' + message.author.id + '>.  I am only allowed to pin my own messages and messages from the author.' } )
               .catch( async noLogChan => { return interaction.editReply( await errHandler( noLogChan, { chanType: 'chat', command: 'pin', channel: channel, type: 'logLogs' } ) ); } );
             }
-            return interaction.editReply( { content: 'That message belongs to <@' + message.author.id + '>.  I am only allowed to pin my own messages and your messages for you.' } );
+            return interaction.editReply( { content: 'That message belongs to <@' + message.author.id + '>.  I am only allowed to pin messages for you from myself or you.' } );
           }
+          else if ( pinned ) { return interaction.editReply( { content: 'That message is already pinned to the channel.  Perhaps you would like to `/unpin message-id:' + msgID + '` instead?' } ); }
+          else if ( !pinnable ) { return interaction.editReply( { content: 'I am unable to pin that message.' } ); }
           else {
             message.pin( 'Pinning ' + ( message.author.id === client.user.id ? 'my' : message.author.displayName + '\'s' ) + ' message for ' + author.displayName + '.' )
             .then( msgPinned => { return interaction.editReply( { content: 'I pinned that message for you.' } ); } )
