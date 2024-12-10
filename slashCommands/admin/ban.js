@@ -55,7 +55,7 @@ module.exports = {
         return interaction.editReply( { content: 'You don\'t have permission to have me ban that member.' } );
       }
       else if ( !banMember.bannable ) { return interaction.editReply( { content: 'I am unable to ban that member.' } ); }
-      else if ( author.id != banMember.id ) {
+      else if ( author.id === banMember.id && canBan ) {
         banMember.send( { content: 'OMG!!! You just banned yourself from **' + guild.name + '**!!!' } )
         .then( async sentMsg => {
           const msgBanned = await channel.send( { content: '<@' + banMember.id + '> just banned themself from this server! *(Don\'t worry, they can come back in five minutes...)*' } );
