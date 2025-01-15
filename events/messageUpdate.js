@@ -16,7 +16,10 @@ client.on( 'messageUpdate', async ( oldMessage, newMessage ) => {
         ( new RegExp( 'Geocaching: Join the world\'s largest treasure hunt.' ) ),
         ( new RegExp( 'Get the free Official Geocaching app and join the world\'s largest t...' ) )
       ];// Must be ( new RegExp() )
-      const arrJunkEmbedURLs = [ ( new RegExp( 'https?://(www\.)?ddowiki.com/(.*)', 'i' ) ) ];// Must be ( new RegExp() )
+      const arrJunkEmbedURLs = [
+        ( new RegExp( 'https?://(www\.)?ddowiki.com/(.*)', 'i' ) ),
+        ( new RegExp( 'https?://apps.apple.com/(.*)', 'i' ) )
+      ];// Must be ( new RegExp() )
       var strLastFoundJunk = '';
       const hasJunkEmbed = ( newMessage.embeds.find( embed => {
         for ( const url of arrJunkEmbedURLs ) {
