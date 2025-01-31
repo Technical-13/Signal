@@ -1,6 +1,7 @@
 const client = require( '..' );
 const chalk = require( 'chalk' );
 const { EmbedBuilder, Collection, PermissionsBitField } = require( 'discord.js' );
+const userPerms = require( '../functions/getPerms.js' );
 const strScript = chalk.hex( '#FFA500' ).bold( './events/messageUpdate.js' );
 const botVerbosity = client.verbosity;
 
@@ -10,8 +11,9 @@ client.on( 'messageUpdate', async ( oldMessage, newMessage ) => {
     if ( author.bot ) return;
     if ( channel.type !== 0 ) return;
     const msgAuthor = await guild.members.cache.get( author.id );
+    const { hasAdministrator, checkPermission } = await userPerms( author, guild );
 
-    if ( newMessage.embeds.length >= 1 ) {
+    if ( !( hasAdministrator || checkPermission( 'ManageServer' ) ) && newMessage.embeds.length >= 1 ) {
       const arrJunkEmbedTitles = [// Must be ( new RegExp() )
         ( new RegExp( 'Geocaching: Join the world\'s largest treasure hunt.' ) ),
         ( new RegExp( 'Get the free Official Geocaching app and join the world\'s largest t...' ) )
