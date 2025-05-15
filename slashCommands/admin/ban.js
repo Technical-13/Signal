@@ -55,23 +55,25 @@ module.exports = {
         return interaction.editReply( { content: 'You don\'t have permission to have me ban that member.' } );
       }
       else if ( !banMember.bannable ) { return interaction.editReply( { content: 'I am unable to ban that member.' } ); }
-      else if ( author.id === banMember.id && canBan ) {
+      else if ( author.id == banMember.id && canBan ) {
         banMember.send( { content: 'OMG!!! You just banned yourself from **' + guild.name + '**!!!' } )
         .then( async sentMsg => {
           const msgBanned = await channel.send( { content: '<@' + banMember.id + '> just banned themself from this server! *(Don\'t worry, they can come back in five minutes...)*' } );
           setTimeout( () => {
             msgBanned.delete().catch( async errDelete => { interaction.editReply( await errHandler( errDelete, { command: 'ban', channel: channel, type: 'errDelete' } ) ); } );
+            guild.bans.remove( banMember, 'Self imposed banned expired.' )
+            .catch( async errUnban => { interaction.editReply( await errHandler( errUnban, { command: 'ban', type: 'errUnban' } ) ); } );
             //send them an invite to come back
           }, 300000 );
           if ( doLogs ) { chanDefault.send( { content: '<@' + banMember.id + '> just banned themself from this server for five minutes!' } ); }
           banMember.ban( { deleteMessageSeconds: 0, reason: 'They banned themself!' } )
-          .catch( async errBan => { interaction.editReply( await errHandler( errBan, { command: 'ban', channel: channel, type: 'errBan' } ) ); } );
+          .catch( async errBan => { interaction.editReply( await errHandler( errBan, { command: 'ban', type: 'errBan' } ) ); } );
         } )
         .catch( async errSend => { interaction.editReply( await errHandler( errSend, { command: 'ban', channel: channel, type: 'errSend' } ) ); } );
       }
       else {
         banMember.ban( { deleteMessageSeconds: deleteDuration, reason: strNow() + ' - ' + author.displayName + ': ' + banReason } )
-        .catch( async errBan => { interaction.editReply( await errHandler( errBan, { command: 'ban', channel: channel, type: 'errBan' } ) ); } );
+        .catch( async errBan => { interaction.editReply( await errHandler( errBan, { command: 'ban', type: 'errBan' } ) ); } );
       }
     }
     catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
