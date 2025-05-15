@@ -1,3 +1,4 @@
+const client = require( '../..' );
 require( 'dotenv' ).config();
 const ENV = process.env;
 const config = require( '../../config.json' );
@@ -9,6 +10,7 @@ const errHandler = require( '../../functions/errorHandler.js' );
 const thisBotName = ENV.BOT_USERNAME;
 const botOwnerID = ENV.OWNER_ID;
 const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/admin/system.js' );
+const botVerbosity = client.verbosity;
 
 module.exports = {
   name: 'system',
@@ -55,11 +57,38 @@ module.exports = {
     try {
       await interaction.deferReply( { ephemeral: true } );
       const { channel, guild, options, user: author } = interaction;
-      const botConfig = await botConfigDB.findOne( { _id: client.id } ).catch( async errFindBot => { await errHandler( errFindBot, { command: 'system', type: 'getBotDB' } ); } );
-      const { guilds, user: bot, users } = client;
+
+      const createConfig = {
+        _id: guild.id,
+        Blacklist: [],
+        DevGuild: config.devGuildId,
+        IssueRepo: config.issueRepo,
+        Logs: { Default: config.logChans.Default, Error: config.logChans.Error, JoinPart: config.logChans.JoinPart },
+        Mods: config.moderatorIds,
+        Name: ( thisBotName || config.botName ),
+        Owner: botOwnerID,
+        Prefix: config.prefix,
+        Verbosity: botVerbosity,
+        Version: config.verBotDB,
+        Whitelist: []
+      };
+
+      const botConfig = ( await botConfigDB.findOne( { _id: client.id } ).catch( async errFindBot => {
+        await errHandler( errFindBot, { command: 'system', type: 'getBotDB' } );
+        await guildConfigDB.create( createConfig )
+        .then( createSuccess => {
+          console.log( 'Created a default botDB entry that was not set up.' );
+          botOwner.send( 'Error attempting to find botDB, so I created it with default config.' );
+        } )
+        .catch( createError => {
+          console.error( 'Error attempting to create botDB in system.js:\n%s', createError.stack );
+          botOwner.send( 'Error attempting to create botDB. Please check console for details.' );
+        } );
+      } ) || createConfig );
+      const { guilds, user: bot, users } = client;console.log( 'botConfig:\n%o', botConfig );
       const botUsers = users.cache;
       const botGuilds = guilds.cache;
-      const botOwner = botUsers.get( botConfig.Owner );
+      const botOwner = botUsers.get( botConfig.Owner || botOwnerID );
       const isBotOwner = ( author.id === botOwner.id ? true : false );
       const arrBlackList = ( botConfig.Blacklist || [] );
       const botMods = ( botConfig.Mods || [] );
@@ -83,8 +112,8 @@ module.exports = {
             let strModList = '**' + ( botMods.length === 0 ? 'No bot moderators!' : '[ **<@' + botMods.join( '>**, **<@' ) + '>** ]' ) + '**';
             let strWhiteList =  '**' + ( arrWhiteList.length === 0 ? 'No one is whitelisted!' : '[ **<@' + arrWhiteList.join( '>**, **<@' ) + '>** ]' ) + '**';
             const showConfigs = 'My configuration:\n\t' +
-              'Name: `' + botConfig.BotName + '` (:id:`' + botConfig.ClientID + '`)\n\t' +
-              'Owner: <@' + botConfig.Owner + '>\n\t' +
+              'Name: `' + botConfig.Name + '` (:id:`' + config.clientId + '`)\n\t' +
+              'Owner: <@' + botOwner.id + '>\n\t' +
               'Command Prefix: `' + botConfig.Prefix + '`\n\t' +
               'Development Guild: `' + botGuilds.get( botConfig.DevGuild ).name + '`\n\t' +
               'Blacklist: ' + strBlackList + '\n\t' +
