@@ -225,8 +225,7 @@ client.on( 'messageCreate', async ( message ) => {
         } else {
           let tbName = objTrack.name;
           tbName = tbName.replace( /\p{Emoji_Presentation}/gu, '�' );
-          strCodes += '\n';
-          strCodes += ' [`' + tbCode + '`: ' + tbName + '](<https://coord.info/' + objTrack.code + '>)';
+          strCodes += '\n<:TB:1378758600687747323 [`' + tbCode + '`: ' + tbName + '](<https://coord.info/' + objTrack.code + '>) by ' + objTrack.nameCO + ' ✏️' + objTrack.logs + ' 👀' + objTrack.watchers;
           await codesResponse.edit( strCodes );
         }
       }
