@@ -69,10 +69,10 @@ module.exports = async ( gcCode ) => {
             trackables = $( '#ctl00_ContentBody_uxTravelBugList_uxViewAllTrackableItems' ).parents( '.WidgetBody' ).find( 'ul > li' ).length;
           }
         }
-        /* TRON */console.log( 'attributes: %o', $( '#ctl00_ContentBody_detailWidget > .WidgetBody > img' ).filter( '[alt!="blank"]' ).map( ( a, attrib ) => { return $( attrib ).attr( 'src' ).split( '/images/attributes/' )[ 1 ].split( '.' )[ 0 ]; } ).get() );/* TROFF */
         result = {
           archived: ( $( '#ctl00_ContentBody_archivedMessage' ).length ? true : false ),
-//          attributes: $( '#ctl00_ContentBody_detailWidget > .WidgetBody > img' ).filter( '[alt!="blank"]' ).map( ( a, attrib ) => { return $( attrib ).attr( 'src' ).split( '/images/attributes/' )[ 1 ].split( '.' )[ 0 ]; } ).get();,
+          attributes: $( '#ctl00_ContentBody_detailWidget > .WidgetBody > img' ).filter( '[alt!="blank"]' )
+            .map( ( a, attrib ) => { return $( attrib ).attr( 'src' ).split( '/images/attributes/' )[ 1 ].split( '.' )[ 0 ]; } ).get();,
           code: gcCode,
           difficulty: $( '#ctl00_ContentBody_uxLegendScale > img' ).attr( 'alt' ).split( ' ' )[ 0 ],
           disabled: ( $( '#ctl00_ContentBody_disabledMessage' ).length ? true : false ),
