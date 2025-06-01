@@ -154,7 +154,7 @@ client.on( 'messageCreate', async ( message ) => {
     }
 
     if ( Object.values( hasCodes ).some( b => b ) ) {
-      const intCodes = arrGcCodes.length + arrPrCodes.length + arrOtherCodes.length;
+      const intCodes = arrGcCodes.length + arrPrCodes.length + arrTbCodes.length + arrOtherCodes.length;
       const strPlural = ( intCodes === 1 ? '' : 's' );
       let arrCodeTypes = [];
       Object.entries( hasCodes ).forEach( entry => { if ( entry[ 1 ] ) { arrCodeTypes.push( entry[ 0 ] ) } } );
