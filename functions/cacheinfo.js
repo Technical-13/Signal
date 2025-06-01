@@ -38,7 +38,7 @@ module.exports = async ( gcCode ) => {
         };
       }
       else if ( isPMO ) {
-        /* TRON */console.log( 'Can\'t split...: %o', $( 'svg.icon.cache-icon > use' ).attr( 'xlink:href' ) );/* TROFF */
+        /* TRON */console.log( 'Can\'t find svg.icon.cache-icon > use...: %o', $( 'svg.icon.cache-icon > use' ) );/* TROFF */
 //        var ctArr = $( 'svg.icon.cache-icon > use' ).attr( 'xlink:href' ).split( '#' )[ 1 ].split( '-' );
         result = {
 //          archived: ( $( '#ctl00_ContentBody_archivedMessage' ).length ? true : false ),
@@ -69,7 +69,7 @@ module.exports = async ( gcCode ) => {
             trackables = $( '#ctl00_ContentBody_uxTravelBugList_uxViewAllTrackableItems' ).parents( '.WidgetBody' ).find( 'ul > li' ).length;
           }
         }
-        /* TRON */console.log( '#ctl00_ContentBody_detailWidget > .WidgetBody > img: %o', $( '#ctl00_ContentBody_detailWidget > .WidgetBody > img' ) );/* TROFF */
+        /* TRON */console.log( '#ctl00_ContentBody_detailWidget > .WidgetBody > img: %o', Array.from( $( '#ctl00_ContentBody_detailWidget > .WidgetBody > img' ) ) );/* TROFF */
         $( '#ctl00_ContentBody_detailWidget > .WidgetBody > img' ).each( ( a, attrib ) => {
           /* TRON */console.log( 'Can\'t split...: %o', attrib.src );/* TROFF */
           if ( attrib.src ) {
