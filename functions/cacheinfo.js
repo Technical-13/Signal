@@ -38,7 +38,7 @@ module.exports = async ( gcCode ) => {
         };
       }
       else if ( isPMO ) {
-        /* TRON */console.log( 'ctArr: %o', $( 'svg.icon.cache-icon > use' )[ 0 ].href.baseVal );/* TROFF */
+        /* TRON */console.log( 'ctArr: %o', $( 'svg.icon.cache-icon > use' )[ 0 ] );/* TROFF */
 //        var ctArr = $( 'svg.icon.cache-icon > use' ).attr( 'xlink\\:href' ).split( '#' )[ 1 ].split( '-' );
         result = {
 //          archived: ( $( '#ctl00_ContentBody_archivedMessage' ).length ? true : false ),
@@ -69,9 +69,9 @@ module.exports = async ( gcCode ) => {
             trackables = $( '#ctl00_ContentBody_uxTravelBugList_uxViewAllTrackableItems' ).parents( '.WidgetBody' ).find( 'ul > li' ).length;
           }
         }
-        /* TRON */console.log( 'attributes: %o', $( '#ctl00_ContentBody_detailWidget > .WidgetBody > img' ) );/* TROFF */
+        //* TRON */console.log( 'attributes: %o', $( '#ctl00_ContentBody_detailWidget > .WidgetBody > img' ) );/* TROFF */
         $( '#ctl00_ContentBody_detailWidget > .WidgetBody > img' ).each( ( a, attrib ) => {
-          /* TRON */console.log( 'attrib.src: %o', attrib.src );/* TROFF */
+          /* TRON */console.log( 'attrib: %o', ( a == 0 ? attrib : a );/* TROFF */
           if ( attrib.src ) {
             attrib = attrib.src.split( 'https://www.geocaching.com/images/attributes/' )[ 1 ].split( '.' )[ 0 ];
             if ( attrib !== 'attribute-blank' ) { attributes.push( attrib ); }
