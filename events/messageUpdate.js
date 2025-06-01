@@ -9,7 +9,7 @@ client.on( 'messageUpdate', async ( oldMessage, newMessage ) => {
   try {
     const { author, channel, content, guild, mentions } = newMessage;
     if ( author.bot ) return;
-    if ( channel.type !== 0 || channel.type !== 11 || channel.type !== 12 ) return;
+    if ( channel.type !== 0 && channel.type !== 10 && channel.type !== 11 && channel.type !== 12 ) return;
     const msgAuthor = await guild.members.cache.get( author.id );
     const { hasAdministrator, checkPermission } = await userPerms( author, guild );
 
