@@ -38,7 +38,7 @@ module.exports = async ( gcCode ) => {
         };
       }
       else if ( isPMO ) {
-        /* TRON */console.log( 'ctArr: %o', $( 'svg.icon.cache-icon > use' )[ 0 ].outerHTML.split( '#' )[ 1 ].split( '"' )[ 0 ] );/* TROFF */
+        /* TRON */console.log( 'ctArr: %o', $( 'svg.icon.cache-icon > use' )[ 0 ].outerHTML );/* TROFF */
 //        var ctArr = $( 'svg.icon.cache-icon > use' )[ 0 ].outerHTML.split( '#' )[ 1 ].split( '"' )[ 0 ];
         result = {
 //          archived: ( $( '#ctl00_ContentBody_archivedMessage' ).length ? true : false ),
