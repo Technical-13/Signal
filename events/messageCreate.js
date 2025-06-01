@@ -176,7 +176,7 @@ client.on( 'messageCreate', async ( message ) => {
       const codesResponse = await message.reply( strCodes );
       for ( let prCode of arrPrCodes ) {
         await codesResponse.edit( strCodes + '\n<:Signal:398980726000975914> ...attempting to gather information about [' + prCode + '](<https://coord.info/' + prCode + '>)...' );
-        let objUser = await cacheinfo( prCode );
+        let objUser = await cacheinfo( prCode );console.info('%s: %o',prCode,objUser);
         if ( objUser.failed ) {
           strCodes += '\n<:RIP:1015415145180176535> **Failed to get info for __[' + prCode + '](<https://coord.info/' + prCode + '>)__: ' + objUser.error + '...**';
           await codesResponse.edit( strCodes );
@@ -193,7 +193,7 @@ client.on( 'messageCreate', async ( message ) => {
       }
       for ( let gcCode of arrGcCodes ) {
         await codesResponse.edit( strCodes + '\n<:Signal:398980726000975914> ...attempting to gather information about [' + gcCode + '](<https://coord.info/' + gcCode + '>)...' );
-        let objCache = await cacheinfo( gcCode );
+        let objCache = await cacheinfo( gcCode );console.info('%s: %o',gcCode,objCache);
         if ( objCache.failed ) {
           strCodes += '\n<:RIP:1015415145180176535> **Failed to get info for __[' + gcCode + '](<https://coord.info/' + gcCode + '>)__: ' + objCache.error + '...**';
           await codesResponse.edit( strCodes );
@@ -211,9 +211,9 @@ client.on( 'messageCreate', async ( message ) => {
           await codesResponse.edit( strCodes );
         }
       }
-      for ( let tbCode of arrTbCodes ) {//SOON™
+      for ( let tbCode of arrTbCodes ) {
         await codesResponse.edit( strCodes + '\n<:Signal:398980726000975914> ...attempting to gather information about [' + tbCode + '](<https://coord.info/' + tbCode + '>)...' );
-        let objTrack = await cacheinfo( tbCode );
+        let objTrack = await cacheinfo( tbCode );console.info('%s: %o',tbCode,objTrack);
         if ( objTrack.failed ) {
           strCodes += '\n<:RIP:1015415145180176535> **Failed to get info for __[' + tbCode + '](<https://coord.info/' + tbCode + '>)__: ' + objTrack.error + '...**';
           await codesResponse.edit( strCodes );
