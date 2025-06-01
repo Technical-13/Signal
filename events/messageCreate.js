@@ -184,7 +184,8 @@ client.on( 'messageCreate', async ( message ) => {
           let userName = objUser.username;
           strCodes += '\n';
           if ( objUser.basic ) { strCodes += '<:basic:398980530017927198>'; }
-          strCodes += cacheTypeIcon + ' [`' + prCode + '`: ' + userName + '](<https://coord.info/' + objUser.code + '>) ' + ( !objUser.basic ? '' : '[🎁](<https://payments.geocaching.com/gift?uguid=' + ObjUser.guid + '>)' );
+          strCodes += ' [`' + prCode + '`: ' + userName + '](<https://coord.info/' + objUser.code + '>)';
+          if ( objUser.basic ) { strCodes += ' [🎁](<https://payments.geocaching.com/gift?uguid=' + ObjUser.guid + '>)'; }
           await codesResponse.edit( strCodes );
         }
       }
