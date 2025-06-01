@@ -47,8 +47,7 @@ client.on( 'messageCreate', async ( message ) => {
       BM: false,// Bookmark
       GT: false//  GeoTour
     };
-    var arrGcCodes = [];
-    var arrOtherCodes = [];
+    var arrGcCodes = [], arrPrCodes = [], arrTbCodes = [], arrOtherCodes = [];
     const arrContent = content.trim().split( ' ' );
     const arrOtherTypeCodes = [ 'GC', 'TB', 'WM', 'GL', 'TL', 'PR', 'BM', 'GT' ];
     const oldRegex = new RegExp('^((?:GC|TB|WM|GL|TL|PR|BM|GT)[a-fA-F0-9]{2,3})', 'g' );
@@ -61,12 +60,22 @@ client.on( 'messageCreate', async ( message ) => {
         arrGcCodes.push( code );
         hasCodes.GC = true;
       }
+      else if ( wordPrefix === 'PR' ) {
+        arrPrCodes.push( code );
+        hasCodes.PR = true;
+      }
+      else if ( wordPrefix === 'TB' ) {
+        arrTbCodes.push( code );
+        hasCodes.TB = true;
+      }
       else if ( arrOtherTypeCodes.indexOf( wordPrefix ) != -1 ) {
         arrOtherCodes.push( code );
         hasCodes[ wordPrefix ] = true;
       }
     }
     arrGcCodes = arrGcCodes.filter( ( val, i, arr ) => { return i == arr.indexOf( val ); } );
+    arrPrCodes = arrPrCodes.filter( ( val, i, arr ) => { return i == arr.indexOf( val ); } );
+    arrTbCodes = arrTbCodes.filter( ( val, i, arr ) => { return i == arr.indexOf( val ); } );
     arrOtherCodes = arrOtherCodes.filter( ( val, i, arr ) => { return i == arr.indexOf( val ); } );
 
     const hasPrefix = ( content.startsWith( prefix ) || content.startsWith( '§' ) );
@@ -145,7 +154,7 @@ client.on( 'messageCreate', async ( message ) => {
     }
 
     if ( Object.values( hasCodes ).some( b => b ) ) {
-      const intCodes = arrGcCodes.length + arrOtherCodes.length;
+      const intCodes = arrGcCodes.length + arrPrCodes.length + arrOtherCodes.length;
       const strPlural = ( intCodes === 1 ? '' : 's' );
       let arrCodeTypes = [];
       Object.entries( hasCodes ).forEach( entry => { if ( entry[ 1 ] ) { arrCodeTypes.push( entry[ 0 ] ) } } );
@@ -165,6 +174,20 @@ client.on( 'messageCreate', async ( message ) => {
       }
       let strCodes = strCodeTypes + ' code' + strPlural + ' detected, here ' + ( intCodes === 1 ? 'is the ' : 'are ' ) + 'link' + strPlural + ':';
       const codesResponse = await message.reply( strCodes );
+      for ( let prCode of arrPrCodes ) {
+        await codesResponse.edit( strCodes + '\n<:Signal:398980726000975914> ...attempting to gather information about [' + prCode + '](<https://coord.info/' + prCode + '>)...' );
+        let objUser = await cacheinfo( prCode );
+        if ( objUser.failed ) {
+          strCodes += '\n<:RIP:1015415145180176535> **Failed to get info for __[' + prCode + '](<https://coord.info/' + prCode + '>)__: ' + objCache.error + '...**';
+          await codesResponse.edit( strCodes );
+        } else {
+          let userName = objUser.username;
+          strCodes += '\n';
+          if ( objUser.basic ) { strCodes += '<:basic:398980530017927198>'; }
+          strCodes += cacheTypeIcon + ' [`' + prCode + '`: ' + userName + '](<https://coord.info/' + objUser.code + '>) ' + ( !objUser.basic ? '' : '[🎁](<https://payments.geocaching.com/gift?uguid=' + ObjUser.guid + '>)' );
+          await codesResponse.edit( strCodes );
+        }
+      }
       for ( let gcCode of arrGcCodes ) {
         await codesResponse.edit( strCodes + '\n<:Signal:398980726000975914> ...attempting to gather information about [' + gcCode + '](<https://coord.info/' + gcCode + '>)...' );
         let objCache = await cacheinfo( gcCode );
@@ -186,6 +209,7 @@ client.on( 'messageCreate', async ( message ) => {
           await codesResponse.edit( strCodes );
         }
       }
+      for ( let tbCode of arrTbCodes ) { strCodes += '\n\t' + tbCode + ' :link: <https://coord.info/' + tbCode + '>'; }//SOON™
       for ( let code of arrOtherCodes ) { strCodes += '\n\t' + code + ' :link: <https://coord.info/' + code + '>'; }
       codesResponse.edit( strCodes );
     }
