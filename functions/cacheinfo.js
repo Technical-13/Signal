@@ -71,7 +71,7 @@ module.exports = async ( gcCode ) => {
         }
         //* TRON */console.log( 'attributes: %o', $( '#ctl00_ContentBody_detailWidget > .WidgetBody > img' ) );/* TROFF */
         $( '#ctl00_ContentBody_detailWidget > .WidgetBody > img' ).each( ( a, attrib ) => {
-          /* TRON */console.log( 'attrib: %o', ( a == 0 ? attrib : a );/* TROFF */
+          /* TRON */console.log( 'attrib: %o', ( a == 0 ? attrib : a ) );/* TROFF */
           if ( attrib.src ) {
             attrib = attrib.src.split( 'https://www.geocaching.com/images/attributes/' )[ 1 ].split( '.' )[ 0 ];
             if ( attrib !== 'attribute-blank' ) { attributes.push( attrib ); }
