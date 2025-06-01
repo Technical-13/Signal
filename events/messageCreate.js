@@ -174,6 +174,7 @@ client.on( 'messageCreate', async ( message ) => {
       }
       let strCodes = strCodeTypes + ' code' + strPlural + ' detected, here ' + ( intCodes === 1 ? 'is the ' : 'are ' ) + 'link' + strPlural + ':';
       const codesResponse = await message.reply( strCodes );
+      // Process PR User Profiles
       for ( let prCode of arrPrCodes ) {
         await codesResponse.edit( strCodes + '\n<:Signal:398980726000975914> ...attempting to gather information about [' + prCode + '](<https://coord.info/' + prCode + '>)...' );
         let objUser = await cacheinfo( prCode );console.info('%s: %o',prCode,objUser);
@@ -191,6 +192,7 @@ client.on( 'messageCreate', async ( message ) => {
           await codesResponse.edit( strCodes );
         }
       }
+      // Process GC Cache Pages
       for ( let gcCode of arrGcCodes ) {
         await codesResponse.edit( strCodes + '\n<:Signal:398980726000975914> ...attempting to gather information about [' + gcCode + '](<https://coord.info/' + gcCode + '>)...' );
         let objCache = await cacheinfo( gcCode );console.info('%s: %o',gcCode,objCache);
@@ -204,13 +206,16 @@ client.on( 'messageCreate', async ( message ) => {
           if ( cacheTypeIcon === '⁉' ) { botOwner.send( { content: '`' + objCache.type + '` for __[' + gcCode + '](<https://coord.info/' + gcCode + '>)__ in https://discord.com/channels/' + guild.id + '/' + channel.id + ' is not a known type of cache.' } ) }
           strCodes += '\n';
           if ( objCache.pmo ) { strCodes += '<:PMO:1293693055127519315>'; }
-          if ( objCache.archived || objCache.locked ) { strCodes += '<:archived:467385636173905942>'; }
-          else if ( objCache.disabled ) { strCodes += '<:disabled:467385661415227393>'; }
+          switch ( objCache.state ) {
+            case 'archived' : case 'locked' : strCodes += '<:archived:467385636173905942>'; break;
+            case 'disabled' : strCodes += '<:disabled:467385661415227393>'; break;
+          }
           let dtURL = '[[' + objCache.difficulty + '/' + objCache.terrain + ']](<https://www.geocaching.com/help/index.php?pg=kb.page&inc=1&id=82>)';
           strCodes += cacheTypeIcon + ' [`' + gcCode + '`: ' + cacheName + '](<https://coord.info/' + objCache.code + '>) by ' + objCache.nameCO + ' ' + dtURL;
           await codesResponse.edit( strCodes );
         }
       }
+      // Process TB Trackable Codes
       for ( let tbCode of arrTbCodes ) {
         await codesResponse.edit( strCodes + '\n<:Signal:398980726000975914> ...attempting to gather information about [' + tbCode + '](<https://coord.info/' + tbCode + '>)...' );
         let objTrack = await cacheinfo( tbCode );console.info('%s: %o',tbCode,objTrack);
