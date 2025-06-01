@@ -38,7 +38,7 @@ module.exports = async ( gcCode ) => {
         };
       }
       else if ( isPMO ) {
-        /* TRON */console.log( 'ctArr: %o', $( 'svg.icon.cache-icon > use' ).attr( 'xlink\\:href' ) );/* TROFF */
+        /* TRON */console.log( 'ctArr: %o', $( 'svg.icon.cache-icon > use' ).attribs.href );/* TROFF */
 //        var ctArr = $( 'svg.icon.cache-icon > use' ).attr( 'xlink\\:href' ).split( '#' )[ 1 ].split( '-' );
         result = {
 //          archived: ( $( '#ctl00_ContentBody_archivedMessage' ).length ? true : false ),
@@ -70,7 +70,7 @@ module.exports = async ( gcCode ) => {
           }
         }
         /* TRON */console.log( 'attributes: %o', Array.from( $( '#ctl00_ContentBody_detailWidget > .WidgetBody > img' ) ) );/* TROFF */
-        $( '#ctl00_ContentBody_detailWidget > .WidgetBody > img' ).each( ( a, attrib ) => {
+        Array.from( $( '#ctl00_ContentBody_detailWidget > .WidgetBody > img' ) ).each( ( a, attrib ) => {
           /* TRON */console.log( 'Can\'t split...: %o', attrib.attribs.src );/* TROFF */
           if ( attrib.src ) {
             attrib = attrib.src.split( 'https://www.geocaching.com/images/attributes/' )[ 1 ].split( '.' )[ 0 ];
