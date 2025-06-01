@@ -68,9 +68,10 @@ module.exports = async ( gcCode ) => {
           }
         }
         $( '#ctl00_ContentBody_detailWidget' ).find( '.WidgetBody > img' ).each( ( a, attrib ) => {
-          console.log( 'URL: %s', attrib.src );
-          attrib = attrib.src.split( 'https://www.geocaching.com/images/attributes/' )[ 1 ].split( '.' )[ 0 ];
-          if ( attrib !== 'attribute-blank' ) { attributes.push( attrib ); }
+          if ( attrib.src ) {
+            attrib = attrib.src.split( 'https://www.geocaching.com/images/attributes/' )[ 1 ].split( '.' )[ 0 ];
+            if ( attrib !== 'attribute-blank' ) { attributes.push( attrib ); }
+          }
         } );
         result = {
           archived: ( $( '#ctl00_ContentBody_archivedMessage' ).length ? true : false ),
