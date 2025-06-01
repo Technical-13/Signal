@@ -38,14 +38,13 @@ module.exports = async ( gcCode ) => {
         };
       }
       else if ( isPMO ) {
-        /* TRON */console.log( 'ctArr: %o', $( 'svg.cache-icon' ).html().split( '#' )[ 1 ].split( '"' )[ 0 ] );/* TROFF */
-//        var ctArr = $( 'svg.icon.cache-icon > use' )[ 0 ].outerHTML.split( '#' )[ 1 ].split( '"' )[ 0 ];
+        var ctArr = $( 'svg.cache-icon' ).html().split( '#' )[ 1 ].split( '"' )[ 0 ].split( '-' );
         result = {
 //          archived: ( $( '#ctl00_ContentBody_archivedMessage' ).length ? true : false ),
 //          attributes: attributes,
           code: gcCode,
           difficulty: $( '#ctl00_ContentBody_lblDifficulty' ).next( 'span' ).text().trim(),
-//          disabled: ( ctArr[ ctArr.length - 1 ] === 'disabled' ? true : false ),
+          disabled: ( ctArr[ ctArr.length - 1 ] === 'disabled' ? true : false ),
           failed: false,
           favorited: $( '#ctl00_ContentBody_lblFavoritePoints' ).next().text(),
 //          hidden: ( new Date( $( '#ctl00_ContentBody_mcd2' ).text().split( '\n' )[ 3 ].trim() ) ),
