@@ -178,14 +178,16 @@ client.on( 'messageCreate', async ( message ) => {
         await codesResponse.edit( strCodes + '\n<:Signal:398980726000975914> ...attempting to gather information about [' + prCode + '](<https://coord.info/' + prCode + '>)...' );
         let objUser = await cacheinfo( prCode );
         if ( objUser.failed ) {
-          strCodes += '\n<:RIP:1015415145180176535> **Failed to get info for __[' + prCode + '](<https://coord.info/' + prCode + '>)__: ' + objCache.error + '...**';
+          strCodes += '\n<:RIP:1015415145180176535> **Failed to get info for __[' + prCode + '](<https://coord.info/' + prCode + '>)__: ' + objUser.error + '...**';
           await codesResponse.edit( strCodes );
         } else {
           let userName = objUser.username;
+          userName = userName.replace( /\p{Emoji_Presentation}/gu, '�' );
           strCodes += '\n';
           if ( objUser.basic ) { strCodes += '<:basic:398980530017927198>'; }
+          else { strCodes += '<:premium:398980560963239936>'; }//Premium, Lacky, Reviewer --- no idea --- just use premium icon
           strCodes += ' [`' + prCode + '`: ' + userName + '](<https://coord.info/' + objUser.code + '>)';
-          if ( objUser.basic ) { strCodes += ' [Gift Membership](<https://payments.geocaching.com/gift?uguid=' + objUser.guid + '>)'; }
+          if ( objUser.basic ) { strCodes += '\n🎁 [Gift Membership](<https://payments.geocaching.com/gift?uguid=' + objUser.guid + '>)'; }
           await codesResponse.edit( strCodes );
         }
       }
@@ -197,7 +199,6 @@ client.on( 'messageCreate', async ( message ) => {
           await codesResponse.edit( strCodes );
         } else {
           let cacheName = objCache.name;
-          let arrCName = cacheName.split( ' ' );
           cacheName = cacheName.replace( /\p{Emoji_Presentation}/gu, '�' );
           let cacheTypeIcon = ( Object.keys( gcCacheTypeIcons ).indexOf( objCache.type ) != -1 ? gcCacheTypeIcons[ objCache.type ] : '⁉' );
           if ( cacheTypeIcon === '⁉' ) { botOwner.send( { content: '`' + objCache.type + '` for __[' + gcCode + '](<https://coord.info/' + gcCode + '>)__ in https://discord.com/channels/' + guild.id + '/' + channel.id + ' is not a known type of cache.' } ) }
@@ -210,7 +211,20 @@ client.on( 'messageCreate', async ( message ) => {
           await codesResponse.edit( strCodes );
         }
       }
-      for ( let tbCode of arrTbCodes ) { strCodes += '\n\t' + tbCode + ' :link: <https://coord.info/' + tbCode + '>'; }//SOON™
+      for ( let tbCode of arrTbCodes ) {//SOON™
+        await codesResponse.edit( strCodes + '\n<:Signal:398980726000975914> ...attempting to gather information about [' + tbCode + '](<https://coord.info/' + tbCode + '>)...' );
+        let objTrack = await cacheinfo( tbCode );
+        if ( objTrack.failed ) {
+          strCodes += '\n<:RIP:1015415145180176535> **Failed to get info for __[' + tbCode + '](<https://coord.info/' + tbCode + '>)__: ' + objTrack.error + '...**';
+          await codesResponse.edit( strCodes );
+        } else {
+          let tbName = objTrack.name;
+          tbName = tbName.replace( /\p{Emoji_Presentation}/gu, '�' );
+          strCodes += '\n';
+          strCodes += ' [`' + tbCode + '`: ' + tbName + '](<https://coord.info/' + objTrack.code + '>)';
+          await codesResponse.edit( strCodes );
+        }
+      }
       for ( let code of arrOtherCodes ) { strCodes += '\n\t' + code + ' :link: <https://coord.info/' + code + '>'; }
       codesResponse.edit( strCodes );
     }
