@@ -90,7 +90,7 @@ module.exports = async ( gcCode ) => {
           size: $( '#ctl00_ContentBody_size > p > span > small' ).text().trim().replace( /[\(\)]/g, '' ),
           terrain: $( '#ctl00_ContentBody_Localize12 > img' ).attr( 'alt' ).split( ' ' )[ 0 ],
           type: $( 'a.cacheImage' ).attr( 'title' ).trim()
-        };console.log('%s result: %o',gcCode,result);
+        };
       }
       return result;
     } ).catch( errGetPage => {
