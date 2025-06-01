@@ -38,12 +38,13 @@ module.exports = async ( gcCode ) => {
         };
       }
       else if ( isPMO ) {
+        var ctArr = $( 'svg.icon.cache-icon > use' ).attr( 'xlink:href' ).split( '#' )[ 1 ].split( '-' );
         result = {
 //          archived: ( $( '#ctl00_ContentBody_archivedMessage' ).length ? true : false ),
 //          attributes: attributes,
           code: gcCode,
           difficulty: $( '#ctl00_ContentBody_lblDifficulty' ).next( 'span' ).text().trim(),
-//          disabled: ( $( '#ctl00_ContentBody_disabledMessage' ).length ? true : false ),
+          disabled: ( ctArr[ ctArr.length - 1 ] === 'disabled' ? true : false ),
           failed: false,
           favorited: $( '#ctl00_ContentBody_lblFavoritePoints' ).next().text(),
 //          hidden: ( new Date( $( '#ctl00_ContentBody_mcd2' ).text().split( '\n' )[ 3 ].trim() ) ),
@@ -68,6 +69,7 @@ module.exports = async ( gcCode ) => {
           }
         }
         $( '#ctl00_ContentBody_detailWidget' ).find( '.WidgetBody > img' ).each( ( a, attrib ) => {
+          /* TRON */console.log( 'attrib: %o', attrib );/* TROFF */
           if ( attrib.src ) {
             attrib = attrib.src.split( 'https://www.geocaching.com/images/attributes/' )[ 1 ].split( '.' )[ 0 ];
             if ( attrib !== 'attribute-blank' ) { attributes.push( attrib ); }
