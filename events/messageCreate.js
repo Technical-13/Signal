@@ -187,7 +187,7 @@ client.on( 'messageCreate', async ( message ) => {
           if ( objUser.basic ) { strCodes += '<:basic:398980530017927198>'; }
           else { strCodes += '<:premium:398980560963239936>'; }//Premium, Lacky, Reviewer --- no idea --- just use premium icon
           strCodes += ' [`' + prCode + '`: ' + userName + '](<https://coord.info/' + objUser.code + '>)';
-          if ( objUser.basic ) { strCodes += '\n🎁 [Gift Membership](<https://payments.geocaching.com/gift?uguid=' + objUser.guid + '>)'; }
+          if ( objUser.basic ) { strCodes += ' (🎁 [Gift Membership](<https://payments.geocaching.com/gift?uguid=' + objUser.guid + '>))'; }
           await codesResponse.edit( strCodes );
         }
       }

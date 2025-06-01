@@ -10,8 +10,8 @@ module.exports = async ( gcCode ) => {
     const info = await axios( 'https://coord.info/' + gcCode ).then( response => {
       const $ = cheerio.load( response.data );
       let result = { code: gcCode, failed: true, error: 'Unknown Error' };
-      let isUser = ( $( '#ctl00_ContentBody_lblErrorText' ).find( 'p.Warning > a[title="Log in"]' ).text() === 'log in' ? true : false );
-      let isTB = ( false ? true : false );
+      let isUser = ( gcCode.slice( 0, 2 ) === 'PR' ? true : false );
+      let isTB = ( gcCode.slice( 0, 2 ) === 'TB' ? true : false );
       let isPMO = ( $( 'head' ).find( 'meta[name="page_name"]' ).attr( 'content' ) === 'PMO Cache Upsell' ? true : false );;
       if ( isUser ) {
         result = {
