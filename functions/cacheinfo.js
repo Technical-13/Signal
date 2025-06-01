@@ -27,7 +27,7 @@ module.exports = async ( gcCode ) => {
           collectable: !( / not /.test( $( '#ctl00_ContentBody_BugDetails_BugTBNum' ).parent()[ 0 ].previousElementSibling.innerText ) ),
           distance: ( $( 'h4.BottomSpacing' ).text().match( /\((\d+\.?\d?mi)\)/ ) ? $( 'h4.BottomSpacing' ).text().match( /\((\d+\.?\d?mi)\)/ )[ 1 ] : null ),
           icon: $( '#ctl00_ContentBody_BugTypeImage' ).attr( 'src' ).match( /[\d]+\.gif/ )[ 0 ],
-          id: ,
+//          id: 0,
           logs: parseInt( $( 'li.pager-info' ).text().split( ' ' )[ 2 ] ),
           name: $( '#ctl00_ContentBody_lbHeading' ).text(),
           nameCO: $( '#ctl00_ContentBody_BugDetails_BugOwner' ).text(),
