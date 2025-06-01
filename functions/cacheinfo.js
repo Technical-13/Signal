@@ -60,7 +60,7 @@ module.exports = async ( gcCode ) => {
       else {
         var attributes = [], trackables = 0;
         if ( $( '#ctl00_ContentBody_uxTravelBugList_uxNoTrackableItemsLabel' ).length === 0 ) {
-          if ( ( $( '#ctl00_ContentBody_uxTravelBugList_uxViewAllTrackableItems' ).text().match( /[0-9]+(,[0-9]+)*/ ) ? true : false ) {
+          if ( $( '#ctl00_ContentBody_uxTravelBugList_uxViewAllTrackableItems' ).text().match( /[0-9]+(,[0-9]+)*/ ) ) {
             trackables = parseInt( $( '#ctl00_ContentBody_uxTravelBugList_uxViewAllTrackableItems' ).text().match( /[0-9]+(,[0-9]+)*/ )[ 0 ].replace( /,/g, '' ) );
           }
           else {
