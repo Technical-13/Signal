@@ -72,7 +72,7 @@ module.exports = async ( gcCode ) => {
         result = {
           archived: ( $( '#ctl00_ContentBody_archivedMessage' ).length ? true : false ),
           attributes: $( '#ctl00_ContentBody_detailWidget > .WidgetBody > img' ).filter( '[alt!="blank"]' )
-            .map( ( a, attrib ) => { return $( attrib ).attr( 'src' ).split( '/images/attributes/' )[ 1 ].split( '.' )[ 0 ]; } ).get();,
+            .map( ( a, attrib ) => { return $( attrib ).attr( 'src' ).split( '/images/attributes/' )[ 1 ].split( '.' )[ 0 ]; } ).get(),
           code: gcCode,
           difficulty: $( '#ctl00_ContentBody_uxLegendScale > img' ).attr( 'alt' ).split( ' ' )[ 0 ],
           disabled: ( $( '#ctl00_ContentBody_disabledMessage' ).length ? true : false ),
