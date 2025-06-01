@@ -185,7 +185,7 @@ client.on( 'messageCreate', async ( message ) => {
           strCodes += '\n';
           if ( objUser.basic ) { strCodes += '<:basic:398980530017927198>'; }
           strCodes += ' [`' + prCode + '`: ' + userName + '](<https://coord.info/' + objUser.code + '>)';
-          if ( objUser.basic ) { strCodes += ' [🎁](<https://payments.geocaching.com/gift?uguid=' + objUser.guid + '>)'; }
+          if ( objUser.basic ) { strCodes += ' [Gift Membership](<https://payments.geocaching.com/gift?uguid=' + objUser.guid + '>)'; }
           await codesResponse.edit( strCodes );
         }
       }
