@@ -60,7 +60,7 @@ module.exports = async ( gcCode ) => {
         };
       }
       else {
-        var attributes = [], trackables = 0;
+        var trackables = 0;
         if ( $( '#ctl00_ContentBody_uxTravelBugList_uxNoTrackableItemsLabel' ).length === 0 ) {
           if ( $( '#ctl00_ContentBody_uxTravelBugList_uxViewAllTrackableItems' ).text().match( /[0-9]+(,[0-9]+)*/ ) ) {
             trackables = parseInt( $( '#ctl00_ContentBody_uxTravelBugList_uxViewAllTrackableItems' ).text().match( /[0-9]+(,[0-9]+)*/ )[ 0 ].replace( /,/g, '' ) );
@@ -69,17 +69,10 @@ module.exports = async ( gcCode ) => {
             trackables = $( '#ctl00_ContentBody_uxTravelBugList_uxViewAllTrackableItems' ).parents( '.WidgetBody' ).find( 'ul > li' ).length;
           }
         }
-        //* TRON */console.log( 'attributes: %o', $( '#ctl00_ContentBody_detailWidget > .WidgetBody > img' ) );/* TROFF */
-        $( '#ctl00_ContentBody_detailWidget > .WidgetBody > img' ).each( ( a, attrib ) => {
-          /* TRON */console.log( 'attrib: %o', ( a == 0 ? attrib : a ) );/* TROFF */
-          if ( attrib.src ) {
-            attrib = attrib.src.split( 'https://www.geocaching.com/images/attributes/' )[ 1 ].split( '.' )[ 0 ];
-            if ( attrib !== 'attribute-blank' ) { attributes.push( attrib ); }
-          }
-        } );
+        /* TRON */console.log( 'attributes: %o', $( '#ctl00_ContentBody_detailWidget > .WidgetBody > img' ).filter( '[alt!="blank"]' ).map( ( a, attrib ) => { return $( attrib ).attr( 'src' ).split( '/images/attributes/' )[ 1 ].split( '.' )[ 0 ]; } ).get(); );/* TROFF */
         result = {
           archived: ( $( '#ctl00_ContentBody_archivedMessage' ).length ? true : false ),
-          attributes: attributes,
+//          attributes: $( '#ctl00_ContentBody_detailWidget > .WidgetBody > img' ).filter( '[alt!="blank"]' ).map( ( a, attrib ) => { return $( attrib ).attr( 'src' ).split( '/images/attributes/' )[ 1 ].split( '.' )[ 0 ]; } ).get();,
           code: gcCode,
           difficulty: $( '#ctl00_ContentBody_uxLegendScale > img' ).attr( 'alt' ).split( ' ' )[ 0 ],
           disabled: ( $( '#ctl00_ContentBody_disabledMessage' ).length ? true : false ),
