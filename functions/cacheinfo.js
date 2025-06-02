@@ -2,7 +2,6 @@ const client = require( '..' );
 const axios = require( 'axios' );
 const cheerio = require( 'cheerio' );
 const chalk = require( 'chalk' );
-const botVerbosity = client.verbosity;
 const strScript = chalk.hex( '#FFA500' ).bold( './functions/cacheinfo.js' );
 
 module.exports = async ( gcCode ) => {
@@ -27,10 +26,12 @@ module.exports = async ( gcCode ) => {
           collectable: !( / not /.test( $( '#ctl00_ContentBody_BugDetails_BugTBNum' ).parent()[ 0 ].previousElementSibling?.innerText ) ),
           distance: ( $( 'h4.BottomSpacing' ).text().match( /\((\d+\.?\d?mi)\)/ ) ? $( 'h4.BottomSpacing' ).text().match( /\((\d+\.?\d?mi)\)/ )[ 1 ] : null ),
           icon: $( '#ctl00_ContentBody_BugTypeImage' ).attr( 'src' ).match( /[\d]+\.gif/ )[ 0 ],
-//          id: 0,
+          id: ( new URLSearchParams( '?' + $( 'a[title="View Map"]' ).attr( 'href' ).split( '?' )[ 1 ] ) ).get( 'ID' ),
+          img: $( '#ctl00_ContentBody_BugDetails_BugImage' ).attr( 'src' ),
           logs: parseInt( $( 'li.pager-info' ).text().split( ' ' )[ 2 ] ),
           name: $( '#ctl00_ContentBody_lbHeading' ).text(),
           nameCO: $( '#ctl00_ContentBody_BugDetails_BugOwner' ).text(),
+          origin: $( '#ctl00_ContentBody_BugDetails_BugOrigin' ).text(),
           ref: $( '#ctl00_ContentBody_BugDetails_BugTBNum > strong' ).text(),
           released: ( new Date( $( '#ctl00_ContentBody_BugDetails_BugReleaseDate' ).text() ) ),
           type: $( '#ctl00_ContentBody_BugTypeImage' ).attr( 'alt' ),
