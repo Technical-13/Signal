@@ -125,7 +125,8 @@ module.exports = {
         .catch( async errFetch => { interaction.editReply( await errHandler( errFetch, { command: 'ftf', msgID: msgID, type: 'errFetch' } ) ); } );
       }
       else if ( cmdInputUser ) {
-        interaction.editReply( { content: '<@' + cmdInputUser.id + '>, ' + i18FTFinfo[ locale ] } ).then( replied => {
+        channel.send( { content: '<@' + cmdInputUser.id + '>, ' + i18FTFinfo[ locale ] } ).then( replied => {
+          interaction.deleteReply();
           if ( doLogs && cmdInputUser.id != author.id ) {
             chanDefault.send( { content: 'I told <@' + cmdInputUser.id + '> about FTFs at <@' + author.id +'>\'s `/ftf` request.' + strClosing } )
             .catch( async errLog => { interaction.editReply( await errHandler( errLog, { chanType: 'default', command: 'ftf', channel: channel, type: 'logLogs' } ) ); } );
