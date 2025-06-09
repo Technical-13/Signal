@@ -18,6 +18,7 @@ module.exports = {
   run: async ( client, interaction ) => {
     try {
       await interaction.deferReply( { ephemeral: true } );
+      const { channel, guild, options, user: author } = interaction;
       const { content } = await userPerms( author, guild );
       if ( content ) { return interaction.editReply( { content: content } ); }
 
