@@ -19,7 +19,9 @@ module.exports = {
   cooldown: 1000,
   run: async ( client, interaction ) => {
     await interaction.deferReply( { ephemeral: true } );
-    const cmdType = options.getString( 'type' ).toLowerCase() ?? 'slash';
+    const { guild, options, user: author } = interaction;
+    const { botOwner, isBotOwner, isBotMod } = await userPerms( author, guild );
+    const cmdType = ( !options.getString( 'type' ) ? 'slash' : options.getString( 'type' ).toLowerCase() );
     const commandName = options.getString( 'command', true ).toLowerCase();
 		try {
       const { guild, options, user: author } = interaction;
