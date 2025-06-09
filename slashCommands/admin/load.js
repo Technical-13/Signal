@@ -33,7 +33,7 @@ module.exports = {
           if ( fs.readdirSync( ( cmdType == 'prefix' ? '../../commands/' : '../' ) + dir + '/' ).filter( file => file == commandName + '.js' ).length !== 1 ) {
             command = { group: dir, name: commandName };
           }
-        }
+        } );
         if ( !command ) { return interaction.editReply( 'I have no ' + ( cmdType == 'prefix' ? 'command' : 'slashCommand' ) + ' named `' + commandName + '`!' ); }
       }
       else {
