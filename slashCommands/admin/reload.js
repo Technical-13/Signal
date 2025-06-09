@@ -6,7 +6,7 @@ const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/admin/reload.js'
 module.exports = {
   name: 'reload',
   group: 'admin',
-  description: 'Reloads a slashCommand.',
+  description: 'Reloads commands.',
   type: ApplicationCommandType.ChatInput,
   contexts: [ InteractionContextType.Guild, InteractionContextType.BotDM ],
   options: [
@@ -19,12 +19,11 @@ module.exports = {
   cooldown: 1000,
   run: async ( client, interaction ) => {
     await interaction.deferReply( { ephemeral: true } );
+    const { guild, options, user: author } = interaction;
+    const { botOwner, isBotOwner, isBotMod } = await userPerms( author, guild );
+    const cmdType = ( !options.getString( 'type' ) ? 'slash' : options.getString( 'type' ).toLowerCase() );
+    const commandName = options.getString( 'command', true ).toLowerCase();
 		try {
-      const { guild, options, user: author } = interaction;
-      const { botOwner, isBotOwner, isBotMod } = await userPerms( author, guild );
-      const cmdType = options.getString( 'type' ).toLowerCase() ?? 'slash';
-      const commandName = options.getString( 'command', true ).toLowerCase();
-
       if ( isBotMod && !isBotOwner ) { return interaction.editReply( 'This is currently an **owner only** command.  Please talk to <@' + botOwner.id + '> if you need assistance.' ); }
       else if ( !isBotOwner ) { return interaction.editReply( 'This is an **owner only** command.' ); }
       else if ( cmdType === 'prefix' ) {
@@ -45,10 +44,10 @@ module.exports = {
         const newCommand = require( '../' + command.group + '/' + command.name + '.js' );
         client.slashCommands.set( newCommand.name, newCommand );
       }
-      interaction.editReply( 'Command `' + newCommand.name + '` was reloaded!' );
+      interaction.editReply( 'Command `' + ( cmdType == 'slash' ? '/' : '§' ) + commandName + '` was reloaded!' );
 		}
     catch ( errObject ) {
-      interaction.editReply( 'There was an error while reloading command `' + command.name + '`:\n`' + errObject.message + '`' );
+      interaction.editReply( 'There was an error while reloading command `' + ( cmdType == 'slash' ? '/' : '§' ) + commandName + '`:\n`' + errObject.message + '`' );
       console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack );
 		}
 	},

@@ -43,10 +43,10 @@ module.exports = {
       const newCommand = require( ( cmdType == 'prefix' ? '../../commands/' : '../' ) + command.group + '/' + command.name + '.js' );
       client[ ( cmdType == 'prefix' ? 'commands' : 'slashCommands' ) ].set( newCommand.name, newCommand );
 
-      interaction.editReply( 'Command `' + newCommand.name + '` was ' + ( !isRe ? '' : 're' ) + 'loaded!' );
+      interaction.editReply( 'Command `' + ( cmdType == 'slash' ? '/' : '§' ) + newCommand.name + '` was ' + ( !isRe ? '' : 're' ) + 'loaded!' );
 		}
     catch ( errObject ) {
-      interaction.editReply( 'There was an error loading command `' + commandName + '`:\n`' + errObject.message + '`' );
+      interaction.editReply( 'There was an error loading command `' + ( cmdType == 'slash' ? '/' : '§' ) + commandName + '`:\n`' + errObject.message + '`' );
       console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack );
 		}
 	},
