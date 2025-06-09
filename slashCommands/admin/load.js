@@ -32,7 +32,9 @@ module.exports = {
       var command = client[ ( cmdType == 'prefix' ? 'commands' : 'slashCommands' ) ].get( commandName );
       if ( !command ) {
         fs.readdirSync( cmdType == 'prefix' ? '../../commands/' : '../' ).forEach( async dir => {
-          if ( fs.readdirSync( ( cmdType == 'prefix' ? '../../commands/' : '../' ) + dir + '/' ).filter( file => file == commandName + '.js' ).length !== 1 ) {
+/* TRON */console.log('Looking for /%s/%s.js',dir,commandName);/* TROFF */
+
+          if ( fs.readdirSync( ( cmdType == 'prefix' ? '../../commands/' : '../' ) + dir + '/' ).filter( file => {/* TRON */console.log( 'file: %o', file );/* TROFF */return file == commandName + '.js'} ).length !== 1 ) {
             command = { group: dir, name: commandName };
           }
         } );
