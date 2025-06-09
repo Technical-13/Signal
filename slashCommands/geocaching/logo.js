@@ -2,6 +2,7 @@ const { ApplicationCommandType, InteractionContextType } = require( 'discord.js'
 const chalk = require( 'chalk' );
 const errHandler = require( '../../functions/errorHandler.js' );
 const userPerms = require( '../../functions/getPerms.js' );
+const getGuildConfig = require( '../../functions/getGuildDB.js' );
 const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/geocaching/logo.js' );
 
 module.exports = {
