@@ -65,7 +65,7 @@ module.exports = {
         channel.messages.fetch( msgID )
         .then( message => {
           const { author: msgAuthor, content } = message;
-          message.reply( { content: '<@' + msgAuthor.id + '>, ' + 'you seem to be looking for the Official Geocaching.com [Logo Kits](<https://www.geocaching.com/about/logousage.aspx>).\nThe kits have `*.png` & `*.eps file versions.  If you\'re looking for an `*.svg` version, <@&385501075001573389> recommends using [EPS to SVG Converter](<https://cloudconvert.com/eps-to-svg>) by cloud**convert**' } )//i18FTFinfo[ locale ] } )
+          message.reply( { content: '<@' + msgAuthor.id + '>, ' + 'you seem to be looking for the Official Geocaching.com [Logo Kits](<https://www.geocaching.com/about/logousage.aspx>).\nThe kits have `*.png` & `*.eps` file versions.  If you\'re looking for an `*.svg` version, <@&385501075001573389> recommends using [EPS to SVG Converter](<https://cloudconvert.com/eps-to-svg>) by cloud**convert**' } )//i18FTFinfo[ locale ] } )
           .then( replied => {
             if ( doLogs && author.id != msgAuthor.id ) {
               chanDefault.send( { content:
@@ -81,7 +81,7 @@ module.exports = {
         .catch( async errFetch => { interaction.editReply( await errHandler( errFetch, { command: 'logo', msgID: msgID, type: 'errFetch' } ) ); } );
       }
       else if ( cmdInputUser ) {
-        interaction.editReply( { content: '<@' + cmdInputUser.id + '>, ' + 'you seem to be looking for the Official Geocaching.com [Logo Kits](<https://www.geocaching.com/about/logousage.aspx>).\nThe kits have `*.png` & `*.eps file versions.  If you\'re looking for an `*.svg` version, <@&385501075001573389> recommends using [EPS to SVG Converter](<https://cloudconvert.com/eps-to-svg>) by cloud**convert**' } ).then( replied => {//i18FTFinfo[ locale ] } ).then( replied => {
+        interaction.editReply( { content: '<@' + cmdInputUser.id + '>, ' + 'you seem to be looking for the Official Geocaching.com [Logo Kits](<https://www.geocaching.com/about/logousage.aspx>).\nThe kits have `*.png` & `*.eps` file versions.  If you\'re looking for an `*.svg` version, <@&385501075001573389> recommends using [EPS to SVG Converter](<https://cloudconvert.com/eps-to-svg>) by cloud**convert**' } ).then( replied => {//i18FTFinfo[ locale ] } ).then( replied => {
           if ( doLogs && cmdInputUser.id != author.id ) {
             chanDefault.send( { content: 'I told <@' + cmdInputUser.id + '> about the [Logo Kits](<https://www.geocaching.com/about/logousage.aspx>) at <@' + author.id +'>\'s `/logo` request.' + strClosing } )
             .catch( async errLog => { interaction.editReply( await errHandler( errLog, { chanType: 'default', command: 'logo', channel: channel, type: 'logLogs' } ) ); } );
@@ -89,7 +89,7 @@ module.exports = {
         } );
       }
       else {
-        interaction.editReply( { content: 'You seem to be looking for the Official Geocaching.com [Logo Kits](<https://www.geocaching.com/about/logousage.aspx>).\nThe kits have `*.png` & `*.eps file versions.  If you\'re looking for an `*.svg` version, <@&385501075001573389> recommends using [EPS to SVG Converter](<https://cloudconvert.com/eps-to-svg>) by cloud**convert**' } ).catch( noReply => {//i18FTFinfo[ locale ] } ).catch( noReply => {
+        interaction.editReply( { content: 'You seem to be looking for the Official Geocaching.com [Logo Kits](<https://www.geocaching.com/about/logousage.aspx>).\nThe kits have `*.png` & `*.eps` file versions.  If you\'re looking for an `*.svg` version, <@&385501075001573389> recommends using [EPS to SVG Converter](<https://cloudconvert.com/eps-to-svg>) by cloud**convert**' } ).catch( noReply => {//i18FTFinfo[ locale ] } ).catch( noReply => {
           if ( doLogs ) {
             chanError.send( { content: 'Error telling <@' + author.id + '> about the [Logo Kits](<https://www.geocaching.com/about/logousage.aspx>) via `/logo` request.' + strClosing } )
             .catch( async errLog => { interaction.editReply( await errHandler( errLog, { chanType: 'error', command: 'logo', channel: channel, type: 'logLogs' } ) ); } );
