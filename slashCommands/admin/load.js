@@ -35,7 +35,7 @@ module.exports = {
         fs.readdirSync( cmdType == 'prefix' ? './commands/' : './' ).forEach( async dir => {
 /* TRON */console.log('Looking for /%s/%s.js',dir,commandName);/* TROFF */
 
-          if ( fs.readdirSync( ( cmdType == 'prefix' ? '../../commands/' : '../' ) + dir + '/' ).filter( file => {/* TRON */console.log( 'file: %o', file );/* TROFF */return file == commandName + '.js'} ).length !== 1 ) {
+          if ( fs.readdirSync( ( cmdType == 'prefix' ? './commands/' : './slashCommands/' ) + dir + '/' ).filter( file => {/* TRON */console.log( 'file: %o', file );/* TROFF */return file == commandName + '.js'} ).length !== 1 ) {
             command = { group: dir, name: commandName };
           }
         } );
@@ -43,9 +43,9 @@ module.exports = {
       }
       else {
         isRe = true;
-        delete require.cache[ require.resolve( ( cmdType == 'prefix' ? '../../commands/' : '../' ) + command.group + '/' + command.name + '.js' ) ];
+        delete require.cache[ require.resolve( ( cmdType == 'prefix' ? './commands/' : './slashCommands/' ) + command.group + '/' + command.name + '.js' ) ];
       }
-      const newCommand = require( ( cmdType == 'prefix' ? '../../commands/' : '../' ) + command.group + '/' + command.name + '.js' );
+      const newCommand = require( ( cmdType == 'prefix' ? './commands/' : './slashCommands/' ) + command.group + '/' + command.name + '.js' );
       client[ ( cmdType == 'prefix' ? 'commands' : 'slashCommands' ) ].set( newCommand.name, newCommand );
 
       interaction.editReply( 'Command `' + ( cmdType == 'slash' ? '/' : '§' ) + newCommand.name + '` was ' + ( !isRe ? '' : 're' ) + 'loaded!' );
