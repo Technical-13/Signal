@@ -7,8 +7,7 @@
         "Deutsch/German", "English (default)", "Suomi/Finnish", "Français/French", "Norsk/Norwegian", "Polski/Polish", "Português/Portuguese (Portugal)", "Svenska/Swedish"
       ] },
       "message-id": { "name": "message-id", "description": "Paste message ID here" },
-      "target": { "name": "target", "description": "Tag someone in response." },
-
+      "target": { "name": "target", "description": "Tag someone in response." }
     },
     "responses": {
       "in": "in",
@@ -87,7 +86,7 @@
           "welcome-role": { "name": "welcome-role", "description": "Which role, if any, would you like to give new members on join?" },
           "welcome-clear-role": { "name": "welcome-clear-role", "description": "Clear role to assign" },
           "welcome-reset": { "name": "welcome-reset", "description": "Reset welcoming of new members to disabled." }
-        } },
+        } }
       },
       "responses": { "TBD": "TBD" }
     },
@@ -251,7 +250,7 @@
       "description": "Show Project-GC StatBar for user.",
       "options": {
         "name": "labcaches",
-        "description": "Should I include labcaches? (default: true)",
+        "description": "Should I include labcaches? (default: true)"
       },
       "responses": {
         "sharedFor": "I shared the `/statbar` for",
