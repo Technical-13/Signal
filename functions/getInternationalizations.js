@@ -14,7 +14,17 @@ module.exports = async ( command ) => {
     langCodes.forEach( ( v, k ) => { i18n.locales[ v ] = langNames[ k ]; } );
 
     const files = fs.readdirSync( './i18n/' ).filter( file => file.endsWith( '.json' ) );
-    console.log( 'I see: %o', files );
+    files.forEach( ( filename ) => {
+      const langCode = filename.replace( '.json', '' );
+      if ( langCodes.indexOf( langCode ) !== -1 ) {
+        console.log( 'Processing: %s', i18n.locales[ langCode ] );
+        const currLang = require( './i18n/' + filename );
+        console.log( 'currLang: %o', currLang );
+      }
+      else {
+        console.warn( '%s is a language not currently supported by Discord.', i18n.locales[ langCode ] );
+      }
+    } );
 
     return i18n;
   }
