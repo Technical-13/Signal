@@ -21,15 +21,15 @@ module.exports = async ( command ) => {
         const currLangFile = require( '../i18n/' + filename );
         const cmdPath = currLangFile[ command.group ][ command.name ];
         i18n.name[ langCode ] = cmdPath.name;
-        i18n.description[ langCode ] = cmdPath.description;/* TRON */console.log( 'i18n: %o', i18n );/* TROFF */
-        /*const commonOptions = Object.entries( currLangFile.common.options );
-        commonOptions.forEach( ( opt ) => {
-          i18n.options[ opt[ 0 ] ] = {};
-          const optBuilder = i18n.options[ opt[ 0 ] ];
-          optBuilder.name = opt[ 1 ].name;
-          optBuilder.description = opt[ 1 ].description;
+        i18n.description[ langCode ] = cmdPath.description;
+        const commonOptions = Object.entries( currLangFile.common.options );
+        commonOptions.forEach( ( opt ) => {/* TRON */console.log( 'opt: %o', opt );/* TROFF */
+          i18n.options[ opt[ 0 ] ] = ( i18n.options[ opt[ 0 ] ] ?? { name: {}, description: {} } );
+          const optBuilder = i18n.options[ opt[ 0 ] ];/* TRON */console.log( 'optBuilder: %o', optBuilder );/* TROFF */
+          optBuilder.name[ langCode ] = opt[ 1 ].name;
+          optBuilder.description[ langCode ] = opt[ 1 ].description;
           //optBuilder.choices = '';//skip this for now.  Let's get name/desc working first.
-        } );//*/
+        } );
         /*if ( cmdPath.options ) {
           const cmdOptions = Object.entries( cmdPath.options );/* TRON /console.log( 'cmdOptions: %o', cmdOptions );/* TROFF /
           cmdOptions.forEach( ( opt ) => {
@@ -47,7 +47,7 @@ module.exports = async ( command ) => {
         }//*/
       }
       else {
-        console.warn( '%s is a language not currently supported by Discord.', i18n.locales[ langCode ] );
+        console.warn( '%s is a language code not currently supported by Discord.', langCode );
       }
     } );
 
