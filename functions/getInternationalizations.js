@@ -9,7 +9,7 @@ module.exports = async ( command ) => {
     const langCodes = Object.values( Locale );
     const langNames = Object.keys( Locale );
     const i18n = { codes: langCodes, names: langNames };
-    fs.readdirSync( '../i18n/' ).then( dirs => {
+    fs.readdirSync( './i18n' ).then( dirs => {
       console.log( 'I see: %o', dirs );
     } );
 
