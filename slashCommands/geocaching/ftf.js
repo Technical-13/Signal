@@ -19,7 +19,7 @@ module.exports = {
         fr: 'langue',
         no: 'språk',
         pl: 'język',
-        'pt-PT': 'idioma',
+        'pt-PT': 'língua',
         'sv-SE': 'språk' },
       description_localizations: {
         de: 'Sprache, um Informationen zu geben.',
@@ -27,7 +27,7 @@ module.exports = {
         fr: 'Langue dans laquelle donner des informations.',
         no: 'Språk å gi informasjon på.',
         pl: 'Język, w którym należy podawać informacje.',
-        'pt-PT': 'Língua para fornecer informações.',
+        'pt-PT': 'Língua para dar informações.',
         'sv-SE': 'Språk att ge information på.' },
       choices: [
         { name: 'Deutsch/German', value: 'de' },
