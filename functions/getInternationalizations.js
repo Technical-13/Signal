@@ -9,7 +9,11 @@ module.exports = async ( command ) => {
     const langCodes = Object.values( Locale );
     const langNames = Object.keys( Locale );
     const i18n = { codes: langCodes, names: langNames };
-    console.log( 'I see: %o', fs.readdirSync( '../i18n/' ) );
+    fs.readdirSync( '../i18n/' ).then( dirs => {
+      console.log( 'I see: %o', dirs );
+    } );
+
+    return i18n;
   }
   catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
 };
