@@ -123,7 +123,7 @@ module.exports = {
           .then( replied => {
             if ( doLogs && author.id != msgAuthor.id ) {
               chanDefault.send( { content:
-                'I told <@' + msgAuthor.id + '> about FTFs ' + strLocale + ' in <#' + channel.id + '> at <@' + author.id +
+                'I told <@' + msgAuthor.id + '> about FTFs in `' + strLocale + '` in <#' + channel.id + '> at <@' + author.id +
                 '>\'s `/ftf` request in response to:\n```\n' + content + '\n```' + strClosing } )
               .then( sentLog => { interaction.deleteReply(); } )
               .catch( async errLog => { await errHandler( errLog, { chanType: 'default', command: 'ftf', channel: channel, type: 'logLogs' } ); } );
