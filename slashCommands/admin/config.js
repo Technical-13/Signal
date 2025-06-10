@@ -25,7 +25,7 @@ module.exports = {
     { type: 1, name: 'get', description: 'Get all settings for the server.', options: [// share
       { type: 5, name: 'share', description: 'Share result to current channel instead of making it ephemeral.' }
     ] },//*/
-    { type: 1, name: 'logs', description: '(Dis|En)able logs and set channels for them.', options: [// do-logs, log-chat, log-default, log-error
+    { type: 1, name: 'logs', description: '(Dis|En)able logs and set channels for them.', options: [// do-logs, log-chat, log-default, log-error, log-reset
       { type: 5, name: 'do-logs', description: 'Send logs for uses of commands that may be devious in nature' },// disable all logs
       { type: 7, name: 'log-chat', description: 'Channel to log chat command (`/edit`, `/react`, `/reply`, and `/say`) requests.' },// chat channel
       { type: 7, name: 'log-default', description: 'Channel to log all requests not otherwise specified.' },// default channel
@@ -42,7 +42,7 @@ module.exports = {
       { type: 3, name: 'prefix', description: 'Guild specific prefix for bot commands' },// guild prefix
       { type: 5, name: 'premium', description: 'Give nitro server boosters extra bot access? (default: TRUE)' }
     ] },//*/
-    { type: 1, name: 'welcome', description: 'Modify the welcome message options.', options: [// do-welcome, welcome-message, welcome-dm, welcome-channel, welcome-role-give, welcome-role
+    { type: 1, name: 'welcome', description: 'Modify the welcome message options.', options: [// do-welcome, welcome-message, welcome-dm, welcome-channel, welcome-role, welcome-clear-role, welcome-reset
       { type: 5, name: 'do-welcome', description: 'Send a message to welcome new members to the server?' },// welcomer on/off
       { type: 3, name: 'welcome-message', description: 'Message to send new members to the server?' },// welcome message
       { type: 5, name: 'welcome-dm', description: 'Send the welcome message to DM?  (default: TRUE)' },// welcome dm
