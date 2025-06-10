@@ -19,6 +19,7 @@ module.exports = {
         fr: 'langue',
         no: 'språk',
         pl: 'język',
+        'pt-PT': 'idioma',
         'sv-SE': 'språk' },
       description_localizations: {
         de: 'Sprache, um Informationen zu geben.',
@@ -26,6 +27,7 @@ module.exports = {
         fr: 'Langue dans laquelle donner des informations.',
         no: 'Språk å gi informasjon på.',
         pl: 'Język, w którym należy podawać informacje.',
+        'pt-PT': 'Língua para fornecer informações.',
         'sv-SE': 'Språk att ge information på.' },
       choices: [
         { name: 'Deutsch/German', value: 'de' },
@@ -34,6 +36,7 @@ module.exports = {
         { name: 'Français/French', value: 'fr' },
         { name: 'Norsk/Norwegian', value: 'no' },
         { name: 'Polski/Polish', value: 'pl' },
+        { name: 'Português/Portuguese (Portugal)', value: 'pt-PT' },
         { name: 'Svenska/Swedish', value: 'sv-SE' }
       ]
     }
@@ -59,6 +62,7 @@ module.exports = {
         fr: 'Français/French',
         no: 'Norsk/Norwegian',
         pl: 'Polski/Polish',
+        'pt-PT': 'Português/Portuguese (Portugal)',
         'sv-SE': 'Svenska/Swedish'
       };
       var getLocale = 'en';
@@ -68,6 +72,7 @@ module.exports = {
         case 'fr' :
         case 'no' :
         case 'pl' :
+        case 'pt-PT' :
         case 'sv-SE' : getLocale = interaction.locale; break;
         case 'en-US' :
         case 'en-GB' :
@@ -82,6 +87,7 @@ module.exports = {
         fr: 'n\'est pas un identifiant de message valide.',
         no: 'er ikke en gyldig meldings-ID.',
         pl: 'nie jest prawidłowym identyfikatorem wiadomości.',
+        'pt-PT': 'Não é um id de mensagem valido',
         'sv-SE': 'är inte ett giltigt meddelande-id.'
       };
       const i18FTFinfo = {
@@ -91,6 +97,7 @@ module.exports = {
         fr: 'Il existe deux manières pour Project-GC de détecter vos FTF. Vous pouvez utiliser un de ces tags dans vos logs : `{*FTF*}` `{FTF}` `[FTF]`. Vous pouvez également ajouter une liste de FTF sous Configuration (<https://project-gc.com/User/Settings/>) qui seront vérifiés une fois par jour. Comprenez bien que les FTFs n\'ont rien d\'officiels et que tout le monde ne tague pas ses FTFs. C\'est pourquoi cette liste ne sera pas fiable à 100 %.',
         no: 'Det er to måter Project-GC kan finne FTF-ene dine på. Enten merker du dine logger med en av disse: `{*FTF*}` `{FTF}` `[FTF]`. Eller så kan du legge til en FTF-bokmerkeliste under Innstillinger (<https://project-gc.com/User/Settings/>) som vil bli sjekket en gang om dagen. Husk at FTF ikke er noe offisielt, og at ikke alle markerer FTF-ene sine. Derfor vil ikke denne listen være 100 % nøyaktig.',
         pl: 'Project-GC wykrywa wpisy FTF na dwa różne sposoby. Możesz oznaczyć swoje wpisy jednym z tagów: `{*FTF*}` `{FTF}` `[FTF]`. Albo w Ustawieniach (<https://project-gc.com/User/Settings/>) możesz wybrać listę zakładek z wpisami FTF, która będzie sprawdzana raz dziennie. Proszę zrozumieć, że FTF nie jest niczym oficjalnym i nie każdy oznacza swoje FTFy. Dlatego ta lista nie jest w 100% dokładna.',
+        'pt-PT': 'Existem 2 maneiras do Project-GC detetar os teus FTFs (First To Finds). Ou colocas uma destas tags nos teus logs {*FTF*}, {FTF}, ou [FTF]. Alternativamente podes colocar uma lista de FTF nas configurações (https://project-gc.com/User/Settings/) que será verificada uma vez por dia. Por favor perceba que os FTF não são algo ofical e nem toda a gente taga os seus FTFs. Portanto esta lista não estará 100% correta.',
         'sv-SE': 'Det finns två sätt för Project-GC att upptäcka dina FTF:er. Antingen taggar du din logg med någon av dessa taggar: `{*FTF*}` `{FTF}` `[FTF]`. Eller så kan du lägga till en lista med dina FTF:er under Inställningar (<https://project-gc.com/User/Settings/>), den kommer att kontrolleras av sidan en gång per dag. Det är viktigt att inse att FTF inte är en officiell term och att det inte är alla som taggar sina FTF-loggar på vedertaget sätt. Därför kommer denna lista aldrig att vara 100% korrekt.'
       };
       const i18NoMessage = {
@@ -100,6 +107,7 @@ module.exports = {
         fr: 'Impossible de trouver un message spécifique auquel répondre.',
         no: 'Finner ikke spesifikk melding å svare på.',
         pl: 'Nie można znaleźć konkretnej wiadomości, na którą można odpowiedzieć.',
+        'pt-PT': 'Impossivel de encontrar a mensagem exata para responder',
         'sv-SE': 'Det gick inte att hitta ett specifikt meddelande att svara på.'
       };
 
