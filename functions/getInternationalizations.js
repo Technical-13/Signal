@@ -22,18 +22,20 @@ module.exports = async ( command ) => {
         const cmdPath = currLangFile[ command.group ][ command.name ];
         i18n.name[ langCode ] = cmdPath.name;
         i18n.description[ langCode ] = cmdPath.description;
-        const commonOptions = Object.entries( currLangFile.common.options );/* TRON */console.log( 'commonOptions: %o', commonOptions );/* TROFF */
+        const commonOptions = Object.entries( currLangFile.common.options );
         commonOptions.forEach( ( opt ) => {
-          i18n.options[ opt[ 0 ] ].name = opt[ 1 ].name;
-          i18n.options[ opt[ 0 ] ].description = opt[ 1 ].description;
-          //i18n.options[ opt[ 0 ] ].choices = '';//skip this for now.  Let's get name/desc working first.
+          const optBuilder = i18n.options[ opt[ 0 ] ];
+          optBuilder.name = opt[ 1 ].name;
+          optBuilder.description = opt[ 1 ].description;
+          //optBuilder.choices = '';//skip this for now.  Let's get name/desc working first.
         } );
         if ( cmdPath.options ) {
           const cmdOptions = Object.entries( cmdPath.options );/* TRON */console.log( 'cmdOptions: %o', cmdOptions );/* TROFF */
           cmdOptions.forEach( ( opt ) => {
-            i18n.options[ opt[ 0 ] ].name = opt[ 1 ].name;
-            i18n.options[ opt[ 0 ] ].description = opt[ 1 ].description;
-            //i18n.options[ opt[ 0 ] ].choices = '';//skip this for now.  Let's get name/desc working first.
+            const optBuilder = i18n.options[ opt[ 0 ] ];
+            optBuilder.name = opt[ 1 ].name;
+            optBuilder.description = opt[ 1 ].description;
+            //optBuilder.choices = '';//skip this for now.  Let's get name/desc working first.
           } );
         }
         const commonResponses = Object.entries( currLangFile.common.responses );/* TRON */console.log( 'commonResponses: %o', commonResponses );/* TROFF */
