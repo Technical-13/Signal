@@ -3,16 +3,9 @@
     "options" : {
       "discord-user": { "name": "discord-user", "description": "Discord member (requires nickname to be set if different from GC name)." },
       "gc-name": { "name": "gc-name", "description": "The case-sensitive Geocaching.com username." },
-      "language": { "name": "language", "description": "Language to give information in.", "choices": {
-        "de": { "name": "Deutsch/German" },
-        "en": { "name": "English (default)" },
-        "fi": { "name": "Suomi/Finnish" },
-        "fr": { "name": "Français/French" },
-        "no": { "name": "Norsk/Norwegian" },
-        "pl": { "name": "Polski/Polish" },
-        "pt-PT": { "name": "Português/Portuguese (Portugal)" },
-        "sv-SE": { "name": "Svenska/Swedish" }
-      } },
+      "language": { "name": "language", "description": "Language to give information in.", "choices": [
+        "Deutsch/German", "English (default)", "Suomi/Finnish", "Français/French", "Norsk/Norwegian", "Polski/Polish", "Português/Portuguese (Portugal)", "Svenska/Swedish"
+      ] },
       "message-id": { "name": "message-id", "description": "Paste message ID here" },
       "target": { "name": "target", "description": "Tag someone in response." },
 
@@ -27,6 +20,14 @@
     }
   },
   "admin": {
+    "ban": {
+      "name": "ban",
+      "description": "Ban a user.",
+    },
+    "config": {
+      "name": "config",
+      "description": "Configure bot for this server."
+    },
     "foo": {
       "name": "foo",
       "description": "Test command.",
@@ -39,6 +40,26 @@
         "mentionable": { "name": "mentionable", "description": "Mentionable:" },
         "attachment": { "name": "attachment", "description": "Attachment:" }
       }
+    },
+    "load": {
+      "name": "load",
+      "description": "Loads commands.",
+      "options": {
+        "command": { "name": "command", "description": "The name of the command to load." },
+        "type": {  "name": "type", "description": "The type of the command to reload.", "choices": [ "/slash commands (default)", "§prefix commands" ] }
+      }
+    },
+    "reload": {
+      "name": "reload",
+      "description": "Reloads commands.",
+      "options": {
+        "command": { "name": "command", "description": "The name of the command to reload." },
+        "type": {  "name": "type", "description": "The type of the command to reload.", "choices": [ "/slash commands (default)", "§prefix commands" ] }
+      }
+    },
+    "system": {
+      "name": "system",
+      "description": "Change bot configs.",
     }
   },
   "geocaching": {
@@ -55,15 +76,8 @@
       "description": "Cipher (de|en)coder.",
       "options": {
         "string": { "name": "string", "description": "string to (de|en)code." },
-        "code": { "name": "code", "description": "Decode or encode?", "choices": {
-          "decode": { "name": "Decode" }
-          "encode": { "name": "Encode" }
-        } },
-        "use-type": { "name": "use-type", "description": "Pick a type.", "choices": {
-          "alphabetic": { "name": "Letters A-Z" },
-          "alphanumeric": { "name": "Letters A-Z & Numbers 0-9" },
-          "numeric": { "name": "Numbers 0-9" }
-        } },
+        "code": { "name": "code", "description": "Decode or encode?", "choices": [ "Decode", "Encode" ] },
+        "use-type": { "name": "use-type", "description": "Pick a type.", "choices": [ "Letters A-Z", "Letters A-Z & Numbers 0-9", "Numbers 0-9" ] },
         "numeric": { "name": "numeric", "description": "Characters in the Latin alphabet. (default 5)" },
         "alphabetic": { "name": "alphabetic", "description": "Characters in the Latin alphabet. (default 13)" },
         "alphanumeric": { "name": "alphanumeric", "description": "Characters in the Latin alphabet. (default 18)" }
