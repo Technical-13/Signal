@@ -18,7 +18,7 @@ module.exports = async ( command ) => {
       const langCode = filename.replace( '.json', '' );
       if ( langCodes.indexOf( langCode ) !== -1 ) {
         console.log( 'Processing: %s', i18n.locales[ langCode ] );
-        const currLang = require( './i18n/' + filename );
+        const currLang = require( '../i18n/' + filename );
         console.log( 'currLang: %o', currLang );
       }
       else {
