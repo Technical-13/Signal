@@ -1,0 +1,111 @@
+{
+  "common": {
+    "options" : {
+      "discord-user": { "name": "discord-user", "description": "Discord member (requires nickname to be set if different from GC name)." },
+      "gc-name": { "name": "gc-name", "description": "The case-sensitive Geocaching.com username." },
+      "language": { "name": "language", "description": "Language to give information in.", "choices": {
+        "de": { "name": "Deutsch/German" },
+        "en": { "name": "English (default)" },
+        "fi": { "name": "Suomi/Finnish" },
+        "fr": { "name": "Français/French" },
+        "no": { "name": "Norsk/Norwegian" },
+        "pl": { "name": "Polski/Polish" },
+        "pt-PT": { "name": "Português/Portuguese (Portugal)" },
+        "sv-SE": { "name": "Svenska/Swedish" }
+      } },
+      "message-id": { "name": "message-id", "description": "Paste message ID here" },
+      "target": { "name": "target", "description": "Tag someone in response." },
+
+    },
+    "responses": {
+      "in": "in",
+      "invalidMsgId": "is not a valid message-id.",
+      "noMsg": "Unable to find specific message to respond to.",
+      "official": "Official Geocaching.com",
+      "requestedBy": "as requested by",
+      "soon": "Comming **SOON**:tm:"
+    }
+  },
+  "admin": {
+    "foo": {
+      "name": "foo",
+      "description": "Test command.",
+      "options": {
+        "console": { "name": "console", "description": "Enable debug mode:" },
+        "string": { "name": "string", "description": "String:" },
+        "integer": { "name": "integer", "description": "Integer:" },
+        "boolean": { "name": "boolean", "description": "Boolean:" },
+        "channel": { "name": "channel", "description": "Channel:" },
+        "mentionable": { "name": "mentionable", "description": "Mentionable:" },
+        "attachment": { "name": "attachment", "description": "Attachment:" }
+      }
+    }
+  },
+  "geocaching": {
+    "badgebar": {
+      "name": "badgebar",
+      "description": "Show Project-GC BadgeBar for user.",
+      "responses": {
+        "badgebarFor": "BadgeBar for",
+        "sharedFor": "I shared the `/badgebar` for"
+      }
+    },
+    "cipher": {
+      "name": "cipher",
+      "description": "Cipher (de|en)coder.",
+      "options": {
+        "string": { "name": "string", "description": "string to (de|en)code." },
+        "code": { "name": "code", "description": "Decode or encode?", "choices": {
+          "decode": { "name": "Decode" }
+          "encode": { "name": "Encode" }
+        } },
+        "use-type": { "name": "use-type", "description": "Pick a type.", "choices": {
+          "alphabetic": { "name": "Letters A-Z" },
+          "alphanumeric": { "name": "Letters A-Z & Numbers 0-9" },
+          "numeric": { "name": "Numbers 0-9" }
+        } },
+        "numeric": { "name": "numeric", "description": "Characters in the Latin alphabet. (default 5)" },
+        "alphabetic": { "name": "alphabetic", "description": "Characters in the Latin alphabet. (default 13)" },
+        "alphanumeric": { "name": "alphanumeric", "description": "Characters in the Latin alphabet. (default 18)" }
+      }
+    },
+    "ftf": {
+      "name": "ftf",
+      "description": "Tell someone how to get their FTF (First To Find) noticed on Project-GC.",
+      "responses": {
+        "ftfInfo": "There are two ways for Project-GC to detect your FTFs (**F**irst **T**o **F**inds). Either you tag your logs with one of these tags: `{*FTF*}`, `{FTF}`, or `[FTF]`. Alternatively you can add an FTF bookmark list under Settings (<https://project-gc.com/User/Settings/>) that will be checked once per day. Please understand that FTF isn't anything offical and not everyone tags their FTFs. Therefore this list won't be 100% accurate."
+      }
+    },
+    "logo": {
+      "name": "logo",
+      "description": "Give someone information about the logo kits for Geocaching.",
+      "responses": {
+        "converter": "EPS to SVG Converter",
+        "kitInfo": "The kits have `*.png` & `*.eps` file versions.",
+        "logoKits": "Logo Kits",
+        "lookingFor": "you seem to be looking for the",
+        "svg": "If you're looking for an `*.svg` version, <@&385501075001573389> recommends using"
+      }
+    },
+    "profilestats": {
+      "name": "profilestats",
+      "description": "Show link to Project-GC ProfileStats for user.",
+      "responses": {
+        "profilestatsFor": "ProfileStats link for:",
+        "sharedFor": "I shared the `/profilestats` for"
+      }
+    },
+    "statbar": {
+      "name": "statbar",
+      "description": "Show Project-GC StatBar for user.",
+      "options": {
+        "name": "labcaches",
+        "description": "Should I include labcaches? (default: true)",
+      },
+      "responses": {
+        "sharedFor": "I shared the `/statbar` for",
+        "statbarFor": "StatBar for:"
+      }
+    }
+  }
+}
