@@ -1,0 +1,24 @@
+{
+  "common": {
+    "options" : {
+      "language": { "name": "língua", "description": "Língua para dar informações.", "choices": [
+        "Deutsch/German", "English (default)", "Suomi/Finnish", "Français/French", "Norsk/Norwegian", "Polski/Polish", "Português/Portuguese (Portugal)", "Svenska/Swedish"
+      ] },
+      "message-id": { "name": "id-da-mensagem", "description": "Cole o ID da mensagem aqui." },
+      "target": { "name": "objetivo", "description": "Assinale alguém como resposta." }
+    },
+    "responses": {
+      "invalidMsgId": "Não é um id de mensagem valido",
+      "noMsg": "Impossivel de encontrar a mensagem exata para responder"
+    }
+  },
+  "geocaching": {
+    "ftf": {
+      "name": "ftf",
+      "description": "Diga a alguém como fazer com que o seu FTF (First To Find) seja notado no Project-GC.",
+      "responses": {
+        "ftfInfo": "Existem 2 maneiras do Project-GC detetar os teus FTFs (First To Finds). Ou colocas uma destas tags nos teus logs {*FTF*}, {FTF}, ou [FTF]. Alternativamente podes colocar uma lista de FTF nas configurações (<https://project-gc.com/User/Settings/>) que será verificada uma vez por dia. Por favor perceba que os FTF não são algo ofical e nem toda a gente taga os seus FTFs. Portanto esta lista não estará 100% correta."
+      }
+    }
+  }
+}
