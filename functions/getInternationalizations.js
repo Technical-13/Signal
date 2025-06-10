@@ -11,7 +11,7 @@ module.exports = async ( command ) => {
     const i18n = { locales: {} };
     const langCodes = Object.values( Locale );
     const langNames = Object.keys( Locale );
-    langCodes.forEach( ( v, k ) => { i18n.locales[ v ] = langNames[ k ]; }
+    langCodes.forEach( ( v, k ) => { i18n.locales[ v ] = langNames[ k ]; } );
 
     const files = fs.readdirSync( './i18n/' ).filter( file => file.endsWith( '.json' ) );
     console.log( 'I see: %o', files );
