@@ -6,13 +6,15 @@ const strScript = chalk.hex( '#FFA500' ).bold( './functions/getInternationalizat
 
 module.exports = async ( command ) => {
   try {
+    if ( !command ) { throw new Error( 'No command to get localizations for.' ); }
+
+    const i18n = { locales: {} };
     const langCodes = Object.values( Locale );
     const langNames = Object.keys( Locale );
-    const i18n = { codes: langCodes, names: langNames };
-    fs.readdirSync( './i18n/' ).forEach( async dir => {
-      const files = fs.readdirSync( `./i18n/${dir}/` ).filter( file => file.endsWith( '.json' ) );
-      console.log( 'I see: %o', files );
-    } );
+    langCodes.forEach( ( v, k ) { i18n.locales[ v ] = langNames[ k ]; }
+
+    const files = fs.readdirSync( './i18n/' ).filter( file => file.endsWith( '.json' ) );
+    console.log( 'I see: %o', files );
 
     return i18n;
   }
