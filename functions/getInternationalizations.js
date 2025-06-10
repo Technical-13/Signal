@@ -18,8 +18,30 @@ module.exports = async ( command ) => {
       const langCode = filename.replace( '.json', '' );
       if ( langCodes.indexOf( langCode ) !== -1 ) {
         console.log( 'Processing: %s', i18n.locales[ langCode ] );
-        const currLang = require( '../i18n/' + filename );
-        console.log( 'currLang: %o', currLang );
+        const currLangFile = require( '../i18n/' + filename );
+        const cmdPath = currLangFile[ command.group ][ command.name ];
+        i18n.name[ langCode ] = cmdPath.name;
+        i18n.description[ langCode ] = cmdPath.description;
+        const commonOptions = Object.entries( currLangFile.common.options );
+        commonOptions.forEach( ( opt ) => {
+          i18n.options[ opt[ 0 ] ].name = opt[ 1 ].name;
+          i18n.options[ opt[ 0 ] ].description = opt[ 1 ].description;
+          //i18n.options[ opt[ 0 ] ].choices = '';//skip this for now.  Let's get name/desc working first.
+        } );
+        if ( cmdPath.options ) {
+          const cmdOptions = Object.entries( cmdPath.options );
+          cmdOptions.forEach( ( opt ) => {
+            i18n.options[ opt[ 0 ] ].name = opt[ 1 ].name;
+            i18n.options[ opt[ 0 ] ].description = opt[ 1 ].description;
+            //i18n.options[ opt[ 0 ] ].choices = '';//skip this for now.  Let's get name/desc working first.
+          } );
+        }
+        const commonResponses = Object.entries( currLangFile.common.responses );
+        commonResponses.forEach( ( res ) => { i18n.responses[ res[ 0 ] ] = res[ 1 ]; } );
+        if ( cmdPath.responses ) {
+          const cmdResponses = Object.entries( cmdPath.responses );
+          cmdResponses.forEach( ( res ) => { i18n.responses[ res[ 0 ] ] = res[ 1 ]; } );
+        }
       }
       else {
         console.warn( '%s is a language not currently supported by Discord.', i18n.locales[ langCode ] );
