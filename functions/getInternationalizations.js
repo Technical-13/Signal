@@ -9,8 +9,9 @@ module.exports = async ( command ) => {
     const langCodes = Object.values( Locale );
     const langNames = Object.keys( Locale );
     const i18n = { codes: langCodes, names: langNames };
-    fs.readdirSync( './i18n' ).then( dirs => {
-      console.log( 'I see: %o', dirs );
+    fs.readdirSync( './i18n/' ).forEach( async dir => {
+      const files = fs.readdirSync( `./i18n/${dir}/` ).filter( file => file.endsWith( '.json' ) );
+      console.log( 'I see: %o', files );
     } );
 
     return i18n;
