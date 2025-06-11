@@ -12,8 +12,9 @@ module.exports = {
   contexts: [ InteractionContextType.Guild, InteractionContextType.BotDM ],
   cooldown: 1000,
   run: async ( client, interaction ) => {
+    const command = client.slashCommands.get( 'ping' );
     try {
-      const responses = i18n.responses;
+      const responses = i18n( command, 'en-US' ).responses;
       interaction.reply( { content: await parse( responses.pong ), ephemeral: interaction.inGuild() } );
       // interaction.reply( { content: '🏓 Pong! Latency: **' + Math.round( client.ws.ping ).toString() + 'ms**', ephemeral: interaction.inGuild() } );
     }
