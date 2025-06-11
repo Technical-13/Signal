@@ -56,6 +56,7 @@ module.exports = {
     const command = client.slashCommands.get( 'statbar' );
     try {
       const responses = i18n( command, 'en-US' ).responses;
+      responses.requestBy = await parse( responses.requestBy, { author: author } );
       await interaction.deferReply( { ephemeral: true } );
       const { channel, guild, options, user: author } = interaction;
       const members = guild.members.cache;
@@ -82,14 +83,14 @@ module.exports = {
 
       channel.send( { content:
         responses.statbarFor + ( !objInputUser ? ( !objInputString ? ( !isAuthor ? '`' + strUseName + '`' : '<@' + author.id + '>' ) : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
-        ( isAuthor ? '' : ' ' + await parse( responses.requestBy, { author: author } ) ) +
+        ( isAuthor ? '' : ' ' + responses.requestBy ) +
         '\nhttps://cdn2.project-gc.com/statbar.php?quote=https://discord.me/Geocaching%20-%20' + intYear + '-' + intMonth + '-' + intDay + strLabcaches + '&user=' + encName
       } )
       .then( sentMsg => {
         if ( doLogs && !isAuthor ) {
           chanDefault.send( { content:
             responses.sharedFor + ( !objInputUser ? ( !objInputString ? '`' + strUseName + '`' : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
-            responses.in + ' <#' + channel.id + '> ' + await parse( responses.requestBy, { author: author } ) + strClosing } )
+            responses.in + ' <#' + channel.id + '> ' + responses.requestBy + ' ' + strClosing } )
           .then( sentLog => { interaction.deleteReply(); } )
           .catch( async errLog => { await errHandler( errLog, { chanType: 'default', command: 'statbar', channel: channel, type: 'logLogs' } ); } );
         }
