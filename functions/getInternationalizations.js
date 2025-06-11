@@ -33,7 +33,7 @@ module.exports = async ( command ) => {
               var choiceIndex = optBuilder.choices.findIndex( choices => choices[ langCode ] === choice );/* TRON */console.log( 'choiceIndex: %o', choiceIndex );/* TROFF */
               if ( choiceIndex === -1 ) {
                 optBuilder.choices.push( {} );/* TRON */console.log( 'optBuilder.choices: %o', optBuilder.choices );/* TROFF */
-                choiceIndex = optBuilder.choices.length + 1;/* TRON */console.log( 'choiceIndex (2): %o', choiceIndex );/* TROFF */
+                choiceIndex = optBuilder.choices.length - 1;/* TRON */console.log( 'choiceIndex (2): %o', choiceIndex );/* TROFF */
               }
               optBuilder.choices[ choiceIndex ][ langCode ] = choice;/* TRON */console.log( 'optBuilder.choices (end iteration): %o', optBuilder.choices );/* TROFF */
             } );/* TRON */console.log( 'optBuilder.choices (finally): %o', opt[ 1 ].choices );/* TROFF */
