@@ -53,10 +53,10 @@ module.exports = async ( command, getLocales = false ) => {
         i18n.name[ langCode ] = cmdPath.name;
         i18n.description[ langCode ] = cmdPath.description;
         const commonOptions = Object.entries( currLangFile.common.options );
-        await getOptions( langCode, commonOptions ) );
+        await getOptions( langCode, commonOptions );
         if ( cmdPath.options ) {
           const cmdOptions = Object.entries( cmdPath.options );
-          await getOptions( langCode, cmdOptions ) );
+          await getOptions( langCode, cmdOptions );
         }
         const commonResponses = Object.entries( currLangFile.common.responses );
         commonResponses.forEach( ( res ) => { i18n.responses[ res[ 0 ] ] = res[ 1 ]; } );
