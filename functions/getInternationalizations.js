@@ -28,15 +28,15 @@ module.exports = async ( command ) => {
           const optBuilder = i18n.options[ opt[ 0 ] ];
           optBuilder.name[ langCode ] = opt[ 1 ].name;
           optBuilder.description[ langCode ] = opt[ 1 ].description;
-          if ( opt[ 1 ].choices ) {
-            opt[ 1 ].choices.forEach( ( choice ) => {
-              var choiceIndex = optBuilder.choices.indexOf( choice );
+          if ( opt[ 1 ].choices ) {/* TRON */console.log( 'opt[ 1 ].choices: %o', opt[ 1 ].choices );/* TROFF */
+            opt[ 1 ].choices.forEach( ( choice ) => {/* TRON */console.log( 'choice: %o', choice );/* TROFF */
+              var choiceIndex = optBuilder.choices.indexOf( choice );/* TRON */console.log( 'choiceIndex: %o', choiceIndex );/* TROFF */
               if ( choiceIndex === -1 ) {
-                optBuilder.choices.push( {} );
-                choiceIndex = optBuilder.choices.indexOf( choice );
+                optBuilder.choices.push( {} );/* TRON */console.log( 'optBuilder.choices: %o', optBuilder.choices );/* TROFF */
+                choiceIndex = optBuilder.choices.indexOf( choice );/* TRON */console.log( 'choiceIndex (2): %o', choiceIndex );/* TROFF */
               }
-              optBuilder.choices[ choiceIndex ][ langCode ] = choice;
-            } );
+              optBuilder.choices[ choiceIndex ][ langCode ] = choice;/* TRON */console.log( 'optBuilder.choices (end iteration): %o', optBuilder.choices );/* TROFF */
+            } );/* TRON */console.log( 'optBuilder.choices (finally): %o', opt[ 1 ].choices );/* TROFF */
           }
         } );
         if ( cmdPath.options ) {
