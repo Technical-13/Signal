@@ -11,7 +11,7 @@ module.exports = {
   cooldown: 1000,
   run: async ( client, interaction ) => {
     try {
-      interaction.reply( { content: '🏓 Pong! Latency: **' + Math.round( client.ws.ping) .toString() + 'ms**', ephemeral: interaction.inGuild() } );
+      interaction.reply( { content: '🏓 Pong! Latency: **' + Math.round( client.ws.ping ).toString() + 'ms**', ephemeral: interaction.inGuild() } );
     }
     catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
   }
