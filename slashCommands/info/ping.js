@@ -7,8 +7,8 @@ const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/info/ping.js' );
 module.exports = {
   name: 'ping',
   group: 'info',
-//  description: 'Check bot\'s ping.',// No description for ApplicationCommandType.User commands
-  type: ApplicationCommandType.User,
+  description: 'Check bot\'s ping.',// No description for ApplicationCommandType.User commands
+  type: ApplicationCommandType.ChatInput,
   contexts: [ InteractionContextType.Guild, InteractionContextType.BotDM ],
   cooldown: 1000,
   run: async ( client, interaction ) => {
