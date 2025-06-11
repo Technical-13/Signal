@@ -3,6 +3,7 @@ const client = require( '..' );
 const { Locale } = require( 'discord-api-types/v10' );
 const chalk = require( 'chalk' );
 const strScript = chalk.hex( '#FFA500' ).bold( './functions/getInternationalizations.js' );
+const enNames = new Intl.DisplayNames( [ 'en' ], { type: 'language' } );
 
 module.exports = async ( command, getLocales = false ) => {
   try {
@@ -10,7 +11,7 @@ module.exports = async ( command, getLocales = false ) => {
     if ( getLocales ) {
       const langNames = Object.keys( Locale );
       locales = {};
-      langCodes.forEach( ( v, k ) => { locales[ v ] = langNames[ k ]; } );
+      langCodes.forEach( ( v, k ) => { locales[ v ] = enNames.of( locales[ v ] ); } );
       if ( !command ) { return locales; }
     }
     if ( !command ) { throw new Error( 'No command to get localizations for.' ); }
@@ -18,10 +19,11 @@ module.exports = async ( command, getLocales = false ) => {
     const i18n = { name: {}, description: {}, options: {}, responses: {} };
     if ( getLocales ) { i18n.locales = locales }
     const files = fs.readdirSync( './i18n/' ).filter( file => file.endsWith( '.json' ) );
-    files.forEach( ( filename ) => {
-      const langCode = filename.replace( '.json', '' );
+    const langs = files.map( file => file.replace( '.json', '' ) );
+    langs.forEach( ( lang ) => {
+      const languageNames = new Intl.DisplayNames( [ lang ], { type: 'language' } );
       if ( langCodes.indexOf( langCode ) !== -1 ) {
-        const currLangFile = require( '../i18n/' + filename );
+        const currLangFile = require( '../i18n/' + lang + '.json' );
         const cmdPath = currLangFile[ command.group ][ command.name ];
         i18n.name[ langCode ] = cmdPath.name;
         i18n.description[ langCode ] = cmdPath.description;
