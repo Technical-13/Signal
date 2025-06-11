@@ -53,43 +53,10 @@ module.exports = async ( command, getLocales = false ) => {
         i18n.name[ langCode ] = cmdPath.name;
         i18n.description[ langCode ] = cmdPath.description;
         const commonOptions = Object.entries( currLangFile.common.options );
-        /* TRON */console.log( 'Test recursive function:\n\tcommonOptions: %o', await getOptions( langCode, commonOptions ) );/* TROFF */
-        commonOptions.forEach( ( opt ) => {
-          i18n.options[ opt[ 0 ] ] = ( i18n.options[ opt[ 0 ] ] ?? { name: {}, description: {} } );
-          const optBuilder = i18n.options[ opt[ 0 ] ];
-          optBuilder.name[ langCode ] = opt[ 1 ].name;
-          optBuilder.description[ langCode ] = opt[ 1 ].description;
-          if ( opt[ 1 ].choices ) {
-            if ( !optBuilder.choices ) { optBuilder.choices = []; }
-            opt[ 1 ].choices.forEach( ( choice ) => {
-              var choiceIndex = optBuilder.choices.findIndex( choices => choices[ langCode ] === choice );
-              if ( choiceIndex === -1 ) {
-                optBuilder.choices.push( {} );
-                choiceIndex = optBuilder.choices.length - 1;
-              }
-              optBuilder.choices[ choiceIndex ][ langCode ] = choice;
-            } );
-          }
-        } );
+        await getOptions( langCode, commonOptions ) );
         if ( cmdPath.options ) {
           const cmdOptions = Object.entries( cmdPath.options );
-          cmdOptions.forEach( ( opt ) => {
-            i18n.options[ opt[ 0 ] ] = ( i18n.options[ opt[ 0 ] ] ?? { name: {}, description: {} } );
-            const optBuilder = i18n.options[ opt[ 0 ] ];
-            optBuilder.name[ langCode ] = opt[ 1 ].name;
-            optBuilder.description[ langCode ] = opt[ 1 ].description;
-            if ( opt[ 1 ].choices ) {
-              if ( !optBuilder.choices ) { optBuilder.choices = []; }
-              opt[ 1 ].choices.forEach( ( choice ) => {
-                var choiceIndex = optBuilder.choices.findIndex( choices => choices[ langCode ] === choice );
-                if ( choiceIndex === -1 ) {
-                  optBuilder.choices.push( {} );
-                  choiceIndex = optBuilder.choices.length - 1;
-                }
-                optBuilder.choices[ choiceIndex ][ langCode ] = choice;
-              } );
-            }
-          } );
+          await getOptions( langCode, cmdOptions ) );
         }
         const commonResponses = Object.entries( currLangFile.common.responses );
         commonResponses.forEach( ( res ) => { i18n.responses[ res[ 0 ] ] = res[ 1 ]; } );
