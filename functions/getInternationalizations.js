@@ -4,15 +4,19 @@ const { Locale } = require( 'discord-api-types/v10' );
 const chalk = require( 'chalk' );
 const strScript = chalk.hex( '#FFA500' ).bold( './functions/getInternationalizations.js' );
 
-module.exports = async ( command ) => {
+module.exports = async ( command, getLocales = false ) => {
   try {
+    const langCodes = Object.values( Locale );
+    if ( getLocales ) {
+      const langNames = Object.keys( Locale );
+      locales = {};
+      langCodes.forEach( ( v, k ) => { locales[ v ] = langNames[ k ]; } );
+      if ( !command ) { return locales; }
+    }
     if ( !command ) { throw new Error( 'No command to get localizations for.' ); }
 
-    const i18n = { locales: {}, name: {}, description: {}, options: {}, responses: {} };
-    const langCodes = Object.values( Locale );
-    const langNames = Object.keys( Locale );
-    langCodes.forEach( ( v, k ) => { i18n.locales[ v ] = langNames[ k ]; } );
-
+    const i18n = { name: {}, description: {}, options: {}, responses: {} };
+    if ( getLocales ) { i18n.locales = locales }
     const files = fs.readdirSync( './i18n/' ).filter( file => file.endsWith( '.json' ) );
     files.forEach( ( filename ) => {
       const langCode = filename.replace( '.json', '' );
