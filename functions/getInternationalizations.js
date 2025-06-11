@@ -56,9 +56,9 @@ module.exports = async ( command, getLocales = false ) => {
         i18n.description[ langCode ] = cmdPath.description;
         const commonOptions = Object.entries( currLangFile.common.options );
         if ( commonOptions ) { i18n.options = await getOptions( commonOptions, langCode ); }
-        // const cmdOptions = Object.entries( cmdPath.options );
-        // if ( cmdOptions ) { i18n.options = await getOptions( commonOptions, langCode, ( i18n.options ?? {} ) ); }
-        if ( cmdPath.options ) {
+        const cmdOptions = Object.entries( cmdPath.options );
+        if ( cmdOptions ) { i18n.options = await getOptions( commonOptions, langCode, ( i18n.options ?? {} ) ); }
+        /*if ( cmdPath.options ) {
           const cmdOptions = Object.entries( cmdPath.options );
           cmdOptions.forEach( ( opt ) => {
             i18n.options[ opt[ 0 ] ] = ( i18n.options[ opt[ 0 ] ] ?? { name: {}, description: {} } );
@@ -79,9 +79,15 @@ module.exports = async ( command, getLocales = false ) => {
           } );
         }//if ( cmdPath.options ) {*/
         const commonResponses = Object.entries( currLangFile.common.responses );
-        if ( commonResponses ) { commonResponses.forEach( ( res ) => { i18n.responses[ res[ 0 ] ] = res[ 1 ]; } ); }
+        if ( commonResponses ) {
+          if ( !i18n.responses ) { i18n.responses = {}; }
+          commonResponses.forEach( ( res ) => { i18n.responses[ res[ 0 ] ] = res[ 1 ]; } );
+        }
         const cmdResponses = Object.entries( cmdPath.responses );
-        if ( cmdResponses ) { cmdResponses.forEach( ( res ) => { i18n.responses[ res[ 0 ] ] = res[ 1 ]; } ); }
+        if ( cmdResponses ) {
+          if ( !i18n.responses ) { i18n.responses = {}; }
+          cmdResponses.forEach( ( res ) => { i18n.responses[ res[ 0 ] ] = res[ 1 ]; } );
+        }
       }
       else {
         console.warn( chalk.bold( `${langCode} is a language code not currently supported by Discord.` ) );
