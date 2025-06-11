@@ -43,11 +43,11 @@ module.exports = ( command, getLocales = false ) => {
     }
     if ( !command ) { throw new Error( 'No command to get localizations for.' ); }
 
-    const i18n = { name: {}, description: {} };
+    const i18n = { langs: [], name: {}, description: {} };
     if ( getLocales ) { i18n.locales = locales }
     const files = fs.readdirSync( './i18n/' ).filter( file => file.endsWith( '.json' ) );
-    const langs = files.map( file => file.replace( '.json', '' ) );
-    langs.forEach( ( langCode ) => {
+    i18n.langs = files.map( file => file.replace( '.json', '' ) );
+    i18n.langs.forEach( ( langCode ) => {
       const languageNames = new Intl.DisplayNames( [ langCode ], { type: 'language' } );
       if ( langCodes.indexOf( langCode ) !== -1 ) {
         const currLangFile = require( '../i18n/' + langCode + '.json' );
@@ -56,19 +56,19 @@ module.exports = ( command, getLocales = false ) => {
         i18n.description[ langCode ] = cmdPath.description;
         if ( currLangFile.common.options ) { i18n.options = getOptions( currLangFile.common.options, langCode ); }
         if ( cmdPath.options ) { i18n.options = getOptions( cmdPath.options, langCode, ( i18n.options ?? {} ) ); }
-        const commonResponses = ( currLangFile.common.responses ? Object.entries( currLangFile.common.responses ) : null );
-        if ( commonResponses ) {
-          if ( !i18n.responses ) { i18n.responses = {}; }
-          commonResponses.forEach( ( res ) => { i18n.responses[ res[ 0 ] ] = res[ 1 ]; } );
-        }
-        const cmdResponses = ( cmdPath.responses ? Object.entries( cmdPath.responses ) : null );
-        if ( cmdResponses ) {
-          if ( !i18n.responses ) { i18n.responses = {}; }
-          cmdResponses.forEach( ( res ) => { i18n.responses[ res[ 0 ] ] = res[ 1 ]; } );
-        }
       }
       else {
         console.warn( chalk.bold( `${langCode} is a language code not currently supported by Discord.` ) );
+      }
+      const commonResponses = ( currLangFile.common.responses ? Object.entries( currLangFile.common.responses ) : null );
+      if ( commonResponses ) {
+        if ( !i18n.responses ) { i18n.responses = {}; }
+        commonResponses.forEach( ( res ) => { i18n.responses[ res[ 0 ] ] = res[ 1 ]; } );
+      }
+      const cmdResponses = ( cmdPath.responses ? Object.entries( cmdPath.responses ) : null );
+      if ( cmdResponses ) {
+        if ( !i18n.responses ) { i18n.responses = {}; }
+        cmdResponses.forEach( ( res ) => { i18n.responses[ res[ 0 ] ] = res[ 1 ]; } );
       }
     } );
 
