@@ -30,10 +30,10 @@ module.exports = async ( command ) => {
           optBuilder.description[ langCode ] = opt[ 1 ].description;
           if ( opt[ 1 ].choices ) {/* TRON */console.log( 'opt[ 1 ].choices: %o', opt[ 1 ].choices );/* TROFF */
             opt[ 1 ].choices.forEach( ( choice ) => {/* TRON */console.log( 'choice: %o', choice );/* TROFF */
-              var choiceIndex = optBuilder.choices.indexOf( choice );/* TRON */console.log( 'choiceIndex: %o', choiceIndex );/* TROFF */
+              var choiceIndex = optBuilder.choices.findIndex( choices => choices[ langCode ] === choice );/* TRON */console.log( 'choiceIndex: %o', choiceIndex );/* TROFF */
               if ( choiceIndex === -1 ) {
                 optBuilder.choices.push( {} );/* TRON */console.log( 'optBuilder.choices: %o', optBuilder.choices );/* TROFF */
-                choiceIndex = optBuilder.choices.indexOf( choice );/* TRON */console.log( 'choiceIndex (2): %o', choiceIndex );/* TROFF */
+                choiceIndex++;/* TRON */console.log( 'choiceIndex (2): %o', choiceIndex );/* TROFF */
               }
               optBuilder.choices[ choiceIndex ][ langCode ] = choice;/* TRON */console.log( 'optBuilder.choices (end iteration): %o', optBuilder.choices );/* TROFF */
             } );/* TRON */console.log( 'optBuilder.choices (finally): %o', opt[ 1 ].choices );/* TROFF */
