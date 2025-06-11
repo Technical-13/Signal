@@ -55,13 +55,13 @@ module.exports = {
   run: async ( client, interaction ) => {
     const command = client.slashCommands.get( 'statbar' );
     try {
-      const responses = i18n( command, 'en-US' ).responses;
-      responses.requestBy = await parse( responses.requestBy, { author: author } );
       await interaction.deferReply( { ephemeral: true } );
       const { channel, guild, options, user: author } = interaction;
       const members = guild.members.cache;
       const { content } = await userPerms( author, guild );
       if ( content ) { return interaction.editReply( { content: content } ); }
+      const responses = i18n( command, 'en-US' ).responses;
+      responses.requestBy = await parse( responses.requestBy, { author: author } );
 
       const today = ( new Date() );
       const intYear = today.getFullYear();
