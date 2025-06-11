@@ -5,7 +5,7 @@ const chalk = require( 'chalk' );
 const strScript = chalk.hex( '#FFA500' ).bold( './functions/getInternationalizations.js' );
 const enNames = new Intl.DisplayNames( [ 'en' ], { type: 'language' } );
 const getOptions = ( options, objOpt = {} ) => {
-  options.forEach( ( opt ) => {
+  options.forEach( async ( opt ) => {
     objOpt[ opt[ 0 ] ] = ( objOpt[ opt[ 0 ] ] ?? { name: {}, description: {} } );
     const optBuilder = objOpt[ opt[ 0 ] ];
     const data = opt[ 1 ];
