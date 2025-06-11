@@ -4,7 +4,9 @@ const { Locale } = require( 'discord-api-types/v10' );
 const chalk = require( 'chalk' );
 const strScript = chalk.hex( '#FFA500' ).bold( './functions/getInternationalizations.js' );
 const enNames = new Intl.DisplayNames( [ 'en' ], { type: 'language' } );
-const getOptions = ( langCode, options, objOpt = {} ) => {
+const getOptions = ( options, langCode = 'en-US', objOpt = {} ) => {
+  if ( !options ) { return { error: 'No options to get data for in getOptions().' }; }
+  if ( !langCode ) { return { error: 'No langCode to get data for in getOptions().' }; }
   options.forEach( async ( opt ) => {
     objOpt[ opt[ 0 ] ] = ( objOpt[ opt[ 0 ] ] ?? { name: {}, description: {} } );
     const optBuilder = objOpt[ opt[ 0 ] ];
@@ -53,9 +55,9 @@ module.exports = async ( command, getLocales = false ) => {
         i18n.name[ langCode ] = cmdPath.name;
         i18n.description[ langCode ] = cmdPath.description;
         const commonOptions = Object.entries( currLangFile.common.options );
-        if ( commonOptions ) { i18n.options = await getOptions( langCode, commonOptions ); }
+        if ( commonOptions ) { i18n.options = await getOptions( commonOptions, langCode ); }
         // const cmdOptions = Object.entries( cmdPath.options );
-        // if ( cmdOptions ) { i18n.options = await getOptions( langCode, commonOptions, ( i18n.options ?? {} ) ); }
+        // if ( cmdOptions ) { i18n.options = await getOptions( commonOptions, langCode, ( i18n.options ?? {} ) ); }
         if ( cmdPath.options ) {
           const cmdOptions = Object.entries( cmdPath.options );
           cmdOptions.forEach( ( opt ) => {
