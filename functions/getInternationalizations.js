@@ -41,7 +41,7 @@ module.exports = async ( command, getLocales = false ) => {
     }
     if ( !command ) { throw new Error( 'No command to get localizations for.' ); }
 
-    const i18n = { name: {}, description: {}, options: {}, responses: {} };
+    const i18n = { name: {}, description: {} };
     if ( getLocales ) { i18n.locales = locales }
     const files = fs.readdirSync( './i18n/' ).filter( file => file.endsWith( '.json' ) );
     const langs = files.map( file => file.replace( '.json', '' ) );
@@ -53,17 +53,33 @@ module.exports = async ( command, getLocales = false ) => {
         i18n.name[ langCode ] = cmdPath.name;
         i18n.description[ langCode ] = cmdPath.description;
         const commonOptions = Object.entries( currLangFile.common.options );
-        await getOptions( langCode, commonOptions );
+        if ( commonOptions ) { i18n.options = await getOptions( langCode, commonOptions ); }
+        // const cmdOptions = Object.entries( cmdPath.options );
+        // if ( cmdOptions ) { i18n.options = await getOptions( langCode, commonOptions, ( i18n.options ?? {} ) ); }
         if ( cmdPath.options ) {
           const cmdOptions = Object.entries( cmdPath.options );
-          await getOptions( langCode, cmdOptions );
-        }
+          cmdOptions.forEach( ( opt ) => {
+            i18n.options[ opt[ 0 ] ] = ( i18n.options[ opt[ 0 ] ] ?? { name: {}, description: {} } );
+            const optBuilder = i18n.options[ opt[ 0 ] ];
+            optBuilder.name[ langCode ] = opt[ 1 ].name;
+            optBuilder.description[ langCode ] = opt[ 1 ].description;
+            if ( opt[ 1 ].choices ) {
+              if ( !optBuilder.choices ) { optBuilder.choices = []; }
+              opt[ 1 ].choices.forEach( ( choice ) => {
+                var choiceIndex = optBuilder.choices.findIndex( choices => choices[ langCode ] === choice );
+                if ( choiceIndex === -1 ) {
+                  optBuilder.choices.push( {} );
+                  choiceIndex = optBuilder.choices.length - 1;
+                }
+                optBuilder.choices[ choiceIndex ][ langCode ] = choice;
+              } );
+            }
+          } );
+        }//if ( cmdPath.options ) {*/
         const commonResponses = Object.entries( currLangFile.common.responses );
-        commonResponses.forEach( ( res ) => { i18n.responses[ res[ 0 ] ] = res[ 1 ]; } );
-        if ( cmdPath.responses ) {
-          const cmdResponses = Object.entries( cmdPath.responses );
-          cmdResponses.forEach( ( res ) => { i18n.responses[ res[ 0 ] ] = res[ 1 ]; } );
-        }
+        if ( commonResponses ) { commonResponses.forEach( ( res ) => { i18n.responses[ res[ 0 ] ] = res[ 1 ]; } ); }
+        const cmdResponses = Object.entries( cmdPath.responses );
+        if ( cmdResponses ) { cmdResponses.forEach( ( res ) => { i18n.responses[ res[ 0 ] ] = res[ 1 ]; } ); }
       }
       else {
         console.warn( chalk.bold( `${langCode} is a language code not currently supported by Discord.` ) );
