@@ -9,7 +9,8 @@ module.exports = {
   group: 'info',
   description: 'Check bot\'s ping.',// No description for ApplicationCommandType.User commands
   type: ApplicationCommandType.ChatInput,
-  contexts: [ InteractionContextType.Guild, InteractionContextType.BotDM ],
+  contexts: [ InteractionContextType.Guild ],
+  devOnly: true,
   cooldown: 1000,
   run: async ( client, interaction ) => {
     const command = client.slashCommands.get( 'ping' );
