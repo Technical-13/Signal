@@ -15,7 +15,7 @@ const getOptions = ( options, langCode = 'en-US', objOpt = {} ) => {
     optBuilder.description[ langCode ] = data.description;
     if ( data.options ) {
       if ( !optBuilder.options ) { optBuilder.options = {}; }
-      optBuilder.options = await getOptions( langCode, data.options );
+      optBuilder.options = await getOptions( data.options, langCode );
     }
     if ( data.choices ) {
       if ( !optBuilder.choices ) { optBuilder.choices = []; }
