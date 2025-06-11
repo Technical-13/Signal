@@ -46,7 +46,7 @@ module.exports = ( command, getLocales = false ) => {
     const i18n = { langs: [], name: {}, description: {} };
     if ( getLocales ) { i18n.locales = locales }
     const files = fs.readdirSync( './i18n/' ).filter( file => file.endsWith( '.json' ) );
-    i18n.langs = files.map( file => file.replace( '.json', '' ) );
+    i18n.langs = files.map( file => file.replace( '.json', '' ) );/* TRON */console.log( 'i18n.langs: %o', i18n.langs );/* TROFF */
     i18n.langs.forEach( ( langCode ) => {
       const langName = new Intl.DisplayNames( [ langCode ], { type: 'language' } );
       const currLangFile = require( '../i18n/' + langCode + '.json' );
