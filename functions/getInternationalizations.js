@@ -7,7 +7,7 @@ const enNames = new Intl.DisplayNames( [ 'en' ], { type: 'language' } );
 const getOptions = ( options, langCode = 'en-US', objOpt = {} ) => {
   if ( !options ) { return { error: 'No options to get data for in getOptions().' }; }
   if ( !langCode ) { return { error: 'No langCode to get data for in getOptions().' }; }
-  if ( Object.prototype.toString.call( options ) === '[object Object]' ) { options = Object.entries( options ) }; }
+  if ( Object.prototype.toString.call( options ) === '[object Object]' ) { options = Object.entries( options ) };
   if ( !Array.isArray( options ) ) { return { error: 'Unable to manipulate options of type "' + typeof( options ) + '" into an array to get data for in getOptions().' }; }
   options.forEach( async ( opt ) => {
     objOpt[ opt[ 0 ] ] = ( objOpt[ opt[ 0 ] ] ?? { name: {}, description: {} } );
@@ -29,7 +29,7 @@ const getOptions = ( options, langCode = 'en-US', objOpt = {} ) => {
     }
   } );
   return objOpt;
-}
+};
 
 module.exports = async ( command, getLocales = false ) => {
   try {
