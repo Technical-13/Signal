@@ -11,7 +11,7 @@ module.exports = async ( command, getLocales = false ) => {
     if ( getLocales ) {
       const langNames = Object.keys( Locale );
       locales = {};
-      langCodes.forEach( ( v, k ) => { locales[ v ] = enNames.of( locales[ v ] ); } );
+      langCodes.forEach( ( v, k ) => { locales[ v ] = enNames.of( v ); } );
       if ( !command ) { return locales; }
     }
     if ( !command ) { throw new Error( 'No command to get localizations for.' ); }
