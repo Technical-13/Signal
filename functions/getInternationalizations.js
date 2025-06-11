@@ -60,7 +60,7 @@ module.exports = async ( command, getLocales = false ) => {
           optBuilder.name[ langCode ] = opt[ 1 ].name;
           optBuilder.description[ langCode ] = opt[ 1 ].description;
           if ( opt[ 1 ].choices ) {
-            if ( !optBuilder.choices ) { optBuilded.choices = []; }
+            if ( !optBuilder.choices ) { optBuilder.choices = []; }
             opt[ 1 ].choices.forEach( ( choice ) => {
               var choiceIndex = optBuilder.choices.findIndex( choices => choices[ langCode ] === choice );
               if ( choiceIndex === -1 ) {
@@ -79,7 +79,7 @@ module.exports = async ( command, getLocales = false ) => {
             optBuilder.name[ langCode ] = opt[ 1 ].name;
             optBuilder.description[ langCode ] = opt[ 1 ].description;
             if ( opt[ 1 ].choices ) {
-              if ( !optBuilder.choices ) { optBuilded.choices = []; }
+              if ( !optBuilder.choices ) { optBuilder.choices = []; }
               opt[ 1 ].choices.forEach( ( choice ) => {
                 var choiceIndex = optBuilder.choices.findIndex( choices => choices[ langCode ] === choice );
                 if ( choiceIndex === -1 ) {
