@@ -1,7 +1,7 @@
-const fs = require( 'fs' );
 const client = require( '..' );
-const { Locale } = require( 'discord-api-types/v10' );
+const fs = require( 'fs' );
 const chalk = require( 'chalk' );
+const { Locale } = require( 'discord-api-types/v10' );
 const strScript = chalk.hex( '#FFA500' ).bold( './functions/getInternationalizations.js' );
 const enNames = new Intl.DisplayNames( [ 'en' ], { type: 'language' } );
 const getOptions = ( options, langCode = 'en-US', objOpt = {} ) => {
@@ -49,16 +49,14 @@ module.exports = ( command, getLocales = false ) => {
     i18n.langs = files.map( file => file.replace( '.json', '' ) );
     i18n.langs.forEach( ( langCode ) => {
       const languageNames = new Intl.DisplayNames( [ langCode ], { type: 'language' } );
-      if ( langCodes.indexOf( langCode ) !== -1 ) {
-        const currLangFile = require( '../i18n/' + langCode + '.json' );
+      const currLangFile = require( '../i18n/' + langCode + '.json' );
+      if ( langCodes.indexOf( langCode ) === -1 ) { console.warn( chalk.bold( `${langCode} is a language code not currently supported by Discord.` ) ); }
+      else {
         const cmdPath = currLangFile[ command.group ][ command.name ];
         i18n.name[ langCode ] = cmdPath.name;
         i18n.description[ langCode ] = cmdPath.description;
         if ( currLangFile.common.options ) { i18n.options = getOptions( currLangFile.common.options, langCode ); }
         if ( cmdPath.options ) { i18n.options = getOptions( cmdPath.options, langCode, ( i18n.options ?? {} ) ); }
-      }
-      else {
-        console.warn( chalk.bold( `${langCode} is a language code not currently supported by Discord.` ) );
       }
       const commonResponses = ( currLangFile.common.responses ? Object.entries( currLangFile.common.responses ) : null );
       if ( commonResponses ) {
