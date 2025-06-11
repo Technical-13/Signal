@@ -50,8 +50,8 @@ module.exports = ( command, getLocales = false ) => {
     i18n.langs.forEach( ( langCode ) => {
       const langName = new Intl.DisplayNames( [ langCode ], { type: 'language' } );
       const currLangFile = require( '../i18n/' + langCode + '.json' );
-      if ( !currLangFile[ command.group ] ) { console.info( chalk.hex( '#FFFFAA' ).bold( `${langCode} has no data for the ${command.group} command group.` ) ); }
-      else if ( !currLangFile[ command.group ][ command.name ] ) { console.info( chalk.hex( '#FFFFAA' ).bold( `${langCode} has no data for the ${command.name} command.` ) ); }
+      if ( !currLangFile[ command.group ] ) { console.info( chalk.hex( '#FFFFAA' ).bold( `${langCode}.json has no data for the ${command.group} command group.` ) ); }
+      else if ( !currLangFile[ command.group ][ command.name ] ) { console.info( chalk.hex( '#FFFFAA' ).bold( `${langCode}.json has no data for the ${command.name} command.` ) ); }
       else {
         const cmdPath = currLangFile[ command.group ][ command.name ];
         if ( langCodes.indexOf( langCode ) === -1 ) { console.warn( chalk.bold( `${langCode} is a language code not currently supported by Discord.` ) ); }
