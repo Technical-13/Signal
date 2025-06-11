@@ -289,7 +289,7 @@
       "name": "ping",
       "description": "Check bot's ping.",
       "responses": {
-        "pong": "🏓 Pong! Latency:"
+        "pong": "🏓 Pong! Latency: **{{bot.latency}}ms**"
       }
     }
   }
