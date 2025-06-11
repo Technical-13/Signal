@@ -4,6 +4,31 @@ const { Locale } = require( 'discord-api-types/v10' );
 const chalk = require( 'chalk' );
 const strScript = chalk.hex( '#FFA500' ).bold( './functions/getInternationalizations.js' );
 const enNames = new Intl.DisplayNames( [ 'en' ], { type: 'language' } );
+const getOptions = ( options, objOpt = {} ) => {
+  options.forEach( ( opt ) => {
+    objOpt[ opt[ 0 ] ] = ( objOpt[ opt[ 0 ] ] ?? { name: {}, description: {} } );
+    const optBuilder = objOpt[ opt[ 0 ] ];
+    const data = opt[ 1 ];
+    optBuilder.name[ langCode ] = data.name;
+    optBuilder.description[ langCode ] = data.description;
+    if ( data.options ) {
+      if ( !optBuilder.options ) { optBuilder.options = {}; }
+      optBuilder.options = await getOptions( data.options );
+    }
+    if ( data.choices ) {
+      if ( !optBuilder.choices ) { optBuilder.choices = []; }
+      data.choices.forEach( ( choice ) => {
+        var choiceIndex = optBuilder.choices.findIndex( choices => choices[ langCode ] === choice );
+        if ( choiceIndex === -1 ) {
+          optBuilder.choices.push( {} );
+          choiceIndex = optBuilder.choices.length - 1;
+        }
+        optBuilder.choices[ choiceIndex ][ langCode ] = choice;
+      } );
+    }
+  } );
+  return objOpt;
+}
 
 module.exports = async ( command, getLocales = false ) => {
   try {
@@ -28,12 +53,14 @@ module.exports = async ( command, getLocales = false ) => {
         i18n.name[ langCode ] = cmdPath.name;
         i18n.description[ langCode ] = cmdPath.description;
         const commonOptions = Object.entries( currLangFile.common.options );
+        /* TRON */console.log( 'Test recursive function:\n\tcommonOptions: %o' await getOptions( commonOptions ) );/* TROFF */
         commonOptions.forEach( ( opt ) => {
-          i18n.options[ opt[ 0 ] ] = ( i18n.options[ opt[ 0 ] ] ?? { name: {}, description: {}, choices: [] } );
+          i18n.options[ opt[ 0 ] ] = ( i18n.options[ opt[ 0 ] ] ?? { name: {}, description: {} } );
           const optBuilder = i18n.options[ opt[ 0 ] ];
           optBuilder.name[ langCode ] = opt[ 1 ].name;
           optBuilder.description[ langCode ] = opt[ 1 ].description;
           if ( opt[ 1 ].choices ) {
+            if ( !optBuilder.choices ) { optBuilded.choices = []; }
             opt[ 1 ].choices.forEach( ( choice ) => {
               var choiceIndex = optBuilder.choices.findIndex( choices => choices[ langCode ] === choice );
               if ( choiceIndex === -1 ) {
@@ -52,6 +79,7 @@ module.exports = async ( command, getLocales = false ) => {
             optBuilder.name[ langCode ] = opt[ 1 ].name;
             optBuilder.description[ langCode ] = opt[ 1 ].description;
             if ( opt[ 1 ].choices ) {
+              if ( !optBuilder.choices ) { optBuilded.choices = []; }
               opt[ 1 ].choices.forEach( ( choice ) => {
                 var choiceIndex = optBuilder.choices.findIndex( choices => choices[ langCode ] === choice );
                 if ( choiceIndex === -1 ) {
