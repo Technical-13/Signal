@@ -6,10 +6,8 @@ const strScript = chalk.hex( '#FFA500' ).bold( './functions/getInternationalizat
 const enNames = new Intl.DisplayNames( [ 'en' ], { type: 'language' } );
 const getOptions = ( options, langCode = 'en-US', objOpt = {} ) => {
   if ( !options ) { return { error: 'No options to get data for in getOptions().' }; }
-  /* TRON */console.log( '(%o in) options: %o', ( Object.prototype.toString.call( options ) !== '[object Object]' ? ( !Array.isArray( options ) ? options : options[ 0 ] ) : options.name ) );/* TROFF */
   if ( Object.prototype.toString.call( options ) === '[object Object]' ) { options = Object.entries( options ); };
   if ( !Array.isArray( options ) ) { return { error: 'Unable to manipulate options of type "' + typeof( options ) + '" into an array to get data for in getOptions().' }; }
-  /* TRON */console.log( '(got) langCode: %o', langCode );/* TROFF */
   if ( !langCode ) { return { error: 'No langCode to get data for in getOptions().' }; }
 
   options.forEach( ( opt ) => {
@@ -18,9 +16,7 @@ const getOptions = ( options, langCode = 'en-US', objOpt = {} ) => {
     const data = opt[ 1 ];
     optBuilder.name[ langCode ] = data.name;
     optBuilder.description[ langCode ] = data.description;
-    /* TRON */console.log( '%s has data.options: %o', optBuilder.name[ langCode ], data.options );/* TROFF */
-    if ( data.options ) { optBuilder.options = getOptions( data.options, langCode );
-    /* TRON */console.log( 'getOptions( data.options, %s ) returned: %o', langCode, optBuilder.options );/* TROFF */ }
+    if ( data.options ) { optBuilder.options = getOptions( data.options, langCode ); }
     if ( data.choices ) {
       if ( !optBuilder.choices ) { optBuilder.choices = []; }
       data.choices.forEach( ( choice ) => {
