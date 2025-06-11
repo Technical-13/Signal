@@ -17,7 +17,6 @@ module.exports = {
     try {
       const responses = i18n( command, 'en-US' ).responses;
       interaction.reply( { content: await parse( responses.pong ), ephemeral: interaction.inGuild() } );
-      // interaction.reply( { content: '🏓 Pong! Latency: **' + Math.round( client.ws.ping ).toString() + 'ms**', ephemeral: interaction.inGuild() } );
     }
     catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
   }

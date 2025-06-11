@@ -15,7 +15,7 @@
       "noMsg": "Unable to find specific message to respond to.",
       "not": "not",
       "official": "Official Geocaching.com",
-      "requestedBy": "as requested by",
+      "requestedBy": "as requested by {{author.ping}}",
       "soon": "Comming **SOON**:tm:"
     }
   },

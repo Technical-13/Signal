@@ -3,6 +3,8 @@ const chalk = require( 'chalk' );
 const errHandler = require( '../../functions/errorHandler.js' );
 const userPerms = require( '../../functions/getPerms.js' );
 const getGuildConfig = require( '../../functions/getGuildDB.js' );
+const parse = require( '../../functions/parser.js' );
+const i18n = require( '../../functions/getInternationalizations.js' );
 const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/geocaching/statbar.js' );
 
 module.exports = {
@@ -51,7 +53,9 @@ module.exports = {
   contexts: [ InteractionContextType.Guild ],
   cooldown: 3000,
   run: async ( client, interaction ) => {
+    const command = client.slashCommands.get( 'statbar' );
     try {
+      const responses = i18n( command, 'en-US' ).responses;
       await interaction.deferReply( { ephemeral: true } );
       const { channel, guild, options, user: author } = interaction;
       const members = guild.members.cache;
@@ -77,15 +81,15 @@ module.exports = {
       const { doLogs, chanDefault, chanError, strClosing } = await getGuildConfig( guild );
 
       channel.send( { content:
-        'StatBar for: ' + ( !objInputUser ? ( !objInputString ? ( !isAuthor ? '`' + strUseName + '`' : '<@' + author.id + '>' ) : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
-        ( isAuthor ? '' : ' as requested by <@' + author.id + '>' ) +
+        responses.statbarFor + ( !objInputUser ? ( !objInputString ? ( !isAuthor ? '`' + strUseName + '`' : '<@' + author.id + '>' ) : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
+        ( isAuthor ? '' : ' ' + await parse( responses.requestBy ) ) +
         '\nhttps://cdn2.project-gc.com/statbar.php?quote=https://discord.me/Geocaching%20-%20' + intYear + '-' + intMonth + '-' + intDay + strLabcaches + '&user=' + encName
       } )
       .then( sentMsg => {
         if ( doLogs && !isAuthor ) {
           chanDefault.send( { content:
-            'I shared the `/statbar` for ' + ( !objInputUser ? ( !objInputString ? '`' + strUseName + '`' : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
-            ' in <#' + channel.id + '> as requested by <@' + author.id + '>' + strClosing } )
+            responses.sharedFor + ( !objInputUser ? ( !objInputString ? '`' + strUseName + '`' : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
+            responses.in + ' <#' + channel.id + '> ' + await parse( responses.requestBy ) + strClosing } )
           .then( sentLog => { interaction.deleteReply(); } )
           .catch( async errLog => { await errHandler( errLog, { chanType: 'default', command: 'statbar', channel: channel, type: 'logLogs' } ); } );
         }
