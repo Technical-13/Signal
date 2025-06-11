@@ -57,7 +57,7 @@ module.exports = async ( command, getLocales = false ) => {
         const commonOptions = ( currLangFile.common.options ? Object.entries( currLangFile.common.options ) : null );
         if ( commonOptions ) { i18n.options = await getOptions( commonOptions, langCode ); }
         const cmdOptions = ( cmdPath.options ? Object.entries( cmdPath.options ) : null );
-        if ( cmdOptions ) { i18n.options = await getOptions( commonOptions, langCode, ( i18n.options ?? {} ) ); }
+        if ( cmdOptions ) { i18n.options = await getOptions( cmdOptions, langCode, ( i18n.options ?? {} ) ); }
         /*if ( cmdPath.options ) {
           const cmdOptions = Object.entries( cmdPath.options );
           cmdOptions.forEach( ( opt ) => {
