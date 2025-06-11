@@ -48,11 +48,11 @@ module.exports = ( command, getLocales = false ) => {
     const files = fs.readdirSync( './i18n/' ).filter( file => file.endsWith( '.json' ) );
     i18n.langs = files.map( file => file.replace( '.json', '' ) );
     i18n.langs.forEach( ( langCode ) => {
-      const languageNames = new Intl.DisplayNames( [ langCode ], { type: 'language' } );
+      const langName = new Intl.DisplayNames( [ langCode ], { type: 'language' } );
       const currLangFile = require( '../i18n/' + langCode + '.json' );
+      const cmdPath = currLangFile[ command.group ][ command.name ];
       if ( langCodes.indexOf( langCode ) === -1 ) { console.warn( chalk.bold( `${langCode} is a language code not currently supported by Discord.` ) ); }
       else {
-        const cmdPath = currLangFile[ command.group ][ command.name ];
         i18n.name[ langCode ] = cmdPath.name;
         i18n.description[ langCode ] = cmdPath.description;
         if ( currLangFile.common.options ) { i18n.options = getOptions( currLangFile.common.options, langCode ); }
