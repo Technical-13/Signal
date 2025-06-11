@@ -1,5 +1,6 @@
 const client = require( '..' );
 const config = require( '../config.json' );
+const discord = require( 'discord.js' );
 const objTimeString = require( '../jsonObjects/time.json' );
 const chalk = require( 'chalk' );
 const duration = require( './duration.js' );
@@ -14,11 +15,10 @@ module.exports = async ( rawString, obj = { author: null, guild: null, member: n
     const ageUnits = { getDecades: true, getYears: true, getMonths: true, getWeeks: true, getDays: true, getHours: false, getMinutes: false };
     const bot = client.user;
 
-    const currUptime = await duration( client.uptime, uptime );
     const transclusions = {
       '{{bot.age}}': await duration( Date.now() - bot.createdTimestamp, ageUnits ),
       '{{bot.guilds}}': client.guilds.cache.size.toLocaleString(),
-      '{{bot.latency}}': client.ws.ping,
+      '{{bot.latency}}': Math.round( client.ws.ping ).toString(),
       '{{bot.members}}': client.users.cache.size.toLocaleString(),
       '{{bot.name}}': bot.displayName,
       '{{bot.owner.name}}': client.users.cache.get( client.ownerId ).displayName,
@@ -27,7 +27,9 @@ module.exports = async ( rawString, obj = { author: null, guild: null, member: n
       '{{bot.since}}': bot.createdAt.toLocaleTimeString( 'en-US', objTimeString ),
       '{{bot.servers}}': client.guilds.cache.size.toLocaleString(),
       '{{bot.users}}': client.users.cache.size.toLocaleString(),
-      '{{bot.uptime}}': currUptime
+      '{{bot.uptime}}': await duration( client.uptime, uptime ),
+      '{{bot.version.djs}}': 'v' + discord.version,
+      '{{bot.version.node}}': 'v' + process.version
     };
     const notAvailable = {};
 
