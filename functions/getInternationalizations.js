@@ -7,16 +7,15 @@ const enNames = new Intl.DisplayNames( [ 'en' ], { type: 'language' } );
 const getOptions = ( options, langCode = 'en-US', objOpt = {} ) => {
   if ( !options ) { return { error: 'No options to get data for in getOptions().' }; }
   if ( !langCode ) { return { error: 'No langCode to get data for in getOptions().' }; }
+  if ( Object.prototype.toString.call( options ) === '[object Object]' ) { options = Object.entries( options ) }; }
+  if ( !Array.isArray( options ) ) { return { error: 'Unable to manipulate options of type "' + typeof( options ) + '" into an array to get data for in getOptions().' }; }
   options.forEach( async ( opt ) => {
     objOpt[ opt[ 0 ] ] = ( objOpt[ opt[ 0 ] ] ?? { name: {}, description: {} } );
     const optBuilder = objOpt[ opt[ 0 ] ];
     const data = opt[ 1 ];
     optBuilder.name[ langCode ] = data.name;
     optBuilder.description[ langCode ] = data.description;
-    if ( data.options ) {
-      if ( !optBuilder.options ) { optBuilder.options = {}; }
-      optBuilder.options = await getOptions( data.options, langCode );
-    }
+    if ( data.options ) { optBuilder.options = await getOptions( data.options, langCode ); }
     if ( data.choices ) {
       if ( !optBuilder.choices ) { optBuilder.choices = []; }
       data.choices.forEach( ( choice ) => {
@@ -54,10 +53,8 @@ module.exports = async ( command, getLocales = false ) => {
         const cmdPath = currLangFile[ command.group ][ command.name ];
         i18n.name[ langCode ] = cmdPath.name;
         i18n.description[ langCode ] = cmdPath.description;
-        const commonOptions = ( currLangFile.common.options ? Object.entries( currLangFile.common.options ) : null );
-        if ( commonOptions ) { i18n.options = await getOptions( commonOptions, langCode ); }
-        const cmdOptions = ( cmdPath.options ? Object.entries( cmdPath.options ) : null );
-        if ( cmdOptions ) { i18n.options = await getOptions( cmdOptions, langCode, ( i18n.options ?? {} ) ); }
+        if ( currLangFile.common.options ) { i18n.options = await getOptions( currLangFile.common.options, langCode ); }
+        if ( cmdPath.options ) { i18n.options = await getOptions( cmdPath.options, langCode, ( i18n.options ?? {} ) ); }
         /*if ( cmdPath.options ) {
           const cmdOptions = Object.entries( cmdPath.options );
           cmdOptions.forEach( ( opt ) => {
