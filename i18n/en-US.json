@@ -37,12 +37,11 @@
         "banFailed": "I am unable to ban that member.",
         "banReasonDefault": "Just for fun!",
         "banReasonSelfBan": "They banned themself!",
-        "dmSelfBan": "OMG!!! You just banned yourself from",
-        "logSelfBan": "just banned themself from this server for five minutes!",
-        "logTried": "tried to get me to ban",
-        "logNoPerm": "and doesn't have permission to do that.",
+        "dmSelfBan": "OMG!!! You just banned yourself from **{{guild.name}}**!!!",
+        "logNoPerm": "{{author.ping}} tried to get me to ban {{member.ping}} and doesn't have permission to do that.",
+        "logSelfBan": "{{member.ping}} just banned themself from this server for five minutes!",
         "noPerm": "You don't have permission to have me ban that member.",
-        "selfBan": "just banned themself from this server! *(Don't worry, they can come back in five minutes...)*",
+        "selfBan": "{{member.ping}} just banned themself from this server! *(Don't worry, they can come back in five minutes...)*",
         "unbanReasonSelfBan": "Self imposed banned expired."
       }
     },
@@ -94,13 +93,13 @@
       "name": "foo",
       "description": "Test command.",
       "options": {
-        "console": { "name": "console", "description": "Enable debug mode:" },
-        "string": { "name": "string", "description": "String:" },
-        "integer": { "name": "integer", "description": "Integer:" },
-        "boolean": { "name": "boolean", "description": "Boolean:" },
-        "channel": { "name": "channel", "description": "Channel:" },
-        "mentionable": { "name": "mentionable", "description": "Mentionable:" },
-        "attachment": { "name": "attachment", "description": "Attachment:" }
+        "console": { "name": "console", "description": "Enable debug mode" },
+        "string": { "name": "string", "description": "String" },
+        "integer": { "name": "integer", "description": "Integer" },
+        "boolean": { "name": "boolean", "description": "Boolean" },
+        "channel": { "name": "channel", "description": "Channel" },
+        "mentionable": { "name": "mentionable", "description": "Mentionable" },
+        "attachment": { "name": "attachment", "description": "Attachment" }
       }
     },
     "reload": {
