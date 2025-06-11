@@ -24,11 +24,20 @@ module.exports = async ( command ) => {
         i18n.description[ langCode ] = cmdPath.description;
         const commonOptions = Object.entries( currLangFile.common.options );
         commonOptions.forEach( ( opt ) => {
-          i18n.options[ opt[ 0 ] ] = ( i18n.options[ opt[ 0 ] ] ?? { name: {}, description: {} } );
+          i18n.options[ opt[ 0 ] ] = ( i18n.options[ opt[ 0 ] ] ?? { name: {}, description: {}, choices: [] } );
           const optBuilder = i18n.options[ opt[ 0 ] ];
           optBuilder.name[ langCode ] = opt[ 1 ].name;
           optBuilder.description[ langCode ] = opt[ 1 ].description;
-          //optBuilder.choices = '';//skip this for now.  Let's get name/desc working first.
+          if ( opt[ 1 ].choices ) {
+            opt[ 1 ].choices.forEach( ( choice ) => {
+              var choiceIndex = optBuilder.choices.indexOf( choice );
+              if ( choiceIndex === -1 ) {
+                optBuilder.choices.push( {} );
+                choiceIndex = optBuilder.choices.indexOf( choice );
+              }
+              optBuilder.choices[ choiceIndex ][ langCode ] = choice;
+            } );
+          }
         } );
         if ( cmdPath.options ) {
           const cmdOptions = Object.entries( cmdPath.options );
@@ -42,13 +51,13 @@ module.exports = async ( command ) => {
         }
         const commonResponses = Object.entries( currLangFile.common.responses );
         commonResponses.forEach( ( res ) => { i18n.responses[ res[ 0 ] ] = res[ 1 ]; } );
-        /*if ( cmdPath.responses ) {
-          const cmdResponses = Object.entries( cmdPath.responses );/* TRON /console.log( 'cmdResponses: %o', cmdResponses );/* TROFF /
+        if ( cmdPath.responses ) {
+          const cmdResponses = Object.entries( cmdPath.responses );
           cmdResponses.forEach( ( res ) => { i18n.responses[ res[ 0 ] ] = res[ 1 ]; } );
-        }//*/
+        }
       }
       else {
-        console.warn( '%s is a language code not currently supported by Discord.', langCode );
+        console.warn( chalk.bold( `${langCode} is a language code not currently supported by Discord.` ) );
       }
     } );
 
