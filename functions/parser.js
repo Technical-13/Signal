@@ -29,7 +29,7 @@ module.exports = async ( rawString, obj = { author: null, guild: null, member: n
       '{{bot.users}}': client.users.cache.size.toLocaleString(),
       '{{bot.uptime}}': await duration( client.uptime, uptime ),
       '{{bot.version.djs}}': 'v' + discord.version,
-      '{{bot.version.node}}': 'v' + process.version
+      '{{bot.version.node}}': process.version
     };
     const notAvailable = {};
 
