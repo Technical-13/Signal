@@ -45,7 +45,7 @@ module.exports = async ( command, getLocales = false ) => {
     if ( getLocales ) { i18n.locales = locales }
     const files = fs.readdirSync( './i18n/' ).filter( file => file.endsWith( '.json' ) );
     const langs = files.map( file => file.replace( '.json', '' ) );
-    langs.forEach( ( langCode ) => {
+    langs.forEach( async ( langCode ) => {
       const languageNames = new Intl.DisplayNames( [ langCode ], { type: 'language' } );
       if ( langCodes.indexOf( langCode ) !== -1 ) {
         const currLangFile = require( '../i18n/' + langCode + '.json' );
