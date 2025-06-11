@@ -4,7 +4,7 @@ const { Locale } = require( 'discord-api-types/v10' );
 const chalk = require( 'chalk' );
 const strScript = chalk.hex( '#FFA500' ).bold( './functions/getInternationalizations.js' );
 const enNames = new Intl.DisplayNames( [ 'en' ], { type: 'language' } );
-const getOptions = async ( options, langCode = 'en-US', objOpt = {} ) => {
+const getOptions = ( options, langCode = 'en-US', objOpt = {} ) => {
   if ( !options ) { return { error: 'No options to get data for in getOptions().' }; }
   /* TRON */console.log( '(%o in) options: %o', ( Object.prototype.toString.call( options ) !== '[object Object]' ? ( !Array.isArray( options ) ? options : options[ 0 ] ) : options.name ) );/* TROFF */
   if ( Object.prototype.toString.call( options ) === '[object Object]' ) { options = Object.entries( options ); };
@@ -12,18 +12,18 @@ const getOptions = async ( options, langCode = 'en-US', objOpt = {} ) => {
   /* TRON */console.log( '(got) langCode: %o', langCode );/* TROFF */
   if ( !langCode ) { return { error: 'No langCode to get data for in getOptions().' }; }
 
-  options.forEach( async ( opt ) => {
+  options.forEach( ( opt ) => {
     objOpt[ opt[ 0 ] ] = ( objOpt[ opt[ 0 ] ] ?? { name: {}, description: {} } );
     const optBuilder = objOpt[ opt[ 0 ] ];
     const data = opt[ 1 ];
     optBuilder.name[ langCode ] = data.name;
     optBuilder.description[ langCode ] = data.description;
     /* TRON */console.log( '%s has data.options: %o', optBuilder.name[ langCode ], data.options );/* TROFF */
-    if ( data.options ) { optBuilder.options = await getOptions( data.options, langCode );
+    if ( data.options ) { optBuilder.options = getOptions( data.options, langCode );
     /* TRON */console.log( 'getOptions( data.options, %s ) returned: %o', langCode, optBuilder.options );/* TROFF */ }
     if ( data.choices ) {
       if ( !optBuilder.choices ) { optBuilder.choices = []; }
-      data.choices.forEach( async ( choice ) => {
+      data.choices.forEach( ( choice ) => {
         var choiceIndex = optBuilder.choices.findIndex( choices => choices[ langCode ] === choice );
         if ( choiceIndex === -1 ) {
           optBuilder.choices.push( {} );
@@ -36,7 +36,7 @@ const getOptions = async ( options, langCode = 'en-US', objOpt = {} ) => {
   return objOpt;
 };
 
-module.exports = async ( command, getLocales = false ) => {
+module.exports = ( command, getLocales = false ) => {
   try {
     const langCodes = Object.values( Locale );
     if ( getLocales ) {
@@ -51,15 +51,15 @@ module.exports = async ( command, getLocales = false ) => {
     if ( getLocales ) { i18n.locales = locales }
     const files = fs.readdirSync( './i18n/' ).filter( file => file.endsWith( '.json' ) );
     const langs = files.map( file => file.replace( '.json', '' ) );
-    langs.forEach( async ( langCode ) => {
+    langs.forEach( ( langCode ) => {
       const languageNames = new Intl.DisplayNames( [ langCode ], { type: 'language' } );
       if ( langCodes.indexOf( langCode ) !== -1 ) {
         const currLangFile = require( '../i18n/' + langCode + '.json' );
         const cmdPath = currLangFile[ command.group ][ command.name ];
         i18n.name[ langCode ] = cmdPath.name;
         i18n.description[ langCode ] = cmdPath.description;
-        if ( currLangFile.common.options ) { i18n.options = await getOptions( currLangFile.common.options, langCode ); }
-        if ( cmdPath.options ) { i18n.options = await getOptions( cmdPath.options, langCode, ( i18n.options ?? {} ) ); }
+        if ( currLangFile.common.options ) { i18n.options = getOptions( currLangFile.common.options, langCode ); }
+        if ( cmdPath.options ) { i18n.options = getOptions( cmdPath.options, langCode, ( i18n.options ?? {} ) ); }
         const commonResponses = ( currLangFile.common.responses ? Object.entries( currLangFile.common.responses ) : null );
         if ( commonResponses ) {
           if ( !i18n.responses ) { i18n.responses = {}; }
