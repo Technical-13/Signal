@@ -4,9 +4,9 @@ const { Locale } = require( 'discord-api-types/v10' );
 const chalk = require( 'chalk' );
 const strScript = chalk.hex( '#FFA500' ).bold( './functions/getInternationalizations.js' );
 const enNames = new Intl.DisplayNames( [ 'en' ], { type: 'language' } );
-const getOptions = ( options, langCode = 'en-US', objOpt = {} ) => {
-  /* TRON */console.log( '(%o in) options: %o', ( Object.prototype.toString.call( options ) !== '[object Object]' ? ( !Array.isArray( options ) ? options : options[ 0 ] ) : options.name ) );/* TROFF */
+const getOptions = async ( options, langCode = 'en-US', objOpt = {} ) => {
   if ( !options ) { return { error: 'No options to get data for in getOptions().' }; }
+  /* TRON */console.log( '(%o in) options: %o', ( Object.prototype.toString.call( options ) !== '[object Object]' ? ( !Array.isArray( options ) ? options : options[ 0 ] ) : options.name ) );/* TROFF */
   if ( Object.prototype.toString.call( options ) === '[object Object]' ) { options = Object.entries( options ); };
   if ( !Array.isArray( options ) ) { return { error: 'Unable to manipulate options of type "' + typeof( options ) + '" into an array to get data for in getOptions().' }; }
   /* TRON */console.log( '(got) langCode: %o', langCode );/* TROFF */
@@ -23,7 +23,7 @@ const getOptions = ( options, langCode = 'en-US', objOpt = {} ) => {
     /* TRON */console.log( 'getOptions( data.options, %s ) returned: %o', langCode, optBuilder.options );/* TROFF */ }
     if ( data.choices ) {
       if ( !optBuilder.choices ) { optBuilder.choices = []; }
-      data.choices.forEach( ( choice ) => {
+      data.choices.forEach( async ( choice ) => {
         var choiceIndex = optBuilder.choices.findIndex( choices => choices[ langCode ] === choice );
         if ( choiceIndex === -1 ) {
           optBuilder.choices.push( {} );
