@@ -54,9 +54,9 @@ module.exports = async ( command, getLocales = false ) => {
         const cmdPath = currLangFile[ command.group ][ command.name ];
         i18n.name[ langCode ] = cmdPath.name;
         i18n.description[ langCode ] = cmdPath.description;
-        const commonOptions = Object.entries( currLangFile.common.options );
+        const commonOptions = ( currLangFile.common.options ? Object.entries( currLangFile.common.options ) : null );
         if ( commonOptions ) { i18n.options = await getOptions( commonOptions, langCode ); }
-        const cmdOptions = Object.entries( cmdPath.options );
+        const cmdOptions = ( cmdPath.options ? Object.entries( cmdPath.options ) : null );
         if ( cmdOptions ) { i18n.options = await getOptions( commonOptions, langCode, ( i18n.options ?? {} ) ); }
         /*if ( cmdPath.options ) {
           const cmdOptions = Object.entries( cmdPath.options );
@@ -78,12 +78,12 @@ module.exports = async ( command, getLocales = false ) => {
             }
           } );
         }//if ( cmdPath.options ) {*/
-        const commonResponses = Object.entries( currLangFile.common.responses );
+        const commonResponses = ( currLangFile.common.responses ? Object.entries( currLangFile.common.responses ) : null );
         if ( commonResponses ) {
           if ( !i18n.responses ) { i18n.responses = {}; }
           commonResponses.forEach( ( res ) => { i18n.responses[ res[ 0 ] ] = res[ 1 ]; } );
         }
-        const cmdResponses = Object.entries( cmdPath.responses );
+        const cmdResponses = ( cmdPath.responses ? Object.entries( cmdPath.responses ) : null );
         if ( cmdResponses ) {
           if ( !i18n.responses ) { i18n.responses = {}; }
           cmdResponses.forEach( ( res ) => { i18n.responses[ res[ 0 ] ] = res[ 1 ]; } );
