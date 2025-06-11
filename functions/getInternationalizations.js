@@ -17,7 +17,6 @@ module.exports = async ( command ) => {
     files.forEach( ( filename ) => {
       const langCode = filename.replace( '.json', '' );
       if ( langCodes.indexOf( langCode ) !== -1 ) {
-        console.log( 'Processing: %s', i18n.locales[ langCode ] );
         const currLangFile = require( '../i18n/' + filename );
         const cmdPath = currLangFile[ command.group ][ command.name ];
         i18n.name[ langCode ] = cmdPath.name;
@@ -28,15 +27,15 @@ module.exports = async ( command ) => {
           const optBuilder = i18n.options[ opt[ 0 ] ];
           optBuilder.name[ langCode ] = opt[ 1 ].name;
           optBuilder.description[ langCode ] = opt[ 1 ].description;
-          if ( opt[ 1 ].choices ) {/* TRON */console.log( 'opt[ 1 ].choices: %o', opt[ 1 ].choices );/* TROFF */
-            opt[ 1 ].choices.forEach( ( choice ) => {/* TRON */console.log( 'choice: %o', choice );/* TROFF */
-              var choiceIndex = optBuilder.choices.findIndex( choices => choices[ langCode ] === choice );/* TRON */console.log( 'choiceIndex: %o', choiceIndex );/* TROFF */
+          if ( opt[ 1 ].choices ) {
+            opt[ 1 ].choices.forEach( ( choice ) => {
+              var choiceIndex = optBuilder.choices.findIndex( choices => choices[ langCode ] === choice );
               if ( choiceIndex === -1 ) {
-                optBuilder.choices.push( {} );/* TRON */console.log( 'optBuilder.choices: %o', optBuilder.choices );/* TROFF */
-                choiceIndex = optBuilder.choices.length - 1;/* TRON */console.log( 'choiceIndex (2): %o', choiceIndex );/* TROFF */
+                optBuilder.choices.push( {} );
+                choiceIndex = optBuilder.choices.length - 1;
               }
-              optBuilder.choices[ choiceIndex ][ langCode ] = choice;/* TRON */console.log( 'optBuilder.choices (end iteration): %o', optBuilder.choices );/* TROFF */
-            } );/* TRON */console.log( 'optBuilder.choices (finally): %o', opt[ 1 ].choices );/* TROFF */
+              optBuilder.choices[ choiceIndex ][ langCode ] = choice;
+            } );
           }
         } );
         if ( cmdPath.options ) {
@@ -46,7 +45,16 @@ module.exports = async ( command ) => {
             const optBuilder = i18n.options[ opt[ 0 ] ];
             optBuilder.name[ langCode ] = opt[ 1 ].name;
             optBuilder.description[ langCode ] = opt[ 1 ].description;
-            //optBuilder.choices = '';//skip this for now.  Let's get name/desc working first.
+            if ( opt[ 1 ].choices ) {
+              opt[ 1 ].choices.forEach( ( choice ) => {
+                var choiceIndex = optBuilder.choices.findIndex( choices => choices[ langCode ] === choice );
+                if ( choiceIndex === -1 ) {
+                  optBuilder.choices.push( {} );
+                  choiceIndex = optBuilder.choices.length - 1;
+                }
+                optBuilder.choices[ choiceIndex ][ langCode ] = choice;
+              } );
+            }
           } );
         }
         const commonResponses = Object.entries( currLangFile.common.responses );
