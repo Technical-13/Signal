@@ -50,11 +50,12 @@ module.exports = ( command, getLocales = false ) => {
     i18n.langs.forEach( ( langCode ) => {
       const langName = new Intl.DisplayNames( [ langCode ], { type: 'language' } );
       const currLangFile = require( '../i18n/' + langCode + '.json' );
-      const cmdPath = currLangFile[ command.group ][ command.name ];/* TRON */console.log( 'cmdPath: %o', cmdPath );/* TROFF */
+      if ( !currLangFile[ command.group ]?[ command.name ] ) { console.info( chalk.hex( '#FFFFAA' ).bold( `${langCode} has no data for the (${command.group}) ${command.name} command.` ) ); }
+      const cmdPath = currLangFile[ command.group ][ command.name ];
       if ( langCodes.indexOf( langCode ) === -1 ) { console.warn( chalk.bold( `${langCode} is a language code not currently supported by Discord.` ) ); }
       else {
-        i18n.name[ langCode ] = cmdPath.name;/* TRON */console.log( 'i18n.name[ langCode ]: %o\ncmdPath.name: %o', i18n.name[ langCode ], cmdPath.name );/* TROFF */
-        i18n.description[ langCode ] = cmdPath.description;/* TRON */console.log( 'i18n.description[ langCode ]: %o\n: %o', i18n.description[ langCode ], cmdPath.description );/* TROFF */
+        i18n.name[ langCode ] = cmdPath.name;
+        i18n.description[ langCode ] = cmdPath.description;
         if ( currLangFile.common.options ) { i18n.options = getOptions( currLangFile.common.options, langCode ); }
         if ( cmdPath.options ) { i18n.options = getOptions( cmdPath.options, langCode, ( i18n.options ?? {} ) ); }
       }
