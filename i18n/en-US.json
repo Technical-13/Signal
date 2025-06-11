@@ -113,7 +113,13 @@
     "system": {
       "name": "system",
       "description": "Change bot configs.",
-      "options": { "TBD": "TBD" },
+      "options": {
+        "add": { "name": "add", "description": "Add a user to one of my lists.", "options": {
+          "blacklist": { "name": "blacklist", "description": "User to block from using all commands." },
+          "moderator": { "name": "moderator", "description": "User to add as a moderator." },
+          "whitelist": { "name": "whitelist", "description": "ser to permit to use all non-mod commands." }
+        } }
+      },
       "responses": { "TBD": "TBD" }
     }
   },
