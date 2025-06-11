@@ -53,7 +53,7 @@ module.exports = async ( command, getLocales = false ) => {
         i18n.name[ langCode ] = cmdPath.name;
         i18n.description[ langCode ] = cmdPath.description;
         const commonOptions = Object.entries( currLangFile.common.options );
-        /* TRON */console.log( 'Test recursive function:\n\tcommonOptions: %o' await getOptions( commonOptions ) );/* TROFF */
+        /* TRON */console.log( 'Test recursive function:\n\tcommonOptions: %o', await getOptions( commonOptions ) );/* TROFF */
         commonOptions.forEach( ( opt ) => {
           i18n.options[ opt[ 0 ] ] = ( i18n.options[ opt[ 0 ] ] ?? { name: {}, description: {} } );
           const optBuilder = i18n.options[ opt[ 0 ] ];
