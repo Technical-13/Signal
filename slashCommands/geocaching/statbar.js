@@ -82,14 +82,14 @@ module.exports = {
 
       channel.send( { content:
         responses.statbarFor + ( !objInputUser ? ( !objInputString ? ( !isAuthor ? '`' + strUseName + '`' : '<@' + author.id + '>' ) : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
-        ( isAuthor ? '' : ' ' + await parse( responses.requestBy ) ) +
+        ( isAuthor ? '' : ' ' + await parse( responses.requestBy, { author: author } ) ) +
         '\nhttps://cdn2.project-gc.com/statbar.php?quote=https://discord.me/Geocaching%20-%20' + intYear + '-' + intMonth + '-' + intDay + strLabcaches + '&user=' + encName
       } )
       .then( sentMsg => {
         if ( doLogs && !isAuthor ) {
           chanDefault.send( { content:
             responses.sharedFor + ( !objInputUser ? ( !objInputString ? '`' + strUseName + '`' : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
-            responses.in + ' <#' + channel.id + '> ' + await parse( responses.requestBy ) + strClosing } )
+            responses.in + ' <#' + channel.id + '> ' + await parse( responses.requestBy, { author: author } ) + strClosing } )
           .then( sentLog => { interaction.deleteReply(); } )
           .catch( async errLog => { await errHandler( errLog, { chanType: 'default', command: 'statbar', channel: channel, type: 'logLogs' } ); } );
         }
