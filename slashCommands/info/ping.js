@@ -11,7 +11,7 @@ const getResponses = async ( interaction ) => {
   const useLang = ( langs.indexOf( locale ) === -1 ? guildLang : locale );
   const results = {}; results[ useLang ] = {}; results[ guildLang ] = {};
   const arrResponses = Object.entries( responses );
-  arrResponses.forEach( resp => {
+  arrResponses.forEach( async resp => {
     results[ useLang ][ resp[ 0 ] ] = await parse( resp[ 1 ][ useLang ], { author: user, guild: guild } );
     results[ guildLang ][ resp[ 0 ] ] = await parse( resp[ 1 ][ guildLang ], { author: user, guild: guild } );
     results[ 'en-US' ][ resp[ 0 ] ] = await parse( resp[ 1 ][ 'en-US' ], { author: user, guild: guild } );
