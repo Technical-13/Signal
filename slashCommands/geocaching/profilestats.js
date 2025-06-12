@@ -82,7 +82,7 @@ module.exports = {
         ( isAuthor ? '' : ' ' + await parse( responses.requestedBy[ useLang ], { author: author } ) ) +
         '\n<https://project-gc.com/Profile/ProfileStats?profile_name=' + encName + '>'
       } )
-      .then( sentMsg => {
+      .then( async sentMsg => {
         if ( doLogs && !isAuthor ) {
           chanDefault.send( { content:
             responses.sharedFor[ guildLang ] + ' ' + ( !objInputUser ? ( !objInputString ? '`' + strUseName + '`' : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +

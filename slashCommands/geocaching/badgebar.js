@@ -79,7 +79,7 @@ module.exports = {
         ( isAuthor ? '' : ' ' + await parse( responses.requestedBy[ useLang ], { author: author } ) ) +
         ':\nhttps://cdn2.project-gc.com/BadgeBar/' + encName + '.png#' + intYear + '-' + intMonth + '-' + intDay
       } )
-      .then( sentMsg => {
+      .then( async sentMsg => {
         if ( doLogs && !isAuthor ) {
           chanDefault.send( { content:
             responses.sharedFor[ guildLang ] + ' ' + ( !objInputUser ? ( !objInputString ? '`' + strUseName + '`' : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
