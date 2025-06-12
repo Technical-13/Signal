@@ -91,7 +91,7 @@ module.exports = {
       .then( async sentMsg => {
         if ( doLogs && !isAuthor ) {
           chanDefault.send( { content:
-          responses.sharedFor[ guildLang ] + ( !objInputUser ? ( !objInputString ? '`' + strUseName + '`' : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
+          responses.sharedFor[ guildLang ] + ' ' + ( !objInputUser ? ( !objInputString ? '`' + strUseName + '`' : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
           responses.in[ guildLang ] + ' <#' + channel.id + '> ' + await parse( responses.requestedBy[ guildLang ], { author: author } ) + ' ' + strClosing } )
           .then( sentLog => { interaction.deleteReply(); } )
           .catch( async errLog => { await errHandler( errLog, { chanType: 'default', command: 'statbar', channel: channel, type: 'logLogs' } ); } );
