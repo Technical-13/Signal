@@ -29,6 +29,7 @@ module.exports = {
   cooldown: 1000,
   run: async ( client, interaction ) => {
     const command = client.slashCommands.get( cmdData.name );
+    const { langs } = await getI18n( command );
     try {
       const { guild, locale } = interaction;
       const guildLang = ( langs.indexOf( guild.preferredLocale ) === -1 ?  'en-US' : guild.preferredLocale );
