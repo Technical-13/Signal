@@ -44,7 +44,7 @@ module.exports = {
         'sv-SE': 'Svenska/Swedish'
       };
 
-      const locale = ( localeInput || useLang );
+      locale = ( localeInput || useLang );
       const strLocale = '(*' + objLocales[ locale ] + '*)';
       const i18InvalidMsgId = responses.invalidMsgId[ ( localeInput || useLang ) ];/*§<!--START-->{
         de: 'ist keine gültige Nachrichten-ID.',
