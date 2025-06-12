@@ -88,7 +88,7 @@ module.exports = {
         ( isAuthor ? '' : ' ' + await parse( responses.requestBy[ useLang ], { author: author } ) ) +
         '\nhttps://cdn2.project-gc.com/statbar.php?quote=https://discord.me/Geocaching%20-%20' + intYear + '-' + intMonth + '-' + intDay + strLabcaches + '&user=' + encName
       } )
-      .then( sentMsg => {
+      .then( async sentMsg => {
         if ( doLogs && !isAuthor ) {
           var requestBy = await parse( responses.requestBy[ guildLang ], { author: author } );
           chanDefault.send( { content:
