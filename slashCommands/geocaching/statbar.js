@@ -4,7 +4,7 @@ const errHandler = require( '../../functions/errorHandler.js' );
 const userPerms = require( '../../functions/getPerms.js' );
 const getGuildConfig = require( '../../functions/getGuildDB.js' );
 const parse = require( '../../functions/parser.js' );
-const i18n = require( '../../functions/getInternationalizations.js' );
+const getI18n = require( '../../functions/getInternationalizations.js' );
 const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/geocaching/statbar.js' );
 
 module.exports = {
@@ -54,14 +54,16 @@ module.exports = {
   cooldown: 3000,
   run: async ( client, interaction ) => {
     const command = client.slashCommands.get( 'statbar' );
+    const i18n = getI18n( command );
+    const responses = i18n.responses;
     try {
       await interaction.deferReply( { ephemeral: true } );
-      const { channel, guild, options, user: author } = interaction;
+      const { channel, guild, locale, options, user: author } = interaction;
+      const guildLang = ( i18n.langs.indexOf( guild.preferredLocale ) === -1 ?  'en-US' : guild.preferredLocale );
+      const useLang = ( i18n.langs.indexOf( locale ) === -1 ? guildLang : locale );
       const members = guild.members.cache;
       const { content } = await userPerms( author, guild );
       if ( content ) { return interaction.editReply( { content: content } ); }
-      const responses = i18n( command, 'en-US' ).responses;
-      responses.requestBy = await parse( responses.requestBy, { author: author } );
 
       const today = ( new Date() );
       const intYear = today.getFullYear();
@@ -82,15 +84,15 @@ module.exports = {
       const { doLogs, chanDefault, chanError, strClosing } = await getGuildConfig( guild );
 
       channel.send( { content:
-        responses.statbarFor + ' ' + ( !objInputUser ? ( !objInputString ? ( !isAuthor ? '`' + strUseName + '`' : '<@' + author.id + '>' ) : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
-        ( isAuthor ? '' : ' ' + responses.requestBy ) +
+        responses.statbarFor[ useLang ] + ' ' + ( !objInputUser ? ( !objInputString ? ( !isAuthor ? '`' + strUseName + '`' : '<@' + author.id + '>' ) : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
+        ( isAuthor ? '' : ' ' + await parse( responses.requestBy[ useLang ], { author: author } ) ) +
         '\nhttps://cdn2.project-gc.com/statbar.php?quote=https://discord.me/Geocaching%20-%20' + intYear + '-' + intMonth + '-' + intDay + strLabcaches + '&user=' + encName
       } )
       .then( sentMsg => {
         if ( doLogs && !isAuthor ) {
           chanDefault.send( { content:
-            responses.sharedFor + ( !objInputUser ? ( !objInputString ? '`' + strUseName + '`' : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
-            responses.in + ' <#' + channel.id + '> ' + responses.requestBy + ' ' + strClosing } )
+            responses.sharedFor[ guildLang ] + ( !objInputUser ? ( !objInputString ? '`' + strUseName + '`' : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
+            responses.in[ guildLang ] + ' <#' + channel.id + '> ' + await parse( responses.requestBy[ guildLang ], { author: author } ) + ' ' + strClosing } )
           .then( sentLog => { interaction.deleteReply(); } )
           .catch( async errLog => { await errHandler( errLog, { chanType: 'default', command: 'statbar', channel: channel, type: 'logLogs' } ); } );
         }
