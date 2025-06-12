@@ -90,9 +90,10 @@ module.exports = {
       } )
       .then( sentMsg => {
         if ( doLogs && !isAuthor ) {
+          var requestBy = await parse( responses.requestBy[ guildLang ], { author: author } );
           chanDefault.send( { content:
             responses.sharedFor[ guildLang ] + ( !objInputUser ? ( !objInputString ? '`' + strUseName + '`' : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
-            responses.in[ guildLang ] + ' <#' + channel.id + '> ' + await parse( responses.requestBy[ guildLang ], { author: author } ) + ' ' + strClosing } )
+            responses.in[ guildLang ] + ' <#' + channel.id + '> ' + requestBy + ' ' + strClosing } )
           .then( sentLog => { interaction.deleteReply(); } )
           .catch( async errLog => { await errHandler( errLog, { chanType: 'default', command: 'statbar', channel: channel, type: 'logLogs' } ); } );
         }
