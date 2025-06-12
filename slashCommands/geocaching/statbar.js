@@ -54,13 +54,12 @@ module.exports = {
   cooldown: 3000,
   run: async ( client, interaction ) => {
     const command = client.slashCommands.get( 'statbar' );
-    const i18n = getI18n( command );
-    const responses = i18n.responses;
+    const { langs, responses } = getI18n( command );
     try {
       await interaction.deferReply( { ephemeral: true } );
       const { channel, guild, locale, options, user: author } = interaction;
-      const guildLang = ( i18n.langs.indexOf( guild.preferredLocale ) === -1 ?  'en-US' : guild.preferredLocale );
-      const useLang = ( i18n.langs.indexOf( locale ) === -1 ? guildLang : locale );
+      const guildLang = ( langs.indexOf( guild.preferredLocale ) === -1 ?  'en-US' : guild.preferredLocale );
+      const useLang = ( langs.indexOf( locale ) === -1 ? guildLang : locale );
       const members = guild.members.cache;
       const { content } = await userPerms( author, guild );
       if ( content ) { return interaction.editReply( { content: content } ); }
@@ -90,10 +89,9 @@ module.exports = {
       } )
       .then( async sentMsg => {
         if ( doLogs && !isAuthor ) {
-          var requestBy = await parse( responses.requestBy[ guildLang ], { author: author } );
           chanDefault.send( { content:
             responses.sharedFor[ guildLang ] + ( !objInputUser ? ( !objInputString ? '`' + strUseName + '`' : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
-            responses.in[ guildLang ] + ' <#' + channel.id + '> ' + requestBy + ' ' + strClosing } )
+            responses.in[ guildLang ] + ' <#' + channel.id + '> ' + await parse( responses.requestBy[ guildLang ], { author: author } ) + ' ' + strClosing } )
           .then( sentLog => { interaction.deleteReply(); } )
           .catch( async errLog => { await errHandler( errLog, { chanType: 'default', command: 'statbar', channel: channel, type: 'logLogs' } ); } );
         }
