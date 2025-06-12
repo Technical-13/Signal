@@ -15,7 +15,7 @@ module.exports = {
   run: async ( client, interaction ) => {
     const command = client.slashCommands.get( 'ping' );
     try {
-      const { langs, responses } = getI18n( command );
+      const { langs, responses } = await getI18n( command );
       const { guild, locale } = interaction;
       const guildLang = ( langs.indexOf( guild.preferredLocale ) === -1 ?  'en-US' : guild.preferredLocale );
       const useLang = ( langs.indexOf( locale ) === -1 ? guildLang : locale );
