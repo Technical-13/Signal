@@ -37,7 +37,6 @@ module.exports = async ( rawString, obj = { author: null, guild: null, member: n
       transclusions[ '{{author.age}}' ] = await duration( Date.now() - author.createdTimestamp, ageUnits );
       transclusions[ '{{author.guild.age}}' ] = await duration( Date.now() - author.joinedTimestamp, ageUnits );
       transclusions[ '{{author.name}}' ] = author.displayName;
-      transclusions[ '{{author.member.since}}' ] = guild.members.cache.get( author.id ).joinedAt.toLocaleTimeString( 'en-US', objTimeString );
       transclusions[ '{{author.ping}}' ] = '<@' + author.id + '>';
       transclusions[ '{{author.server.age}}' ] = await duration( Date.now() - author.joinedTimestamp, ageUnits );
       transclusions[ '{{author.since}}' ] = author.createdAt.toLocaleTimeString( 'en-US', objTimeString );
@@ -47,11 +46,17 @@ module.exports = async ( rawString, obj = { author: null, guild: null, member: n
       notAvailable[ '{{author.age}}' ] = 'author';
       notAvailable[ '{{author.guild.age}}' ] = 'author';
       notAvailable[ '{{author.name}}' ] = 'author';
-      notAvailable[ '{{author.member.since}}' ] = 'author';
       notAvailable[ '{{author.ping}}' ] = 'author';
       notAvailable[ '{{author.server.age}}' ] = 'author';
       notAvailable[ '{{author.since}}' ] = 'author';
       notAvailable[ '{{author.user.since}}' ] = 'author';
+    }
+
+    if ( author && guild ) {
+      transclusions[ '{{author.member.since}}' ] = guild.members.cache.get( author.id ).joinedAt.toLocaleTimeString( 'en-US', objTimeString );
+    }
+    else {
+      notAvailable[ '{{author.member.since}}' ] = 'author';
     }
 
     if ( guild ) {
