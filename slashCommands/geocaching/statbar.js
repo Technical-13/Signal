@@ -78,7 +78,7 @@ module.exports = {
     const strInputUserDisplayName = ( objInputUser ? members.get( objInputUser.id ).displayName : strInputString );
     const isAuthor = ( ( !strInputString && !objInputUser ) || author.id === objInputString?.id || strInputUserDisplayName === strAuthorDisplayName ? true : false );
     const strUseName = ( strInputUserDisplayName ? strInputUserDisplayName : strAuthorDisplayName );
-    const encName = encodeURI( strUseName ).replace( '&', '%26' );
+    const encName = encodeURIComponent( strUseName.replace( / /g, '_' ) );//.replace( '&', '%26' );
     const strLabcaches = ( options.getBoolean( 'labcaches' ) ? '&includeLabcaches' : '' );
     const { doLogs, chanDefault, chanError, strClosing } = await getGuildConfig( guild );
 
