@@ -3,18 +3,20 @@ const chalk = require( 'chalk' );
 const errHandler = require( '../../functions/errorHandler.js' );
 const userPerms = require( '../../functions/getPerms.js' );
 const getGuildConfig = require( '../../functions/getGuildDB.js' );
+const parse = require( '../../functions/parser.js' );
+const getI18n = require( '../../functions/getInternationalizations.js' );
 const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/geocaching/badgebar.js' );
 
 module.exports = {
   name: 'badgebar',
   group: 'geocaching',
-  description: 'Show Project-GC BadgeBar for user.',
+  description: 'Show Project-GC BadgeBar for user.'/*§<!--START-->*/,
   description_localizations: {
     de: 'Project-GC BadgeBar für Benutzer anzeigen.',
     fi: 'Näytä Project-GC BadgeBar käyttäjälle.',
-    pl: 'Pokaż pasek odznak Project-GC dla użytkownika.' },
+    pl: 'Pokaż pasek odznak Project-GC dla użytkownika.' }/*<!--END-->§*/,
   options: [//gc-name, discord-user
-    { type: 3, name: 'gc-name', description: 'The case-sensitive Geocaching.com username.',
+    { type: 3, name: 'gc-name', description: 'The case-sensitive Geocaching.com username.'/*§<!--START-->*/,
       name_localizations: {
         de: 'gc-name',
         fr: 'nom-gc',
@@ -24,9 +26,9 @@ module.exports = {
       description_localizations: {
         de: 'Der Geocaching.com-Benutzername, bei dem die Groß-/Kleinschreibung beachtet werden muss.',
         fi: 'Geocaching.com-käyttäjänimi, kirjainkoko merkitsevä.',
-        pl: 'W nazwie użytkownika Geocaching.com rozróżniana jest wielkość liter.' }
+        pl: 'W nazwie użytkownika Geocaching.com rozróżniana jest wielkość liter.' }/*<!--END-->§*/
     },
-    { type: 6, name: 'discord-user', description: 'Discord member (requires nickname to be set if different from GC name).',
+    { type: 6, name: 'discord-user', description: 'Discord member (requires nickname to be set if different from GC name).'/*§<!--START-->*/,
       name_localizations: {
         de: 'discord-benutzer',
         fr: 'utilisateur-discord',
@@ -36,16 +38,20 @@ module.exports = {
       description_localizations: {
         de: 'Discord-Mitglied (erfordert das Festlegen eines Spitznamens, wenn dieser vom GC-Namen abweicht).',
         fi: 'Discord-jäsen (vaatii nimimerkin asettamisen, jos se on eri kuin GC-nimi).',
-        pl: 'Członek Discord (wymaga ustawienia pseudonimu, jeśli różni się od nazwy GC).' }
+        pl: 'Członek Discord (wymaga ustawienia pseudonimu, jeśli różni się od nazwy GC).' }/*<!--END-->§*/
     }
   ],
   type: ApplicationCommandType.ChatInput,
   contexts: [ InteractionContextType.Guild ],
   cooldown: 1000,
   run: async ( client, interaction ) => {
+    const command = client.slashCommands.get( 'badgebar' );
+    const { langs, responses } = await getI18n( command );
     try {
       await interaction.deferReply( { ephemeral: true } );
-      const { channel, guild, options, user: author } = interaction;
+      const { channel, guild, locale, options, user: author } = interaction;
+      const guildLang = ( langs.indexOf( guild.preferredLocale ) === -1 ?  'en-US' : guild.preferredLocale );
+      const useLang = ( langs.indexOf( locale ) === -1 ? guildLang : locale );
       const { cache: members } = guild.members;
       const { content } = await userPerms( author, guild );
       if ( content ) { return interaction.editReply( { content: content } ); }
@@ -64,19 +70,20 @@ module.exports = {
       const strInputUserDisplayName = ( objInputUser ? members.get( objInputUser.id ).displayName : strInputString );
       const isAuthor = ( ( !strInputString && !objInputUser ) || author.id === objInputString?.id || strInputUserDisplayName === strAuthorDisplayName ? true : false );
       const strUseName = ( strInputUserDisplayName ? strInputUserDisplayName : strAuthorDisplayName );
-      const encName = encodeURI( strUseName ).replace( '&', '%26' );
+      const encName = encodeURIComponent( strUseName.replace( / /g, '_' ) );
 
       const { doLogs, chanDefault, chanError, strClosing } = await getGuildConfig( guild );
       channel.send( { content:
-        'BadgeBar for ' + ( !objInputUser ? ( !objInputString ? ( !isAuthor ? '`' + strUseName + '`' : '<@' + author.id + '>' ) : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
-        ( isAuthor ? '' : ' as requested by <@' + author.id + '>' ) +
+        responses.badgebarFor[ useLang ] + ' ' +
+        ( !objInputUser ? ( !objInputString ? ( !isAuthor ? '`' + strUseName + '`' : '<@' + author.id + '>' ) : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
+        ( isAuthor ? '' : ' ' + await parse( responses.requestedBy[ useLang ], { author: author } ) ) +
         ':\nhttps://cdn2.project-gc.com/BadgeBar/' + encName + '.png#' + intYear + '-' + intMonth + '-' + intDay
       } )
       .then( sentMsg => {
         if ( doLogs && !isAuthor ) {
           chanDefault.send( { content:
-            'I shared the `/badgebar` for ' + ( !objInputUser ? ( !objInputString ? '`' + strUseName + '`' : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
-            ' in <#' + channel.id + '> as requested by <@' + author.id + '>' + strClosing } )
+            responses.sharedFor[ guildLang ] + ' ' + ( !objInputUser ? ( !objInputString ? '`' + strUseName + '`' : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
+            ' in <#' + channel.id + '> ' + await parse( responses.requestedBy[ guildLang ], { author: author } ) + ' ' + strClosing } )
           .then( sentLog => { interaction.deleteReply(); } )
           .catch( async errLog => { await errHandler( errLog, { chanType: 'default', command: 'badgebar', channel: channel, type: 'logLogs' } ); } );
         }

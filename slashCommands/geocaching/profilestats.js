@@ -3,52 +3,58 @@ const chalk = require( 'chalk' );
 const errHandler = require( '../../functions/errorHandler.js' );
 const userPerms = require( '../../functions/getPerms.js' );
 const getGuildConfig = require( '../../functions/getGuildDB.js' );
+const parse = require( '../../functions/parser.js' );
+const getI18n = require( '../../functions/getInternationalizations.js' );
 const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/geocaching/profilestats.js' );
 
 module.exports = {
   name: 'profilestats',
   group: 'geocaching',
-  description: 'Show link to Project-GC ProfileStats for user.',
+  description: 'Show link to Project-GC ProfileStats for user.'/*§<!--START-->*/,
   description_localizations: {
     de: 'Link zu Project-GC ProfileStats für Benutzer anzeigen.',
     fi: 'Näytä käyttäjälle linkki Project-GC ProfileStatsiin.',
-    pl: 'Pokaż link do Project-GC ProfileStats dla użytkownika.' },
+    pl: 'Pokaż link do Project-GC ProfileStats dla użytkownika.' }/*<!--END-->§*/,
   options: [ {
-    name: 'gc-name',
+    name: 'gc-name'/*§<!--START-->*/,
     name_localizations: {
       de: 'gc-name',
       fr: 'nom-gc',
       fi: 'gc-nimi',
       pl: 'gc-name',
-      'sv-SE': 'gc-namn' },
-    description: 'The case-sensitive Geocaching.com username.',
+      'sv-SE': 'gc-namn' }/*<!--END-->§*/,
+    description: 'The case-sensitive Geocaching.com username.'/*§<!--START-->*/,
     description_localizations: {
       de: 'Der Geocaching.com-Benutzername, bei dem die Groß-/Kleinschreibung beachtet werden muss.',
       fi: 'Geocaching.com-käyttäjänimi, kirjainkoko merkitsevä.',
-      pl: 'W nazwie użytkownika Geocaching.com rozróżniana jest wielkość liter.' },
+      pl: 'W nazwie użytkownika Geocaching.com rozróżniana jest wielkość liter.' }/*<!--END-->§*/,
     type: 3
   }, {
-    name: 'discord-user',
+    name: 'discord-user'/*§<!--START-->*/,
     name_localizations: {
       de: 'discord-benutzer',
       fr: 'utilisateur-discord',
       fi: 'discord-käyttäjä',
       pl: 'discord-użytkownik',
-      'sv-SE': 'discord-användare' },
-    description: 'Discord member (requires nickname to be set if different from GC name).',
+      'sv-SE': 'discord-användare' }/*<!--END-->§*/,
+    description: 'Discord member (requires nickname to be set if different from GC name).'/*§<!--START-->*/,
     description_localizations: {
       de: 'Discord-Mitglied (erfordert das Festlegen eines Spitznamens, wenn dieser vom GC-Namen abweicht).',
       fi: 'Discord-jäsen (vaatii nimimerkin asettamisen, jos se on eri kuin GC-nimi).',
-      pl: 'Członek Discord (wymaga ustawienia pseudonimu, jeśli różni się od nazwy GC).' },
+      pl: 'Członek Discord (wymaga ustawienia pseudonimu, jeśli różni się od nazwy GC).' }/*<!--END-->§*/,
     type: 6
   } ],
   type: ApplicationCommandType.ChatInput,
   contexts: [ InteractionContextType.Guild ],
   cooldown: 120000,
   run: async ( client, interaction ) => {
+    const command = client.slashCommands.get( 'profilestats' );
+    const { langs, responses } = await getI18n( command );
     try {
       await interaction.deferReply( { ephemeral: true } );
-      const { channel, guild, options, user: author } = interaction;
+      const { channel, guild, locale, options, user: author } = interaction;
+      const guildLang = ( langs.indexOf( guild.preferredLocale ) === -1 ?  'en-US' : guild.preferredLocale );
+      const useLang = ( langs.indexOf( locale ) === -1 ? guildLang : locale );
       const members = guild.members.cache;
       const { content } = await userPerms( author, guild );
       if ( content ) { return interaction.editReply( { content: content } ); }
@@ -67,19 +73,20 @@ module.exports = {
       const strInputUserDisplayName = ( objInputUser ? members.get( objInputUser.id ).displayName : strInputString );
       const isAuthor = ( ( !strInputString && !objInputUser ) || author.id === objInputString?.id || strInputUserDisplayName === strAuthorDisplayName ? true : false );
       const strUseName = ( strInputUserDisplayName ? strInputUserDisplayName : strAuthorDisplayName );
-      const encName = encodeURI( strUseName ).replace( '&', '%26' );
+      const encName = encodeURIComponent( strUseName.replace( / /g, '_' ) );
 
       const { doLogs, chanDefault, chanError, strClosing } = await getGuildConfig( guild );
       channel.send( { content:
-        'ProfileStats link for: ' +
+        responses.profilestatsFor[ useLang ] + ' ' +
         ( !objInputUser ? ( !objInputString ? ( !isAuthor ? '`' + strUseName + '`' : '<@' + author.id + '>' ) : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
-        ( isAuthor ? '' : ' as requested by <@' + author.id + '>' ) + '\n<https://project-gc.com/Profile/ProfileStats?profile_name=' + encName + '>'
+        ( isAuthor ? '' : ' ' + await parse( responses.requestedBy[ useLang ], { author: author } ) ) +
+        '\n<https://project-gc.com/Profile/ProfileStats?profile_name=' + encName + '>'
       } )
       .then( sentMsg => {
         if ( doLogs && !isAuthor ) {
           chanDefault.send( { content:
-            'I shared the `/profilestats` for ' + ( !objInputUser ? ( !objInputString ? '`' + strUseName + '`' : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
-            ' in <#' + channel.id + '> as requested by <@' + author.id + '>' + strClosing } )
+            responses.sharedFor[ guildLang ] + ' ' + ( !objInputUser ? ( !objInputString ? '`' + strUseName + '`' : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
+            ' in <#' + channel.id + '> ' + await parse( responses.requestedBy[ guildLang ], { author: author } ) + ' ' + strClosing } )
           .then( sentLog => { interaction.deleteReply(); } )
           .catch( async errLog => { await errHandler( errLog, { chanType: 'default', command: 'profilestats', channel: channel, type: 'logLogs' } ); } );
         }
