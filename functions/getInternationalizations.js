@@ -32,6 +32,21 @@ const getOptions = ( options, langCode = 'en-US', objOpt = {} ) => {
   return objOpt;
 };
 
+const getResponses = ( responses, langCode = 'en-US', objRes = {} ) => {
+  if ( !responses ) { return { error: 'No responses to get data for in getResponses().' }; }
+  if ( Object.prototype.toString.call( responses ) === '[object Object]' ) { responses = Object.entries( responses ); };
+  if ( !Array.isArray( responses ) ) { return { error: 'Unable to manipulate responses of type "' + typeof( responses ) + '" into an array to get data for in getResponses().' }; }
+  if ( !langCode ) { return { error: 'No langCode to get data for in getResponses().' }; }
+
+  responses.forEach( ( res ) => {
+    objRes[ res[ 0 ] ] = ( objRes[ res[ 0 ] ] ?? {} );
+    const resBuilder = objRes[ res[ 0 ] ];
+    const data = res[ 1 ];
+    resBuilder[ langCode ] = data;
+  } );
+  return objRes;
+}
+
 module.exports = ( command, getLocales = false ) => {
   try {
     const langCodes = Object.values( Locale );
@@ -61,16 +76,8 @@ module.exports = ( command, getLocales = false ) => {
           if ( currLangFile.common.options ) { i18n.options = getOptions( currLangFile.common.options, langCode ); }
           if ( cmdPath.options ) { i18n.options = getOptions( cmdPath.options, langCode, ( i18n.options ?? {} ) ); }
         }
-        const commonResponses = ( currLangFile.common.responses ? Object.entries( currLangFile.common.responses ) : null );
-        if ( commonResponses ) {
-          if ( !i18n.responses ) { i18n.responses = {}; }
-          commonResponses.forEach( ( res ) => { i18n.responses[ res[ 0 ] ] = res[ 1 ]; } );
-        }
-        const cmdResponses = ( cmdPath.responses ? Object.entries( cmdPath.responses ) : null );
-        if ( cmdResponses ) {
-          if ( !i18n.responses ) { i18n.responses = {}; }
-          cmdResponses.forEach( ( res ) => { i18n.responses[ res[ 0 ] ] = res[ 1 ]; } );
-        }
+        if ( currLangFile.common.responses ) { i18n.responses = getResponses( currLangFile.common.responses, langCode ); }
+        if ( cmdPath.responses ) { i18n.responses = getOptions( cmdPath.responses, langCode, ( i18n.responses ?? {} ) ); }
       }
     } );
 
