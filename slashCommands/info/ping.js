@@ -1,7 +1,7 @@
 const { ApplicationCommandType, InteractionContextType } = require( 'discord.js' );
 const chalk = require( 'chalk' );
 const parse = require( '../../functions/parser.js' );
-const i18n = require( '../../functions/getInternationalizations.js' );
+const getI18n = require( '../../functions/getInternationalizations.js' );
 const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/info/ping.js' );
 
 module.exports = {
@@ -15,8 +15,11 @@ module.exports = {
   run: async ( client, interaction ) => {
     const command = client.slashCommands.get( 'ping' );
     try {
-      const responses = i18n( command, 'en-US' ).responses;
-      interaction.reply( { content: await parse( responses.pong ), ephemeral: interaction.inGuild() } );
+      const i18n = getI18n( command );
+      const { guild, locale } = interaction;
+      const guildLang = ( i18n.langs.indexOf( guild.preferredLocale ) === -1 ?  'en-US' : guild.preferredLocale );
+      const useLang = ( i18n.langs.indexOf( locale ) === -1 ? guildLang : locale );
+      interaction.reply( { content: await parse( responses.pong[ useLang ] ), ephemeral: interaction.inGuild() } );
     }
     catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
   }
