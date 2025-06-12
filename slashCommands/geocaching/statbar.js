@@ -54,7 +54,7 @@ module.exports = {
   cooldown: 3000,
   run: async ( client, interaction ) => {
     const command = client.slashCommands.get( 'statbar' );
-    const { langs, responses } = await getI18n( command );/* TRON */console.log( 'responses: %o', responses );/* TROFF */
+    const { langs, responses } = await getI18n( command );
     try {
       await interaction.deferReply( { ephemeral: true } );
       const { channel, guild, locale, options, user: author } = interaction;
@@ -81,20 +81,18 @@ module.exports = {
       const encName = encodeURI( strUseName ).replace( '&', '%26' );
       const strLabcaches = ( options.getBoolean( 'labcaches' ) ? '&includeLabcaches' : '' );
       const { doLogs, chanDefault, chanError, strClosing } = await getGuildConfig( guild );
-      const chanParsedReqBy = await parse( responses.requestBy[ useLang ], { author: author } );
 
       channel.send( { content:
         responses.statbarFor[ useLang ] + ' ' +
         ( !objInputUser ? ( !objInputString ? ( !isAuthor ? '`' + strUseName + '`' : '<@' + author.id + '>' ) : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
-        ( isAuthor ? '' : ' ' + chanParsedReqBy ) +
+        ( isAuthor ? '' : ' ' + await parse( responses.requestedBy[ useLang ], { author: author } ) ) +
         '\nhttps://cdn2.project-gc.com/statbar.php?quote=https://discord.me/Geocaching%20-%20' + intYear + '-' + intMonth + '-' + intDay + strLabcaches + '&user=' + encName
       } )
       .then( async sentMsg => {
         if ( doLogs && !isAuthor ) {
-          const logParsedReqBy = await parse( responses.requestBy[ guildLang ], { author: author } );
           chanDefault.send( { content:
             responses.sharedFor[ guildLang ] + ( !objInputUser ? ( !objInputString ? '`' + strUseName + '`' : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
-            responses.in[ guildLang ] + ' <#' + channel.id + '> ' + logParsedReqBy + ' ' + strClosing } )
+            responses.in[ guildLang ] + ' <#' + channel.id + '> ' + await parse( responses.requestedBy[ guildLang ], { author: author } ) + ' ' + strClosing } )
           .then( sentLog => { interaction.deleteReply(); } )
           .catch( async errLog => { await errHandler( errLog, { chanType: 'default', command: 'statbar', channel: channel, type: 'logLogs' } ); } );
         }
