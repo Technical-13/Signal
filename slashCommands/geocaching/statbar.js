@@ -54,7 +54,7 @@ module.exports = {
   cooldown: 3000,
   run: async ( client, interaction ) => {
     const command = client.slashCommands.get( 'statbar' );
-    const { langs, responses } = getI18n( command );
+    const { langs, responses } = getI18n( command );/* TRON */console.log( 'responses: %o', responses );/* TROFF */
     try {
       await interaction.deferReply( { ephemeral: true } );
       const { channel, guild, locale, options, user: author } = interaction;
