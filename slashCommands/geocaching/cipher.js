@@ -1,11 +1,14 @@
 const { ApplicationCommandType } = require( 'discord.js' );
 const chalk = require( 'chalk' );
 const userPerms = require( '../../functions/getPerms.js' );
-const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/geocaching/cipher.js' );
+const parse = require( '../../functions/parser.js' );
+const getI18n = require( '../../functions/getInternationalizations.js' );
+const cmdData = { group: 'geocaching', name: 'cipher' };
+const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/' + cmdData.group + '/' + cmdData.name + '.js' );
 
 module.exports = {
-  name: 'cipher',
-  group: 'geocaching',
+  name: cmdData.name,
+  group: cmdData.group,
   description: 'Cipher (de|en)coder.',
   type: ApplicationCommandType.ChatInput,
   options: [
@@ -21,13 +24,17 @@ module.exports = {
   devOnly: true,
   cooldown: 1000,
   run: async ( client, interaction ) => {
+    const command = client.slashCommands.get( cmdData.name );
+    const { langs, responses } = await getI18n( command );
     try {
       await interaction.deferReply( { ephemeral: true } );
-      const { channel, guild, options, user: author } = interaction;
+      const { channel, guild, locale, options, user: author } = interaction;
+      const guildLang = ( langs.indexOf( guild.preferredLocale ) === -1 ?  'en-US' : guild.preferredLocale );
+      const useLang = ( langs.indexOf( locale ) === -1 ? guildLang : locale );
       const { content } = await userPerms( author, guild );
       if ( content ) { return interaction.editReply( { content: content } ); }
 
-      return interaction.editReply( { content: 'Comming **SOON**:tm:' } );
+      return interaction.editReply( { content: responses.soon[ useLang ] } );
     }
     catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
   }

@@ -5,11 +5,12 @@ const userPerms = require( '../../functions/getPerms.js' );
 const getGuildConfig = require( '../../functions/getGuildDB.js' );
 const parse = require( '../../functions/parser.js' );
 const getI18n = require( '../../functions/getInternationalizations.js' );
-const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/geocaching/profilestats.js' );
+const cmdData = { group: 'geocaching', name: 'profilestats' };
+const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/' + cmdData.group + '/' + cmdData.name + '.js' );
 
 module.exports = {
-  name: 'profilestats',
-  group: 'geocaching',
+  name: cmdData.name,
+  group: cmdData.group,
   description: 'Show link to Project-GC ProfileStats for user.'/*§<!--START-->*/,
   description_localizations: {
     de: 'Link zu Project-GC ProfileStats für Benutzer anzeigen.',
@@ -48,7 +49,7 @@ module.exports = {
   contexts: [ InteractionContextType.Guild ],
   cooldown: 120000,
   run: async ( client, interaction ) => {
-    const command = client.slashCommands.get( 'profilestats' );
+    const command = client.slashCommands.get( cmdData.name );
     const { langs, responses } = await getI18n( command );
     try {
       await interaction.deferReply( { ephemeral: true } );
@@ -86,7 +87,7 @@ module.exports = {
         if ( doLogs && !isAuthor ) {
           chanDefault.send( { content:
             responses.sharedFor[ guildLang ] + ' ' + ( !objInputUser ? ( !objInputString ? '`' + strUseName + '`' : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
-            ' in <#' + channel.id + '> ' + await parse( responses.requestedBy[ guildLang ], { author: author } ) + ' ' + strClosing } )
+            ' ' + responses.in[ guildLang ] + ' <#' + channel.id + '> ' + await parse( responses.requestedBy[ guildLang ], { author: author } ) + ' ' + strClosing } )
           .then( sentLog => { interaction.deleteReply(); } )
           .catch( async errLog => { await errHandler( errLog, { chanType: 'default', command: 'profilestats', channel: channel, type: 'logLogs' } ); } );
         }
