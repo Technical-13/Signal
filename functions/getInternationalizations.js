@@ -37,12 +37,11 @@ const getResponses = ( responses, langCode = 'en-US', objRes = {} ) => {
   if ( Object.prototype.toString.call( responses ) === '[object Object]' ) { responses = Object.entries( responses ); };
   if ( !Array.isArray( responses ) ) { return { error: 'Unable to manipulate responses of type "' + typeof( responses ) + '" into an array to get data for in getResponses().' }; }
   if ( !langCode ) { return { error: 'No langCode to get data for in getResponses().' }; }
-
+/* TRON */console.log( 'responses: %o', responses );/* TROFF */
   responses.forEach( ( res ) => {
     objRes[ res[ 0 ] ] = ( objRes[ res[ 0 ] ] ?? {} );
     const resBuilder = objRes[ res[ 0 ] ];
-    const data = res[ 1 ];
-    resBuilder[ langCode ] = data;
+    resBuilder[ langCode ] = res[ 1 ];
   } );
   return objRes;
 }
