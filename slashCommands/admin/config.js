@@ -17,7 +17,7 @@ module.exports = {
     { type: 1, name: 'clear', description: 'Clear guild\'s blacklist and/or whitelist.', options: [// blacklist, whitelist
       { type: 5, name: 'blacklist', description: 'Clear guild\'s blacklist.' },
       { type: 5, name: 'whitelist', description: 'Clear guild\'s whitelist.' }
-    ] },/
+    ] },
     /*{ type: 1, name: 'commands', description: 'Manage command groups allowed in server.' },//*/
     { type: 1, name: 'get', description: 'Get all settings for the server.', options: [// share
       { type: 5, name: 'share', description: 'Share result to current channel instead of making it ephemeral.' }
