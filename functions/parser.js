@@ -4,8 +4,8 @@ const discord = require( 'discord.js' );
 const objTimeString = require( '../jsonObjects/time.json' );
 const chalk = require( 'chalk' );
 const duration = require( './duration.js' );
-const fData = { name: 'parser', type: 'functions' };
-const strScript = chalk.hex( '#FFA500' ).bold( './' + fData.type + '/' + fData.name + '.js' );
+const modData = { name: 'parser', type: 'functions' };
+const strScript = chalk.hex( '#FFA500' ).bold( './' + modData.type + '/' + modData.name + '.js' );
 
 module.exports = async ( rawString, obj = { author: null, guild: null, interaction: null, member: null, uptime: null, useLang: null } ) => {
   try {
