@@ -2,6 +2,7 @@ const client = require( '..' );
 const fs = require( 'fs' );
 const chalk = require( 'chalk' );
 const { Locale } = require( 'discord-api-types/v10' );
+const parse = require( './parser.js' );
 const strScript = chalk.hex( '#FFA500' ).bold( './functions/getInternationalizations.js' );
 const enNames = new Intl.DisplayNames( [ 'en-US' ], { type: 'language' } );
 const getOptions = ( options, langCode = 'en-US', objOpt = {} ) => {
@@ -31,25 +32,30 @@ const getOptions = ( options, langCode = 'en-US', objOpt = {} ) => {
   } );
   return objOpt;
 };
-
 const getResponses = ( responses, langCode = 'en-US', objRes = {} ) => {
   if ( !responses ) { return { error: 'No responses to get data for in getResponses().' }; }
   if ( Object.prototype.toString.call( responses ) === '[object Object]' ) { responses = Object.entries( responses ); };
   if ( !Array.isArray( responses ) ) { return { error: 'Unable to manipulate responses of type "' + typeof( responses ) + '" into an array to get data for in getResponses().' }; }
   if ( !langCode ) { return { error: 'No langCode to get data for in getResponses().' }; }
 
-  responses.forEach( ( res ) => {
+  responses.forEach( async ( res ) => {
     objRes[ res[ 0 ] ] = ( objRes[ res[ 0 ] ] ?? {} );
     const resBuilder = objRes[ res[ 0 ] ];
-    resBuilder[ langCode ] = res[ 1 ];
+    resBuilder[ langCode ] = await parse( res[ 1 ] );
   } );
   return objRes;
 }
 
-module.exports = ( command, getLocales = false ) => {
+module.exports = ( command, params = { author: null, getLocales: false, guild: null, interaction: null, member: null, uptime: null, useLang: null } ) => {
   try {
+    const interaction = ( params.interaction ?? null );
+    const { channel, guild: iGuild, locale: iLocale, options, user } = ( interaction ?? { channel: null, guild: null, locale: null, options: null, user: null } );
+    const author = ( params.author ?? ( user ?? null ) );
+    const member = ( params.member ?? null );
+    const guild = ( params.guild ?? ( iGuild ?? ( author ? author.guild : ( member ? member.guild : null ) ) ) );
+    const useLang = ( params.useLang ?? options?.getString( 'language' ) ?? iLocale ?? guild?.preferedLocale ?? 'en-US' );
     const langCodes = Object.values( Locale );
-    if ( getLocales ) {
+    if ( params.getLocales ) {
       const langNames = Object.keys( Locale );
       locales = {};
       langCodes.forEach( ( v, k ) => { locales[ v ] = enNames.of( v ); } );
@@ -58,7 +64,7 @@ module.exports = ( command, getLocales = false ) => {
     if ( !command ) { throw new Error( 'No command to get localizations for.' ); }
 
     const i18n = { langs: [], name: {}, description: {} };
-    if ( getLocales ) { i18n.locales = locales }
+    if ( params.getLocales ) { i18n.locales = locales }
     const files = fs.readdirSync( './i18n/' ).filter( file => file.endsWith( '.json' ) );
     i18n.langs = files.map( file => file.replace( '.json', '' ) );
     i18n.langs.forEach( ( langCode ) => {
