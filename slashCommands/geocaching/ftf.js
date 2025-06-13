@@ -9,9 +9,9 @@ module.exports = {
   name:'ftf',
   group: 'geocaching',
   description: 'Tell someone how to get their FTF (First To Find) noticed on Project-GC.',
-  options: [// message-id, target, language
+  options: [// message-id, discord-user, language
     { type: 3, name: 'message-id', description: 'Paste message ID here' },
-    { type: 6, name: 'target', description: 'Tag someone in response.' },
+    { type: 6, name: 'discord-user', description: 'Tag someone in response.' },
     { type: 3, name: 'language', description: 'Language to give information in.',
       name_localizations: {
         de: 'sprache',
@@ -49,7 +49,7 @@ module.exports = {
       if ( content ) { return interaction.editReply( { content: content } ); }
 
       const msgID = options.getString( 'message-id' );
-      const cmdInputUser = options.getUser( 'target' );
+      const cmdInputUser = options.getUser( 'discord-user' );
       const localeInput = options.getString( 'language' );
 
       const objLocales = {

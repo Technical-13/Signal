@@ -14,7 +14,7 @@ module.exports = {
   options: [// query, nice, target
     { type: 3, name: 'query', description: 'What do you want me to look up?', required: true },
     { type: 5, name: 'nice', description: 'Should I be nice?' },
-    { type: 6, name: 'target', description: 'Who should I mention with my response? (Default: yourself)' }
+    { type: 6, name: 'discord-user', description: 'Who should I mention with my response? (Default: yourself)' }
   ],
   cooldown: 1000,
   run: async ( client, interaction ) => {
@@ -25,7 +25,7 @@ module.exports = {
       if ( content ) { return interaction.editReply( { content: content } ); }
 
       const { doLogs, chanChat, strClosing } = await getGuildConfig( guild );
-      const cmdInputUser = options.getUser( 'target' );
+      const cmdInputUser = options.getUser( 'discord-user' );
       const mentionUserID = ( cmdInputUser ? cmdInputUser.id : author.id );
       const mentionUser = '<@' + mentionUserID + '>';
       const beNice = ( options.getBoolean( 'nice' ) || ( cmdInputUser === author ? niceDefault : !niceDefault ) );

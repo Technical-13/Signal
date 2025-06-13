@@ -11,7 +11,7 @@ module.exports = {
   description: 'Give someone information about the logo kits for Geocaching.',
   options: [
     { type: 3, name: 'message-id', description: 'Paste message ID here' },
-    { type: 6, name: 'target', description: 'Tag someone in response.' },
+    { type: 6, name: 'discord-user', description: 'Tag someone in response.' },
   ],
   type: ApplicationCommandType.ChatInput,
   contexts: [ InteractionContextType.Guild ],
@@ -24,7 +24,7 @@ module.exports = {
       if ( content ) { return interaction.editReply( { content: content } ); }
 
       const msgID = options.getString( 'message-id' );
-      const cmdInputUser = options.getUser( 'target' );
+      const cmdInputUser = options.getUser( 'discord-user' );
 
       const objLocales = {
         de: 'Deutsch/German',
