@@ -3,14 +3,11 @@ const chalk = require( 'chalk' );
 const errHandler = require( '../../functions/errorHandler.js' );
 const userPerms = require( '../../functions/getPerms.js' );
 const getGuildConfig = require( '../../functions/getGuildDB.js' );
-const parse = require( '../../functions/parser.js' );
-const getI18n = require( '../../functions/getInternationalizations.js' );
-const cmdData = { group: 'geocaching', name: 'logo' };
-const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/' + cmdData.group + '/' + cmdData.name + '.js' );
+const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/geocaching/logo.js' );
 
 module.exports = {
-  name: cmdData.name,
-  group: cmdData.group,
+  name: 'logo',
+  group: 'geocaching',
   description: 'Give someone information about the logo kits for Geocaching.',
   options: [
     { type: 3, name: 'message-id', description: 'Paste message ID here' },
@@ -20,13 +17,9 @@ module.exports = {
   contexts: [ InteractionContextType.Guild ],
   cooldown: 1000,
   run: async ( client, interaction ) => {
-    const command = client.slashCommands.get( cmdData.name );
-    const { langs, responses } = await getI18n( command );
     try {
       await interaction.deferReply( { ephemeral: true } );
-      const { channel, guild, locale, options, user: author } = interaction;
-      const guildLang = ( langs.indexOf( guild.preferredLocale ) === -1 ?  'en-US' : guild.preferredLocale );
-      const useLang = ( langs.indexOf( locale ) === -1 ? guildLang : locale );
+      const { channel, guild, options, user: author } = interaction;
       const { content } = await userPerms( author, guild );
       if ( content ) { return interaction.editReply( { content: content } ); }
 
@@ -40,22 +33,31 @@ module.exports = {
         fr: 'Français/French',
         no: 'Norsk/Norwegian',
         pl: 'Polski/Polish',
-        'pt-PT': 'Português/Portuguese (Portugal)',
         'sv-SE': 'Svenska/Swedish'
       };
-
-      locale = ( localeInput || useLang );
+      var getLocale = 'en';
+      switch ( interaction.locale ) {
+        case 'de' :
+        case 'fi' :
+        case 'fr' :
+        case 'no' :
+        case 'pl' :
+        case 'sv-SE' : getLocale = interaction.locale; break;
+        case 'en-US' :
+        case 'en-GB' :
+        default : getLocale = 'en';
+      }
+      const locale = getLocale;//( localeInput || getLocale );
       const strLocale = '(*' + objLocales[ locale ] + '*)';
-      const i18InvalidMsgId = responses.invalidMsgId[ ( localeInput || useLang ) ];/*§<!--START-->{
+      const i18InvalidMsgId = {
         de: 'ist keine gültige Nachrichten-ID.',
         en: 'is not a valid message-id.',
         fi: 'ei ole kelvollinen viestin tunnus.',
         fr: 'n\'est pas un identifiant de message valide.',
         no: 'er ikke en gyldig meldings-ID.',
         pl: 'nie jest prawidłowym identyfikatorem wiadomości.',
-        'pt-PT': 'Não é um id de mensagem valido',
         'sv-SE': 'är inte ett giltigt meddelande-id.'
-      };/*<!--END-->§*/
+      };
 
       const { doLogs, chanDefault, chanError, strClosing } = await getGuildConfig( guild );
       if ( msgID && !( /[\d]{18,19}/.test( msgID ) ) ) { return interaction.editReply( { content: '`' + msgID + '` ' + i18InvalidMsgId[ locale ] } ); }
