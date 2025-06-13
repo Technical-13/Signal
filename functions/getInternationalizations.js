@@ -73,11 +73,11 @@ module.exports = ( command, getLocales = false ) => {
         else {
           i18n.name[ langCode ] = cmdPath.name;
           i18n.description[ langCode ] = cmdPath.description;
-          if ( currLangFile.common.options ) { i18n.options = getOptions( currLangFile.common.options, langCode ); }
-          if ( cmdPath.options ) { i18n.options = getOptions( cmdPath.options, langCode, ( i18n.options ?? {} ) ); }
+          if ( currLangFile.common.options ) { i18n.options = getOptions( currLangFile.common.options, langCode, i18n.options ); }
+          if ( cmdPath.options ) { i18n.options = getOptions( cmdPath.options, langCode, i18n.options ); }
         }
-        if ( currLangFile.common.responses ) { i18n.responses = getResponses( currLangFile.common.responses, langCode ); }
-        if ( cmdPath.responses ) { i18n.responses = getResponses( cmdPath.responses, langCode, ( i18n.responses ?? {} ) ); }
+        if ( currLangFile.common.responses ) { i18n.responses = getResponses( currLangFile.common.responses, langCode, i18n.responses ); }
+        if ( cmdPath.responses ) { i18n.responses = getResponses( cmdPath.responses, langCode, i18n.responses ); }
       }
     } );
 
