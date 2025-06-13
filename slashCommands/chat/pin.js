@@ -9,7 +9,9 @@ module.exports = {
   name: 'pin',
   group: 'chat',
   description: 'Pin a message to the channel.',
-  options: [ { type: 3, name: 'message-id', description: 'Paste message ID here:', required: true } ],
+  options: [ /* message-id //*/
+    { type: 3, name: 'message-id', description: 'Paste message ID here:', required: true }
+  ],
   type: ApplicationCommandType.ChatInput,
   contexts: [ InteractionContextType.Guild ],
   cooldown: 1000,

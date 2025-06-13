@@ -12,7 +12,7 @@ module.exports = {
   name: 'ban',
   group: 'admin',
   description: 'Ban a user.',
-  options: [
+  options: [ /* member, delete, reason //*/
     { type: 6, name: 'member', description: 'Select a member to ban.', required: true },
     { type: 4, name: 'delete', description: 'Delete messages back for:', choices: [
       { name: 'None', value: 0 },

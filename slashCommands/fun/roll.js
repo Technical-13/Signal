@@ -5,21 +5,22 @@ const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/fun/roll.js' );
 
 module.exports = {
   name: 'roll',
-  group: 'fun',
   name_localizations: {
     de: 'würfeln',
     fr: 'lancer-les-dés',
     fi: 'heitä-noppaa',
     pl: 'rzuć-kostką',
     'sv-SE': 'rulla-tärningen' },
+  group: 'fun',
   description: 'Dice Roller (default: 1#1d6±0)',
-  type: ApplicationCommandType.ChatInput,
   options: [// dice, sides, sets, modifier
     { type: 4, name: 'dice', description: 'How many dice? (default: 1)' },
     { type: 4, name: 'sides', description: 'How many sides per die? (default: 6)' },
     { type: 4, name: 'sets', description: 'How many sets of dice? (default: 1)' },
     { type: 4, name: 'modifier', description: '± to final roll for each die? (default: 0)' }
   ],
+  type: ApplicationCommandType.ChatInput,
+  contexts: [ InteractionContextType.BotDM , InteractionContextType.Guild ],
   cooldown: 1000, // Set a cooldown of 1 second
   run: async ( client, interaction ) => {
     try {

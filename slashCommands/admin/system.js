@@ -16,10 +16,7 @@ module.exports = {
   name: 'system',
   group: 'admin',
   description: 'Change bot configs.',
-  type: ApplicationCommandType.ChatInput,
-  contexts: [ InteractionContextType.Guild ],
-  cooldown: 1000,
-  options: [/* add, clear, get, remove, reset, set //*/
+  options: [ /* add, clear, get, remove, reset, set //*/
     { type: 1, name: 'add', description: 'Add a user to one of my lists.', options: [
       { type: 6, name: 'blacklist', description: 'User to block from using all commands.' },
       { type: 6, name: 'moderator', description: 'User to add as a moderator.' },
@@ -52,7 +49,10 @@ module.exports = {
       { type: 6, name: 'owner', description: 'Who is my master!?' },
       { type: 3, name: 'dev-guild', description: 'Where am I from!?' }
     ] }/* set //*/
-  ]/* add, get, remove, reset, set //*/,
+  ],
+  type: ApplicationCommandType.ChatInput,
+  contexts: [ InteractionContextType.Guild ],
+  cooldown: 1000,
   run: async ( client, interaction ) => {
     try {
       await interaction.deferReply( { ephemeral: true } );

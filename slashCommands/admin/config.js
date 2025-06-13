@@ -9,39 +9,36 @@ module.exports = {
   name: 'config',
   group: 'admin',
   description: 'Configure bot for this server.',
-  type: ApplicationCommandType.ChatInput,
-  contexts: [ InteractionContextType.Guild ],
-  cooldown: 1000,
-  options: [// add, clear, commands, get, logs, remove, reset, set, welcome
+  options: [ /* add, clear, commands, get, logs, remove, reset, set, welcome //*/
     { type: 1, name: 'add', description: 'Add a user to the guild blacklist or whitelist.', options: [// blacklist, whitelist
       { type: 9, name: 'blacklist', description: 'Role or Member to block from using all commands.' },
       { type: 9, name: 'whitelist', description: 'Role or Member to permit to use all commands.' }
-    ] },//*/
+    ] },
     { type: 1, name: 'clear', description: 'Clear guild\'s blacklist and/or whitelist.', options: [// blacklist, whitelist
       { type: 5, name: 'blacklist', description: 'Clear guild\'s blacklist.' },
       { type: 5, name: 'whitelist', description: 'Clear guild\'s whitelist.' }
-    ] },//*/
+    ] },/
     /*{ type: 1, name: 'commands', description: 'Manage command groups allowed in server.' },//*/
     { type: 1, name: 'get', description: 'Get all settings for the server.', options: [// share
       { type: 5, name: 'share', description: 'Share result to current channel instead of making it ephemeral.' }
-    ] },//*/
+    ] },
     { type: 1, name: 'logs', description: '(Dis|En)able logs and set channels for them.', options: [// do-logs, log-chat, log-default, log-error, log-reset
       { type: 5, name: 'do-logs', description: 'Send logs for uses of commands that may be devious in nature' },// disable all logs
       { type: 7, name: 'log-chat', description: 'Channel to log chat command (`/edit`, `/react`, `/reply`, and `/say`) requests.' },// chat channel
       { type: 7, name: 'log-default', description: 'Channel to log all requests not otherwise specified.' },// default channel
       { type: 7, name: 'log-error', description: 'Channel to log errors.' },// error channel
       { type: 5, name: 'log-reset', description: 'Reset logging to enabled and all logs DMed to guild owner.' }// reset log settings
-    ] },//*/
+    ] },
     { type: 1, name: 'remove', description: 'Remove a user from the guild blacklist or whitelist.', options: [// blacklist, whitelist
       { type: 9, name: 'blacklist', description: 'Role or Member to remove from blacklist.' },
       { type: 9, name: 'whitelist', description: 'Role or Member to remove from whitelist.' }
-    ] },//*/
+    ] },
     { type: 1, name: 'reset', description: 'Reset all settings for the server to default.' },//*/
     { type: 1, name: 'set', description: 'Set settings for the server.', options: [// invite, prefix, premium
       { type: 7, name: 'invite', description: 'Channel to make invites to. Will try to guess if not set.' },// invite channel
       { type: 3, name: 'prefix', description: 'Guild specific prefix for bot commands' },// guild prefix
       { type: 5, name: 'premium', description: 'Give nitro server boosters extra bot access? (default: TRUE)' }
-    ] },//*/
+    ] },
     { type: 1, name: 'welcome', description: 'Modify the welcome message options.', options: [// do-welcome, welcome-message, welcome-dm, welcome-channel, welcome-role, welcome-clear-role, welcome-reset
       { type: 5, name: 'do-welcome', description: 'Send a message to welcome new members to the server?' },// welcomer on/off
       { type: 3, name: 'welcome-message', description: 'Message to send new members to the server?' },// welcome message
@@ -50,8 +47,11 @@ module.exports = {
       { type: 8, name: 'welcome-role', description: 'Which role, if any, would you like to give new members on join?' },// welcome role
       { type: 5, name: 'welcome-clear-role', description: 'Clear role to assign' },// clear welcome role
       { type: 5, name: 'welcome-reset', description: 'Reset welcoming of new members to disabled.' },// reset welcomer settings
-    ] }//*/
+    ] }
   ],
+  type: ApplicationCommandType.ChatInput,
+  contexts: [ InteractionContextType.Guild ],
+  cooldown: 1000,
   run: async ( client, interaction ) => {
     try {
       await interaction.deferReply( { ephemeral: true } );

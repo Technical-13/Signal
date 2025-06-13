@@ -10,12 +10,13 @@ module.exports = {
   name: 'lmgtfy',
   group: 'fun',
   description: 'Let Me Google That For You!',
-  type: ApplicationCommandType.ChatInput,
-  options: [// query, nice, target
+  options: [ /* query, nice, target //*/
     { type: 3, name: 'query', description: 'What do you want me to look up?', required: true },
     { type: 5, name: 'nice', description: 'Should I be nice?' },
     { type: 6, name: 'discord-user', description: 'Who should I mention with my response? (Default: yourself)' }
   ],
+  type: ApplicationCommandType.ChatInput,
+  contexts: [ InteractionContextType.BotDM , InteractionContextType.Guild ],
   cooldown: 1000,
   run: async ( client, interaction ) => {
     try {

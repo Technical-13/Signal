@@ -8,25 +8,18 @@ const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/chat/reply.js' )
 
 module.exports = {
   name: 'reply',
-  group: 'chat',
   name_localizations: {
     de: 'antwort',
     fr: 'répondre',
     fi: 'vastaa',
     pl: 'odpowiedź',
     'sv-SE': 'svar' },
+  group: 'chat',
   description: 'Make bot respond to message.',
-  options: [ {
-    name: 'message-id',
-    description: 'Paste message ID here:',
-    required: true,
-    type: 3
-  }, {
-    name: 'response',
-    description: 'What do you want me to say in response?',
-    required: true,
-    type: 3
-  }  ],
+  options: [ /* message-id, response //*/
+    { type: 3, name: 'message-id', description: 'Paste message ID here:', required: true },
+    { type: 3, name: 'response', description: 'What do you want me to say in response?', required: true }
+  ],
   type: ApplicationCommandType.ChatInput,
   contexts: [ InteractionContextType.Guild ],
   cooldown: 1000,

@@ -13,35 +13,32 @@ module.exports = {
     de: 'Link zu Project-GC ProfileStats für Benutzer anzeigen.',
     fi: 'Näytä käyttäjälle linkki Project-GC ProfileStatsiin.',
     pl: 'Pokaż link do Project-GC ProfileStats dla użytkownika.' },
-  options: [ {
-    name: 'gc-name',
-    name_localizations: {
-      de: 'gc-name',
-      fr: 'nom-gc',
-      fi: 'gc-nimi',
-      pl: 'gc-name',
-      'sv-SE': 'gc-namn' },
-    description: 'The case-sensitive Geocaching.com username.',
-    description_localizations: {
-      de: 'Der Geocaching.com-Benutzername, bei dem die Groß-/Kleinschreibung beachtet werden muss.',
-      fi: 'Geocaching.com-käyttäjänimi, kirjainkoko merkitsevä.',
-      pl: 'W nazwie użytkownika Geocaching.com rozróżniana jest wielkość liter.' },
-    type: 3
-  }, {
-    name: 'discord-user',
-    name_localizations: {
-      de: 'discord-benutzer',
-      fr: 'utilisateur-discord',
-      fi: 'discord-käyttäjä',
-      pl: 'discord-użytkownik',
-      'sv-SE': 'discord-användare' },
-    description: 'Discord member (requires nickname to be set if different from GC name).',
-    description_localizations: {
-      de: 'Discord-Mitglied (erfordert das Festlegen eines Spitznamens, wenn dieser vom GC-Namen abweicht).',
-      fi: 'Discord-jäsen (vaatii nimimerkin asettamisen, jos se on eri kuin GC-nimi).',
-      pl: 'Członek Discord (wymaga ustawienia pseudonimu, jeśli różni się od nazwy GC).' },
-    type: 6
-  } ],
+  options: [/* gc-name, discord-user //*/
+    { type: 3, name: 'gc-name', description: 'The case-sensitive Geocaching.com username.',
+      name_localizations: {
+        de: 'gc-name',
+        fr: 'nom-gc',
+        fi: 'gc-nimi',
+        pl: 'gc-name',
+        'sv-SE': 'gc-namn' },
+      description_localizations: {
+        de: 'Der Geocaching.com-Benutzername, bei dem die Groß-/Kleinschreibung beachtet werden muss.',
+        fi: 'Geocaching.com-käyttäjänimi, kirjainkoko merkitsevä.',
+        pl: 'W nazwie użytkownika Geocaching.com rozróżniana jest wielkość liter.' }
+    },
+    { type: 6, name: 'discord-user', description: 'Discord member (requires nickname to be set if different from GC name).',
+      name_localizations: {
+        de: 'discord-benutzer',
+        fr: 'utilisateur-discord',
+        fi: 'discord-käyttäjä',
+        pl: 'discord-użytkownik',
+        'sv-SE': 'discord-användare' },
+      description_localizations: {
+        de: 'Discord-Mitglied (erfordert das Festlegen eines Spitznamens, wenn dieser vom GC-Namen abweicht).',
+        fi: 'Discord-jäsen (vaatii nimimerkin asettamisen, jos se on eri kuin GC-nimi).',
+        pl: 'Członek Discord (wymaga ustawienia pseudonimu, jeśli różni się od nazwy GC).' }
+    }
+  ],
   type: ApplicationCommandType.ChatInput,
   contexts: [ InteractionContextType.Guild ],
   cooldown: 120000,

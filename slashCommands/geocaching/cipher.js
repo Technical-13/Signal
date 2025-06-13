@@ -7,8 +7,7 @@ module.exports = {
   name: 'cipher',
   group: 'geocaching',
   description: 'Cipher (de|en)coder.',
-  type: ApplicationCommandType.ChatInput,
-  options: [
+  options: [/* string, code, use-type, numeric, alphabetic, alphanumberic //*/
     { type: 3, name: 'string', description: 'string to (de|en)code.', required: true },
     { type: 3, name: 'code', description: 'Decode or encode?', required: true,
       choices: [ { name: 'Decode', value: 'decode' }, { name: 'Encode', value: 'encode' } ] },
@@ -18,6 +17,8 @@ module.exports = {
     { type: 10, name: 'alphabetic', description: 'Characters in the Latin alphabet. (default 13)', minValue: 1, maxValue: 26 },
     { type: 10, name: 'alphanumberic', description: 'Characters in the Latin alphabet. (default 18)', minValue: 1, maxValue: 36 }
   ],
+  type: ApplicationCommandType.ChatInput,
+  contexts: [ InteractionContextType.Guild ],
   devOnly: true,
   cooldown: 1000,
   run: async ( client, interaction ) => {

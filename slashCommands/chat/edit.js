@@ -8,25 +8,18 @@ const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/chat/edit.js' );
 
 module.exports = {
   name: 'edit',
-  group: 'chat',
   name_localizations: {
     de: 'bearbeiten',
     fr: 'modifier',
     fi: 'muokata',
     pl: 'redagować',
     'sv-SE': 'redigera' },
+  group: 'chat',
   description: 'Edit a bot message.',
-  options: [ {
-    name: 'message-id',
-    description: 'Paste message ID here:',
-    required: true,
-    type: 3
-  }, {
-    name: 'saying',
-    description: 'What should I have said?',
-    required: true,
-    type: 3
-  } ],
+  options: [ /* message-id, saying //*/
+    { type: 3, name: 'message-id', description: 'Paste message ID here:', required: true },
+    { type: 3, name: 'saying', description: 'What should I have said?', required: true }
+  ],
   type: ApplicationCommandType.ChatInput,
   contexts: [ InteractionContextType.Guild ],
   cooldown: 1000,

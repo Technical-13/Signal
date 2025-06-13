@@ -14,39 +14,33 @@ module.exports = {
     fi: 'Näytä Project-GC StatBar käyttäjälle.',
     pl: 'Pokaż Project-GC StatBar dla użytkownika.'
   },
-  options: [ {
-    name: 'gc-name',
-    name_localizations: {
-      de: 'gc-name',
-      fr: 'nom-gc',
-      fi: 'gc-nimi',
-      pl: 'gc-name',
-      'sv-SE': 'gc-namn' },
-    description: 'The case-sensitive Geocaching.com username.',
-    description_localizations: {
-      de: 'Der Geocaching.com-Benutzername, bei dem die Groß-/Kleinschreibung beachtet werden muss.',
-      fi: 'Geocaching.com-käyttäjänimi, kirjainkoko merkitsevä.',
-      pl: 'W nazwie użytkownika Geocaching.com rozróżniana jest wielkość liter.' },
-    type: 3
-  }, {
-    name: 'discord-user',
-    name_localizations: {
-      de: 'discord-benutzer',
-      fr: 'utilisateur-discord',
-      fi: 'discord-käyttäjä',
-      pl: 'discord-użytkownik',
-      'sv-SE': 'discord-användare' },
-    description: 'Discord member (requires nickname to be set if different from GC name).',
-    description_localizations: {
-      de: 'Discord-Mitglied (erfordert das Festlegen eines Spitznamens, wenn dieser vom GC-Namen abweicht).',
-      fi: 'Discord-jäsen (vaatii nimimerkin asettamisen, jos se on eri kuin GC-nimi).',
-      pl: 'Członek Discord (wymaga ustawienia pseudonimu, jeśli różni się od nazwy GC).' },
-    type: 6
-  }, {
-    name: 'labcaches',
-    description: 'Should I include labcaches? (default: true)',
-    type : 5
-  } ],
+  options: [/* gc-name, discord-user, labcaches //*/
+    { type: 3, name: 'gc-name', description: 'The case-sensitive Geocaching.com username.',
+      name_localizations: {
+        de: 'gc-name',
+        fr: 'nom-gc',
+        fi: 'gc-nimi',
+        pl: 'gc-name',
+        'sv-SE': 'gc-namn' },
+      description_localizations: {
+        de: 'Der Geocaching.com-Benutzername, bei dem die Groß-/Kleinschreibung beachtet werden muss.',
+        fi: 'Geocaching.com-käyttäjänimi, kirjainkoko merkitsevä.',
+        pl: 'W nazwie użytkownika Geocaching.com rozróżniana jest wielkość liter.' }
+    },
+    { type: 6, name: 'discord-user', description: 'Discord member (requires nickname to be set if different from GC name).',
+      name_localizations: {
+        de: 'discord-benutzer',
+        fr: 'utilisateur-discord',
+        fi: 'discord-käyttäjä',
+        pl: 'discord-użytkownik',
+        'sv-SE': 'discord-användare' },
+      description_localizations: {
+        de: 'Discord-Mitglied (erfordert das Festlegen eines Spitznamens, wenn dieser vom GC-Namen abweicht).',
+        fi: 'Discord-jäsen (vaatii nimimerkin asettamisen, jos se on eri kuin GC-nimi).',
+        pl: 'Członek Discord (wymaga ustawienia pseudonimu, jeśli różni się od nazwy GC).' }
+    },
+    { type : 5, name: 'labcaches', description: 'Should I include labcaches? (default: true)' }
+  ],
   type: ApplicationCommandType.ChatInput,
   contexts: [ InteractionContextType.Guild ],
   cooldown: 3000,

@@ -9,7 +9,7 @@ module.exports = {
   name: 'logo',
   group: 'geocaching',
   description: 'Give someone information about the logo kits for Geocaching.',
-  options: [
+  options: [/* message-id, discord-user //*/
     { type: 3, name: 'message-id', description: 'Paste message ID here' },
     { type: 6, name: 'discord-user', description: 'Tag someone in response.' },
   ],

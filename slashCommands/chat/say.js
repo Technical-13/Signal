@@ -8,24 +8,18 @@ const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/chat/say.js' );
 
 module.exports = {
   name: 'say',
-  group: 'chat',
   name_localizations: {
     de: 'sagen',
     fr: 'dire',
     fi: 'sano',
     pl: 'mowić',
     'sv-SE': 'säga' },
+  group: 'chat',
   description: 'Make bot speak.',
-  options: [ {
-    name: 'saying',
-    description: 'What do you want me to say?',
-    required: true,
-    type: 3
-  }, {
-    name: 'channel',
-    description: 'Where do you want me to say it? (default: current channel)',
-    type: 7
-  } ],
+  options: [ /* saying, channel //*/
+    { type: 3, name: 'saying', description: 'What do you want me to say?', required: true },
+    { type: 7, name: 'channel', description: 'Where do you want me to say it? (default: current channel)' }
+  ],
   type: ApplicationCommandType.ChatInput,
   contexts: [ InteractionContextType.Guild ],
   cooldown: 1000,

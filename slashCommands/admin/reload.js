@@ -7,15 +7,15 @@ module.exports = {
   name: 'reload',
   group: 'admin',
   description: 'Reloads commands.',
-  type: ApplicationCommandType.ChatInput,
-  contexts: [ InteractionContextType.Guild, InteractionContextType.BotDM ],
-  options: [
+  options: [ /* command, type //*/
     { type: 3, name: 'command', description: 'The name of the command to reload.', required: true },
     { type: 3, name: 'type', description: 'The type of the command to reload.', choices: [
       { name: '/slash commands (default)', value: 'slash' },
       { name: '§prefix commands', value: 'prefix' }
     ] }
   ],
+  type: ApplicationCommandType.ChatInput,
+  contexts: [ InteractionContextType.BotDM , InteractionContextType.Guild ],
   cooldown: 1000,
   run: async ( client, interaction ) => {
     await interaction.deferReply( { ephemeral: true } );

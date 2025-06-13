@@ -7,25 +7,18 @@ const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/chat/react.js' )
 
 module.exports = {
   name: 'react',
-  group: 'chat',
   name_localizations: {
     de: 'reagieren',
     fr: 'réagir',
     fi: 'reagoi',
     pl: 'reagować',
     'sv-SE': 'reagera' },
+  group: 'chat',
   description: 'What reaction do you want me to use on which message?',
-  options: [ {
-    name: 'message-id',
-    description: 'Paste message ID here:',
-    required: true,
-    type: 3
-  }, {
-    name: 'reaction',
-    description: 'How do you want me to react?',
-    required: true,
-    type: 3
-  } ],
+  options: [ /* message-id, reaction //*/
+    { type: 3, name: 'message-id', description: 'Paste message ID here:', required: true },
+    { type: 3, name: 'reaction', description: 'How do you want me to react?', required: true }
+  ],
   type: ApplicationCommandType.ChatInput,
   contexts: [ InteractionContextType.Guild ],
   cooldown: 1000,

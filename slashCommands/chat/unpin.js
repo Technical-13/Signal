@@ -9,7 +9,9 @@ module.exports = {
   name: 'unpin',
   group: 'chat',
   description: 'unpin a message from the channel.',
-  options: [ { type: 3, name: 'message-id', description: 'Paste message ID here:', required: true } ],
+  options: [ /* message-id //*/
+    { type: 3, name: 'message-id', description: 'Paste message ID here:', required: true }
+  ],
   type: ApplicationCommandType.ChatInput,
   contexts: [ InteractionContextType.Guild ],
   cooldown: 1000,

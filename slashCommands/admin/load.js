@@ -8,15 +8,15 @@ module.exports = {
   name: 'load',
   group: 'admin',
   description: 'Loads commands.',
-  type: ApplicationCommandType.ChatInput,
-  contexts: [ InteractionContextType.Guild, InteractionContextType.BotDM ],
-  options: [
+  options: [ /* command, type //*/
     { type: 3, name: 'command', description: 'The name of the command to load.', required: true },
     { type: 3, name: 'type', description: 'The type of the command to load.', choices: [
       { name: '`/slash commands` (default)', value: 'slash' },
       { name: '`§prefix commands`', value: 'prefix' }
     ] }
   ],
+  type: ApplicationCommandType.ChatInput,
+  contexts: [ InteractionContextType.BotDM , InteractionContextType.Guild ],
   cooldown: 1000,
   run: async ( client, interaction ) => {
     await interaction.deferReply( { ephemeral: true } );

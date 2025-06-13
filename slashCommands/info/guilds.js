@@ -13,7 +13,8 @@ module.exports = {
   group: 'info',
   description: 'Get information about the guilds I\'m in.',
   type: ApplicationCommandType.ChatInput,
-  options: [
+  contexts: [ InteractionContextType.Guild ],
+  options: [ /* guild //*/
     { type: 3, name: 'guild', description: 'Start with a specific guild by ID (invalid input will be ignored). (default current or first guild)' }
   ],
   cooldown: 1000,// 300000,
