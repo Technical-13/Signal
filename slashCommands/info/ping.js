@@ -1,6 +1,5 @@
 const { ApplicationCommandType, InteractionContextType } = require( 'discord.js' );
 const chalk = require( 'chalk' );
-const parse = require( '../../functions/parser.js' );
 const getI18n = require( '../../functions/getInternationalizations.js' );
 const modData = { group: 'info', name: 'ping', type: 'slashCommands' };
 const strScript = chalk.hex( '#FFA500' ).bold( './' + modData.type + '/' + modData.group + '/' + modData.name + '.js' );
