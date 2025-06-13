@@ -20,7 +20,7 @@ module.exports = {
     { type: 4, name: 'modifier', description: '± to final roll for each die? (default: 0)' }
   ],
   type: ApplicationCommandType.ChatInput,
-  contexts: [ InteractionContextType.BotDM , InteractionContextType.Guild ],
+  contexts: [ InteractionContextType.BotDM, InteractionContextType.Guild ],
   cooldown: 1000, // Set a cooldown of 1 second
   run: async ( client, interaction ) => {
     try {

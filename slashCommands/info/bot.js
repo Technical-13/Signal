@@ -11,7 +11,7 @@ module.exports = {
   description: 'Bot information and message management.',
   options: null,
   type: ApplicationCommandType.ChatInput,
-  contexts: [ InteractionContextType.BotDM , InteractionContextType.Guild ],
+  contexts: [ InteractionContextType.BotDM, InteractionContextType.Guild ],
   cooldown: 1000,
   devOnly: true,
   run: async ( client, interaction ) => {

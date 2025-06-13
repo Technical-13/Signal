@@ -16,7 +16,7 @@ module.exports = {
     { type: 6, name: 'discord-user', description: 'Who should I mention with my response? (Default: yourself)' }
   ],
   type: ApplicationCommandType.ChatInput,
-  contexts: [ InteractionContextType.BotDM , InteractionContextType.Guild ],
+  contexts: [ InteractionContextType.BotDM, InteractionContextType.Guild ],
   cooldown: 1000,
   run: async ( client, interaction ) => {
     try {

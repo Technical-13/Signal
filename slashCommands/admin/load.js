@@ -16,7 +16,7 @@ module.exports = {
     ] }
   ],
   type: ApplicationCommandType.ChatInput,
-  contexts: [ InteractionContextType.BotDM , InteractionContextType.Guild ],
+  contexts: [ InteractionContextType.BotDM, InteractionContextType.Guild ],
   cooldown: 1000,
   run: async ( client, interaction ) => {
     await interaction.deferReply( { ephemeral: true } );
