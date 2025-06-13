@@ -32,7 +32,7 @@ const getOptions = ( options, langCode = 'en-US', objOpt = {} ) => {
   } );
   return objOpt;
 };
-const getResponses = ( responses, langCode = 'en-US', objRes = {} ) => {
+const getResponses = ( responses, langCode = 'en-US', objRes = {}, params ) => {
   if ( !responses ) { return { error: 'No responses to get data for in getResponses().' }; }
   if ( Object.prototype.toString.call( responses ) === '[object Object]' ) { responses = Object.entries( responses ); };
   if ( !Array.isArray( responses ) ) { return { error: 'Unable to manipulate responses of type "' + typeof( responses ) + '" into an array to get data for in getResponses().' }; }
@@ -41,7 +41,7 @@ const getResponses = ( responses, langCode = 'en-US', objRes = {} ) => {
   responses.forEach( async ( res ) => {
     objRes[ res[ 0 ] ] = ( objRes[ res[ 0 ] ] ?? {} );
     const resBuilder = objRes[ res[ 0 ] ];
-    resBuilder[ langCode ] = await parse( res[ 1 ] );
+    resBuilder[ langCode ] = await parse( res[ 1 ], params );
   } );
   return objRes;
 }
@@ -55,6 +55,7 @@ module.exports = ( command, params = { author: null, getLocales: false, guild: n
     const guild = ( params.guild ?? ( iGuild ?? ( author ? author.guild : ( member ? member.guild : null ) ) ) );
     const useLang = ( params.useLang ?? options?.getString( 'language' ) ?? iLocale ?? guild?.preferedLocale ?? 'en-US' );
     const langCodes = Object.values( Locale );
+    const resParams = { author: author, channel: channel, guild: guild, member: member };
     if ( params.getLocales ) {
       const langNames = Object.keys( Locale );
       locales = {};
@@ -82,8 +83,8 @@ module.exports = ( command, params = { author: null, getLocales: false, guild: n
           if ( currLangFile.common.options ) { i18n.options = getOptions( currLangFile.common.options, langCode, i18n.options ); }
           if ( cmdPath.options ) { i18n.options = getOptions( cmdPath.options, langCode, i18n.options ); }
         }
-        if ( currLangFile.common.responses ) { i18n.responses = getResponses( currLangFile.common.responses, langCode, i18n.responses ); }
-        if ( cmdPath.responses ) { i18n.responses = getResponses( cmdPath.responses, langCode, i18n.responses ); }
+        if ( currLangFile.common.responses ) { i18n.responses = getResponses( currLangFile.common.responses, langCode, i18n.responses, resParams ); }
+        if ( cmdPath.responses ) { i18n.responses = getResponses( cmdPath.responses, langCode, i18n.responses, resParams ); }
       }
     } );
 
