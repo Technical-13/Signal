@@ -9,7 +9,7 @@ module.exports = {
   name:'ftf',
   group: 'geocaching',
   description: 'Tell someone how to get their FTF (First To Find) noticed on Project-GC.',
-  options: [// message-id, discord-user, language
+  options: [ /* message-id, discord-user, language //*/
     { type: 3, name: 'message-id', description: 'Paste message ID here' },
     { type: 6, name: 'discord-user', description: 'Tag someone in response.' },
     { type: 3, name: 'language', description: 'Language to give information in.',
