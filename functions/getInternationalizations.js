@@ -3,7 +3,7 @@ const fs = require( 'fs' );
 const chalk = require( 'chalk' );
 const { Locale } = require( 'discord-api-types/v10' );
 const strScript = chalk.hex( '#FFA500' ).bold( './functions/getInternationalizations.js' );
-const enNames = new Intl.DisplayNames( [ 'en' ], { type: 'language' } );
+const enNames = new Intl.DisplayNames( [ 'en-US' ], { type: 'language' } );
 const getOptions = ( options, langCode = 'en-US', objOpt = {} ) => {
   if ( !options ) { return { error: 'No options to get data for in getOptions().' }; }
   if ( Object.prototype.toString.call( options ) === '[object Object]' ) { options = Object.entries( options ); };
@@ -64,10 +64,11 @@ module.exports = ( command, getLocales = false ) => {
     i18n.langs.forEach( ( langCode ) => {
       const langName = new Intl.DisplayNames( [ langCode ], { type: 'language' } );
       const currLangFile = require( '../i18n/' + langCode + '.json' );
-      if ( !currLangFile[ command.group ] ) { console.info( chalk.hex( '#FFFFAA' ).bold( `${langCode}.json has no data for the ${command.group} command group.` ) ); }
-      else if ( !currLangFile[ command.group ][ command.name ] ) { console.info( chalk.hex( '#FFFFAA' ).bold( `${langCode}.json has no data for the ${command.name} command.` ) ); }
+      if ( !currLangFile[ command.type ] ) { console.info( chalk.hex( '#FFFFAA' ).bold( `${langCode}.json has no data for ${command.type}s.` ) ); }
+      else if ( !currLangFile[ command.type ][ command.group ] ) { console.info( chalk.hex( '#FFFFAA' ).bold( `${langCode}.json has no data for the ${command.group} ${command.type} group.` ) ); }
+      else if ( !currLangFile[ command.type ][ command.group ][ command.name ] ) { console.info( chalk.hex( '#FFFFAA' ).bold( `${langCode}.json has no data for the ${command.name} ${command.type}.` ) ); }
       else {
-        const cmdPath = currLangFile[ command.group ][ command.name ];
+        const cmdPath = currLangFile[ command.type ][ command.group ][ command.name ];
         if ( langCodes.indexOf( langCode ) === -1 ) { console.warn( chalk.bold( `${langCode} is a language code not currently supported by Discord.` ) ); }
         else {
           i18n.name[ langCode ] = cmdPath.name;

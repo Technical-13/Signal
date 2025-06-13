@@ -2,8 +2,10 @@ const { ApplicationCommandType, InteractionContextType } = require( 'discord.js'
 const chalk = require( 'chalk' );
 const parse = require( '../../functions/parser.js' );
 const getI18n = require( '../../functions/getInternationalizations.js' );
-const cmdData = { group: 'info', name: 'ping' };
-const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/' + cmdData.group + '/' + cmdData.name + '.js' );
+const modData = { group: 'info', name: 'ping', type: 'slashCommands' };
+const strScript = chalk.hex( '#FFA500' ).bold( './' + modData.type + '/' + modData.group + '/' + modData.name + '.js' );
+const localizations = getI18n( modData );
+/* I don't think I need this anymore, but I'll leave it for now in case.
 const getResponses = async ( interaction ) => {
   const { guild, locale, user } = interaction;
   const { langs, responses } = await getI18n( command );
@@ -17,25 +19,24 @@ const getResponses = async ( interaction ) => {
     results[ 'en-US' ][ resp[ 0 ] ] = await parse( resp[ 1 ][ 'en-US' ], { author: user, guild: guild } );
   } );
   return results;
-}
+}//*/
 
 module.exports = {
-  name: cmdData.name,
-  group: cmdData.group,
+  name: modData.name,
+  name_localization: localizations.name,
+  group: modData.group,
   description: 'Check bot\'s ping.',// No description for ApplicationCommandType.User commands
+  description_localization: localizations.description,
+  options: null,
   type: ApplicationCommandType.ChatInput,
-  contexts: [ InteractionContextType.Guild ],
+  contexts: [ InteractionContextType.BotDM , InteractionContextType.Guild ],
   devOnly: true,
   cooldown: 1000,
   run: async ( client, interaction ) => {
-    const command = client.slashCommands.get( cmdData.name );
-    const { langs } = await getI18n( command );
+    const { langs } = await getI18n( modData );
     try {
       const { guild, locale } = interaction;
-      const guildLang = ( langs.indexOf( guild.preferredLocale ) === -1 ?  'en-US' : guild.preferredLocale );
-      const useLang = ( langs.indexOf( locale ) === -1 ? guildLang : locale );
-      const useResponses = getResponses( interaction );
-      interaction.reply( { content: await parse( useResponses[ useLang ].pong ), ephemeral: interaction.inGuild() } );
+      interaction.reply( { content: 'TBD', ephemeral: interaction.inGuild() } );
     }
     catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
   }
