@@ -1,4 +1,4 @@
-const { ApplicationCommandType } = require( 'discord.js' );
+const { ApplicationCommandType, InteractionContextType } = require( 'discord.js' );
 const chalk = require( 'chalk' );
 const errHandler = require( '../../functions/errorHandler.js' );
 const userPerms = require( '../../functions/getPerms.js' );

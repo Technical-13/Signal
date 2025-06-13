@@ -1,4 +1,4 @@
-const { ApplicationCommandType } = require( 'discord.js' );
+const { ApplicationCommandType, InteractionContextType } = require( 'discord.js' );
 const chalk = require( 'chalk' );
 const userPerms = require( '../../functions/getPerms.js' );
 const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/geocaching/cipher.js' );
