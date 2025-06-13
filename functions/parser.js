@@ -10,7 +10,7 @@ const strScript = chalk.hex( '#FFA500' ).bold( './' + fData.type + '/' + fData.n
 module.exports = async ( rawString, obj = { author: null, guild: null, interaction: null, member: null, uptime: null, useLang: null } ) => {
   try {
     const interaction = ( obj.interaction ?? null );
-    const { channel, iGuild: guild, locale, options, user } = ( interaction ?? { channel: null, guild: null, locale: null, options: null, user: null } );
+    const { channel, guild: iGuild, locale, options, user } = ( interaction ?? { channel: null, guild: null, locale: null, options: null, user: null } );
     const author = ( obj.author ? obj.author : ( user ?? null ) );
     const member = ( obj.member ?? null );
     const guild = ( obj.guild ? obj.guild : ( iGuild ?? ( author ? author.guild : ( member ? member.guild : null ) ) ) );
