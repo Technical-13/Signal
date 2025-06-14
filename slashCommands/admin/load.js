@@ -23,7 +23,7 @@ module.exports = {
       description: 'The type of the command to reload.',
       description_localizations: l10n.options.type.description,
       choices: [
-        { value: 'slash', name: '/slash commands (default)', name_localizations: l10n..optionstype.choices[ 0 ] },
+        { value: 'slash', name: '/slash commands (default)', name_localizations: l10n.options.type.choices[ 0 ] },
         { value: 'prefix', name: '§prefix commands', name_localizations: l10n.options.type.choices[ 1 ] }
       ]
     }
