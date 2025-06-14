@@ -38,7 +38,7 @@ const getResponses = ( responses, langCode = 'en-US', objRes = {}, params ) => {
   if ( !Array.isArray( responses ) ) { return { error: 'Unable to manipulate responses of type "' + typeof( responses ) + '" into an array to get data for in getResponses().' }; }
   if ( !langCode ) { return { error: 'No langCode to get data for in getResponses().' }; }
 
-  responses.forEach( async ( res ) => {
+  responses.forEach( ( res ) => {
     objRes[ res[ 0 ] ] = ( objRes[ res[ 0 ] ] ?? {} );
     const resBuilder = objRes[ res[ 0 ] ];
     resBuilder[ langCode ] = parse( res[ 1 ], params );

@@ -2,7 +2,7 @@ const client = require( '..' );
 const chalk = require( 'chalk' );
 const strScript = chalk.hex( '#FFA500' ).bold( './functions/duraction.js' );
 
-module.exports = async ( ms, getUnits = {
+module.exports = ( ms, getUnits = {
   getDecades: false, getYears: false, getMonths: false, getWeeks: false, getDays: true, getHours: true, getMinutes: true, getSeconds: false, getMs: false
 }, debug = false ) => {
   try {

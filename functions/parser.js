@@ -7,7 +7,7 @@ const duration = require( './duration.js' );
 const modData = { name: 'parser', type: 'functions' };
 const strScript = chalk.hex( '#FFA500' ).bold( './' + modData.type + '/' + modData.name + '.js' );
 
-module.exports = async ( rawString, obj = { author: null, guild: null, interaction: null, member: null, uptime: null, useLang: null } ) => {
+module.exports = ( rawString, obj = { author: null, guild: null, interaction: null, member: null, uptime: null, useLang: null } ) => {
   try {
     const interaction = ( obj.interaction ?? null );
     const { channel, guild: iGuild, locale, options, user } = ( interaction ?? { channel: null, guild: null, locale: null, options: null, user: null } );
@@ -24,7 +24,7 @@ module.exports = async ( rawString, obj = { author: null, guild: null, interacti
     const bot = client.user;
 
     const transclusions = {
-      '{{bot.age}}': await duration( Date.now() - bot.createdTimestamp, ageUnits ),
+      '{{bot.age}}': duration( Date.now() - bot.createdTimestamp, ageUnits ),
       '{{bot.guilds}}': client.guilds.cache.size.toLocaleString( useLang ),
       '{{bot.latency}}': Math.round( client.ws.ping ).toLocaleString( useLang ),
       '{{bot.members}}': client.users.cache.size.toLocaleString( useLang ),
@@ -35,17 +35,17 @@ module.exports = async ( rawString, obj = { author: null, guild: null, interacti
       '{{bot.since}}': bot.createdAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) ),
       '{{bot.servers}}': client.guilds.cache.size.toLocaleString( useLang ),
       '{{bot.users}}': client.users.cache.size.toLocaleString( useLang ),
-      '{{bot.uptime}}': await duration( client.uptime, uptime ),
+      '{{bot.uptime}}': duration( client.uptime, uptime ),
       '{{bot.version.djs}}': 'v' + discord.version,
       '{{bot.version.node}}': process.version
     };
     const notAvailable = {};
     if ( author ) {
-      transclusions[ '{{author.age}}' ] = await duration( Date.now() - author.createdTimestamp, ageUnits );
-      transclusions[ '{{author.guild.age}}' ] = await duration( Date.now() - author.joinedTimestamp, ageUnits );
+      transclusions[ '{{author.age}}' ] = duration( Date.now() - author.createdTimestamp, ageUnits );
+      transclusions[ '{{author.guild.age}}' ] = duration( Date.now() - author.joinedTimestamp, ageUnits );
       transclusions[ '{{author.name}}' ] = author.displayName;
       transclusions[ '{{author.ping}}' ] = '<@' + author.id + '>';
-      transclusions[ '{{author.server.age}}' ] = await duration( Date.now() - author.joinedTimestamp, ageUnits );
+      transclusions[ '{{author.server.age}}' ] = duration( Date.now() - author.joinedTimestamp, ageUnits );
       transclusions[ '{{author.since}}' ] = author.createdAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) );
       transclusions[ '{{author.user.since}}' ] = author.createdAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) );
     }
@@ -65,7 +65,7 @@ module.exports = async ( rawString, obj = { author: null, guild: null, interacti
       notAvailable[ '{{author.member.since}}' ] = 'author';
     }
     if ( channel ) {
-      transclusions[ '{{channel.age}}' ] = await duration( Date.now() - channel.createdTimestamp, ageUnits );
+      transclusions[ '{{channel.age}}' ] = duration( Date.now() - channel.createdTimestamp, ageUnits );
       transclusions[ '{{channel.members}}' ] = channel.members.cache.size.toLocaleString( useLang );
       transclusions[ '{{channel.name}}' ] = channel.name;
       transclusions[ '{{channel.since}}' ] = channel.createdAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) );
@@ -79,19 +79,19 @@ module.exports = async ( rawString, obj = { author: null, guild: null, interacti
       notAvailable[ '{{channel.topic}}' ] = 'channel';
     }
     if ( guild ) {
-      transclusions[ '{{bot.guild.age}}' ] = await duration( Date.now() - guild.members.cache.get( bot.id ).joinedTimestamp, ageUnits );
+      transclusions[ '{{bot.guild.age}}' ] = duration( Date.now() - guild.members.cache.get( bot.id ).joinedTimestamp, ageUnits );
       transclusions[ '{{bot.guild.since}}' ] = guild.members.cache.get( bot.id ).joinedAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) );
-      transclusions[ '{{bot.member.age}}' ] = await duration( Date.now() - guild.members.cache.get( bot.id ).joinedTimestamp, ageUnits );
+      transclusions[ '{{bot.member.age}}' ] = duration( Date.now() - guild.members.cache.get( bot.id ).joinedTimestamp, ageUnits );
       transclusions[ '{{bot.member.since}}' ] = guild.members.cache.get( bot.id ).joinedAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) );
-      transclusions[ '{{bot.server.age}}' ] = await duration( Date.now() - guild.members.cache.get( bot.id ).joinedTimestamp, ageUnits );
+      transclusions[ '{{bot.server.age}}' ] = duration( Date.now() - guild.members.cache.get( bot.id ).joinedTimestamp, ageUnits );
       transclusions[ '{{bot.server.since}}' ] = guild.members.cache.get( bot.id ).joinedAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) );
-      transclusions[ '{{guild.age}}' ] = await duration( Date.now() - guild.createdTimestamp, ageUnits );
+      transclusions[ '{{guild.age}}' ] = duration( Date.now() - guild.createdTimestamp, ageUnits );
       transclusions[ '{{guild.owner.name}}' ] = guild.members.cache.get( guild.ownerId ).displayName;
       transclusions[ '{{guild.owner.ping}}' ] = '<@' + guild.ownerId + '>';
       transclusions[ '{{guild.members}}' ] = guild.members.cache.size.toLocaleString( useLang );
       transclusions[ '{{guild.name}}' ] = guild.name;
       transclusions[ '{{guild.since}}' ] = guild.createdAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) );
-      transclusions[ '{{server.age}}' ] = await duration( Date.now() - guild.createdTimestamp, ageUnits );
+      transclusions[ '{{server.age}}' ] = duration( Date.now() - guild.createdTimestamp, ageUnits );
       transclusions[ '{{server.owner.name}}' ] = guild.members.cache.get( guild.ownerId ).displayName;
       transclusions[ '{{server.owner.ping}}' ] = '<@' + guild.ownerId + '>';
       transclusions[ '{{server.members}}' ] = guild.members.cache.size.toLocaleString( useLang );
@@ -119,11 +119,11 @@ module.exports = async ( rawString, obj = { author: null, guild: null, interacti
       notAvailable[ '{{server.since}}' ] = 'guild';
     }
     if ( member ) {
-      transclusions[ '{{member.age}}' ] = await duration( Date.now() - member.user.createdTimestamp, ageUnits );
-      transclusions[ '{{member.guild.age}}' ] = await duration( Date.now() - member.joinedTimestamp, ageUnits );
+      transclusions[ '{{member.age}}' ] = duration( Date.now() - member.user.createdTimestamp, ageUnits );
+      transclusions[ '{{member.guild.age}}' ] = duration( Date.now() - member.joinedTimestamp, ageUnits );
       transclusions[ '{{member.name}}' ] = member.displayName;
       transclusions[ '{{member.ping}}' ] = '<@' + member.id + '>';
-      transclusions[ '{{member.server.age}}' ] = await duration( Date.now() - member.joinedTimestamp, ageUnits );
+      transclusions[ '{{member.server.age}}' ] = duration( Date.now() - member.joinedTimestamp, ageUnits );
       transclusions[ '{{member.since}}' ] = guild.members.cache.get( member.id ).joinedAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) );
       transclusions[ '{{member.user.since}}' ] = member.user.createdAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) );
     }
