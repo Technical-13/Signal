@@ -38,7 +38,6 @@ module.exports = {
         { value: 'sv-SE', name: 'Svenska/Swedish', name_localizations: l10n.options.language.choices[ 8 ] }
       ]
     }
-    }
   ],
   type: ApplicationCommandType.ChatInput,
   contexts: [ InteractionContextType.Guild ],
