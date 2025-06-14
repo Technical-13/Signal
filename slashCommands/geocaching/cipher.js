@@ -21,17 +21,17 @@ module.exports = {
       description: 'Decode or encode?', name_localizations: l10n.code.name,
       description_localizations: l10n.code.description,
       choices: [
-        { value: 'decode' name: 'Decode', name_localizations: l10n.code.choices[ 0 ] },
-        { value: 'encode' name: 'Encode', name_localizations: l10n.code.choices[ 1 ] }
+        { value: 'decode', name: 'Decode', name_localizations: l10n.code.choices[ 0 ] },
+        { value: 'encode', name: 'Encode', name_localizations: l10n.code.choices[ 1 ] }
       ]
     },
     { type: 3, name: 'use-type', name_localizations: l10n[ 'use-type' ].name,
       description: 'Pick a type.',
       description_localizations: l10n[ 'use-type' ].description,
       choices: [
-        { value: 'alphabetic' name: 'Letters A-Z', name_localizations: l10n[ 'use-type' ].choices[ 0 ] },
-        { value: 'alphanumberic' name: 'Letters A-Z & Numbers 0-9', name_localizations: l10n[ 'use-type' ].choices[ 1 ] },
-        { value: 'numeric' name: 'Numbers 0-9', name_localizations: l10n[ 'use-type' ].choices[ 2 ] }
+        { value: 'alphabetic', name: 'Letters A-Z', name_localizations: l10n[ 'use-type' ].choices[ 0 ] },
+        { value: 'alphanumberic', name: 'Letters A-Z & Numbers 0-9', name_localizations: l10n[ 'use-type' ].choices[ 1 ] },
+        { value: 'numeric', name: 'Numbers 0-9', name_localizations: l10n[ 'use-type' ].choices[ 2 ] }
       ]
     },
     { type: 10, minValue: 1, maxValue: 10,

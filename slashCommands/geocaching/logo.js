@@ -27,15 +27,15 @@ module.exports = {
       description: 'Language to give information in.',
       description_localizations: l10n.options.language.description,
       choices: [
-        { value: 'de' name: 'Deutsch/German', name_localizations: l10n.language.choices[ 0 ] },
-        { value: 'en-GB' name: 'British', name_localizations: l10n.language.choices[ 1 ] },
-        { value: 'en-US' name: 'American (default)', name_localizations: l10n.language.choices[ 2 ] },
-        { value: 'fi' name: 'Suomi/Finnish', name_localizations: l10n.language.choices[ 3 ] },
-        { value: 'fr' name: 'Français/French', name_localizations: l10n.language.choices[ 4 ] },
-        { value: 'no' name: 'Norsk/Norwegian', name_localizations: l10n.language.choices[ 5 ] },
-        { value: 'pl' name: 'Polski/Polish', name_localizations: l10n.language.choices[ 6 ] },
-        { value: 'pt-PT' name: 'Português/Portuguese (Portugal)', name_localizations: l10n.language.choices[ 7 ] },
-        { value: 'sv-SE' name: 'Svenska/Swedish', name_localizations: l10n.language.choices[ 8 ] }
+        { value: 'de', name: 'Deutsch/German', name_localizations: l10n.language.choices[ 0 ] },
+        { value: 'en-GB', name: 'British', name_localizations: l10n.language.choices[ 1 ] },
+        { value: 'en-US', name: 'American (default)', name_localizations: l10n.language.choices[ 2 ] },
+        { value: 'fi', name: 'Suomi/Finnish', name_localizations: l10n.language.choices[ 3 ] },
+        { value: 'fr', name: 'Français/French', name_localizations: l10n.language.choices[ 4 ] },
+        { value: 'no', name: 'Norsk/Norwegian', name_localizations: l10n.language.choices[ 5 ] },
+        { value: 'pl', name: 'Polski/Polish', name_localizations: l10n.language.choices[ 6 ] },
+        { value: 'pt-PT', name: 'Português/Portuguese (Portugal)', name_localizations: l10n.language.choices[ 7 ] },
+        { value: 'sv-SE', name: 'Svenska/Swedish', name_localizations: l10n.language.choices[ 8 ] }
       ]
     }
   ],
