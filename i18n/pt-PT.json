@@ -70,7 +70,7 @@
           "type": {  "name": "type", "description": "The type of the command to reload.", "choices": [ "/slash commands (default)", "§prefix commands" ] }
         }
       }
-    }
+    },
     "fun": {
       "lmgtfy": {
         "name": "lmgtfy",
