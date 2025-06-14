@@ -9,7 +9,6 @@ const strScript = chalk.hex( '#FFA500' ).bold( './' + modData.type + '/' + modDa
 const l10n = getI18n( modData );
 
 module.exports = {
-  type: modData.type,
   group: modData.group,
   name: modData.name,
   name_localizations: l10n.name,
