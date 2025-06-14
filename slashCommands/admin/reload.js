@@ -14,16 +14,16 @@ module.exports = {
   description_localizations: l10n.description,
   options: [
     { type: 3, required: true,
-      name: 'command', name_localizations: l10n.command.name,
+      name: 'command', name_localizations: l10n.options.command.name,
       description: 'The name of the command to reload.',
-      description_localizations: l10n.command.description
+      description_localizations: l10n.options.command.description
     },
-    { type: 3, name: 'type', name_localizations: l10n.type.name,
+    { type: 3, name: 'type', name_localizations: l10n.options.type.name,
       description: 'The type of the command to reload.',
-      description_localizations: l10n.type.description,
+      description_localizations: l10n.options.type.description,
       choices: [
-        { value: 'slash', name: '/slash commands (default)', name_localizations: l10n.type.choices[ 0 ] },
-        { value: 'prefix', name: '§prefix commands', name_localizations: l10n.type.choices[ 1 ] }
+        { value: 'slash', name: '/slash commands (default)', name_localizations: l10n.options.type.choices[ 0 ] },
+        { value: 'prefix', name: '§prefix commands', name_localizations: l10n.options.type.choices[ 1 ] }
       ]
     }
   ],

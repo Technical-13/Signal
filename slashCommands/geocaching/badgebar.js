@@ -15,13 +15,13 @@ module.exports = {
   description: 'Show Project-GC BadgeBar for user.',
   description_localizations: l10n.description,
   options: [
-    { type: 3, name: 'gc-name', name_localizations: l10n[ 'gc-name' ].name,
+    { type: 3, name: 'gc-name', name_localizations: l10n.options[ 'gc-name' ].name,
       description: 'The case-sensitive Geocaching.com username.',
-      description_localizations: l10n[ 'gc-name' ].description
+      description_localizations: l10n.options[ 'gc-name' ].description
     },
-    { type: 6, name: 'discord-user', name_localizations: l10n[ 'discord-user' ].name,
+    { type: 6, name: 'discord-user', name_localizations: l10n.options[ 'discord-user' ].name,
       description: 'Discord member (requires nickname to be set if different from GC name).',
-      description_localizations: l10n[ 'discord-user' ].description
+      description_localizations: l10n.options[ 'discord-user' ].description
     }
   ],
   type: ApplicationCommandType.ChatInput,

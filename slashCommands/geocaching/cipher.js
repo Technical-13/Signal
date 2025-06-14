@@ -13,41 +13,41 @@ module.exports = {
   description: 'Cipher (de|en)coder.',
   description_localizations: l10n.description,
   options: [
-    { type: 3, required: true, name: 'string', name_localizations: l10n.string.name,
+    { type: 3, required: true, name: 'string', name_localizations: l10n.options.string.name,
       description: 'string to (de|en)code.',
-      description_localizations: l10n.string.description
+      description_localizations: l10n.options.string.description
     },
-    { type: 3, required: true, name: 'code',
-      description: 'Decode or encode?', name_localizations: l10n.code.name,
-      description_localizations: l10n.code.description,
+    { type: 3, required: true, name: 'code', name_localizations: l10n.options.code.name,
+      description: 'Decode or encode?',
+      description_localizations: l10n.options.code.description,
       choices: [
-        { value: 'decode', name: 'Decode', name_localizations: l10n.code.choices[ 0 ] },
-        { value: 'encode', name: 'Encode', name_localizations: l10n.code.choices[ 1 ] }
+        { value: 'decode', name: 'Decode', name_localizations: l10n.options.code.choices[ 0 ] },
+        { value: 'encode', name: 'Encode', name_localizations: l10n.options.code.choices[ 1 ] }
       ]
     },
-    { type: 3, name: 'use-type', name_localizations: l10n[ 'use-type' ].name,
+    { type: 3, name: 'use-type', name_localizations: l10n.options[ 'use-type' ].name,
       description: 'Pick a type.',
-      description_localizations: l10n[ 'use-type' ].description,
+      description_localizations: l10n.options[ 'use-type' ].description,
       choices: [
-        { value: 'alphabetic', name: 'Letters A-Z', name_localizations: l10n[ 'use-type' ].choices[ 0 ] },
-        { value: 'alphanumberic', name: 'Letters A-Z & Numbers 0-9', name_localizations: l10n[ 'use-type' ].choices[ 1 ] },
-        { value: 'numeric', name: 'Numbers 0-9', name_localizations: l10n[ 'use-type' ].choices[ 2 ] }
+        { value: 'alphabetic', name: 'Letters A-Z', name_localizations: l10n.options[ 'use-type' ].choices[ 0 ] },
+        { value: 'alphanumberic', name: 'Letters A-Z & Numbers 0-9', name_localizations: l10n.options[ 'use-type' ].choices[ 1 ] },
+        { value: 'numeric', name: 'Numbers 0-9', name_localizations: l10n.options[ 'use-type' ].choices[ 2 ] }
       ]
     },
     { type: 10, minValue: 1, maxValue: 10,
-      name: 'numeric', name_localizations: l10n.numeric.name,
+      name: 'numeric', name_localizations: l10n.options.numeric.name,
       description: 'Characters in the Latin alphabet. (default 5)',
-      description_localizations: l10n.numeric.description
+      description_localizations: l10n.options.numeric.description
     },
     { type: 10, minValue: 1, maxValue: 26,
-      name: 'alphabetic', name_localizations: l10n.alphabetic.name,
+      name: 'alphabetic', name_localizations: l10n.options.alphabetic.name,
       description: 'Characters in the Latin alphabet. (default 13)',
-      description_localizations: l10n.alphabetic.description
+      description_localizations: l10n.options.alphabetic.description
     },
     { type: 10, minValue: 1, maxValue: 36,
-      name: 'alphanumberic', name_localizations: l10n.alphanumberic.name,
+      name: 'alphanumberic', name_localizations: l10n.options.alphanumberic.name,
       description: 'Characters in the Latin alphabet. (default 18)',
-      description_localizations: l10n.alphanumberic.description
+      description_localizations: l10n.options.alphanumberic.description
     }
   ],
   type: ApplicationCommandType.ChatInput,

@@ -15,27 +15,27 @@ module.exports = {
   description: 'Tell someone how to get their FTF (First To Find) noticed on Project-GC.',
   description_localizations: l10n.description,
   options: [
-    { type: 3, name: 'message-id', name_localizations: l10n[ 'message-id' ].name,
+    { type: 3, name: 'message-id', name_localizations: l10n.options[ 'message-id' ].name,
       description: 'Paste message ID here',
-      description_localizations: l10n[ 'message-id' ].description
+      description_localizations: l10n.options[ 'message-id' ].description
     },
-    { type: 6, name: 'taggee', name_localizations: l10n.taggee.name,
+    { type: 6, name: 'taggee', name_localizations: l10n.options.taggee.name,
       description: 'Who should I mention with my response? (Default: yourself)',
-      description_localizations: l10n.taggee.description
+      description_localizations: l10n.options.taggee.description
     },
     { type: 3, name: 'language', name_localizations: l10n.options.language.name,
       description: 'Language to give information in.',
       description_localizations: l10n.options.language.description,
       choices: [
-        { value: 'de', name: 'Deutsch/German', name_localizations: l10n.language.choices[ 0 ] },
-        { value: 'en-GB', name: 'British', name_localizations: l10n.language.choices[ 1 ] },
-        { value: 'en-US', name: 'American (default)', name_localizations: l10n.language.choices[ 2 ] },
-        { value: 'fi', name: 'Suomi/Finnish', name_localizations: l10n.language.choices[ 3 ] },
-        { value: 'fr', name: 'Français/French', name_localizations: l10n.language.choices[ 4 ] },
-        { value: 'no', name: 'Norsk/Norwegian', name_localizations: l10n.language.choices[ 5 ] },
-        { value: 'pl', name: 'Polski/Polish', name_localizations: l10n.language.choices[ 6 ] },
-        { value: 'pt-PT', name: 'Português/Portuguese (Portugal)', name_localizations: l10n.language.choices[ 7 ] },
-        { value: 'sv-SE', name: 'Svenska/Swedish', name_localizations: l10n.language.choices[ 8 ] }
+        { value: 'de', name: 'Deutsch/German', name_localizations: l10n.options.language.choices[ 0 ] },
+        { value: 'en-GB', name: 'British', name_localizations: l10n.options.language.choices[ 1 ] },
+        { value: 'en-US', name: 'American (default)', name_localizations: l10n.options.language.choices[ 2 ] },
+        { value: 'fi', name: 'Suomi/Finnish', name_localizations: l10n.options.language.choices[ 3 ] },
+        { value: 'fr', name: 'Français/French', name_localizations: l10n.options.language.choices[ 4 ] },
+        { value: 'no', name: 'Norsk/Norwegian', name_localizations: l10n.options.language.choices[ 5 ] },
+        { value: 'pl', name: 'Polski/Polish', name_localizations: l10n.options.language.choices[ 6 ] },
+        { value: 'pt-PT', name: 'Português/Portuguese (Portugal)', name_localizations: l10n.options.language.choices[ 7 ] },
+        { value: 'sv-SE', name: 'Svenska/Swedish', name_localizations: l10n.options.language.choices[ 8 ] }
       ]
     }
     }
