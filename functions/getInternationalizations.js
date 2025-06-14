@@ -84,9 +84,7 @@ module.exports = ( command, params = { author: null, getLocales: false, guild: n
           if ( cmdPath.options ) { i18n.options = getOptions( cmdPath.options, langCode, i18n.options ); }
         }
         if ( currLangFile.common.responses ) { i18n.responses = getResponses( currLangFile.common.responses, langCode, i18n.responses, resParams ); }
-        /* TRON */console.log( 'getResponses( %o, %o, %o, "resParams" ): %o', currLangFile.common.responses, langCode, i18n.responses, i18n.responses );/* TROFF */
         if ( cmdPath.responses ) { i18n.responses = getResponses( cmdPath.responses, langCode, i18n.responses, resParams ); }
-        /* TRON */console.log( 'getResponses( %o, %o, %o, "resParams" ): %o', currLangFile.common.responses, langCode, i18n.responses, i18n.responses );/* TROFF */
       }
     } );
 
