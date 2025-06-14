@@ -21,25 +21,41 @@ module.exports = ( rawString, obj = { author: null, guild: null, interaction: nu
     // const targetGuild = ( options?.getString( 'guild' ) ?? null );
     // const targetUser = ( options?.getUser( 'discord-user' ) ?? null );
     const ageUnits = { getDecades: true, getYears: true, getMonths: true, getWeeks: true, getDays: true, getHours: false, getMinutes: false };
-    const bot = client.user;
+    const { bot: user, guilds, ownerId, users, ws } = client.user;
 
     const transclusions = {
-      // '{{bot.age}}': duration( Date.now() - bot.createdTimestamp, ageUnits ),
-      '{{bot.guilds}}': client.guilds.cache.size.toLocaleString( useLang ),
-      '{{bot.latency}}': Math.round( client.ws.ping ).toLocaleString( useLang ),
-      '{{bot.members}}': client.users.cache.size.toLocaleString( useLang ),
-      '{{bot.name}}': bot.displayName,
-      '{{bot.owner.name}}': client.users.cache.get( client.ownerId ).displayName,
-      '{{bot.owner.ping}}': '<@' + client.ownerId + '>',
-      '{{bot.ping}}': '<@' + client.id + '>',
-      '{{bot.since}}': bot.createdAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) ),
-      '{{bot.servers}}': client.guilds.cache.size.toLocaleString( useLang ),
-      '{{bot.users}}': client.users.cache.size.toLocaleString( useLang ),
-      '{{bot.uptime}}': duration( client.uptime, uptime ),
       '{{bot.version.djs}}': 'v' + discord.version,
       '{{bot.version.node}}': process.version
     };
     const notAvailable = {};
+    if ( bot ) {
+      transclusions[ '{{bot.age}}' ] = duration( Date.now() - bot.createdTimestamp, ageUnits );
+      transclusions[ '{{bot.guilds}}' ] = guilds.cache.size.toLocaleString( useLang );
+      transclusions[ '{{bot.latency}}' ] = Math.round( ws.ping ).toLocaleString( useLang );
+      transclusions[ '{{bot.members}}' ] = users.cache.size.toLocaleString( useLang );
+      transclusions[ '{{bot.name}}' ] = bot.displayName;
+      transclusions[ '{{bot.owner.name}}' ] =  users.cache.get( ownerId ).displayName;
+      transclusions[ '{{bot.owner.ping}}' ] = '<@' + ownerId + '>';
+      transclusions[ '{{bot.ping}}' ] = '<@' + bot.id + '>';
+      transclusions[ '{{bot.since}}' ] = bot.createdAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) );
+      transclusions[ '{{bot.servers}}' ] = guilds.cache.size.toLocaleString( useLang );
+      transclusions[ '{{bot.users}}' ] = users.cache.size.toLocaleString( useLang );
+      transclusions[ '{{bot.uptime}}' ] = duration( client.uptime, uptime );
+    }
+    else {
+      notAvailable[ '{{bot.age}}' ] = 'bot';
+      notAvailable[ '{{bot.guilds}}' ] = 'bot';
+      notAvailable[ '{{bot.latency}}' ] = 'bot';
+      notAvailable[ '{{bot.members}}' ] = 'bot';
+      notAvailable[ '{{bot.name}}' ] = 'bot';
+      notAvailable[ '{{bot.owner.name}}' ] = 'bot';
+      notAvailable[ '{{bot.owner.ping}}' ] = 'bot';
+      notAvailable[ '{{bot.ping}}' ] = 'bot';
+      notAvailable[ '{{bot.since}}' ] = 'bot';
+      notAvailable[ '{{bot.servers}}' ] = 'bot';
+      notAvailable[ '{{bot.users}}' ] = 'bot';
+      notAvailable[ '{{bot.uptime}}' ] = 'bot';
+    }
     if ( author ) {
       transclusions[ '{{author.age}}' ] = duration( Date.now() - author.createdTimestamp, ageUnits );
       transclusions[ '{{author.guild.age}}' ] = duration( Date.now() - author.joinedTimestamp, ageUnits );
