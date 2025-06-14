@@ -2,23 +2,37 @@ const { ApplicationCommandType, InteractionContextType, SlashCommandBuilder } = 
 const fs = require( 'fs' );
 const chalk = require( 'chalk' );
 const userPerms = require( '../../functions/getPerms.js' );
-const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/admin/load.js' );
+const getI18n = require( '../../functions/getInternationalizations.js' );
+const modData = { group: 'admin', name: 'load', type: 'slashCommands' };
+const strScript = chalk.hex( '#FFA500' ).bold( './' + modData.type + '/' + modData.group + '/' + modData.name + '.js' );
+const l10n = getI18n( modData );
 
 module.exports = {
-  name: 'load',
-  group: 'admin',
-  description: 'Loads commands.',
-  options: [ /* command, type //*/
-    { type: 3, name: 'command', description: 'The name of the command to load.', required: true },
-    { type: 3, name: 'type', description: 'The type of the command to load.', choices: [
-      { name: '`/slash commands` (default)', value: 'slash' },
-      { name: '`§prefix commands`', value: 'prefix' }
-    ] }
+  group: modData.group,
+  name: modData.name,
+  name_localizations: l10n.name,
+  description: 'Reloads commands.',
+  description_localizations: l10n.description,
+  options: [
+    { type: 3, required: true,
+      name: 'command', name_localizations: l10n.command.name,
+      description: 'The name of the command to reload.',
+      description_localizations: l10n.command.description
+    },
+    { type: 3, name: 'type', name_localizations: l10n.type.name,
+      description: 'The type of the command to reload.',
+      description_localizations: l10n.type.description,
+      choices: [
+        { value: 'slash' name: '/slash commands (default)', name_localizations: l10n.type.choices[ 0 ] },
+        { value: 'prefix' name: '§prefix commands', name_localizations: l10n.type.choices[ 1 ] }
+      ]
+    }
   ],
   type: ApplicationCommandType.ChatInput,
   contexts: [ InteractionContextType.BotDM, InteractionContextType.Guild ],
   cooldown: 1000,
   run: async ( client, interaction ) => {
+    const r6e = getI18n( modData, { interaction: interaction } ).responses;
     await interaction.deferReply( { ephemeral: true } );
     const { guild, options, user: author } = interaction;
     const { botOwner, isBotOwner, isBotMod } = await userPerms( author, guild );
@@ -27,8 +41,8 @@ module.exports = {
 		try {
       const { guild, options, user: author } = interaction;
       const { botOwner, isBotOwner, isBotMod } = await userPerms( author, guild );
-      if ( isBotMod && !isBotOwner ) { return interaction.editReply( 'This is currently an **owner only** command.  Please talk to <@' + botOwner.id + '> if you need assistance.' ); }
-      else if ( !isBotOwner ) { return interaction.editReply( 'This is an **owner only** command.' ); }
+      if ( isBotMod && !isBotOwner ) { return interaction.editReply( r6e.ownerOnly[ useLang ] ); }
+      else if ( !isBotOwner ) { return interaction.editReply( r6e.modOnly[ useLang ] ); }
       var isRe = false;
       var command = client[ ( cmdType == 'prefix' ? 'commands' : 'slashCommands' ) ].get( commandName );
       if ( !command ) {
@@ -48,10 +62,10 @@ module.exports = {
       const newCommand = require( ( cmdType == 'prefix' ? './commands/' : './slashCommands/' ) + command.group + '/' + command.name + '.js' );
       client[ ( cmdType == 'prefix' ? 'commands' : 'slashCommands' ) ].set( newCommand.name, newCommand );
 
-      interaction.editReply( 'Command `' + ( cmdType == 'slash' ? '/' : '§' ) + newCommand.name + '` was ' + ( !isRe ? '' : 're' ) + 'loaded!' );
+      interaction.editReply( r6e.command[ useLang ] + ' `' + ( cmdType == 'slash' ? '/' : '§' ) + newCommand.name + '` was ' + ( !isRe ? '' : 're' ) + 'loaded!' );
 		}
     catch ( errObject ) {
-      interaction.editReply( 'There was an error loading command `' + ( cmdType == 'slash' ? '/' : '§' ) + commandName + '`:\n`' + errObject.message + '`' );
+      interaction.editReply( r6e.errReload[ useLang ] + ' `' + ( cmdType == 'slash' ? '/' : '§' ) + commandName + '`:\n`' + errObject.message + '`' );
       console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack );
 		}
 	},

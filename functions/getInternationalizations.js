@@ -66,7 +66,6 @@ module.exports = ( command, params = { author: null, getLocales: false, guild: n
     const files = fs.readdirSync( './i18n/' ).filter( file => file.endsWith( '.json' ) );
     i18n.langs = files.map( file => file.replace( '.json', '' ) );
     i18n.langs.forEach( ( langCode ) => {
-      const langName = new Intl.DisplayNames( [ langCode ], { type: 'language' } );
       const currLangFile = require( '../i18n/' + langCode + '.json' );
       if ( !currLangFile[ command.type ] ) { console.info( chalk.hex( '#FFFFAA' ).bold( `${langCode}.json has no data for ${command.type}s.` ) ); }
       else if ( !currLangFile[ command.type ][ command.group ] ) { console.info( chalk.hex( '#FFFFAA' ).bold( `${langCode}.json has no data for the ${command.group} ${command.type} group.` ) ); }

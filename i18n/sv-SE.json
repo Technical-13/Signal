@@ -1,21 +1,24 @@
 {
   "common": {
     "options" : {
-      "discord-user": { "name": "discord-user", "description": "Discord member (requires nickname to be set if different from GC name)." },
-      "gc-name": { "name": "gc-name", "description": "The case-sensitive username on Geocaching.com" },
-      "language": { "name": "language", "description": "Language to give information in.", "choices": [
-        "Deutsch/German", "British", "American (default)", "Suomi/Finnish",
-        "Français/French", "Norsk/Norwegian", "Polski/Polish", "Português/Portuguese (Portugal)", "Svenska/Swedish"
+      "discord-user": { "name": "discord-användare", "description": "Discord member (requires nickname to be set if different from GC name)." },
+      "gc-name": { "name": "gc-namn", "description": "The case-sensitive username on Geocaching.com" },
+      "language": { "name": "språk", "description": "Språk att ge information på.", "choices": [
+        "Deutsch/Tyska", "British/Brittisk", "American/Amerikansk (default)", "Suomi/Finska",
+        "Français/Franska", "Norsk/Norska", "Polski/Polska", "Português/Portugisiska (Portugal)", "Svenska"
       ] },
       "message-id": { "name": "message-id", "description": "Paste message ID here" },
-      "taggee": { "name": "target", "description": "Tag someone in response." }
+      "taggee": { "name": "målanvändare", "description": "Tag someone in response." }
     },
     "responses": {
-      "in": " in ",
-      "invalidMsgId": " is not a valid message-id.",
-      "noMsg": "Unable to find specific message to respond to.",
+      "in": " i ",
+      "invalidMsgId": " är inte ett giltigt meddelande-id.",
+      "logTold": "I told ",
+      "noMsg": "Det gick inte att hitta ett specifikt meddelande att svara på.",
       "not": "not",
       "official": "Official Geocaching.com",
+      "ownerOnly": "This is currently an **owner only** command.  Please talk to {{bot.owner.ping}} if you need assistance.",
+      "modOnly": "This is a **bot moderator only** command.  Please talk to {{bot.owner.ping}} if you need assistance.",
       "requestedBy": " as requested by {{author.ping}}",
       "soon": "Comming **SOON**:tm:"
     }
@@ -110,6 +113,13 @@
         "options": {
           "command": { "name": "command", "description": "The name of the command to reload." },
           "type": {  "name": "type", "description": "The type of the command to reload.", "choices": [ "/slash commands (default)", "§prefix commands" ] }
+        },
+        "responses": {
+          "command": "Command",
+          "errReload": "There was an error while reloading command",
+          "noCommand": "I have no command named ",
+          "noSlashCommand": "I have no slashCommand named",
+          "wasReloaded": "was reloaded!"
         }
       },
       "system": {
@@ -184,14 +194,15 @@
           "nice": { "name": "nice", "description": "Should I be nice?" }
         },
         "responses": {
-          "sent": "sent",
+          "aCmdFor": " a `/lmgtfy` for ",
+          "sent": "{{author.ping}} sent ",
           "cmdFor": "a `/lmgtfy` for",
-          "theyWere": "and they were",
+          "theyWere": " and they were ",
           "nice": "nice"
         }
       },
       "roll": {
-        "name": "roll",
+        "name": "rulla-tärningen",
         "description": "Dice Roller (default: 1#1d6±0)",
         "options": {
           "dice": { "name": "dice", "description": "How many dice? (default: 1)" },
@@ -230,10 +241,9 @@
         "description": "Tell someone how to get their FTF (First To Find) noticed on Project-GC.",
         "responses": {
           "errTell": "Error telling {{author.ping}} about FTFs via `/ftf` request.",
-          "ftfInfo": "There are two ways for Project-GC to detect your FTFs (**F**irst **T**o **F**inds). Either you tag your logs with one of these tags: `{*FTF*}`, `{FTF}`, or `[FTF]`. Alternatively you can add an FTF bookmark list under Settings (<https://project-gc.com/User/Settings/>) that will be checked once per day. Please understand that FTF isn't anything offical and not everyone tags their FTFs. Therefore this list won't be 100% accurate.",
+          "ftfInfo": "Det finns två sätt för Project-GC att upptäcka dina FTF:er. Antingen taggar du din logg med någon av dessa taggar: `{*FTF*}` `{FTF}` `[FTF]`. Eller så kan du lägga till en lista med dina FTF:er under Inställningar (<https://project-gc.com/User/Settings/>), den kommer att kontrolleras av sidan en gång per dag. Det är viktigt att inse att FTF inte är en officiell term och att det inte är alla som taggar sina FTF-loggar på vedertaget sätt. Därför kommer denna lista aldrig att vara 100% korrekt.",
           "logAboutAtRequest": " about FTFs at {{author.ping}}'s `/ftf` request.",
           "logAtRequestInResponse": " at {{author.ping}}'s `/ftf` request in response to:",
-          "logTold": "I told ",
           "logAbout": "{{author.ping}} about FTFs "
         }
       },

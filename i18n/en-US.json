@@ -4,17 +4,20 @@
       "discord-user": { "name": "discord-user", "description": "Discord member (requires nickname to be set if different from GC name)." },
       "gc-name": { "name": "gc-name", "description": "The case-sensitive username on Geocaching.com" },
       "language": { "name": "language", "description": "Language to give information in.", "choices": [
-        "Deutsch/German", "English (default)", "Suomi/Finnish", "Français/French", "Norsk/Norwegian", "Polski/Polish", "Português/Portuguese (Portugal)", "Svenska/Swedish"
+        "Deutsch/German", "British", "American (default)", "Suomi/Finnish",
+        "Français/French", "Norsk/Norwegian", "Polski/Polish", "Português/Portuguese (Portugal)", "Svenska/Swedish"
       ] },
       "message-id": { "name": "message-id", "description": "Paste message ID here" },
-      "target": { "name": "target", "description": "Tag someone in response." }
+      "taggee": { "name": "taggee", "description": "Tag someone in response." }
     },
     "responses": {
-      "in": "in",
+      "in": " in ",
       "invalidMsgId": " is not a valid message-id.",
       "noMsg": "Unable to find specific message to respond to.",
       "not": "not",
       "official": "Official Geocaching.com",
+      "ownerOnly": "This is currently an **owner only** command.  Please talk to {{bot.owner.ping}} if you need assistance.",
+      "modOnly": "This is a **bot moderator only** command.  Please talk to {{bot.owner.ping}} if you need assistance.",
       "requestedBy": " as requested by {{author.ping}}",
       "soon": "Comming **SOON**:tm:"
     }
@@ -109,6 +112,13 @@
         "options": {
           "command": { "name": "command", "description": "The name of the command to reload." },
           "type": {  "name": "type", "description": "The type of the command to reload.", "choices": [ "/slash commands (default)", "§prefix commands" ] }
+        },
+        "responses": {
+          "command": "Command",
+          "errReload": "There was an error while reloading command",
+          "noCommand": "I have no command named ",
+          "noSlashCommand": "I have no slashCommand named",
+          "wasReloaded": "was reloaded!"
         }
       },
       "system": {
@@ -179,14 +189,14 @@
         "name": "lmgtfy",
         "description": "Let Me Google That For You!",
         "options": {
-          "nice": { "name": "nice", "description": "Should I be nice?" },
           "query": { "name": "query", "description": "What do you want me to look up?" },
-          "target": { "name": "target", "description": "Who should I mention with my response? (Default: yourself)" }
+          "nice": { "name": "nice", "description": "Should I be nice?" }
         },
         "responses": {
-          "sent": "sent",
+          "aCmdFor": " a `/lmgtfy` for ",
+          "sent": "{{author.ping}} sent ",
           "cmdFor": "a `/lmgtfy` for",
-          "theyWere": "and they were",
+          "theyWere": " and they were ",
           "nice": "nice"
         }
       },
@@ -209,8 +219,8 @@
         "name": "badgebar",
         "description": "Show Project-GC BadgeBar for user.",
         "responses": {
-          "badgebarFor": "BadgeBar for",
-          "sharedFor": "I shared the `/badgebar` for"
+          "badgebarFor": "BadgeBar for: ",
+          "sharedFor": "I shared the `/badgebar` for "
         }
       },
       "cipher": {
@@ -229,26 +239,31 @@
         "name": "ftf",
         "description": "Tell someone how to get their FTF (First To Find) noticed on Project-GC.",
         "responses": {
-          "ftfInfo": "There are two ways for Project-GC to detect your FTFs (**F**irst **T**o **F**inds). Either you tag your logs with one of these tags: `{*FTF*}`, `{FTF}`, or `[FTF]`. Alternatively you can add an FTF bookmark list under Settings (<https://project-gc.com/User/Settings/>) that will be checked once per day. Please understand that FTF isn't anything offical and not everyone tags their FTFs. Therefore this list won't be 100% accurate."
+          "errTell": "Error telling {{author.ping}} about FTFs via `/ftf` request.",
+          "ftfInfo": "There are two ways for Project-GC to detect your FTFs (**F**irst **T**o **F**inds). Either you tag your logs with one of these tags: `{*FTF*}`, `{FTF}`, or `[FTF]`. Alternatively you can add an FTF bookmark list under Settings (<https://project-gc.com/User/Settings/>) that will be checked once per day. Please understand that FTF isn't anything offical and not everyone tags their FTFs. Therefore this list won't be 100% accurate.",
+          "logAboutAtRequest": " about FTFs at {{author.ping}}'s `/ftf` request.",
+          "logAtRequestInResponse": " at {{author.ping}}'s `/ftf` request in response to:",
+          "logTold": "I told ",
+          "logAbout": "{{author.ping}} about FTFs "
         }
       },
       "logo": {
         "name": "logo",
         "description": "Give someone information about the logo kits for Geocaching.",
         "responses": {
-          "converter": "EPS to SVG Converter",
-          "kitInfo": "The kits have `*.png` & `*.eps` file versions.",
-          "logoKits": "Logo Kits",
-          "lookingFor": "you seem to be looking for the",
-          "svg": "If you're looking for an `*.svg` version, <@&385501075001573389> recommends using"
+          "errTell": "Error telling {{author.ping}} about the [Logo Kits](<https://www.geocaching.com/about/logousage.aspx>) via `/logo` request.",
+          "logoInfo": "you seem to be looking for the Official Geocaching.com [Logo Kits](<https://www.geocaching.com/about/logousage.aspx>).\nThe kits have `*.png` & `*.eps` file versions.  If you're looking for an `*.svg` version, <@&385501075001573389> recommends using [EPS to SVG Converter](<https://cloudconvert.com/eps-to-svg>) by cloud**convert**",
+          "logAboutAtRequest": " about the [Logo Kits](<https://www.geocaching.com/about/logousage.aspx>) at {{author.ping}}'s `/logo` request.",
+          "logAtRequestInResponse": " at {{author.ping}}'s `/logo` request in response to:",
+          "logAbout": "{{author.ping}} about the [Logo Kits](<https://www.geocaching.com/about/logousage.aspx>) "
         }
       },
       "profilestats": {
         "name": "profilestats",
         "description": "Show link to Project-GC ProfileStats for user.",
         "responses": {
-          "profilestatsFor": "ProfileStats link for:",
-          "sharedFor": "I shared the `/profilestats` for"
+          "profilestatsFor": "ProfileStats link for: ",
+          "sharedFor": "I shared the `/profilestats` for "
         }
       },
       "statbar": {
@@ -259,8 +274,8 @@
           "description": "Should I include labcaches? (default: true)"
         },
         "responses": {
-          "sharedFor": "I shared the `/statbar` for",
-          "statbarFor": "StatBar for:"
+          "sharedFor": "I shared the `/statbar` for ",
+          "statbarFor": "StatBar for: "
         }
       }
     },

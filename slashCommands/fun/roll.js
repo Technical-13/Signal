@@ -1,30 +1,43 @@
 const { ApplicationCommandType, InteractionContextType } = require( 'discord.js' );
 const chalk = require( 'chalk' );
 const userPerms = require( '../../functions/getPerms.js' );
-const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/fun/roll.js' );
+const getI18n = require( '../../functions/getInternationalizations.js' );
+const modData = { group: 'fun', name: 'roll', type: 'slashCommands' };
+const l10n = getI18n( modData );
+const strScript = chalk.hex( '#FFA500' ).bold( './' + modData.type + '/' + modData.group + '/' + modData.name + '.js' );
 
 module.exports = {
-  name: 'roll',
-  name_localizations: {
-    de: 'würfeln',
-    fr: 'lancer-les-dés',
-    fi: 'heitä-noppaa',
-    pl: 'rzuć-kostką',
-    'sv-SE': 'rulla-tärningen' },
-  group: 'fun',
+  group: modData.group,
+  name: modData.name,
+  name_localizations: l10n.name,
   description: 'Dice Roller (default: 1#1d6±0)',
-  options: [// dice, sides, sets, modifier
-    { type: 4, name: 'dice', description: 'How many dice? (default: 1)' },
-    { type: 4, name: 'sides', description: 'How many sides per die? (default: 6)' },
-    { type: 4, name: 'sets', description: 'How many sets of dice? (default: 1)' },
-    { type: 4, name: 'modifier', description: '± to final roll for each die? (default: 0)' }
+  description_localizations: l10n.description,
+  options: [
+    { type: 4, name: 'dice', name_localizations: l10n.dice.name,
+      description: 'How many dice? (default: 1)',
+      description_localizations: l10n.dice.description
+    },
+    { type: 4, name: 'sides', name_localizations: l10n.sides.name,
+      description: 'How many sides per die? (default: 6)',
+      description_localizations: l10n.sides.description
+    },
+    { type: 4, name: 'sets', name_localizations: l10n.sets.name,
+      description: 'How many sets of dice? (default: 1)',
+      description_localizations: l10n.sets.description
+    },
+    { type: 4, name: 'modifier', name_localizations: l10n.modifier.name,
+      description: '± to final roll for each die? (default: 0)',
+      description_localizations: l10n.modifier.description
+    }
   ],
   type: ApplicationCommandType.ChatInput,
   contexts: [ InteractionContextType.BotDM, InteractionContextType.Guild ],
   cooldown: 1000, // Set a cooldown of 1 second
   run: async ( client, interaction ) => {
+    const r6e = getI18n( modData, { interaction: interaction } ).responses;
     try {
-      const { guild, options, user: author } = interaction;
+      const { guild, locale, options, user: author } = interaction;
+      const useLang = ( locale ?? 'en-US' );
       const { content } = await userPerms( author, guild );
       if ( content ) { return interaction.editReply( { content: content } ); }
 

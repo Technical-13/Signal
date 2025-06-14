@@ -1,34 +1,69 @@
 const { ApplicationCommandType, InteractionContextType } = require( 'discord.js' );
 const chalk = require( 'chalk' );
 const userPerms = require( '../../functions/getPerms.js' );
-const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/geocaching/cipher.js' );
+const getI18n = require( '../../functions/getInternationalizations.js' );
+const modData = { group: 'geocaching', name: 'cipher', type: 'slashCommands' };
+const l10n = getI18n( modData );
+const strScript = chalk.hex( '#FFA500' ).bold( './' + modData.type + '/' + modData.group + '/' + modData.name + '.js' );
 
 module.exports = {
-  name: 'cipher',
-  group: 'geocaching',
+  group: modData.group,
+  name: modData.name,
+  name_localizations: l10n.name,
   description: 'Cipher (de|en)coder.',
-  options: [/* string, code, use-type, numeric, alphabetic, alphanumberic //*/
-    { type: 3, name: 'string', description: 'string to (de|en)code.', required: true },
-    { type: 3, name: 'code', description: 'Decode or encode?', required: true,
-      choices: [ { name: 'Decode', value: 'decode' }, { name: 'Encode', value: 'encode' } ] },
-    { type: 3, name: 'use-type', description: 'Pick a type.',
-      choices: [ { name: 'Letters A-Z', value: 'alphabetic' }, { name: 'Letters A-Z & Numbers 0-9', value: 'alphanumberic' }, { name: 'Numbers 0-9', value: 'numeric' } ] },
-    { type: 10, name: 'numeric', description: 'Characters in the Latin alphabet. (default 5)', minValue: 1, maxValue: 10 },
-    { type: 10, name: 'alphabetic', description: 'Characters in the Latin alphabet. (default 13)', minValue: 1, maxValue: 26 },
-    { type: 10, name: 'alphanumberic', description: 'Characters in the Latin alphabet. (default 18)', minValue: 1, maxValue: 36 }
+  description_localizations: l10n.description,
+  options: [
+    { type: 3, required: true, name: 'string', name_localizations: l10n.string.name,
+      description: 'string to (de|en)code.',
+      description_localizations: l10n.string.description
+    },
+    { type: 3, required: true, name: 'code',
+      description: 'Decode or encode?', name_localizations: l10n.code.name,
+      description_localizations: l10n.code.description,
+      choices: [
+        { value: 'decode' name: 'Decode', name_localizations: l10n.code.choices[ 0 ] },
+        { value: 'encode' name: 'Encode', name_localizations: l10n.code.choices[ 1 ] }
+      ]
+    },
+    { type: 3, name: 'use-type', name_localizations: l10n[ 'use-type' ].name,
+      description: 'Pick a type.',
+      description_localizations: l10n[ 'use-type' ].description,
+      choices: [
+        { value: 'alphabetic' name: 'Letters A-Z', name_localizations: l10n[ 'use-type' ].choices[ 0 ] },
+        { value: 'alphanumberic' name: 'Letters A-Z & Numbers 0-9', name_localizations: l10n[ 'use-type' ].choices[ 1 ] },
+        { value: 'numeric' name: 'Numbers 0-9', name_localizations: l10n[ 'use-type' ].choices[ 2 ] }
+      ]
+    },
+    { type: 10, minValue: 1, maxValue: 10,
+      name: 'numeric', name_localizations: l10n.numeric.name,
+      description: 'Characters in the Latin alphabet. (default 5)',
+      description_localizations: l10n.numeric.description
+    },
+    { type: 10, minValue: 1, maxValue: 26,
+      name: 'alphabetic', name_localizations: l10n.alphabetic.name,
+      description: 'Characters in the Latin alphabet. (default 13)',
+      description_localizations: l10n.alphabetic.description
+    },
+    { type: 10, minValue: 1, maxValue: 36,
+      name: 'alphanumberic', name_localizations: l10n.alphanumberic.name,
+      description: 'Characters in the Latin alphabet. (default 18)',
+      description_localizations: l10n.alphanumberic.description
+    }
   ],
   type: ApplicationCommandType.ChatInput,
   contexts: [ InteractionContextType.Guild ],
   devOnly: true,
   cooldown: 1000,
   run: async ( client, interaction ) => {
+    const r6e = getI18n( modData, { interaction: interaction } ).responses;
     try {
       await interaction.deferReply( { ephemeral: true } );
-      const { channel, guild, options, user: author } = interaction;
+      const { channel, guild, locale, options, user: author } = interaction;
+      const useLang = ( locale ?? 'en-US' );
       const { content } = await userPerms( author, guild );
       if ( content ) { return interaction.editReply( { content: content } ); }
 
-      return interaction.editReply( { content: 'Comming **SOON**:tm:' } );
+      return interaction.editReply( { content: r6e.soon[ useLang ] } );
     }
     catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
   }

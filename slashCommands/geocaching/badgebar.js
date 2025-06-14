@@ -3,49 +3,36 @@ const chalk = require( 'chalk' );
 const errHandler = require( '../../functions/errorHandler.js' );
 const userPerms = require( '../../functions/getPerms.js' );
 const getGuildConfig = require( '../../functions/getGuildDB.js' );
-const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/geocaching/badgebar.js' );
+const getI18n = require( '../../functions/getInternationalizations.js' );
+const modData = { group: 'geocaching', name: 'badgebar', type: 'slashCommands' };
+const l10n = getI18n( modData );
+const strScript = chalk.hex( '#FFA500' ).bold( './' + modData.type + '/' + modData.group + '/' + modData.name + '.js' );
 
 module.exports = {
-  name: 'badgebar',
-  group: 'geocaching',
+  group: modData.group,
+  name: modData.name,
+  name_localizations: l10n.name,
   description: 'Show Project-GC BadgeBar for user.',
-  description_localizations: {
-    de: 'Project-GC BadgeBar für Benutzer anzeigen.',
-    fi: 'Näytä Project-GC BadgeBar käyttäjälle.',
-    pl: 'Pokaż pasek odznak Project-GC dla użytkownika.' },
-  options: [//gc-name, discord-user
-    { type: 3, name: 'gc-name', description: 'The case-sensitive Geocaching.com username.',
-      name_localizations: {
-        de: 'gc-name',
-        fr: 'nom-gc',
-        fi: 'gc-nimi',
-        pl: 'gc-name',
-        'sv-SE': 'gc-namn' },
-      description_localizations: {
-        de: 'Der Geocaching.com-Benutzername, bei dem die Groß-/Kleinschreibung beachtet werden muss.',
-        fi: 'Geocaching.com-käyttäjänimi, kirjainkoko merkitsevä.',
-        pl: 'W nazwie użytkownika Geocaching.com rozróżniana jest wielkość liter.' }
+  description_localizations: l10n.description,
+  options: [
+    { type: 3, name: 'gc-name', name_localizations: l10n[ 'gc-name' ].name,
+      description: 'The case-sensitive Geocaching.com username.',
+      description_localizations: l10n[ 'gc-name' ].description
     },
-    { type: 6, name: 'discord-user', description: 'Discord member (requires nickname to be set if different from GC name).',
-      name_localizations: {
-        de: 'discord-benutzer',
-        fr: 'utilisateur-discord',
-        fi: 'discord-käyttäjä',
-        pl: 'discord-użytkownik',
-        'sv-SE': 'discord-användare' },
-      description_localizations: {
-        de: 'Discord-Mitglied (erfordert das Festlegen eines Spitznamens, wenn dieser vom GC-Namen abweicht).',
-        fi: 'Discord-jäsen (vaatii nimimerkin asettamisen, jos se on eri kuin GC-nimi).',
-        pl: 'Członek Discord (wymaga ustawienia pseudonimu, jeśli różni się od nazwy GC).' }
+    { type: 6, name: 'discord-user', name_localizations: l10n[ 'discord-user' ].name,
+      description: 'Discord member (requires nickname to be set if different from GC name).',
+      description_localizations: l10n[ 'discord-user' ].description
     }
   ],
   type: ApplicationCommandType.ChatInput,
   contexts: [ InteractionContextType.Guild ],
   cooldown: 1000,
   run: async ( client, interaction ) => {
+    const r6e = getI18n( modData, { interaction: interaction } ).responses;
     try {
       await interaction.deferReply( { ephemeral: true } );
-      const { channel, guild, options, user: author } = interaction;
+      const { channel, guild, locale, options, user: author } = interaction;
+      const useLang = ( locale ?? 'en-US' );
       const { cache: members } = guild.members;
       const { content } = await userPerms( author, guild );
       if ( content ) { return interaction.editReply( { content: content } ); }
@@ -64,25 +51,26 @@ module.exports = {
       const strInputUserDisplayName = ( objInputUser ? members.get( objInputUser.id ).displayName : strInputString );
       const isAuthor = ( ( !strInputString && !objInputUser ) || author.id === objInputString?.id || strInputUserDisplayName === strAuthorDisplayName ? true : false );
       const strUseName = ( strInputUserDisplayName ? strInputUserDisplayName : strAuthorDisplayName );
-      const encName = encodeURI( strUseName ).replace( '&', '%26' );
+      const encName = encodeURIComponent( strUseName.replace( / /g, '_' ) );
 
       const { doLogs, chanDefault, chanError, strClosing } = await getGuildConfig( guild );
       channel.send( { content:
-        'BadgeBar for ' + ( !objInputUser ? ( !objInputString ? ( !isAuthor ? '`' + strUseName + '`' : '<@' + author.id + '>' ) : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
-        ( isAuthor ? '' : ' as requested by <@' + author.id + '>' ) +
+        r6e.badgebarFor[ useLang ] +
+        ( !objInputUser ? ( !objInputString ? ( !isAuthor ? '`' + strUseName + '`' : '<@' + author.id + '>' ) : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
+        ( isAuthor ? '' : r6e.requestedBy[ useLang ] ) +
         ':\nhttps://cdn2.project-gc.com/BadgeBar/' + encName + '.png#' + intYear + '-' + intMonth + '-' + intDay
       } )
       .then( sentMsg => {
         if ( doLogs && !isAuthor ) {
           chanDefault.send( { content:
-            'I shared the `/badgebar` for ' + ( !objInputUser ? ( !objInputString ? '`' + strUseName + '`' : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
-            ' in <#' + channel.id + '> as requested by <@' + author.id + '>' + strClosing } )
+            r6e.sharedFor[ useLang ] + ( !objInputUser ? ( !objInputString ? '`' + strUseName + '`' : '<@' + objInputString.id + '>' ) : '<@' + objInputUser.id + '>' ) +
+            r6e.in[ useLang ] + '<#' + channel.id + '>' + r6e.requestedBy[ useLang ] + strClosing } )
           .then( sentLog => { interaction.deleteReply(); } )
-          .catch( async errLog => { await errHandler( errLog, { chanType: 'default', command: 'badgebar', channel: channel, type: 'logLogs' } ); } );
+          .catch( errLog => { errHandler( errLog, { chanType: 'default', command: modData.name, channel: channel, type: 'logLogs' } ); } );
         }
         else { interaction.deleteReply(); }
       } )
-      .catch( async errSend => { interaction.editReply( await errHandler( errSend, { command: 'badgebar', channel: channel, type: 'errSend' } ) ); } );
+      .catch( errSend => { interaction.editReply( errHandler( errSend, { command: modData.name, channel: channel, type: 'errSend' } ) ); } );
     }
     catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
   }

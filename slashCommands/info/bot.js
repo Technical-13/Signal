@@ -5,8 +5,8 @@ const userPerms = require( '../../functions/getPerms.js' );
 const getBotConfig = require( '../../functions/getBotDB.js' );
 const getI18n = require( '../../functions/getInternationalizations.js' );
 const modData = { group: 'info', name: 'bot', type: 'slashCommands' };
-const strScript = chalk.hex( '#FFA500' ).bold( './' + modData.type + '/' + modData.group + '/' + modData.name + '.js' );
 const l10n = getI18n( modData );
+const strScript = chalk.hex( '#FFA500' ).bold( './' + modData.type + '/' + modData.group + '/' + modData.name + '.js' );
 
 module.exports = {
   group: modData.group,
@@ -20,7 +20,7 @@ module.exports = {
   devOnly: true,
   cooldown: 1000,
   run: async ( client, interaction ) => {
-    const r6e = getI18n( modData ).responses;
+    const r6e = getI18n( modData, { interaction: interaction } ).responses;
     try {
       await interaction.deferReply( { ephemeral: true } );// ephemeral: interaction.inGuild()
       const { channel, guild, locale, options, user: author } = interaction;

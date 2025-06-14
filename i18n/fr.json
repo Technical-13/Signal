@@ -1,19 +1,19 @@
 {
   "common": {
     "options" : {
-      "discord-user": { "name": "discord-user", "description": "Discord member (requires nickname to be set if different from GC name)." },
-      "gc-name": { "name": "gc-name", "description": "The case-sensitive username on Geocaching.com" },
-      "language": { "name": "língua", "description": "Língua para dar informações.", "choices": [
-        "Deutsch/Alemão", "British/Inglês Britânico", "American/Americano (default)", "Suomi/Finlandês",
-        "Français/Francês", "Norsk/Norueguês", "Polski/Polaco", "Português", "Svenska/Sueco"
+      "discord-user": { "name": "utilisateur-discord", "description": "Discord member (requires nickname to be set if different from GC name)." },
+      "gc-name": { "name": "nom-gc", "description": "The case-sensitive username on Geocaching.com" },
+      "language": { "name": "langue", "description": "Langue dans laquelle donner des informations.", "choices": [
+        "Deutsch/German", "British/Anglais Britannique", "American/Américain (default)", "Suomi/Finnish",
+        "Français", "Norsk/Norwegian", "Polski/Polish", "Português/Portuguese (Portugal)", "Svenska/Swedish"
       ] },
-      "message-id": { "name": "id-da-mensagem", "description": "Cole o ID da mensagem aqui." },
-      "taggee": { "name": "utilizador-alvo", "description": "Assinale alguém como resposta." }
+      "message-id": { "name": "message-id", "description": "Paste message ID here" },
+      "taggee": { "name": "utilisateur-cible", "description": "Tag someone in response." }
     },
     "responses": {
-      "in": " em ",
-      "invalidMsgId": " não é um id de mensagem valido",
-      "noMsg": "Impossivel de encontrar a mensagem exata para responder",
+      "in": " dans ",
+      "invalidMsgId": " n'est pas un identifiant de message valide.",
+      "noMsg": "Impossible de trouver un message spécifique auquel répondre.",
       "not": "not",
       "official": "Official Geocaching.com",
       "ownerOnly": "This is currently an **owner only** command.  Please talk to {{bot.owner.ping}} if you need assistance.",
@@ -49,6 +49,50 @@
           "unbanReasonSelfBan": "Self imposed banned expired."
         }
       },
+      "config": {
+        "name": "config",
+        "description": "Configure bot for this server.",
+        "options": {
+          "add": { "name": "add", "description": "Add a user to the guild blacklist or whitelist.", "options": {
+            "blacklist": { "name": "blacklist", "description": "Role or Member to block from using all commands." },
+            "whitelist": { "name": "whitelist", "description": "Role or Member to permit to use all commands." }
+          } },
+          "clear": { "name": "clear", "description": "Clear guild's blacklist and/or whitelist.", "options": {
+            "blacklist": { "name": "blacklist", "description": "Clear guild's blacklist." },
+            "whitelist": { "name": "whitelist", "description": "Clear guild's whitelist." }
+          } },
+          "get": { "name": "get", "description": "Get all settings for the server.", "options": {
+            "share": { "name": "share", "description": "Share result to current channel instead of making it ephemeral." }
+          } },
+          "logs": { "name": "logs", "description": "(Dis|En)able logs and set channels for them.", "options": {
+            "do-logs": { "name": "do-logs", "description": "Send logs for uses of commands that may be devious in nature" },
+            "log-chat": { "name": "log-chat", "description": "Channel to log chat command (`/edit`, `/react`, `/reply`, and `/say`) requests." },
+            "log-default": { "name": "log-default", "description": "Channel to log all requests not otherwise specified." },
+            "log-error": { "name": "log-error", "description": "Channel to log errors." },
+            "log-reset": { "name": "log-reset", "description": "Reset logging to enabled and all logs DMed to guild owner." }
+          } },
+          "remove": { "name": "remove", "description": "Remove a user from the guild blacklist or whitelist.", "options": {
+            "blacklist": { "name": "blacklist", "description": "Role or Member to remove from blacklist." },
+            "whitelist": { "name": "whitelist", "description": "Role or Member to remove from whitelist." }
+          } },
+          "reset": { "name": "reset", "description": "Reset all settings for the server to default." },
+          "set": { "name": "set", "description": "Set settings for the server.", "options": {
+            "invite": { "name": "invite", "description": "Channel to make invites to. Will try to guess if not set." },
+            "prefix": { "name": "prefix", "description": "Guild specific prefix for bot commands" },
+            "premium": { "name": "premium", "description": "Give nitro server boosters extra bot access? (default: TRUE)" }
+          } },
+          "welcome": { "name": "welcome", "description": "Modify the welcome message options.", "options": {
+            "do-welcome": { "name": "do-welcome", "description": "Send a message to welcome new members to the server?" },
+            "welcome-message": { "name": "welcome-message", "description": "Message to send new members to the server?" },
+            "welcome-dm": { "name": "welcome-dm", "description": "Send the welcome message to DM?  (default: TRUE)" },
+            "welcome-channel": { "name": "welcome-channel", "description": "Which channel would you like to send the message?'" },
+            "welcome-role": { "name": "welcome-role", "description": "Which role, if any, would you like to give new members on join?" },
+            "welcome-clear-role": { "name": "welcome-clear-role", "description": "Clear role to assign" },
+            "welcome-reset": { "name": "welcome-reset", "description": "Reset welcoming of new members to disabled." }
+          } }
+        },
+        "responses": { "TBD": "TBD" }
+      },
       "foo": {
         "name": "foo",
         "description": "Test command.",
@@ -68,9 +112,78 @@
         "options": {
           "command": { "name": "command", "description": "The name of the command to reload." },
           "type": {  "name": "type", "description": "The type of the command to reload.", "choices": [ "/slash commands (default)", "§prefix commands" ] }
+        },
+        "responses": {
+          "command": "Command",
+          "errReload": "There was an error while reloading command",
+          "noCommand": "I have no command named ",
+          "noSlashCommand": "I have no slashCommand named",
+          "wasReloaded": "was reloaded!"
         }
+      },
+      "system": {
+        "name": "system",
+        "description": "Change bot configs.",
+        "options": {
+          "add": { "name": "add", "description": "Add a user to one of my lists.", "options": {
+            "blacklist": { "name": "blacklist", "description": "User to block from using all commands." },
+            "moderator": { "name": "moderator", "description": "User to add as a moderator." },
+            "whitelist": { "name": "whitelist", "description": "ser to permit to use all non-mod commands." }
+          } }
+        },
+        "responses": { "TBD": "TBD" }
       }
-    }
+    },
+    "chat": {
+      "delete": {
+        "name": "delete",
+        "description": "Delete a bot message.",
+        "responses": { "TBD": "TBD" }
+      },
+      "edit": {
+        "name": "edit",
+        "description": "Edit a bot message.",
+        "options": {
+          "saying": { "name": "saying", "description": "What should I have said?" }
+        },
+        "responses": { "TBD": "TBD" }
+      },
+      "pin": {
+        "name": "pin",
+        "description": "Pin a message to the channel.",
+        "responses": { "TBD": "TBD" }
+      },
+      "react": {
+        "name": "react",
+        "description": "What reaction do you want me to use on which message?",
+        "options": {
+          "reaction": { "name": "reaction", "description": "How do you want me to react?" }
+        },
+        "responses": { "TBD": "TBD" }
+      },
+      "reply": {
+        "name": "reply",
+        "description": "Make bot respond to message.",
+        "options": {
+          "response": { "name": "response", "description": "What do you want me to say in response?" }
+        },
+        "responses": { "TBD": "TBD" }
+      },
+      "say": {
+        "name": "say",
+        "description": "Make bot speak.",
+        "options": {
+          "saying": { "name": "saying", "description": "What do you want me to say?" },
+          "channel": { "name": "channel", "description": "Where do you want me to say it? (default: current channel)" }
+        },
+        "responses": { "TBD": "TBD" }
+      },
+      "unpin": {
+        "name": "unpin",
+        "description": "Unpin a message from the channel.",
+        "responses": { "TBD": "TBD" }
+      }
+    },
     "fun": {
       "lmgtfy": {
         "name": "lmgtfy",
@@ -87,7 +200,7 @@
         }
       },
       "roll": {
-        "name": "roll",
+        "name": "lancer-les-dés",
         "description": "Dice Roller (default: 1#1d6±0)",
         "options": {
           "dice": { "name": "dice", "description": "How many dice? (default: 1)" },
@@ -123,10 +236,10 @@
       },
       "ftf": {
         "name": "ftf",
-        "description": "Diga a alguém como fazer com que o seu FTF (First To Find) seja notado no Project-GC.",
+        "description": "Tell someone how to get their FTF (First To Find) noticed on Project-GC.",
         "responses": {
           "errTell": "Error telling {{author.ping}} about FTFs via `/ftf` request.",
-          "ftfInfo": "Existem 2 maneiras do Project-GC detetar os teus FTFs (First To Finds). Ou colocas uma destas tags nos teus logs {*FTF*}, {FTF}, ou [FTF]. Alternativamente podes colocar uma lista de FTF nas configurações (<https://project-gc.com/User/Settings/>) que será verificada uma vez por dia. Por favor perceba que os FTF não são algo ofical e nem toda a gente taga os seus FTFs. Portanto esta lista não estará 100% correta.",
+          "ftfInfo": "Il existe deux manières pour Project-GC de détecter vos FTF. Vous pouvez utiliser un de ces tags dans vos logs : `{*FTF*}` `{FTF}` `[FTF]`. Vous pouvez également ajouter une liste de FTF sous Configuration (<https://project-gc.com/User/Settings/>) qui seront vérifiés une fois par jour. Comprenez bien que les FTFs n'ont rien d'officiels et que tout le monde ne tague pas ses FTFs. C'est pourquoi cette liste ne sera pas fiable à 100%.",
           "logAboutAtRequest": " about FTFs at {{author.ping}}'s `/ftf` request.",
           "logAtRequestInResponse": " at {{author.ping}}'s `/ftf` request in response to:",
           "logTold": "I told ",
@@ -189,9 +302,9 @@
       },
       "ping": {
         "name": "ping",
-        "description": "Verifique o ping do bot.",
+        "description": "Check bot's ping.",
         "responses": {
-          "pong": "🏓 Pong! Latência: **{{bot.latency}}ms**"
+          "pong": "🏓 Pong! Latency: **{{bot.latency}}ms**"
         }
       }
     }
