@@ -1,0 +1,56 @@
+{
+  "common": {
+    "options" : {
+      "discord-user": { "name": "discord-benutzer", "description": "Discord-Mitglied (erfordert die Festlegung eines Spitznamens, wenn dieser vom GC-Namen abweicht)." },
+      "gc-name": { "name": "gc-name", "description": "Der Groß- und Kleinschreibung beachtende Benutzername auf Geocaching.com" },
+      "language": { "name": "sprache", "description": "Sprache, in der Informationen gegeben werden.", "choices": [
+        "Deutsch", "English/Englisch (standard)", "Suomi/Finnisch", "Français/Französisch", "Norsk/Norwegisch", "Polski/Polieren", "Português/Portugiesisch (Portugal)", "Svenska/Schwedisch"
+      ] },
+      "message-id": { "name": "nachrichten-id", "description": "Fügen Sie hier die Nachrichten-ID ein" },
+      "target-user": { "name": "zielbenutzer", "description": "Markieren Sie als Antwort jemanden." }
+    },
+    "responses": {
+      "in": "in",
+      "invalidMsgId": " ist keine gültige Nachrichten-ID.is not a valid message-id.",
+      "noMsg": "Es konnte keine spezifische Nachricht zum Antworten gefunden werden.",
+      "not": "nicht",
+      "official": "Offiziell Geocaching.com",
+      "requestedBy": " wie angefordert von {{author.ping}}",
+      "soon": "Kommt **BALD**:tm:"
+    }
+  },
+  "slashCommands": {
+    "admin": {
+      "foo": {
+        "name": "foo",
+        "description": "Testbefehl.",
+        "options": {
+          "console": { "name": "konsole", "description": "Debug-Modus aktivieren" },
+          "string": { "name": "zeichenfolge", "description": "Zeichenfolge" },
+          "integer": { "name": "ganze-zahl", "description": "Ganze Zahl" },
+          "boolean": { "name": "boolesch", "description": "Boolesch" },
+          "channel": { "name": "kanal", "description": "Kanal" },
+          "mentionable": { "name": "erwähnenswert", "description": "Erwähnenswert" },
+          "attachment": { "name": "anhang", "description": "Anhang" }
+        }
+      },
+      "reload": {
+        "name": "reload",
+        "description": "Reloads commands.",
+        "options": {
+          "command": { "name": "befehl", "description": "Der Name des neu zu ladenden Befehls." },
+          "type": {  "name": "typ", "description": "Der Typ des neu zu ladenden Befehls.", "choices": [ "/Schrägstrich-Befehle (Standard)", "§Präfixbefehle" ] }
+        }
+      }
+    },
+    "info": {
+      "ping": {
+        "name": "klingeln",
+        "description": "Überprüfen Sie den Ping des Bots.",
+        "responses": {
+          "pong": "🏓 Pong! Latenz: **{{bot.latency}}ms**"
+        }
+      }
+    }
+  }
+}
