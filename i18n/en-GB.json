@@ -2,7 +2,7 @@
   "common": {
     "options" : {
       "discord-user": { "name": "discord-user", "description": "Discord member (requires nickname to be set if different from GC name)." },
-      "gc-name": { "name": "gc-name", "description": "The case-sensitive Geocaching.com username." },
+      "gc-name": { "name": "gc-name", "description": "The case-sensitive username on Geocaching.com" },
       "language": { "name": "language", "description": "Language to give information in.", "choices": [
         "Deutsch/German", "English (default)", "Suomi/Finnish", "Français/French", "Norsk/Norwegian", "Polski/Polish", "Português/Portuguese (Portugal)", "Svenska/Swedish"
       ] },
@@ -200,7 +200,7 @@
           "modifier": { "name": "modifier", "description": "± to final roll for each die? (default: 0)" }
         },
         "responses": {
-          "total": "Total:"
+          "total": "Total"
         }
       }
     },

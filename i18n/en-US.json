@@ -200,7 +200,7 @@
           "modifier": { "name": "modifier", "description": "± to final roll for each die? (default: 0)" }
         },
         "responses": {
-          "total": "Total:"
+          "total": "Total"
         }
       }
     },
