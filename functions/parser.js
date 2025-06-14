@@ -21,9 +21,10 @@ module.exports = ( rawString, obj = { author: null, guild: null, interaction: nu
     // const targetGuild = ( options?.getString( 'guild' ) ?? null );
     // const targetUser = ( options?.getUser( 'discord-user' ) ?? null );
     const ageUnits = { getDecades: true, getYears: true, getMonths: true, getWeeks: true, getDays: true, getHours: false, getMinutes: false };
-    const { user: bot, guilds, ownerId, users, ws } = client.user;
+    const { user: bot, guilds, ownerId, users, ws } = ( client ?? { bot: null, guilds: null, ownerId: config.botOwnerId, users: null, ws: null } );
 
     const transclusions = {
+      '{{bot.owner.ping}}': '<@' + ownerId + '>',
       '{{bot.version.djs}}': 'v' + discord.version,
       '{{bot.version.node}}': process.version
     };
@@ -35,7 +36,6 @@ module.exports = ( rawString, obj = { author: null, guild: null, interaction: nu
       transclusions[ '{{bot.members}}' ] = users.cache.size.toLocaleString( useLang );
       transclusions[ '{{bot.name}}' ] = bot.displayName;
       transclusions[ '{{bot.owner.name}}' ] =  users.cache.get( ownerId ).displayName;
-      transclusions[ '{{bot.owner.ping}}' ] = '<@' + ownerId + '>';
       transclusions[ '{{bot.ping}}' ] = '<@' + bot.id + '>';
       transclusions[ '{{bot.since}}' ] = bot.createdAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) );
       transclusions[ '{{bot.servers}}' ] = guilds.cache.size.toLocaleString( useLang );
@@ -49,7 +49,6 @@ module.exports = ( rawString, obj = { author: null, guild: null, interaction: nu
       notAvailable[ '{{bot.members}}' ] = 'bot';
       notAvailable[ '{{bot.name}}' ] = 'bot';
       notAvailable[ '{{bot.owner.name}}' ] = 'bot';
-      notAvailable[ '{{bot.owner.ping}}' ] = 'bot';
       notAvailable[ '{{bot.ping}}' ] = 'bot';
       notAvailable[ '{{bot.since}}' ] = 'bot';
       notAvailable[ '{{bot.servers}}' ] = 'bot';
