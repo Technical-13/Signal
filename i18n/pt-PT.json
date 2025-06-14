@@ -8,7 +8,7 @@
       "target": { "name": "objetivo", "description": "Assinale alguém como resposta." }
     },
     "responses": {
-      "invalidMsgId": "Não é um id de mensagem valido",
+      "invalidMsgId": " não é um id de mensagem valido",
       "noMsg": "Impossivel de encontrar a mensagem exata para responder"
     }
   },
