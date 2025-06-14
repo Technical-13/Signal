@@ -20,14 +20,7 @@ const getOptions = ( options, langCode = 'en-US', objOpt = {} ) => {
     if ( data.options ) { optBuilder.options = getOptions( data.options, langCode ); }
     if ( data.choices ) {
       if ( !optBuilder.choices ) { optBuilder.choices = []; }
-      data.choices.forEach( ( choice ) => {
-        var choiceIndex = optBuilder.choices.findIndex( choices => choices[ langCode ] === choice );
-        if ( choiceIndex === -1 ) {
-          optBuilder.choices.push( {} );
-          choiceIndex = optBuilder.choices.length - 1;
-        }
-        optBuilder.choices[ choiceIndex ][ langCode ] = choice;
-      } );
+      data.choices.forEach( ( choice, ndx ) => { optBuilder.choices[ ndx ][ langCode ] = choice; } );
     }
   } );
   return objOpt;
