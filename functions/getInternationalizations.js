@@ -21,7 +21,7 @@ const getOptions = ( options, langCode = 'en-US', objOpt = {} ) => {
     if ( data.choices ) {
       if ( !optBuilder.choices ) {
         optBuilder.choices = [];
-        const intLastChoice = ( data.choices.length - 1 );
+        let intLastChoice = ( data.choices.length - 1 );
         for ( intLastChoice; intLastChoice >= 0; intLastChoice-- ) { optBuilder.choices.push( {} ); }
       }
       data.choices.forEach( ( choice, ndx ) => { optBuilder.choices[ ndx ][ langCode ] = choice; } );
