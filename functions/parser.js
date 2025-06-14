@@ -24,7 +24,7 @@ module.exports = ( rawString, obj = { author: null, guild: null, interaction: nu
     const bot = client.user;
 
     const transclusions = {
-      '{{bot.age}}': duration( Date.now() - bot.createdTimestamp, ageUnits ),
+      // '{{bot.age}}': duration( Date.now() - bot.createdTimestamp, ageUnits ),
       '{{bot.guilds}}': client.guilds.cache.size.toLocaleString( useLang ),
       '{{bot.latency}}': Math.round( client.ws.ping ).toLocaleString( useLang ),
       '{{bot.members}}': client.users.cache.size.toLocaleString( useLang ),
