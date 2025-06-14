@@ -41,7 +41,7 @@ const getResponses = ( responses, langCode = 'en-US', objRes = {}, params ) => {
   responses.forEach( async ( res ) => {
     objRes[ res[ 0 ] ] = ( objRes[ res[ 0 ] ] ?? {} );
     const resBuilder = objRes[ res[ 0 ] ];
-    resBuilder[ langCode ] = await parse( res[ 1 ], params );
+    resBuilder[ langCode ] = parse( res[ 1 ], params );
   } );
   return objRes;
 }
