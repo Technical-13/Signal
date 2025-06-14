@@ -5,21 +5,29 @@ const errHandler = require( '../../functions/errorHandler.js' );
 const userPerms = require( '../../functions/getPerms.js' );
 //const getGuildConfig = require( '../../functions/getGuildDB.js' );
 const pagination = require( '../../functions/pagination.js' );
-const strScript = chalk.hex( '#FFA500' ).bold( './slashCommands/info/guilds.js' );
-
+const getI18n = require( '../../functions/getInternationalizations.js' );
+const modData = { group: 'info', name: 'guilds', type: 'slashCommands' };
+const strScript = chalk.hex( '#FFA500' ).bold( './' + modData.type + '/' + modData.group + '/' + modData.name + '.js' );
+const l10n = getI18n( modData );
 
 module.exports = {
-  name: 'guilds',
-  group: 'info',
+  type: modData.type,
+  group: modData.group,
+  name: modData.name,
+  name_localizations: l10n.name,
   description: 'Get information about the guilds I\'m in.',
+  description_localizations: l10n.description,
   type: ApplicationCommandType.ChatInput,
   contexts: [ InteractionContextType.Guild ],
   options: [ /* guild //*/
-    { type: 3, name: 'guild', description: 'Start with a specific guild by ID (invalid input will be ignored). (default current or first guild)' }
+    { type: 3, name: 'guild', name_localizations: l10n.options.guild.name,
+    description: 'Start with a specific guild by ID (invalid input will be ignored). (default current or first guild)',
+    description_localizations: l10n.options.guild.description }
   ],
-  cooldown: 1000,// 300000,
   devOnly: true,
+  cooldown: 1000,// 300000,
   run: async ( client, interaction ) => {
+    const r6e = getI18n( modData ).responses;
     try {
       await interaction.deferReply();
 
@@ -28,7 +36,8 @@ module.exports = {
       storedGuilds.forEach( ( entry, i ) => { storedGuildIds.push( entry.Guild ); } );
 
       const bot = client.user;
-      const { channel, guild, options, user: author } = interaction;
+      const { channel, guild, locale, options, user: author } = interaction;
+      const useLang = ( locale ?? 'en-US' );
       const { content } = await userPerms( author, guild );
       if ( content ) { return interaction.editReply( { content: content } ); }
 

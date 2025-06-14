@@ -6,9 +6,10 @@ const strScript = chalk.hex( '#FFA500' ).bold( './' + modData.type + '/' + modDa
 const l10n = getI18n( modData );
 
 module.exports = {
+  type: modData.type,
+  group: modData.group,
   name: modData.name,
   name_localizations: l10n.name,
-  group: modData.group,
   description: 'Check bot\'s ping.',// No description for ApplicationCommandType.User commands
   description_localizations: l10n.description,
   options: null,
@@ -17,10 +18,11 @@ module.exports = {
   devOnly: true,
   cooldown: 1000,
   run: async ( client, interaction ) => {
+    const r6e = getI18n( modData ).responses;
     try {
       const { locale } = interaction;
       const useLang = ( locale ?? 'en-US' );
-      interaction.reply( { content: l10n.responses.pong[ useLang ], ephemeral: interaction.inGuild() } );
+      interaction.reply( { content: r6e.pong[ useLang ], ephemeral: interaction.inGuild() } );
     }
     catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
   }
