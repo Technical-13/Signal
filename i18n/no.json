@@ -106,6 +106,14 @@
           "attachment": { "name": "attachment", "description": "Attachment" }
         }
       },
+      "load": {
+        "name": "reload",
+        "description": "Reloads commands.",
+        "options": {
+          "command": { "name": "befehl", "description": "Der Name des neu zu ladenden Befehls." },
+          "type": {  "name": "typ", "description": "Der Typ des neu zu ladenden Befehls.", "choices": [ "/Schrägstrich-Befehle (Standard)", "§Präfixbefehle" ] }
+        }
+      },
       "reload": {
         "name": "reload",
         "description": "Reloads commands.",
