@@ -10,8 +10,8 @@ const strScript = chalk.hex( '#FFA500' ).bold( './' + modData.type + '/' + modDa
 module.exports = ( rawString, obj = { author: null, guild: null, interaction: null, member: null, uptime: null, useLang: null } ) => {
   try {
     const interaction = ( obj.interaction ?? null );
-    const { channel, guild: iGuild, locale, options, user } = ( interaction ?? { channel: null, guild: null, locale: null, options: null, user: null } );
-    const author = ( obj.author ? obj.author : ( user ?? null ) );
+    const { channel, guild: iGuild, locale, options, user: iUser } = ( interaction ?? { channel: null, guild: null, locale: null, options: null, user: null } );
+    const author = ( obj.author ? obj.author : ( iUser ?? null ) );
     const member = ( obj.member ?? null );
     const guild = ( obj.guild ? obj.guild : ( iGuild ?? ( author ? author.guild : ( member ? member.guild : null ) ) ) );
     const useLang = ( obj.useLang ?? options?.getString( 'language' ) ?? locale ?? guild?.preferedLocale ?? 'en-US' );
@@ -21,7 +21,7 @@ module.exports = ( rawString, obj = { author: null, guild: null, interaction: nu
     // const targetGuild = ( options?.getString( 'guild' ) ?? null );
     // const targetUser = ( options?.getUser( 'discord-user' ) ?? null );
     const ageUnits = { getDecades: true, getYears: true, getMonths: true, getWeeks: true, getDays: true, getHours: false, getMinutes: false };
-    const { bot: user, guilds, ownerId, users, ws } = client.user;
+    const { user: bot, guilds, ownerId, users, ws } = client.user;
 
     const transclusions = {
       '{{bot.version.djs}}': 'v' + discord.version,
