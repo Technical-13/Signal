@@ -19,7 +19,11 @@ const getOptions = ( options, langCode = 'en-US', objOpt = {} ) => {
     optBuilder.description[ langCode ] = data.description;
     if ( data.options ) { optBuilder.options = getOptions( data.options, langCode ); }
     if ( data.choices ) {
-      if ( !optBuilder.choices ) { optBuilder.choices = []; }
+      if ( !optBuilder.choices ) {
+        optBuilder.choices = [];
+        const intLastChoice = ( data.choices.length - 1 );
+        for ( intLastChoice; z >= 0; z-- ) { optBuilder.choices.push( {} ); }
+      }
       data.choices.forEach( ( choice, ndx ) => { optBuilder.choices[ ndx ][ langCode ] = choice; } );
     }
   } );
