@@ -1,0 +1,298 @@
+{
+  "common": {
+    "options" : {
+      "discord-user": { "name": "discord-user", "description": "Discord member (requires nickname to be set if different from GC name)." },
+      "gc-name": { "name": "gc-name", "description": "The case-sensitive Geocaching.com username." },
+      "language": { "name": "language", "description": "Language to give information in.", "choices": [
+        "Deutsch/German", "English (default)", "Suomi/Finnish", "Français/French", "Norsk/Norwegian", "Polski/Polish", "Português/Portuguese (Portugal)", "Svenska/Swedish"
+      ] },
+      "message-id": { "name": "message-id", "description": "Paste message ID here" },
+      "target": { "name": "target", "description": "Tag someone in response." }
+    },
+    "responses": {
+      "in": "in",
+      "invalidMsgId": "is not a valid message-id.",
+      "noMsg": "Unable to find specific message to respond to.",
+      "not": "not",
+      "official": "Official Geocaching.com",
+      "requestedBy": "as requested by {{author.ping}}",
+      "soon": "Comming **SOON**:tm:"
+    }
+  },
+  "slashCommands": {
+    "admin": {
+      "ban": {
+        "name": "ban",
+        "description": "Ban a user.",
+        "options": {
+          "member": { "name": "member", "description": "Select a member to ban." },
+          "delete": { "name": "delete", "description": "Delete messages back for:", "choices": [
+            "None", "One hour", "Three hours", "Six hours", "Half day", "One day", "Three days", "Five days", "One week"
+          ] },
+          "reason": { "name": "reason", "description": "Reason for the ban." },
+          "duration": { "name": "duration", "description": "Duration of the ban.", "choices": [
+            "Indefinite", "One month", "Three months", "Six months", "One year", "Three years", "Five years"
+          ] }
+        },
+        "responses": {
+          "banFailed": "I am unable to ban that member.",
+          "banReasonDefault": "Just for fun!",
+          "banReasonSelfBan": "They banned themself!",
+          "dmSelfBan": "OMG!!! You just banned yourself from **{{guild.name}}**!!!",
+          "logNoPerm": "{{author.ping}} tried to get me to ban {{member.ping}} and doesn't have permission to do that.",
+          "logSelfBan": "{{member.ping}} just banned themself from this server for five minutes!",
+          "noPerm": "You don't have permission to have me ban that member.",
+          "selfBan": "{{member.ping}} just banned themself from this server! *(Don't worry, they can come back in five minutes...)*",
+          "unbanReasonSelfBan": "Self imposed banned expired."
+        }
+      },
+      "config": {
+        "name": "config",
+        "description": "Configure bot for this server.",
+        "options": {
+          "add": { "name": "add", "description": "Add a user to the guild blacklist or whitelist.", "options": {
+            "blacklist": { "name": "blacklist", "description": "Role or Member to block from using all commands." },
+            "whitelist": { "name": "whitelist", "description": "Role or Member to permit to use all commands." }
+          } },
+          "clear": { "name": "clear", "description": "Clear guild's blacklist and/or whitelist.", "options": {
+            "blacklist": { "name": "blacklist", "description": "Clear guild's blacklist." },
+            "whitelist": { "name": "whitelist", "description": "Clear guild's whitelist." }
+          } },
+          "get": { "name": "get", "description": "Get all settings for the server.", "options": {
+            "share": { "name": "share", "description": "Share result to current channel instead of making it ephemeral." }
+          } },
+          "logs": { "name": "logs", "description": "(Dis|En)able logs and set channels for them.", "options": {
+            "do-logs": { "name": "do-logs", "description": "Send logs for uses of commands that may be devious in nature" },
+            "log-chat": { "name": "log-chat", "description": "Channel to log chat command (`/edit`, `/react`, `/reply`, and `/say`) requests." },
+            "log-default": { "name": "log-default", "description": "Channel to log all requests not otherwise specified." },
+            "log-error": { "name": "log-error", "description": "Channel to log errors." },
+            "log-reset": { "name": "log-reset", "description": "Reset logging to enabled and all logs DMed to guild owner." }
+          } },
+          "remove": { "name": "remove", "description": "Remove a user from the guild blacklist or whitelist.", "options": {
+            "blacklist": { "name": "blacklist", "description": "Role or Member to remove from blacklist." },
+            "whitelist": { "name": "whitelist", "description": "Role or Member to remove from whitelist." }
+          } },
+          "reset": { "name": "reset", "description": "Reset all settings for the server to default." },
+          "set": { "name": "set", "description": "Set settings for the server.", "options": {
+            "invite": { "name": "invite", "description": "Channel to make invites to. Will try to guess if not set." },
+            "prefix": { "name": "prefix", "description": "Guild specific prefix for bot commands" },
+            "premium": { "name": "premium", "description": "Give nitro server boosters extra bot access? (default: TRUE)" }
+          } },
+          "welcome": { "name": "welcome", "description": "Modify the welcome message options.", "options": {
+            "do-welcome": { "name": "do-welcome", "description": "Send a message to welcome new members to the server?" },
+            "welcome-message": { "name": "welcome-message", "description": "Message to send new members to the server?" },
+            "welcome-dm": { "name": "welcome-dm", "description": "Send the welcome message to DM?  (default: TRUE)" },
+            "welcome-channel": { "name": "welcome-channel", "description": "Which channel would you like to send the message?'" },
+            "welcome-role": { "name": "welcome-role", "description": "Which role, if any, would you like to give new members on join?" },
+            "welcome-clear-role": { "name": "welcome-clear-role", "description": "Clear role to assign" },
+            "welcome-reset": { "name": "welcome-reset", "description": "Reset welcoming of new members to disabled." }
+          } }
+        },
+        "responses": { "TBD": "TBD" }
+      },
+      "foo": {
+        "name": "foo",
+        "description": "Test command.",
+        "options": {
+          "console": { "name": "console", "description": "Enable debug mode" },
+          "string": { "name": "string", "description": "String" },
+          "integer": { "name": "integer", "description": "Integer" },
+          "boolean": { "name": "boolean", "description": "Boolean" },
+          "channel": { "name": "channel", "description": "Channel" },
+          "mentionable": { "name": "mentionable", "description": "Mentionable" },
+          "attachment": { "name": "attachment", "description": "Attachment" }
+        }
+      },
+      "reload": {
+        "name": "reload",
+        "description": "Reloads commands.",
+        "options": {
+          "command": { "name": "command", "description": "The name of the command to reload." },
+          "type": {  "name": "type", "description": "The type of the command to reload.", "choices": [ "/slash commands (default)", "§prefix commands" ] }
+        }
+      },
+      "system": {
+        "name": "system",
+        "description": "Change bot configs.",
+        "options": {
+          "add": { "name": "add", "description": "Add a user to one of my lists.", "options": {
+            "blacklist": { "name": "blacklist", "description": "User to block from using all commands." },
+            "moderator": { "name": "moderator", "description": "User to add as a moderator." },
+            "whitelist": { "name": "whitelist", "description": "ser to permit to use all non-mod commands." }
+          } }
+        },
+        "responses": { "TBD": "TBD" }
+      }
+    },
+    "chat": {
+      "delete": {
+        "name": "delete",
+        "description": "Delete a bot message.",
+        "responses": { "TBD": "TBD" }
+      },
+      "edit": {
+        "name": "edit",
+        "description": "Edit a bot message.",
+        "options": {
+          "saying": { "name": "saying", "description": "What should I have said?" }
+        },
+        "responses": { "TBD": "TBD" }
+      },
+      "pin": {
+        "name": "pin",
+        "description": "Pin a message to the channel.",
+        "responses": { "TBD": "TBD" }
+      },
+      "react": {
+        "name": "react",
+        "description": "What reaction do you want me to use on which message?",
+        "options": {
+          "reaction": { "name": "reaction", "description": "How do you want me to react?" }
+        },
+        "responses": { "TBD": "TBD" }
+      },
+      "reply": {
+        "name": "reply",
+        "description": "Make bot respond to message.",
+        "options": {
+          "response": { "name": "response", "description": "What do you want me to say in response?" }
+        },
+        "responses": { "TBD": "TBD" }
+      },
+      "say": {
+        "name": "say",
+        "description": "Make bot speak.",
+        "options": {
+          "saying": { "name": "saying", "description": "What do you want me to say?" },
+          "channel": { "name": "channel", "description": "Where do you want me to say it? (default: current channel)" }
+        },
+        "responses": { "TBD": "TBD" }
+      },
+      "unpin": {
+        "name": "unpin",
+        "description": "Unpin a message from the channel.",
+        "responses": { "TBD": "TBD" }
+      }
+    },
+    "fun": {
+      "lmgtfy": {
+        "name": "lmgtfy",
+        "description": "Let Me Google That For You!",
+        "options": {
+          "nice": { "name": "nice", "description": "Should I be nice?" },
+          "query": { "name": "query", "description": "What do you want me to look up?" },
+          "target": { "name": "target", "description": "Who should I mention with my response? (Default: yourself)" }
+        },
+        "responses": {
+          "sent": "sent",
+          "cmdFor": "a `/lmgtfy` for",
+          "theyWere": "and they were",
+          "nice": "nice"
+        }
+      },
+      "roll": {
+        "name": "roll",
+        "description": "Dice Roller (default: 1#1d6±0)",
+        "options": {
+          "dice": { "name": "dice", "description": "How many dice? (default: 1)" },
+          "sides": { "name": "sides", "description": "How many sides per die? (default: 6)" },
+          "sets": { "name": "sets", "description": "How many sets of dice? (default: 1)" },
+          "modifier": { "name": "modifier", "description": "± to final roll for each die? (default: 0)" }
+        },
+        "responses": {
+          "total": "Total:"
+        }
+      }
+    },
+    "geocaching": {
+      "badgebar": {
+        "name": "badgebar",
+        "description": "Show Project-GC BadgeBar for user.",
+        "responses": {
+          "badgebarFor": "BadgeBar for",
+          "sharedFor": "I shared the `/badgebar` for"
+        }
+      },
+      "cipher": {
+        "name": "cipher",
+        "description": "Cipher (de|en)coder.",
+        "options": {
+          "string": { "name": "string", "description": "string to (de|en)code." },
+          "code": { "name": "code", "description": "Decode or encode?", "choices": [ "Decode", "Encode" ] },
+          "use-type": { "name": "use-type", "description": "Pick a type.", "choices": [ "Letters A-Z", "Letters A-Z & Numbers 0-9", "Numbers 0-9" ] },
+          "numeric": { "name": "numeric", "description": "Characters in the Latin alphabet. (default 5)" },
+          "alphabetic": { "name": "alphabetic", "description": "Characters in the Latin alphabet. (default 13)" },
+          "alphanumeric": { "name": "alphanumeric", "description": "Characters in the Latin alphabet. (default 18)" }
+        }
+      },
+      "ftf": {
+        "name": "ftf",
+        "description": "Tell someone how to get their FTF (First To Find) noticed on Project-GC.",
+        "responses": {
+          "ftfInfo": "There are two ways for Project-GC to detect your FTFs (**F**irst **T**o **F**inds). Either you tag your logs with one of these tags: `{*FTF*}`, `{FTF}`, or `[FTF]`. Alternatively you can add an FTF bookmark list under Settings (<https://project-gc.com/User/Settings/>) that will be checked once per day. Please understand that FTF isn't anything offical and not everyone tags their FTFs. Therefore this list won't be 100% accurate."
+        }
+      },
+      "logo": {
+        "name": "logo",
+        "description": "Give someone information about the logo kits for Geocaching.",
+        "responses": {
+          "converter": "EPS to SVG Converter",
+          "kitInfo": "The kits have `*.png` & `*.eps` file versions.",
+          "logoKits": "Logo Kits",
+          "lookingFor": "you seem to be looking for the",
+          "svg": "If you're looking for an `*.svg` version, <@&385501075001573389> recommends using"
+        }
+      },
+      "profilestats": {
+        "name": "profilestats",
+        "description": "Show link to Project-GC ProfileStats for user.",
+        "responses": {
+          "profilestatsFor": "ProfileStats link for:",
+          "sharedFor": "I shared the `/profilestats` for"
+        }
+      },
+      "statbar": {
+        "name": "statbar",
+        "description": "Show Project-GC StatBar for user.",
+        "options": {
+          "name": "labcaches",
+          "description": "Should I include labcaches? (default: true)"
+        },
+        "responses": {
+          "sharedFor": "I shared the `/statbar` for",
+          "statbarFor": "StatBar for:"
+        }
+      }
+    },
+    "info": {
+      "bot": {
+        "name": "bot",
+        "description": "Bot information and message management."
+      },
+      "guilds": {
+        "name": "guilds",
+        "description": "Get information about the guilds I'm in.",
+        "options": {
+          "guild": { "name": "guild", "description": "Start with a specific guild by ID (invalid input will be ignored). (default current or first guild)" }
+        },
+        "responses": {
+          "getInfo": "Getting information for guild",
+          "createdBy": "Invite created by",
+          "with": "with `/guilds`.",
+          "owner": "Owner",
+          "members": "Members",
+          "bots": "bots",
+          "verLevel": "Verification Level",
+          "reqInfo": "requested /guilds information"
+        }
+      },
+      "ping": {
+        "name": "ping",
+        "description": "Check bot's ping.",
+        "responses": {
+          "pong": "🏓 Pong! Latency: **{{bot.latency}}ms**"
+        }
+      }
+    }
+  }
+}
