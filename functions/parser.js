@@ -7,19 +7,21 @@ const duration = require( './duration.js' );
 const modData = { name: 'parser', type: 'functions' };
 const strScript = chalk.hex( '#FFA500' ).bold( './' + modData.type + '/' + modData.name + '.js' );
 
-module.exports = ( rawString, obj = { author: null, guild: null, interaction: null, member: null, uptime: null, useLang: null } ) => {
+module.exports = ( rawString, obj = { author: null, guild: null, interaction: null, member: null, uptime: null, useLang: null, user: null } ) => {
   try {
     const interaction = ( obj.interaction ?? null );
     const { channel, guild: iGuild, locale, options, user: iUser } = ( interaction ?? { channel: null, guild: null, locale: null, options: null, user: null } );
     const author = ( obj.author ? obj.author : ( iUser ?? null ) );
     const member = ( obj.member ?? null );
-    const guild = ( obj.guild ? obj.guild : ( iGuild ?? ( author ? author.guild : ( member ? member.guild : null ) ) ) );
+    const guild = ( obj.guild ? obj.guild : ( iGuild ?? ( member ? member.guild : null ) ) );
     const useLang = ( obj.useLang ?? options?.getString( 'language' ) ?? locale ?? guild?.preferedLocale ?? 'en-US' );
     const uptime = ( obj.uptime ? obj.uptime : null );
     // /* Something just came up that is time sensative, adding these to the parser is going to have to wait. */
     // const targetChannel = ( options?.getChannel( 'channel' ) ?? null );
     // const targetGuild = ( options?.getString( 'guild' ) ?? null );
-    // const targetUser = ( options?.getUser( 'discord-user' ) ?? null );
+    const geocacher = ( options?.getUser( 'discord-user' ) ?? null );
+    const taggee =  ( options?.getUser( 'taggee' ) ?? null );
+    const user = ( obj.user ?? null );
     const ageUnits = { getDecades: true, getYears: true, getMonths: true, getWeeks: true, getDays: true, getHours: false, getMinutes: false };
     const { user: bot, guilds, ownerId, users, ws } = ( client ?? { bot: null, guilds: null, ownerId: config.botOwnerId, users: null, ws: null } );
 
@@ -93,6 +95,18 @@ module.exports = ( rawString, obj = { author: null, guild: null, interaction: nu
       notAvailable[ '{{channel.since}}' ] = 'channel';
       notAvailable[ '{{channel.topic}}' ] = 'channel';
     }
+    if ( geocacher ) {
+      transclusions[ '{{geocacher.age}}' ] = duration( Date.now() - geocacher.createdTimestamp, ageUnits );
+      transclusions[ '{{geocacher.name}}' ] = geocacher.displayName;
+      transclusions[ '{{geocacher.ping}}' ] = '<@' + geocacher.id + '>';
+      transclusions[ '{{geocacher.since}}' ] = geocacher.createdAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) );
+    }
+    else {
+      notAvailable[ '{{geocacher.age}}' ] = 'geocacher';
+      notAvailable[ '{{geocacher.name}}' ] = 'geocacher';
+      notAvailable[ '{{geocacher.ping}}' ] = 'geocacher';
+      notAvailable[ '{{geocacher.since}}' ] = 'geocacher';
+    }
     if ( guild ) {
       transclusions[ '{{bot.guild.age}}' ] = duration( Date.now() - guild.members.cache.get( bot.id ).joinedTimestamp, ageUnits );
       transclusions[ '{{bot.guild.since}}' ] = guild.members.cache.get( bot.id ).joinedAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) );
@@ -151,8 +165,32 @@ module.exports = ( rawString, obj = { author: null, guild: null, interaction: nu
       notAvailable[ '{{member.since}}' ] = 'member';
       notAvailable[ '{{member.user.since}}' ] = 'member';
     }
+    if ( taggee ) {
+      transclusions[ '{{taggee.age}}' ] = duration( Date.now() - taggee.createdTimestamp, ageUnits );
+      transclusions[ '{{taggee.name}}' ] = taggee.displayName;
+      transclusions[ '{{taggee.ping}}' ] = '<@' + taggee.id + '>';
+      transclusions[ '{{taggee.since}}' ] = taggee.createdAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) );
+    }
+    else {
+      notAvailable[ '{{taggee.age}}' ] = 'taggee';
+      notAvailable[ '{{taggee.name}}' ] = 'taggee';
+      notAvailable[ '{{taggee.ping}}' ] = 'taggee';
+      notAvailable[ '{{taggee.since}}' ] = 'taggee';
+    }
+    if ( user ) {
+      transclusions[ '{{user.age}}' ] = duration( Date.now() - user.createdTimestamp, ageUnits );
+      transclusions[ '{{user.name}}' ] = user.displayName;
+      transclusions[ '{{user.ping}}' ] = '<@' + user.id + '>';
+      transclusions[ '{{user.since}}' ] = user.createdAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) );
+    }
+    else {
+      notAvailable[ '{{user.age}}' ] = 'user';
+      notAvailable[ '{{user.name}}' ] = 'user';
+      notAvailable[ '{{user.ping}}' ] = 'user';
+      notAvailable[ '{{user.since}}' ] = 'user';
+    }
 
-    arrTemplates = rawString.match( /\{\{((?:author|bot|channel|guild|member|server)\.[a-z\.]*)\}\}/g );
+    arrTemplates = rawString.match( /\{\{((?:author|bot|channel|geocacher|guild|member|server|taggee|user)\.[a-z\.]*)\}\}/g );
     var parsed = rawString;
     if ( arrTemplates ) {
       arrTemplates.forEach( template => {
