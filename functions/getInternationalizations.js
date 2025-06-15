@@ -5,6 +5,7 @@ const { Locale } = require( 'discord-api-types/v10' );
 const parse = require( './parser.js' );
 const strScript = chalk.hex( '#FFA500' ).bold( './functions/getInternationalizations.js' );
 const enNames = new Intl.DisplayNames( [ 'en-US' ], { type: 'language' } );
+const objDefaults = { author: null, getLocales: false, guild: null, interaction: null, member: null, uptime: null, useLang: null };
 const getOptions = ( options, langCode = 'en-US', objOpt = {} ) => {
   if ( !options ) { return { error: 'No options to get data for in getOptions().' }; }
   if ( Object.prototype.toString.call( options ) === '[object Object]' ) { options = Object.entries( options ); };
@@ -29,7 +30,7 @@ const getOptions = ( options, langCode = 'en-US', objOpt = {} ) => {
   } );
   return objOpt;
 };
-const getResponses = ( responses, langCode = 'en-US', objRes = {}, params ) => {
+const getResponses = ( responses, langCode = 'en-US', objRes = {}, params, debug ) => {
   if ( !responses ) { return { error: 'No responses to get data for in getResponses().' }; }
   if ( Object.prototype.toString.call( responses ) === '[object Object]' ) { responses = Object.entries( responses ); };
   if ( !Array.isArray( responses ) ) { return { error: 'Unable to manipulate responses of type "' + typeof( responses ) + '" into an array to get data for in getResponses().' }; }
@@ -38,12 +39,12 @@ const getResponses = ( responses, langCode = 'en-US', objRes = {}, params ) => {
   responses.forEach( ( res ) => {
     objRes[ res[ 0 ] ] = ( objRes[ res[ 0 ] ] ?? {} );
     const resBuilder = objRes[ res[ 0 ] ];
-    resBuilder[ langCode ] = parse( res[ 1 ], params );
+    resBuilder[ langCode ] = parse( res[ 1 ], params, debug );
   } );
   return objRes;
 }
 
-module.exports = ( command, params = { author: null, getLocales: false, guild: null, interaction: null, member: null, uptime: null, useLang: null } ) => {
+module.exports = ( command, params = objDefaults, debug = false ) => {
   try {
     const interaction = ( params.interaction ?? null );
     const { channel, guild: iGuild, locale: iLocale, options, user } = ( interaction ?? { channel: null, guild: null, locale: null, options: null, user: null } );
@@ -79,8 +80,8 @@ module.exports = ( command, params = { author: null, getLocales: false, guild: n
           if ( currLangFile.common.options ) { i18n.options = getOptions( currLangFile.common.options, langCode, i18n.options ); }
           if ( cmdPath.options ) { i18n.options = getOptions( cmdPath.options, langCode, i18n.options ); }
         }
-        if ( currLangFile.common.responses ) { i18n.responses = getResponses( currLangFile.common.responses, langCode, i18n.responses, resParams ); }
-        if ( cmdPath.responses ) { i18n.responses = getResponses( cmdPath.responses, langCode, i18n.responses, resParams ); }
+        if ( currLangFile.common.responses ) { i18n.responses = getResponses( currLangFile.common.responses, langCode, i18n.responses, resParams, debug ); }
+        if ( cmdPath.responses ) { i18n.responses = getResponses( cmdPath.responses, langCode, i18n.responses, resParams, debug ); }
       }
     } );
 

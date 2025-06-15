@@ -7,6 +7,7 @@ const duration = require( './duration.js' );
 const modData = { name: 'parser', type: 'functions' };
 const strScript = chalk.hex( '#FFA500' ).bold( './' + modData.type + '/' + modData.name + '.js' );
 const dispNames = ( dLang ) => { return new Intl.DisplayNames( [ dLang ], { type: 'language' } ); };
+const objDefaults = { author: null, channel: null, command: null, guild: null, interaction: null, member: null, respMsg: null, uptime: null, useLang: null, user: null };
 const getDebugString = ( thing ) => {
   if ( Array.isArray( thing ) ) { return '{ object-Array: { length: ' + thing.length + ' } }'; }
   else if ( Object.prototype.toString.call( thing ) === '[object Date]' ) { return '{ object-Date: { ISOstring: ' + thing.toISOString() + ', value: ' + thing.valueOf() + ' } }'; }
@@ -19,7 +20,7 @@ const getDebugString = ( thing ) => {
   }
 };
 
-module.exports = ( rawString, obj = { author: null, channel: null, command: null, guild: null, interaction: null, member: null, respMsg: null, uptime: null, useLang: null, user: null }, debug = false ) => {
+module.exports = ( rawString, obj = objDefaults, debug = false ) => {
   try {
     if ( debug ) {
       const preAuthor = getDebugString( obj.author );
