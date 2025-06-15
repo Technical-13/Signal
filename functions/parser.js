@@ -53,7 +53,7 @@ module.exports = ( rawString, obj = objDefaults, debug = false ) => {
     const useLang = ( obj.useLang ?? options?.getString( 'language' ) ?? locale ?? guildLang );
     const useLangName = dispNames( useLang ).of( useLang );
     const geocacher = ( options?.getUser( 'discord-user' ) ?? null );
-    const taggee =  ( options?.getUser( 'taggee' ) ?? respMsg?.author ?? null );
+    const taggee = ( options?.getUser( 'taggee' ) ?? respMsg?.author ?? null );
     const { user: bot, guilds, ownerId, users, ws } = ( client ?? { bot: null, guilds: null, ownerId: config.botOwnerId, users: null, ws: null } );
     const ageUnits = { getDecades: true, getYears: true, getMonths: true, getWeeks: true, getDays: true, getHours: false, getMinutes: false };
     if ( debug ) {
@@ -61,8 +61,9 @@ module.exports = ( rawString, obj = objDefaults, debug = false ) => {
       const prcChannel = getDebugString( channel );
       const prcCommand = getDebugString( command );
       const prcGuild = getDebugString( guild );
+      const prcMember = getDebugString( member );
       const prcUser = getDebugString( user );
-      const processed = { author: prcAuthor, channel: prcChannel, command: prcCommand, geocacher: geocacher, guild: prcGuild, member: preMember, authorLang: authorLang, useLang: useLang, guildLang: guildLang, taggee: taggee, user: preUser };
+      const processed = { author: prcAuthor, channel: prcChannel, command: prcCommand, geocacher: geocacher, guild: prcGuild, member: prcMember, authorLang: authorLang, useLang: useLang, guildLang: guildLang, taggee: taggee, user: prcUser };
       console.warn( modData.type + '/' + modData.name + '.js processed options:%o', processed );
     }
 
