@@ -250,7 +250,6 @@
         "name": "ftf",
         "description": "Tell someone how to get their FTF (First To Find) noticed on Project-GC.",
         "responses": {
-          "ftfAuthorInfo": "{{author.ping}}, t",
           "ftfTaggeeInfo": "{{taggee.ping}}, t",
           "ftfInfo": "here are two ways for Project-GC to detect your FTFs (**F**irst **T**o **F**inds). Either you tag your logs with one of these tags: `{*FTF*}`, `{FTF}`, or `[FTF]`. Alternatively you can add an FTF bookmark list under Settings (<https://project-gc.com/User/Settings/>) that will be checked once per day. Please understand that FTF isn't anything offical and not everyone tags their FTFs. Therefore this list won't be 100% accurate."
         }
