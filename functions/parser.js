@@ -298,5 +298,8 @@ module.exports = ( rawString, obj = objDefaults, debug = false ) => {
      if ( debug ) { console.warn( 'parsed: %o', parsed ); }
     return parsed;
   }
-  catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
+  catch ( errObject ) {
+    console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject );
+    return { error: true, message: 'Failed to parse string', string: rawString };
+  }
 };

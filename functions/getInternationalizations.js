@@ -40,6 +40,10 @@ const getResponses = ( responses, langCode = 'en-US', objRes = {}, params, debug
     objRes[ res[ 0 ] ] = ( objRes[ res[ 0 ] ] ?? {} );
     const resBuilder = objRes[ res[ 0 ] ];
     resBuilder[ langCode ] = parse( res[ 1 ], params, debug );
+    if ( resBuilder[ langCode ]?.error ) {
+      console.error( 'getI18n %s: %s', resBuilder[ langCode ].message, resBuilder[ langCode ].string );
+      resBuilder[ langCode ] = resBuilder[ langCode ].string;
+    }
   } );
   return objRes;
 }
