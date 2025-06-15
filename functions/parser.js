@@ -17,7 +17,7 @@ const getDebugString = ( thing ) => {
     let objType = 'object-' + thing.constructor.name;
     let objId = ( thing?.id ?? 'undefined' );
     let objName = ( thing?.displayName ?? thing?.globalName ?? thing?.name ?? 'undefined' );
-    return '{ ' + objType + ': ' + ( objType === 'object-Object' ? Object.keys( thing ) : '{ id: ' + objId + ', name: ' + objName + objSize + ' }' ) + ' }';
+    return '{ ' + objType + ': ' + ( objType === 'object-Object' ? Object.keys( thing ) : '{ id: ' + objId + ', name: ' + objName + ' }' ) + ' }';
   }
 };
 
