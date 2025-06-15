@@ -7,9 +7,34 @@ const duration = require( './duration.js' );
 const modData = { name: 'parser', type: 'functions' };
 const strScript = chalk.hex( '#FFA500' ).bold( './' + modData.type + '/' + modData.name + '.js' );
 const dispNames = ( dLang ) => { return new Intl.DisplayNames( [ dLang ], { type: 'language' } ); };
+const getDebugString = ( thing ) => {
+  if ( Array.isArray( thing ) ) { return '{ object-Array: { length: ' + thing.length + ' } }'; }
+  else if ( Object.prototype.toString.call( thing ) === '[object Date]' ) { return '{ object-Date: { ISOstring: ' + thing.toISOString() + ', value: ' + thing.valueOf() + ' } }'; }
+  else if ( typeof( thing ) != 'object' ) { return thing; }
+  else {
+    let objType = ( thing ? 'object-' + thing.constructor.name : typeof( thing ) );
+    let objId = ( thing ? thing.id : 'no.id' );
+    let objName = ( thing ? ( thing.displayName || thing.globalName || thing.name ) : 'no.name' );
+    return '{ ' + objType + ': { id: ' + objId + ', name: ' + objName + ' } }';
+  }
+};
 
-module.exports = ( rawString, obj = { author: null, channel: null, command: null, guild: null, interaction: null, member: null, respMsg: null, uptime: null, useLang: null, user: null } ) => {
+module.exports = ( rawString, obj = { author: null, channel: null, command: null, guild: null, interaction: null, member: null, respMsg: null, uptime: null, useLang: null, user: null }, debug = false ) => {
   try {
+    if ( debug ) {
+      const preAuthor = getDebugString( obj.author );
+      const preChannel = getDebugString( obj.channel );
+      const preCommand = getDebugString( obj.command );
+      const preGuild = getDebugString( obj.guild );
+      const preInteraction = getDebugString( obj.interaction );
+      const preMember = getDebugString( obj.member );
+      const preRespMsg = getDebugString( obj.respMsg );
+      const preUptime = getDebugString( obj.uptime );
+      const preUseLang = getDebugString( obj.useLang );
+      const preUser = getDebugString( obj.user );
+      const preProcessed = { rawString: rawString, obj = { author: preAuthor, channel: preChannel, command: preCommand, guild: preGuild, interaction: preInteraction, member: preMember, respMsg: preRespMsg, uptime: preUptime, useLang: preUseLang, user: preUser } };
+      console.warn( modData.type + '/' + modData.name + '.js recieved: %o', preProcessed );
+    }
     const interaction = ( obj.interaction ?? { channel: null, command: null, commandId: null, commandName: null, guild: null, guildLocale: null, locale: null, options: null, user: null } );
     const { channel: iChannel, command: iCommand, commandId, commandName, guild: iGuild, guildLocale, locale, options, user: iUser } = interaction;
     const author = ( obj.author ?? iUser ?? null );
@@ -27,10 +52,18 @@ module.exports = ( rawString, obj = { author: null, channel: null, command: null
     const useLang = ( obj.useLang ?? options?.getString( 'language' ) ?? locale ?? guildLang );
     const useLangName = dispNames( useLang ).of( useLang );
     const geocacher = ( options?.getUser( 'discord-user' ) ?? null );
-    const msgID = ( options?.getString( 'message-id' ) ?? null );
     const taggee =  ( options?.getUser( 'taggee' ) ?? respMsg?.author ?? null );
     const { user: bot, guilds, ownerId, users, ws } = ( client ?? { bot: null, guilds: null, ownerId: config.botOwnerId, users: null, ws: null } );
     const ageUnits = { getDecades: true, getYears: true, getMonths: true, getWeeks: true, getDays: true, getHours: false, getMinutes: false };
+    if ( debug ) {
+      const prcAuthor = getDebugString( author );
+      const prcChannel = getDebugString( channel );
+      const prcCommand = getDebugString( command );
+      const prcGuild = getDebugString( guild );
+      const prcUser = getDebugString( user );
+      const processed = { author: prcAuthor, channel: prcChannel, command: prcCommand, geocacher: geocacher, guild: prcGuild, member: preMember, authorLang: authorLang, useLang: useLang, guildLang: guildLang, taggee: taggee, user: preUser };
+      console.warn( modData.type + '/' + modData.name + '.js processed options:%o', processed );
+    }
 
     const transclusions = {
       '{{bot.owner.ping}}': '<@' + ownerId + '>',
@@ -244,11 +277,13 @@ module.exports = ( rawString, obj = { author: null, channel: null, command: null
     }
 
     arrTemplates = rawString.match( /\{\{((?:author|bot|cmd|command|channel|geocacher|guild|member|server|taggee|user)\.[a-z\.]*)\}\}/g );
+    if ( debug ) { console.warn( 'arrTemplates: %o', arrTemplates ); }
     var parsed = rawString;
     if ( arrTemplates ) {
       arrTemplates.forEach( template => {
+        if ( debug ) { console.warn( 'template: %o', template ); }
         if ( transclusions[ template ] ) { parsed = parsed.replace( template, transclusions[ template ] ); }
-        else if ( notAvailable[ template ] ) { parsed = parsed.replace( template, '*(unknown ' + notAvailable[ template ] + ')*' ); }
+        else if ( notAvailable[ template ] ) { parsed = parsed.replace( template, '(*`unknown ' + notAvailable[ template ] + '`*)' ); }
         else {
           parsed = parsed.replace( template, '[*' + template + '*](<' + config.issueRepo + '/issues/new?labels=enhancement&template=feature_request.md&title=' + encodeURIComponent( 'Please add ' + template + ' to ' + strScript ) + '>)' );
           console.log( 'Someone tried to transclude %s, search for a GitHub feature request:\n %s/issues?q=%s', chalk.bold.red( template ), config.issueRepo, encodeURIComponent( 'Please add ' + template + ' to ' + strScript ) );
