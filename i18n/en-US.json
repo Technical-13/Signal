@@ -111,11 +111,11 @@
         }
       },
       "load": {
-        "name": "reload",
-        "description": "Reloads commands.",
+        "name": "load",
+        "description": "Loads commands.",
         "options": {
-          "command": { "name": "befehl", "description": "Der Name des neu zu ladenden Befehls." },
-          "type": {  "name": "typ", "description": "Der Typ des neu zu ladenden Befehls.", "choices": [ "/Schrägstrich-Befehle (Standard)", "§Präfixbefehle" ] }
+          "command": { "name": "command", "description": "The name of the command to load." },
+          "type": {  "name": "type", "description": "The type of the command to load.", "choices": [ "/slash commands (default)", "§prefix commands" ] }
         }
       },
       "reload": {
