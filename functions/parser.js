@@ -108,14 +108,22 @@ module.exports = async ( rawString, obj = { author: null, channel: null, command
     }
     if ( command ) {
       transclusions[ '{{cmd.id}}' ] = command.id;
+      transclusions[ '{{cmd.lang.code}}' ] = useLang;
+      transclusions[ '{{cmd.lang.name}}' ] = useLangName;
       transclusions[ '{{cmd.name}}' ] = command.name;
       transclusions[ '{{command.id}}' ] = command.id;
+      transclusions[ '{{command.language.code}}' ] = useLang;
+      transclusions[ '{{command.language.name}}' ] = useLangName;
       transclusions[ '{{command.name}}' ] = command.name;
     }
     else {
       notAvailable[ '{{cmd.id}}' ] = 'command';
+      notAvailable[ '{{cmd.lang.code}}' ] = 'command';
+      notAvailable[ '{{cmd.lang.name}}' ] = 'command';
       notAvailable[ '{{cmd.name}}' ] = 'command';
       notAvailable[ '{{command.id}}' ] = 'command';
+      notAvailable[ '{{command.language.code}}' ] = 'command';
+      notAvailable[ '{{command.language.name}}' ] = 'command';
       notAvailable[ '{{command.name}}' ] = 'command';
     }
     if ( geocacher ) {
