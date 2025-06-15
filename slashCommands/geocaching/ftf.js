@@ -46,28 +46,26 @@ module.exports = {
     const r6e = getI18n( modData, { interaction: interaction } ).responses;
     try {
       await interaction.deferReply( { ephemeral: true } );
-      const { channel, guild, locale, options, user: author } = interaction;
+      const { channel, guild, guildLocale, locale, options, user: author } = interaction;
       const localeInput = options?.getString( 'language' );
       const useLang = ( localeInput ?? ( locale ?? 'en-US' ) );
-      const guildLang = ( guild.preferedLocale ?? useLang );
-      const langName = new Intl.DisplayNames( [ useLang ], { type: 'language' } );
+      const guildLang = ( guildLocale ?? useLang );
       const { content } = await userPerms( author, guild );
       if ( content ) { return interaction.editReply( { content: content } ); }
       const msgID = options.getString( 'message-id' );
       const cmdTaggee = options.getUser( 'taggee' );
-      const strLocale = '(*' + langName + '*)';
-
       const { doLogs, chanDefault, chanError, strClosing } = await getGuildConfig( guild );
+
       if ( msgID && !( /[\d]{18,19}/.test( msgID ) ) ) { return interaction.editReply( { content: '`' + msgID + '` ' + r6e.invalidMsgId[ useLang ] } ); }
       else if ( msgID ) {
         channel.messages.fetch( msgID )
         .then( message => {
           const { author: msgAuthor, content } = message;
-          message.reply( { content: '<@' + msgAuthor.id + '>, ' + r6e.i18FTFinfo[ useLang ] } )
+          message.reply( { content: r6e.ftfAuthorInfo[ useLang ] + r6e.ftfInfo[ useLang ] } )
           .then( replied => {
             if ( doLogs && author.id != msgAuthor.id ) {
               chanDefault.send( { content:
-                r6e.logTold[ guildLang ] + r6e.logAbout[ guildLang ] + strLocale + r6e.in[ guildLang ] + '<#' + channel.id + '>' + r6e.logAtRequestInResponse[ guildLang ] + '\n```\n' + content + '\n```' + strClosing } )
+                r6e.logToldTaggeeAbout[ guildLang ] + 'FTFs' + r6e.logLangChanAtRequest[ guildLang ] + r6e.logInResponse[ guildLang ] + '\n```\n' + content + '\n```' + strClosing } )
               .then( sentLog => { interaction.deleteReply(); } )
               .catch( errLog => { errHandler( errLog, { chanType: 'default', command: modData.name, channel: channel, type: 'logLogs' } ); } );
             }
@@ -78,17 +76,17 @@ module.exports = {
         .catch( errFetch => { interaction.editReply( errHandler( errFetch, { command: modData.name, msgID: msgID, type: 'errFetch' } ) ); } );
       }
       else if ( cmdTaggee ) {
-        interaction.editReply( { content: '<@' + cmdTaggee.id + '>, ' + r6e.i18FTFinfo[ useLang ] } ).then( replied => {
+        interaction.editReply( { content: r6e.ftfTaggeeInfo[ useLang ] + r6e.ftfInfo[ useLang ] } ).then( replied => {
           if ( doLogs && cmdTaggee.id != author.id ) {
-            chanDefault.send( { content: r6e.logTold[ guildLang ] + '<@' + cmdTaggee.id + '>' + r6e.logAboutAtRequest[ guildLang ] + strClosing } )
+            chanDefault.send( { content: r6e.logToldTaggeeAbout[ guildLang ] + 'FTFs' + r6e.logLangChanAtRequest[ guildLang ] + '.' + strClosing } )
             .catch( errLog => { interaction.editReply( errHandler( errLog, { chanType: 'default', command: modData.name, channel: channel, type: 'logLogs' } ) ); } );
           }
         } );
       }
       else {
-        interaction.editReply( { content: r6e.i18FTFinfo[ useLang ] } ).catch( noReply => {
+        interaction.editReply( { content: 'T' + r6e.ftfInfo[ useLang ] } ).catch( noReply => {
           if ( doLogs ) {
-            chanError.send( { content: r6e.errTell[ guildLang ] + strClosing } )
+            chanError.send( { content: r6e.errTellAuthor[ guildLang ] + 'FTFs' + r6e.logLangChanAtRequest[ guildLang ] + '.' + strClosing } )
             .catch( errLog => { interaction.editReply( errHandler( errLog, { chanType: 'error', command: modData.name, channel: channel, type: 'logLogs' } ) ); } );
           }
         } );

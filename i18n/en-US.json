@@ -11,13 +11,17 @@
       "taggee": { "name": "taggee", "description": "Tag someone in response." }
     },
     "responses": {
+      "errTellAuthor": "Error telling {{author.ping}} about ",
+      "errTellTaggee": "Error telling {{taggee.ping}} about ",
       "in": " in ",
       "invalidMsgId": " is not a valid message-id.",
       "noMsg": "Unable to find specific message to respond to.",
       "not": "not",
+      "logInResponse": " in response to:",
+      "logLangChanAtRequest": " (*{{command.language.name}}*) in {{channel.ping}} at {{author.ping}}'s `/{{command.name}}` request",
+      "logToldAuthorAbout": "I told {{author.ping}} about ",
+      "logToldTaggeeAbout": "I told {{taggee.ping}} about ",
       "official": "Official Geocaching.com",
-      "ownerOnly": "This is currently an **owner only** command.  Please talk to {{bot.owner.ping}} if you need assistance.",
-      "modOnly": "This is a **bot moderator only** command.  Please talk to {{bot.owner.ping}} if you need assistance.",
       "requestedBy": " as requested by {{author.ping}}",
       "soon": "Comming **SOON**:tm:"
     }
@@ -247,11 +251,9 @@
         "name": "ftf",
         "description": "Tell someone how to get their FTF (First To Find) noticed on Project-GC.",
         "responses": {
-          "errTell": "Error telling {{author.ping}} about FTFs via `/ftf` request.",
-          "ftfInfo": "There are two ways for Project-GC to detect your FTFs (**F**irst **T**o **F**inds). Either you tag your logs with one of these tags: `{*FTF*}`, `{FTF}`, or `[FTF]`. Alternatively you can add an FTF bookmark list under Settings (<https://project-gc.com/User/Settings/>) that will be checked once per day. Please understand that FTF isn't anything offical and not everyone tags their FTFs. Therefore this list won't be 100% accurate.",
-          "logToldAuthorAboutAtRequest": "I told {{author.ping}} about FTFs (*{{author.language.name}}*) in {{channel.ping}} at {{author.ping}}'s `/ftf` request",
-          "logToldTaggeeAboutAtRequest": "I told {{taggee.ping}} about FTFs (*{{taggee.language.name}}*) in {{channel.ping}} at {{author.ping}}'s `/ftf` request",
-          "logInResponse": " in response to:"
+          "ftfAuthorInfo": "{{author.ping}}, t",
+          "ftfTaggeeInfo": "{{taggee.ping}}, t",
+          "ftfInfo": "here are two ways for Project-GC to detect your FTFs (**F**irst **T**o **F**inds). Either you tag your logs with one of these tags: `{*FTF*}`, `{FTF}`, or `[FTF]`. Alternatively you can add an FTF bookmark list under Settings (<https://project-gc.com/User/Settings/>) that will be checked once per day. Please understand that FTF isn't anything offical and not everyone tags their FTFs. Therefore this list won't be 100% accurate."
         }
       },
       "logo": {
