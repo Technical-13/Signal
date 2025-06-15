@@ -32,7 +32,7 @@ module.exports = {
   ],
   type: ApplicationCommandType.ChatInput,
   contexts: [ InteractionContextType.BotDM, InteractionContextType.Guild ],
-  cooldown: 1000, // Set a cooldown of 1 second
+  cooldown: 1000,// Set a cooldown of 1 second
   run: async ( client, interaction ) => {
     const r6e = getI18n( modData, { interaction: interaction } ).responses;
     try {

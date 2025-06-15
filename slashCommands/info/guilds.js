@@ -18,7 +18,7 @@ module.exports = {
   description_localizations: l10n.description,
   type: ApplicationCommandType.ChatInput,
   contexts: [ InteractionContextType.Guild ],
-  options: [ /* guild //*/
+  options: [
     { type: 3, name: 'guild', name_localizations: l10n.options.guild.name,
     description: 'Start with a specific guild by ID (invalid input will be ignored). (default current or first guild)',
     description_localizations: l10n.options.guild.description }
