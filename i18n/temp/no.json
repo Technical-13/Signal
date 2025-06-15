@@ -1,19 +1,19 @@
 {
   "common": {
     "options" : {
-      "discord-user": { "name": "discord-user", "description": "Członek Discord (wymaga ustawienia pseudonimu, jeśli różni się od nazwy GC)." },
-      "gc-name": { "name": "gc-name", "description": "Nazwa użytkownika w serwisie Geocaching.com rozróżnia wielkość liter" },
-      "language": { "name": "język", "description": "Język, w którym należy podawać informacje.", "choices": [
-        "Deutsch/Niemiecki", "British/Brytyjski", "American/Amerykański (default)", "Suomi/Fiński",
-        "Français/Francuski", "Norsk/Norweski", "Polski", "Português/Portugalski (Portugalia)", "Svenska/Szwedzki"
+      "discord-user": { "name": "discord-user", "description": "Discord member (requires nickname to be set if different from GC name)." },
+      "gc-name": { "name": "gc-name", "description": "The case-sensitive username on Geocaching.com" },
+      "language": { "name": "språk", "description": "Språk å gi informasjon på.", "choices": [
+        "Deutsch/Tysk", "British/Britisk", "American/Amerikansk (default)", "Suomi/Finsk",
+        "Français/Fransk", "Norsk", "Polski/Pusse", "Português/Portugisisk (Portugal)", "Svenska/Svensk"
       ] },
       "message-id": { "name": "message-id", "description": "Paste message ID here" },
-      "taggee": { "name": "użytkownik-docelowy", "description": "Tag someone in response." }
+      "taggee": { "name": "målbruker", "description": "Tag someone in response." }
     },
     "responses": {
-      "in": " W ",
-      "invalidMsgId": " nie jest prawidłowym identyfikatorem wiadomości.",
-      "noMsg": "Nie można znaleźć konkretnej wiadomości, na którą można odpowiedzieć.",
+      "in": " i ",
+      "invalidMsgId": " er ikke en gyldig meldings-ID.",
+      "noMsg": "Finner ikke spesifikk melding å svare på.",
       "not": "not",
       "official": "Official Geocaching.com",
       "ownerOnly": "This is currently an **owner only** command.  Please talk to {{bot.owner.ping}} if you need assistance.",
@@ -201,14 +201,15 @@
           "nice": { "name": "nice", "description": "Should I be nice?" }
         },
         "responses": {
-          "sent": "sent",
+          "aCmdFor": " a `/lmgtfy` for ",
+          "sent": "{{author.ping}} sent ",
           "cmdFor": "a `/lmgtfy` for",
-          "theyWere": "and they were",
+          "theyWere": " and they were ",
           "nice": "nice"
         }
       },
       "roll": {
-        "name": "rzuć-kostką",
+        "name": "roll",
         "description": "Dice Roller (default: 1#1d6±0)",
         "options": {
           "dice": { "name": "dice", "description": "How many dice? (default: 1)" },
@@ -224,7 +225,7 @@
     "geocaching": {
       "badgebar": {
         "name": "badgebar",
-        "description": "Pokaż pasek odznak Project-GC dla użytkownika.",
+        "description": "Show Project-GC BadgeBar for user.",
         "responses": {
           "badgebarFor": "BadgeBar for: ",
           "sharedFor": "I shared the `/badgebar` for "
@@ -247,11 +248,10 @@
         "description": "Tell someone how to get their FTF (First To Find) noticed on Project-GC.",
         "responses": {
           "errTell": "Error telling {{author.ping}} about FTFs via `/ftf` request.",
-          "ftfInfo": "Project-GC wykrywa wpisy FTF na dwa różne sposoby. Możesz oznaczyć swoje wpisy jednym z tagów: `{*FTF*}` `{FTF}` `[FTF]`. Albo w Ustawieniach (<https://project-gc.com/User/Settings/>) możesz wybrać listę zakładek z wpisami FTF, która będzie sprawdzana raz dziennie. Proszę zrozumieć, że FTF nie jest niczym oficjalnym i nie każdy oznacza swoje FTFy. Dlatego ta lista nie jest w 100% dokładna.",
-          "logAboutAtRequest": " about FTFs at {{author.ping}}'s `/ftf` request.",
-          "logAtRequestInResponse": " at {{author.ping}}'s `/ftf` request in response to:",
-          "logTold": "I told ",
-          "logAbout": "{{author.ping}} about FTFs "
+          "ftfInfo": "Det er to måter Project-GC kan finne FTF-ene dine på. Enten merker du dine logger med en av disse: `{*FTF*}` `{FTF}` `[FTF]`. Eller så kan du legge til en FTF-bokmerkeliste under Innstillinger (<https://project-gc.com/User/Settings/>) som vil bli sjekket en gang om dagen. Husk at FTF ikke er noe offisielt, og at ikke alle markerer FTF-ene sine. Derfor vil ikke denne listen være 100% nøyaktig.",
+          "logToldAuthorAboutAtRequest": "I told {{author.ping}} about FTFs (*{{author.language.name}}*) in {{channel.ping}} at {{author.ping}}'s `/ftf` request",
+          "logToldTaggeeAboutAtRequest": "I told {{taggee.ping}} about FTFs (*{{taggee.language.name}}*) in {{channel.ping}} at {{author.ping}}'s `/ftf` request",
+          "logInResponse": " in response to:"
         }
       },
       "logo": {
@@ -267,7 +267,7 @@
       },
       "profilestats": {
         "name": "profilestats",
-        "description": "Pokaż link do Project-GC ProfileStats dla użytkownika.",
+        "description": "Show link to Project-GC ProfileStats for user.",
         "responses": {
           "profilestatsFor": "ProfileStats link for: ",
           "sharedFor": "I shared the `/profilestats` for "
@@ -275,7 +275,7 @@
       },
       "statbar": {
         "name": "statbar",
-        "description": "Pokaż Project-GC StatBar dla użytkownika.",
+        "description": "Show Project-GC StatBar for user.",
         "options": {
           "labcaches": { "name": "labcaches", "description": "Should I include labcaches? (default: true)" }
         },

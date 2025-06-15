@@ -1,21 +1,25 @@
 {
   "common": {
     "options" : {
-      "discord-user": { "name": "discord-käyttäjä", "description": "Discord-jäsen (vaatii nimimerkin asettamisen, jos se on eri kuin GC-nimi)." },
-      "gc-name": { "name": "gc-nimi", "description": "Kirjainkokoa huomioiva käyttäjätunnus Geocaching.com-sivustolla" },
-      "language": { "name": "kieli", "description": "Kieli, jolla tiedot annetaan.", "choices": [
-        "Deutsch/Saksa", "British/Brittiläinen", "American/Amerikanenglanti (default)", "Suomi",
-        "Français/Ranskalainen", "Norsk/Norja", "Polski/Kiillottaa", "Português/Portugali (Portugali)", "Svenska/Ruotsin"
+      "discord-user": { "name": "discord-användare", "description": "Discord member (requires nickname to be set if different from GC name)." },
+      "gc-name": { "name": "gc-namn", "description": "The case-sensitive username on Geocaching.com" },
+      "language": { "name": "språk", "description": "Språk att ge information på.", "choices": [
+        "Deutsch/Tyska", "British/Brittisk", "American/Amerikansk (default)", "Suomi/Finska",
+        "Français/Franska", "Norsk/Norska", "Polski/Polska", "Português/Portugisiska (Portugal)", "Svenska"
       ] },
       "message-id": { "name": "message-id", "description": "Paste message ID here" },
-      "taggee": { "name": "kohdekäyttäjä", "description": "Tag someone in response." }
+      "taggee": { "name": "målanvändare", "description": "Tag someone in response." }
     },
     "responses": {
-      "in": " sisään ",
-      "invalidMsgId": " ei ole kelvollinen viestin tunnus.",
-      "noMsg": "Ei löydy tiettyä viestiä, johon vastata.",
+      "errTellAuthor": "Error telling {{author.ping}} about ",
+      "errTellTaggee": "Error telling {{taggee.ping}} about ",
+      "in": " i ",
+      "invalidMsgId": " är inte ett giltigt meddelande-id.",
+      "noMsg": "Det gick inte att hitta ett specifikt meddelande att svara på.",
       "not": "not",
-      "official": "Official Geocaching.com",
+      "logLangChanAtRequest": " (*{{author.language.name}}*) in {{channel.ping}} at {{author.ping}}'s `/{{cmd.name}}` request",
+      "logToldAuthorAbout": "I told {{author.ping}} about ",
+      "logToldTaggeeAbout": "I told {{taggee.ping}} about ",
       "ownerOnly": "This is currently an **owner only** command.  Please talk to {{bot.owner.ping}} if you need assistance.",
       "modOnly": "This is a **bot moderator only** command.  Please talk to {{bot.owner.ping}} if you need assistance.",
       "requestedBy": " as requested by {{author.ping}}",
@@ -201,14 +205,15 @@
           "nice": { "name": "nice", "description": "Should I be nice?" }
         },
         "responses": {
-          "sent": "sent",
+          "aCmdFor": " a `/lmgtfy` for ",
+          "sent": "{{author.ping}} sent ",
           "cmdFor": "a `/lmgtfy` for",
-          "theyWere": "and they were",
+          "theyWere": " and they were ",
           "nice": "nice"
         }
       },
       "roll": {
-        "name": "heitä-noppaa",
+        "name": "rulla-tärningen",
         "description": "Dice Roller (default: 1#1d6±0)",
         "options": {
           "dice": { "name": "dice", "description": "How many dice? (default: 1)" },
@@ -224,7 +229,7 @@
     "geocaching": {
       "badgebar": {
         "name": "badgebar",
-        "description": "Näytä Project-GC BadgeBar käyttäjälle.",
+        "description": "Show Project-GC BadgeBar for user.",
         "responses": {
           "badgebarFor": "BadgeBar for: ",
           "sharedFor": "I shared the `/badgebar` for "
@@ -246,28 +251,21 @@
         "name": "ftf",
         "description": "Tell someone how to get their FTF (First To Find) noticed on Project-GC.",
         "responses": {
-          "errTell": "Error telling {{author.ping}} about FTFs via `/ftf` request.",
-          "ftfInfo": "Project-GC tunnistaa FTF-löytöjä kahdella tavalla. Voit merkitä lokisi jollakin seuraavista tunnisteista: `{*FTF*}` `{FTF}` `[FTF]`. Vaihtoehtoisesti voit lisätä FTF-löytösi kirjanmerkkilistaan ja linkittää sen Asetuksissa (<https://project-gc.com/User/Settings/>). Lista tarkistetaan kerran päivässä. Huomioithan että FTF ei ole virallinen termi, eivätkä kaikki kirjaa heidän FTFiä, joten tämä lista ei ole täsmällinen.",
-          "logAboutAtRequest": " about FTFs at {{author.ping}}'s `/ftf` request.",
-          "logAtRequestInResponse": " at {{author.ping}}'s `/ftf` request in response to:",
-          "logTold": "I told ",
-          "logAbout": "{{author.ping}} about FTFs "
+          "ftfInfo": "Det finns två sätt för Project-GC att upptäcka dina FTF:er. Antingen taggar du din logg med någon av dessa taggar: `{*FTF*}` `{FTF}` `[FTF]`. Eller så kan du lägga till en lista med dina FTF:er under Inställningar (<https://project-gc.com/User/Settings/>), den kommer att kontrolleras av sidan en gång per dag. Det är viktigt att inse att FTF inte är en officiell term och att det inte är alla som taggar sina FTF-loggar på vedertaget sätt. Därför kommer denna lista aldrig att vara 100% korrekt.",
+          "logToldAbout": "FTFs"
         }
       },
       "logo": {
         "name": "logo",
         "description": "Give someone information about the logo kits for Geocaching.",
         "responses": {
-          "errTell": "Error telling {{author.ping}} about the [Logo Kits](<https://www.geocaching.com/about/logousage.aspx>) via `/logo` request.",
-          "logoInfo": "you seem to be looking for the Official Geocaching.com [Logo Kits](<https://www.geocaching.com/about/logousage.aspx>).\nThe kits have `*.png` & `*.eps` file versions.  If you're looking for an `*.svg` version, the Staff on the [Geocaching Discord](<https://discord.gg/invite/WQt4f7p>) recommends using [EPS to SVG Converter](<https://cloudconvert.com/eps-to-svg>) by cloud**convert**",
-          "logAboutAtRequest": " about the [Logo Kits](<https://www.geocaching.com/about/logousage.aspx>) at {{author.ping}}'s `/logo` request.",
-          "logAtRequestInResponse": " at {{author.ping}}'s `/logo` request in response to:",
-          "logAbout": "{{author.ping}} about the [Logo Kits](<https://www.geocaching.com/about/logousage.aspx>) "
+          "logoInfo": " seem to be looking for the Official Geocaching.com [Logo Kits](<https://www.geocaching.com/about/logousage.aspx>).\nThe kits have `*.png` & `*.eps` file versions.  If you're looking for an `*.svg` version, the Staff on the [Geocaching Discord](<https://discord.gg/invite/WQt4f7p>) recommends using [EPS to SVG Converter](<https://cloudconvert.com/eps-to-svg>) by cloud**convert**",
+          "logToldAbout": "the [Logo Kits](<https://www.geocaching.com/about/logousage.aspx>)"
         }
       },
       "profilestats": {
         "name": "profilestats",
-        "description": "Näytä käyttäjälle linkki Project-GC ProfileStatsiin.",
+        "description": "Show link to Project-GC ProfileStats for user.",
         "responses": {
           "profilestatsFor": "ProfileStats link for: ",
           "sharedFor": "I shared the `/profilestats` for "
@@ -275,7 +273,7 @@
       },
       "statbar": {
         "name": "statbar",
-        "description": "Näytä Project-GC StatBar käyttäjälle.",
+        "description": "Show Project-GC StatBar for user.",
         "options": {
           "labcaches": { "name": "labcaches", "description": "Should I include labcaches? (default: true)" }
         },

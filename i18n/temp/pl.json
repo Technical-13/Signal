@@ -1,19 +1,19 @@
 {
   "common": {
     "options" : {
-      "discord-user": { "name": "utilisateur-discord", "description": "Discord member (requires nickname to be set if different from GC name)." },
-      "gc-name": { "name": "nom-gc", "description": "The case-sensitive username on Geocaching.com" },
-      "language": { "name": "langue", "description": "Langue dans laquelle donner des informations.", "choices": [
-        "Deutsch/German", "British/Anglais Britannique", "American/Américain (default)", "Suomi/Finnish",
-        "Français", "Norsk/Norwegian", "Polski/Polish", "Português/Portuguese (Portugal)", "Svenska/Swedish"
+      "discord-user": { "name": "discord-user", "description": "Członek Discord (wymaga ustawienia pseudonimu, jeśli różni się od nazwy GC)." },
+      "gc-name": { "name": "gc-name", "description": "Nazwa użytkownika w serwisie Geocaching.com rozróżnia wielkość liter" },
+      "language": { "name": "język", "description": "Język, w którym należy podawać informacje.", "choices": [
+        "Deutsch/Niemiecki", "British/Brytyjski", "American/Amerykański (default)", "Suomi/Fiński",
+        "Français/Francuski", "Norsk/Norweski", "Polski", "Português/Portugalski (Portugalia)", "Svenska/Szwedzki"
       ] },
       "message-id": { "name": "message-id", "description": "Paste message ID here" },
-      "taggee": { "name": "utilisateur-cible", "description": "Tag someone in response." }
+      "taggee": { "name": "użytkownik-docelowy", "description": "Tag someone in response." }
     },
     "responses": {
-      "in": " dans ",
-      "invalidMsgId": " n'est pas un identifiant de message valide.",
-      "noMsg": "Impossible de trouver un message spécifique auquel répondre.",
+      "in": " W ",
+      "invalidMsgId": " nie jest prawidłowym identyfikatorem wiadomości.",
+      "noMsg": "Nie można znaleźć konkretnej wiadomości, na którą można odpowiedzieć.",
       "not": "not",
       "official": "Official Geocaching.com",
       "ownerOnly": "This is currently an **owner only** command.  Please talk to {{bot.owner.ping}} if you need assistance.",
@@ -208,7 +208,7 @@
         }
       },
       "roll": {
-        "name": "lancer-les-dés",
+        "name": "rzuć-kostką",
         "description": "Dice Roller (default: 1#1d6±0)",
         "options": {
           "dice": { "name": "dice", "description": "How many dice? (default: 1)" },
@@ -224,7 +224,7 @@
     "geocaching": {
       "badgebar": {
         "name": "badgebar",
-        "description": "Show Project-GC BadgeBar for user.",
+        "description": "Pokaż pasek odznak Project-GC dla użytkownika.",
         "responses": {
           "badgebarFor": "BadgeBar for: ",
           "sharedFor": "I shared the `/badgebar` for "
@@ -247,11 +247,10 @@
         "description": "Tell someone how to get their FTF (First To Find) noticed on Project-GC.",
         "responses": {
           "errTell": "Error telling {{author.ping}} about FTFs via `/ftf` request.",
-          "ftfInfo": "Il existe deux manières pour Project-GC de détecter vos FTF. Vous pouvez utiliser un de ces tags dans vos logs : `{*FTF*}` `{FTF}` `[FTF]`. Vous pouvez également ajouter une liste de FTF sous Configuration (<https://project-gc.com/User/Settings/>) qui seront vérifiés une fois par jour. Comprenez bien que les FTFs n'ont rien d'officiels et que tout le monde ne tague pas ses FTFs. C'est pourquoi cette liste ne sera pas fiable à 100%.",
-          "logAboutAtRequest": " about FTFs at {{author.ping}}'s `/ftf` request.",
-          "logAtRequestInResponse": " at {{author.ping}}'s `/ftf` request in response to:",
-          "logTold": "I told ",
-          "logAbout": "{{author.ping}} about FTFs "
+          "ftfInfo": "Project-GC wykrywa wpisy FTF na dwa różne sposoby. Możesz oznaczyć swoje wpisy jednym z tagów: `{*FTF*}` `{FTF}` `[FTF]`. Albo w Ustawieniach (<https://project-gc.com/User/Settings/>) możesz wybrać listę zakładek z wpisami FTF, która będzie sprawdzana raz dziennie. Proszę zrozumieć, że FTF nie jest niczym oficjalnym i nie każdy oznacza swoje FTFy. Dlatego ta lista nie jest w 100% dokładna.",
+          "logToldAuthorAboutAtRequest": "I told {{author.ping}} about FTFs (*{{author.language.name}}*) in {{channel.ping}} at {{author.ping}}'s `/ftf` request",
+          "logToldTaggeeAboutAtRequest": "I told {{taggee.ping}} about FTFs (*{{taggee.language.name}}*) in {{channel.ping}} at {{author.ping}}'s `/ftf` request",
+          "logInResponse": " in response to:"
         }
       },
       "logo": {
@@ -267,7 +266,7 @@
       },
       "profilestats": {
         "name": "profilestats",
-        "description": "Show link to Project-GC ProfileStats for user.",
+        "description": "Pokaż link do Project-GC ProfileStats dla użytkownika.",
         "responses": {
           "profilestatsFor": "ProfileStats link for: ",
           "sharedFor": "I shared the `/profilestats` for "
@@ -275,7 +274,7 @@
       },
       "statbar": {
         "name": "statbar",
-        "description": "Show Project-GC StatBar for user.",
+        "description": "Pokaż Project-GC StatBar dla użytkownika.",
         "options": {
           "labcaches": { "name": "labcaches", "description": "Should I include labcaches? (default: true)" }
         },

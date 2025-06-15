@@ -11,10 +11,15 @@
       "taggee": { "name": "target", "description": "Tag someone in response." }
     },
     "responses": {
+      "errTellAuthor": "Error telling {{author.ping}} about ",
+      "errTellTaggee": "Error telling {{taggee.ping}} about ",
       "in": " in ",
       "invalidMsgId": " is not a valid message-id.",
       "noMsg": "Unable to find specific message to respond to.",
       "not": "not",
+      "logLangChanAtRequest": " (*{{author.language.name}}*) in {{channel.ping}} at {{author.ping}}'s `/{{cmd.name}}` request",
+      "logToldAuthorAbout": "I told {{author.ping}} about ",
+      "logToldTaggeeAbout": "I told {{taggee.ping}} about ",
       "official": "Official Geocaching.com",
       "requestedBy": " as requested by {{author.ping}}",
       "soon": "Comming **SOON**:tm:"
@@ -237,12 +242,10 @@
         "name": "ftf",
         "description": "Tell someone how to get their FTF (First To Find) noticed on Project-GC.",
         "responses": {
-          "errTell": "Error telling {{author.ping}} about FTFs via `/ftf` request.",
-          "ftfInfo": "There are two ways for Project-GC to detect your FTFs (**F**irst **T**o **F**inds). Either you tag your logs with one of these tags: `{*FTF*}`, `{FTF}`, or `[FTF]`. Alternatively you can add an FTF bookmark list under Settings (<https://project-gc.com/User/Settings/>) that will be checked once per day. Please understand that FTF isn't anything offical and not everyone tags their FTFs. Therefore this list won't be 100% accurate.",
-          "logAboutAtRequest": " about FTFs at {{author.ping}}'s `/ftf` request.",
-          "logAtRequestInResponse": " at {{author.ping}}'s `/ftf` request in response to:",
-          "logTold": "I told ",
-          "logAbout": "{{author.ping}} about FTFs "
+          "ftfAuthorInfo": "{{author.ping}}, t",
+          "ftfTaggeeInfo": "{{taggee.ping}}, t",
+          "ftfInfo": "here are two ways for Project-GC to detect your FTFs (**F**irst **T**o **F**inds). Either you tag your logs with one of these tags: `{*FTF*}`, `{FTF}`, or `[FTF]`. Alternatively you can add an FTF bookmark list under Settings (<https://project-gc.com/User/Settings/>) that will be checked once per day. Please understand that FTF isn't anything offical and not everyone tags their FTFs. Therefore this list won't be 100% accurate.",
+          "logToldAbout": "FTFs"
         }
       },
       "logo": {

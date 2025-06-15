@@ -133,10 +133,9 @@
         "responses": {
           "errTell": "Error telling {{author.ping}} about FTFs via `/ftf` request.",
           "ftfInfo": "Es gibt zwei Möglichkeiten über die Project-GC deine FTFs finden kann. Entweder markierst du deine Logs mit einem dieser Markierungen: `{*FTF*}` `{FTF}` `[FTF]`. Alternativ kannst du eine FTF-Bookmark Liste in den Einstellungen (<https://project-gc.com/User/Settings/>) hinzufügen - diese wird dann einmal täglich überprüft. Bitte berücksichtige, dass FTF nichts offizielles ist und nicht jeder seine FTFs markiert. Deshalb wird diese Liste nie 100% genau sein.",
-          "logAboutAtRequest": " about FTFs at {{author.ping}}'s `/ftf` request.",
-          "logAtRequestInResponse": " at {{author.ping}}'s `/ftf` request in response to:",
-          "logTold": "I told ",
-          "logAbout": "{{author.ping}} about FTFs "
+          "logToldAuthorAboutAtRequest": "I told {{author.ping}} about FTFs (*{{author.language.name}}*) in {{channel.ping}} at {{author.ping}}'s `/ftf` request",
+          "logToldTaggeeAboutAtRequest": "I told {{taggee.ping}} about FTFs (*{{taggee.language.name}}*) in {{channel.ping}} at {{author.ping}}'s `/ftf` request",
+          "logInResponse": " in response to:"
         }
       },
       "logo": {
