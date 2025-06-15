@@ -6,6 +6,7 @@ const chalk = require( 'chalk' );
 const duration = require( './duration.js' );
 const modData = { name: 'parser', type: 'functions' };
 const strScript = chalk.hex( '#FFA500' ).bold( './' + modData.type + '/' + modData.name + '.js' );
+const dispNames = ( dLang ) => { return new Intl.DisplayNames( [ dLang ], { type: 'language' } ); };
 
 module.exports = ( rawString, obj = { author: null, channel: null, guild: null, interaction: null, member: null, uptime: null, useLang: null, user: null } ) => {
   try {
@@ -17,10 +18,12 @@ module.exports = ( rawString, obj = { author: null, channel: null, guild: null, 
     const user = ( obj.user ?? null );
     const guild = ( obj.guild ?? iGuild ?? member?.guild ?? null );
     const uptime = ( obj.uptime ?? null );
+    const authorLang = ( locale ?? 'en-US' );
+    const authorLangName = dispNames( authorLang ).of( authorLang );
     const guildLang = ( guild?.preferedLocale ?? guildLocale ?? 'en-US' );
-    const guildLangName = new Intl.DisplayNames( [ guildLang ], { type: 'language' } );
+    const guildLangName = dispNames( guildLang ).of( guildLang );
     const useLang = ( obj.useLang ?? options?.getString( 'language' ) ?? locale ?? guildLang );
-    const useLangName = new Intl.DisplayNames( [ useLang ], { type: 'language' } );
+    const useLangName = dispNames( useLang ).of( useLang );
     const geocacher = ( options?.getUser( 'discord-user' ) ?? null );
     const taggee =  ( options?.getUser( 'taggee' ) ?? null );
     const { user: bot, guilds, ownerId, users, ws } = ( client ?? { bot: null, guilds: null, ownerId: config.botOwnerId, users: null, ws: null } );
@@ -35,6 +38,8 @@ module.exports = ( rawString, obj = { author: null, channel: null, guild: null, 
     if ( author ) {
       transclusions[ '{{author.age}}' ] = duration( Date.now() - author.createdTimestamp, ageUnits );
       transclusions[ '{{author.guild.age}}' ] = duration( Date.now() - author.joinedTimestamp, ageUnits );
+      transclusions[ '{{author.language.code}}' ] = authorLang;
+      transclusions[ '{{author.language.name}}' ] = authorLangName;
       transclusions[ '{{author.member.since}}' ] = guild.members.cache.get( author.id ).joinedAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) );
       transclusions[ '{{author.name}}' ] = author.displayName;
       transclusions[ '{{author.ping}}' ] = '<@' + author.id + '>';
@@ -45,6 +50,8 @@ module.exports = ( rawString, obj = { author: null, channel: null, guild: null, 
     else {
       notAvailable[ '{{author.age}}' ] = 'author';
       notAvailable[ '{{author.guild.age}}' ] = 'author';
+      notAvailable[ '{{author.language.code}}' ] = 'author';
+      notAvailable[ '{{author.language.name}}' ] = 'author';
       notAvailable[ '{{author.member.since}}' ] = 'author';
       notAvailable[ '{{author.name}}' ] = 'author';
       notAvailable[ '{{author.ping}}' ] = 'author';
@@ -100,12 +107,16 @@ module.exports = ( rawString, obj = { author: null, channel: null, guild: null, 
       transclusions[ '{{geocacher.age}}' ] = duration( Date.now() - geocacher.createdTimestamp, ageUnits );
       transclusions[ '{{geocacher.name}}' ] = geocacher.displayName;
       transclusions[ '{{geocacher.ping}}' ] = '<@' + geocacher.id + '>';
+      transclusions[ '{{geocacher.language.code}}' ] = useLang;
+      transclusions[ '{{geocacher.language.name}}' ] = useLangName;
       transclusions[ '{{geocacher.since}}' ] = geocacher.createdAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) );
     }
     else {
       notAvailable[ '{{geocacher.age}}' ] = 'geocacher';
       notAvailable[ '{{geocacher.name}}' ] = 'geocacher';
       notAvailable[ '{{geocacher.ping}}' ] = 'geocacher';
+      notAvailable[ '{{geocacher.language.code}}' ] = 'geocacher';
+      notAvailable[ '{{geocacher.language.name}}' ] = 'geocacher';
       notAvailable[ '{{geocacher.since}}' ] = 'geocacher';
     }
     if ( guild ) {
