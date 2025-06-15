@@ -8,12 +8,13 @@ const modData = { name: 'parser', type: 'functions' };
 const strScript = chalk.hex( '#FFA500' ).bold( './' + modData.type + '/' + modData.name + '.js' );
 const dispNames = ( dLang ) => { return new Intl.DisplayNames( [ dLang ], { type: 'language' } ); };
 
-module.exports = ( rawString, obj = { author: null, channel: null, guild: null, interaction: null, member: null, uptime: null, useLang: null, user: null } ) => {
+module.exports = ( rawString, obj = { author: null, channel: null, command = null, guild: null, interaction: null, member: null, uptime: null, useLang: null, user: null } ) => {
   try {
-    const interaction = ( obj.interaction ?? { channel: null, guild: null, guildLocale: null, locale: null, member: null, options: null, user: null } );
-    const { channel: iChannel, guild: iGuild, guildLocale, locale, member: iMember, options, user: iUser } = interaction;
+    const interaction = ( obj.interaction ?? { channel: null, command: null, guild: null, guildLocale: null, locale: null, member: null, options: null, user: null } );
+    const { channel: iChannel, command: iCommand, commandId, commandName, guild: iGuild, guildLocale, locale, member: iMember, options, user: iUser } = interaction;
     const author = ( obj.author ?? iMember ?? null );
     const channel = ( obj.channel ?? iChannel ?? null );
+    const command = ( obj.command ?? iCommand ?? ( commandId && commandName ? { id: commandId, name: commandName } : null ) );
     const member = ( obj.member ?? null );
     const user = ( obj.user ?? null );
     const guild = ( obj.guild ?? iGuild ?? member?.guild ?? null );
@@ -102,6 +103,18 @@ module.exports = ( rawString, obj = { author: null, channel: null, guild: null, 
       notAvailable[ '{{channel.ping}}' ] = 'channel';
       notAvailable[ '{{channel.since}}' ] = 'channel';
       notAvailable[ '{{channel.topic}}' ] = 'channel';
+    }
+    if ( command ) {
+      transclusions[ '{{cmd.id}}' ] = command.id;
+      transclusions[ '{{cmd.name}}' ] = command.name;
+      transclusions[ '{{command.id}}' ] = command.id;
+      transclusions[ '{{command.name}}' ] = command.name;
+    }
+    else {
+      notAvailable[ '{{cmd.id}}' ] = 'command';
+      notAvailable[ '{{cmd.name}}' ] = 'command';
+      notAvailable[ '{{command.id}}' ] = 'command';
+      notAvailable[ '{{command.name}}' ] = 'command';
     }
     if ( geocacher ) {
       transclusions[ '{{geocacher.age}}' ] = duration( Date.now() - geocacher.createdTimestamp, ageUnits );
@@ -218,7 +231,7 @@ module.exports = ( rawString, obj = { author: null, channel: null, guild: null, 
       notAvailable[ '{{user.since}}' ] = 'user';
     }
 
-    arrTemplates = rawString.match( /\{\{((?:author|bot|channel|geocacher|guild|member|server|taggee|user)\.[a-z\.]*)\}\}/g );
+    arrTemplates = rawString.match( /\{\{((?:author|bot|cmd|command|channel|geocacher|guild|member|server|taggee|user)\.[a-z\.]*)\}\}/g );
     var parsed = rawString;
     if ( arrTemplates ) {
       arrTemplates.forEach( template => {
