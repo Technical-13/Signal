@@ -59,21 +59,18 @@ module.exports = {
 
       if ( msgID && !( /[\d]{18,19}/.test( msgID ) ) ) { return interaction.editReply( { content: '`' + msgID + '` ' + r6e.invalidMsgId[ useLang ] } ); }
       else if ( respMsg ) {
-        respMsg.then( message => {
-          const { author: msgAuthor, content } = message;
-          message.reply( { content: r6e.ftfAuthorInfo[ useLang ] + r6e.ftfInfo[ useLang ] } )
-          .then( replied => {
-            if ( doLogs && author.id != msgAuthor.id ) {
-              chanDefault.send( { content:
-                r6e.logToldTaggeeAbout[ guildLang ] + 'FTFs' + r6e.logLangChanAtRequest[ guildLang ] + r6e.logInResponse[ guildLang ] + '\n```\n' + content + '\n```' + strClosing } )
-              .then( sentLog => { interaction.deleteReply(); } )
-              .catch( errLog => { errHandler( errLog, { chanType: 'default', command: modData.name, channel: channel, type: 'logLogs' } ); } );
-            }
-            else { interaction.deleteReply(); }
-          } )
-          .catch( errSend => { interaction.editReply( errHandler( errSend, { command: modData.name, doLog: doLogs, guild: guild, msgID: msgID, type: 'errSend' } ) ); } );
+        const { author: msgAuthor, content } = respMsg;
+        respMsg.reply( { content: r6e.ftfAuthorInfo[ useLang ] + r6e.ftfInfo[ useLang ] } )
+        .then( replied => {
+          if ( doLogs && author.id != msgAuthor.id ) {
+            chanDefault.send( { content:
+              r6e.logToldTaggeeAbout[ guildLang ] + 'FTFs' + r6e.logLangChanAtRequest[ guildLang ] + r6e.logInResponse[ guildLang ] + '\n```\n' + content + '\n```' + strClosing } )
+            .then( sentLog => { interaction.deleteReply(); } )
+            .catch( errLog => { errHandler( errLog, { chanType: 'default', command: modData.name, channel: channel, type: 'logLogs' } ); } );
+          }
+          else { interaction.deleteReply(); }
         } )
-        .catch( errFetch => { interaction.editReply( errHandler( errFetch, { command: modData.name, msgID: msgID, type: 'errFetch' } ) ); } );
+        .catch( errSend => { interaction.editReply( errHandler( errSend, { command: modData.name, doLog: doLogs, guild: guild, msgID: msgID, type: 'errSend' } ) ); } );
       }
       else if ( cmdTaggee ) {
         interaction.editReply( { content: r6e.ftfTaggeeInfo[ useLang ] + r6e.ftfInfo[ useLang ] } ).then( replied => {
