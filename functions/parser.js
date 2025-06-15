@@ -8,7 +8,7 @@ const modData = { name: 'parser', type: 'functions' };
 const strScript = chalk.hex( '#FFA500' ).bold( './' + modData.type + '/' + modData.name + '.js' );
 const dispNames = ( dLang ) => { return new Intl.DisplayNames( [ dLang ], { type: 'language' } ); };
 
-module.exports = async ( rawString, obj = { author: null, channel: null, command = null, guild: null, interaction: null, member: null, uptime: null, useLang: null, user: null } ) => {
+module.exports = async ( rawString, obj = { author: null, channel: null, command: null, guild: null, interaction: null, member: null, uptime: null, useLang: null, user: null } ) => {
   try {
     const interaction = ( obj.interaction ?? { channel: null, command: null, guild: null, guildLocale: null, locale: null, member: null, options: null, user: null } );
     const { channel: iChannel, command: iCommand, commandId, commandName, guild: iGuild, guildLocale, locale, member: iMember, options, user: iUser } = interaction;
