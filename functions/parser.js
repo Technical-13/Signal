@@ -15,8 +15,8 @@ module.exports = ( rawString, obj = { author: null, channel: null, command: null
     const author = ( obj.author ?? iUser ?? null );
     const channel = ( obj.channel ?? iChannel ?? null );
     const command = ( obj.command ?? iCommand ?? ( commandId && commandName ? { id: commandId, name: commandName } : null ) );
-    const guild = ( obj.guild ?? iGuild ?? member?.guild ?? null );
     const member = ( obj.member ?? null );
+    const guild = ( obj.guild ?? iGuild ?? member?.guild ?? null );
     const respMsg = ( obj.respMsg ?? null );
     const uptime = ( obj.uptime ?? null );
     const user = ( obj.user ?? null );
