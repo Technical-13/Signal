@@ -13,10 +13,11 @@ const getDebugString = ( thing ) => {
   else if ( Object.prototype.toString.call( thing ) === '[object Date]' ) { return '{ object-Date: { ISOstring: ' + thing.toISOString() + ', value: ' + thing.valueOf() + ' } }'; }
   else if ( typeof( thing ) != 'object' ) { return thing; }
   else {
-    let objType = ( thing ? 'object-' + thing.constructor.name : typeof( thing ) );
-    let objId = ( thing ? thing.id : 'no.id' );
-    let objName = ( thing ? ( thing.displayName || thing.globalName || thing.name ) : 'no.name' );
-    return '{ ' + objType + ': { id: ' + objId + ', name: ' + objName + ' } }';
+    let objType = 'object-' + ( thing.constructor.name ?? 'Keys' );
+    let objId = ( thing ? 'id: ' + thing.id + ', ' : '' );
+    let objName = ( thing ? 'name: ' + ( thing.displayName || thing.globalName || thing.name ) + ', ' : '' );
+    let objSize = ( thing ? 'size: ' + thing.size ', ' : '' );
+    return '{ ' + objType + ': ' + ( objType === 'object-Keys' ? Object.keys( thing ) : '{ ' + objId + objName + objSize + ' }' ) + ' }';
   }
 };
 
