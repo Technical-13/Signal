@@ -13,21 +13,21 @@ module.exports = {
   description: 'Dice Roller (default: 1#1d6±0)',
   description_localizations: l10n.description,
   options: [
-    { type: 4, name: 'dice', name_localizations: l10n.dice.name,
+    { type: 4, name: 'dice', name_localizations: l10n.options.dice.name,
       description: 'How many dice? (default: 1)',
-      description_localizations: l10n.dice.description
+      description_localizations: l10n.options.dice.description
     },
-    { type: 4, name: 'sides', name_localizations: l10n.sides.name,
+    { type: 4, name: 'sides', name_localizations: l10n.options.sides.name,
       description: 'How many sides per die? (default: 6)',
-      description_localizations: l10n.sides.description
+      description_localizations: l10n.options.sides.description
     },
-    { type: 4, name: 'sets', name_localizations: l10n.sets.name,
+    { type: 4, name: 'sets', name_localizations: l10n.options.sets.name,
       description: 'How many sets of dice? (default: 1)',
-      description_localizations: l10n.sets.description
+      description_localizations: l10n.options.sets.description
     },
-    { type: 4, name: 'modifier', name_localizations: l10n.modifier.name,
+    { type: 4, name: 'modifier', name_localizations: l10n.options.modifier.name,
       description: '± to final roll for each die? (default: 0)',
-      description_localizations: l10n.modifier.description
+      description_localizations: l10n.options.modifier.description
     }
   ],
   type: ApplicationCommandType.ChatInput,

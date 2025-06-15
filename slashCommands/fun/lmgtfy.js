@@ -17,17 +17,17 @@ module.exports = {
   description_localizations: l10n.description,
   options: [
     { type: 3, required: true,
-      name: 'query', name_localizations: l10n.query.name,
+      name: 'query', name_localizations: l10n.options.query.name,
       description: 'What do you want me to look up?',
-      description_localizations: l10n.query.description
+      description_localizations: l10n.options.query.description
     },
-    { type: 5, name: 'nice', name_localizations: l10n.nice.name,
+    { type: 5, name: 'nice', name_localizations: l10n.options.nice.name,
       description: 'Should I be nice?',
-      description_localizations: l10n.nice.description
+      description_localizations: l10n.options.nice.description
     },
-    { type: 6, name: 'taggee', name_localizations: l10n.taggee.name,
+    { type: 6, name: 'taggee', name_localizations: l10n.options.taggee.name,
       description: 'Who should I mention with my response? (Default: yourself)',
-      description_localizations: l10n.taggee.description
+      description_localizations: l10n.options.taggee.description
     },
     { type: 3, name: 'language', name_localizations: l10n.options.language.name,
       description: 'Language to give information in.',
