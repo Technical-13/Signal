@@ -47,7 +47,7 @@ module.exports = {
       const { channel, guild, guildLocale, locale, options, user: author } = interaction;
       const msgID = options.getString( 'message-id' );
       const respMsg = ( !msgID ? null : ( !( /[\d]{18,19}/.test( msgID ) ) ? null : await channel.messages.fetch( msgID ) ) );
-      const r6e = getI18n( modData, { interaction: interaction, respMsg: respMsg } ).responses;
+      const r6e = getI18n( modData, { interaction: interaction, respMsg: respMsg }, true ).responses;
       await interaction.deferReply( { ephemeral: true } );
       const localeInput = options?.getString( 'language' );
       const useLang = ( localeInput ?? ( locale ?? 'en-US' ) );
