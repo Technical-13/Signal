@@ -43,23 +43,23 @@ module.exports = {
   contexts: [ InteractionContextType.Guild ],
   cooldown: 1000,
   run: async ( client, interaction ) => {
-    const r6e = getI18n( modData, { interaction: interaction } ).responses;
     try {
-      await interaction.deferReply( { ephemeral: true } );
       const { channel, guild, guildLocale, locale, options, user: author } = interaction;
+      const msgID = options.getString( 'message-id' );
+      const respMsg = ( !msgID ? null : ( !( /[\d]{18,19}/.test( msgID ) ) ? null : await channel.messages.fetch( myString ) ) );
+      const r6e = getI18n( modData, { interaction: interaction, respMsg: respMsg } ).responses;
+      await interaction.deferReply( { ephemeral: true } );
       const localeInput = options?.getString( 'language' );
       const useLang = ( localeInput ?? ( locale ?? 'en-US' ) );
       const guildLang = ( guildLocale ?? useLang );
       const { content } = await userPerms( author, guild );
       if ( content ) { return interaction.editReply( { content: content } ); }
-      const msgID = options.getString( 'message-id' );
       const cmdTaggee = options.getUser( 'taggee' );
       const { doLogs, chanDefault, chanError, strClosing } = await getGuildConfig( guild );
 
       if ( msgID && !( /[\d]{18,19}/.test( msgID ) ) ) { return interaction.editReply( { content: '`' + msgID + '` ' + r6e.invalidMsgId[ useLang ] } ); }
-      else if ( msgID ) {
-        channel.messages.fetch( msgID )
-        .then( message => {
+      else if ( respMsg ) {
+        respMsg.then( message => {
           const { author: msgAuthor, content } = message;
           message.reply( { content: r6e.ftfAuthorInfo[ useLang ] + r6e.ftfInfo[ useLang ] } )
           .then( replied => {
