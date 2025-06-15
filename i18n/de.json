@@ -162,8 +162,7 @@
         "name": "statbar",
         "description": "Project-GC StatBar für Benutzer anzeigen.",
         "options": {
-          "name": "labcaches",
-          "description": "Should I include labcaches? (default: true)"
+          "labcaches": { "name": "labcaches", "description": "Should I include labcaches? (default: true)" }
         },
         "responses": {
           "sharedFor": "I shared the `/statbar` for ",
