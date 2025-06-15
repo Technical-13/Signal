@@ -260,7 +260,7 @@
         "description": "Give someone information about the logo kits for Geocaching.",
         "responses": {
           "errTell": "Error telling {{author.ping}} about the [Logo Kits](<https://www.geocaching.com/about/logousage.aspx>) via `/logo` request.",
-          "logoInfo": "you seem to be looking for the Official Geocaching.com [Logo Kits](<https://www.geocaching.com/about/logousage.aspx>).\nThe kits have `*.png` & `*.eps` file versions.  If you're looking for an `*.svg` version, <@&385501075001573389> recommends using [EPS to SVG Converter](<https://cloudconvert.com/eps-to-svg>) by cloud**convert**",
+          "logoInfo": "you seem to be looking for the Official Geocaching.com [Logo Kits](<https://www.geocaching.com/about/logousage.aspx>).\nThe kits have `*.png` & `*.eps` file versions.  If you're looking for an `*.svg` version, the Staff on the [Geocaching Discord](<https://discord.gg/invite/WQt4f7p>) recommends using [EPS to SVG Converter](<https://cloudconvert.com/eps-to-svg>) by cloud**convert**",
           "logAboutAtRequest": " about the [Logo Kits](<https://www.geocaching.com/about/logousage.aspx>) at {{author.ping}}'s `/logo` request.",
           "logAtRequestInResponse": " at {{author.ping}}'s `/logo` request in response to:",
           "logAbout": "{{author.ping}} about the [Logo Kits](<https://www.geocaching.com/about/logousage.aspx>) "
