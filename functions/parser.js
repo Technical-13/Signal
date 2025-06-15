@@ -7,23 +7,24 @@ const duration = require( './duration.js' );
 const modData = { name: 'parser', type: 'functions' };
 const strScript = chalk.hex( '#FFA500' ).bold( './' + modData.type + '/' + modData.name + '.js' );
 
-module.exports = ( rawString, obj = { author: null, guild: null, interaction: null, member: null, uptime: null, useLang: null, user: null } ) => {
+module.exports = ( rawString, obj = { author: null, channel: null, guild: null, interaction: null, member: null, uptime: null, useLang: null, user: null } ) => {
   try {
-    const interaction = ( obj.interaction ?? null );
-    const { channel, guild: iGuild, locale, options, user: iUser } = ( interaction ?? { channel: null, guild: null, locale: null, options: null, user: null } );
-    const author = ( obj.author ? obj.author : ( iUser ?? null ) );
+    const interaction = ( obj.interaction ?? { channel: null, guild: null, guildLocale: null, locale: null, member: null, options: null, user: null } );
+    const { channel: iChannel, guild: iGuild, guildLocale, locale, member: iMember, options, user: iUser } = interaction;
+    const author = ( obj.author ?? iMember ?? null );
+    const channel = ( obj.channel ?? iChannel ?? null );
     const member = ( obj.member ?? null );
-    const guild = ( obj.guild ? obj.guild : ( iGuild ?? ( member ? member.guild : null ) ) );
-    const useLang = ( obj.useLang ?? options?.getString( 'language' ) ?? locale ?? guild?.preferedLocale ?? 'en-US' );
-    const uptime = ( obj.uptime ? obj.uptime : null );
-    // /* Something just came up that is time sensative, adding these to the parser is going to have to wait. */
-    // const targetChannel = ( options?.getChannel( 'channel' ) ?? null );
-    // const targetGuild = ( options?.getString( 'guild' ) ?? null );
+    const user = ( obj.user ?? null );
+    const guild = ( obj.guild ?? iGuild ?? member?.guild ?? null );
+    const uptime = ( obj.uptime ?? null );
+    const guildLang = ( guild?.preferedLocale ?? guildLocale ?? 'en-US' );
+    const guildLangName = new Intl.DisplayNames( [ guildLang ], { type: 'language' } );
+    const useLang = ( obj.useLang ?? options?.getString( 'language' ) ?? locale ?? guildLang );
+    const useLangName = new Intl.DisplayNames( [ useLang ], { type: 'language' } );
     const geocacher = ( options?.getUser( 'discord-user' ) ?? null );
     const taggee =  ( options?.getUser( 'taggee' ) ?? null );
-    const user = ( obj.user ?? null );
-    const ageUnits = { getDecades: true, getYears: true, getMonths: true, getWeeks: true, getDays: true, getHours: false, getMinutes: false };
     const { user: bot, guilds, ownerId, users, ws } = ( client ?? { bot: null, guilds: null, ownerId: config.botOwnerId, users: null, ws: null } );
+    const ageUnits = { getDecades: true, getYears: true, getMonths: true, getWeeks: true, getDays: true, getHours: false, getMinutes: false };
 
     const transclusions = {
       '{{bot.owner.ping}}': '<@' + ownerId + '>',
@@ -31,6 +32,26 @@ module.exports = ( rawString, obj = { author: null, guild: null, interaction: nu
       '{{bot.version.node}}': process.version
     };
     const notAvailable = {};
+    if ( author ) {
+      transclusions[ '{{author.age}}' ] = duration( Date.now() - author.createdTimestamp, ageUnits );
+      transclusions[ '{{author.guild.age}}' ] = duration( Date.now() - author.joinedTimestamp, ageUnits );
+      transclusions[ '{{author.member.since}}' ] = guild.members.cache.get( author.id ).joinedAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) );
+      transclusions[ '{{author.name}}' ] = author.displayName;
+      transclusions[ '{{author.ping}}' ] = '<@' + author.id + '>';
+      transclusions[ '{{author.server.age}}' ] = duration( Date.now() - author.joinedTimestamp, ageUnits );
+      transclusions[ '{{author.since}}' ] = author.createdAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) );
+      transclusions[ '{{author.user.since}}' ] = author.createdAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) );
+    }
+    else {
+      notAvailable[ '{{author.age}}' ] = 'author';
+      notAvailable[ '{{author.guild.age}}' ] = 'author';
+      notAvailable[ '{{author.member.since}}' ] = 'author';
+      notAvailable[ '{{author.name}}' ] = 'author';
+      notAvailable[ '{{author.ping}}' ] = 'author';
+      notAvailable[ '{{author.server.age}}' ] = 'author';
+      notAvailable[ '{{author.since}}' ] = 'author';
+      notAvailable[ '{{author.user.since}}' ] = 'author';
+    }
     if ( bot ) {
       transclusions[ '{{bot.age}}' ] = duration( Date.now() - bot.createdTimestamp, ageUnits );
       transclusions[ '{{bot.guilds}}' ] = guilds.cache.size.toLocaleString( useLang );
@@ -57,41 +78,21 @@ module.exports = ( rawString, obj = { author: null, guild: null, interaction: nu
       notAvailable[ '{{bot.users}}' ] = 'bot';
       notAvailable[ '{{bot.uptime}}' ] = 'bot';
     }
-    if ( author ) {
-      transclusions[ '{{author.age}}' ] = duration( Date.now() - author.createdTimestamp, ageUnits );
-      transclusions[ '{{author.guild.age}}' ] = duration( Date.now() - author.joinedTimestamp, ageUnits );
-      transclusions[ '{{author.name}}' ] = author.displayName;
-      transclusions[ '{{author.ping}}' ] = '<@' + author.id + '>';
-      transclusions[ '{{author.server.age}}' ] = duration( Date.now() - author.joinedTimestamp, ageUnits );
-      transclusions[ '{{author.since}}' ] = author.createdAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) );
-      transclusions[ '{{author.user.since}}' ] = author.createdAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) );
-    }
-    else {
-      notAvailable[ '{{author.age}}' ] = 'author';
-      notAvailable[ '{{author.guild.age}}' ] = 'author';
-      notAvailable[ '{{author.name}}' ] = 'author';
-      notAvailable[ '{{author.ping}}' ] = 'author';
-      notAvailable[ '{{author.server.age}}' ] = 'author';
-      notAvailable[ '{{author.since}}' ] = 'author';
-      notAvailable[ '{{author.user.since}}' ] = 'author';
-    }
-    if ( author && guild ) {
-      transclusions[ '{{author.member.since}}' ] = guild.members.cache.get( author.id ).joinedAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) );
-    }
-    else {
-      notAvailable[ '{{author.member.since}}' ] = 'author';
-    }
     if ( channel ) {
       transclusions[ '{{channel.age}}' ] = duration( Date.now() - channel.createdTimestamp, ageUnits );
+      transclusions[ '{{channel.link}}' ] = '<https://discord.com/channels/' + guild.id + '/' + channel.id + '>';
       transclusions[ '{{channel.members}}' ] = channel.members.cache.size.toLocaleString( useLang );
       transclusions[ '{{channel.name}}' ] = channel.name;
+      transclusions[ '{{channel.ping}}' ] = '<#' + channel.id + '>';
       transclusions[ '{{channel.since}}' ] = channel.createdAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) );
       transclusions[ '{{channel.topic}}' ] = channel.topic;
     }
     else {
       notAvailable[ '{{channel.age}}' ] = 'channel';
+      notAvailable[ '{{channel.link}}' ] = 'channel';
       notAvailable[ '{{channel.members}}' ] = 'channel';
       notAvailable[ '{{channel.name}}' ] = 'channel';
+      notAvailable[ '{{channel.ping}}' ] = 'channel';
       notAvailable[ '{{channel.since}}' ] = 'channel';
       notAvailable[ '{{channel.topic}}' ] = 'channel';
     }
@@ -115,12 +116,18 @@ module.exports = ( rawString, obj = { author: null, guild: null, interaction: nu
       transclusions[ '{{bot.server.age}}' ] = duration( Date.now() - guild.members.cache.get( bot.id ).joinedTimestamp, ageUnits );
       transclusions[ '{{bot.server.since}}' ] = guild.members.cache.get( bot.id ).joinedAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) );
       transclusions[ '{{guild.age}}' ] = duration( Date.now() - guild.createdTimestamp, ageUnits );
+      transclusions[ '{{guild.language.code}}' ] = guildLang;
+      transclusions[ '{{guild.language.name}}' ] = guildLangName;
+      transclusions[ '{{guild.link}}' ] = '<https://discord.com/channels/' + guild.id + '>';
       transclusions[ '{{guild.owner.name}}' ] = guild.members.cache.get( guild.ownerId ).displayName;
       transclusions[ '{{guild.owner.ping}}' ] = '<@' + guild.ownerId + '>';
       transclusions[ '{{guild.members}}' ] = guild.members.cache.size.toLocaleString( useLang );
       transclusions[ '{{guild.name}}' ] = guild.name;
       transclusions[ '{{guild.since}}' ] = guild.createdAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) );
       transclusions[ '{{server.age}}' ] = duration( Date.now() - guild.createdTimestamp, ageUnits );
+      transclusions[ '{{server.language.code}}' ] = guildLang;
+      transclusions[ '{{server.language.name}}' ] = guildLangName;
+      transclusions[ '{{server.link}}' ] = '<https://discord.com/channels/' + guild.id + '>';
       transclusions[ '{{server.owner.name}}' ] = guild.members.cache.get( guild.ownerId ).displayName;
       transclusions[ '{{server.owner.ping}}' ] = '<@' + guild.ownerId + '>';
       transclusions[ '{{server.members}}' ] = guild.members.cache.size.toLocaleString( useLang );
@@ -135,12 +142,18 @@ module.exports = ( rawString, obj = { author: null, guild: null, interaction: nu
       notAvailable[ '{{bot.server.age}}' ] = 'guild';
       notAvailable[ '{{bot.server.since}}' ] = 'guild';
       notAvailable[ '{{guild.age}}' ] = 'guild';
+      notAvailable[ '{{guild.language.code}}' ] = 'guild';
+      notAvailable[ '{{guild.language.name}}' ] = 'guild';
+      notAvailable[ '{{guild.link}}' ] = 'guild';
       notAvailable[ '{{guild.owner.name}}' ] = 'guild';
       notAvailable[ '{{guild.owner.ping}}' ] = 'guild';
       notAvailable[ '{{guild.members}}' ] = 'guild';
       notAvailable[ '{{guild.name}}' ] = 'guild';
       notAvailable[ '{{guild.since}}' ] = 'guild';
       notAvailable[ '{{server.age}}' ] = 'guild';
+      notAvailable[ '{{server.language.code}}' ] = 'guild';
+      notAvailable[ '{{server.language.name}}' ] = 'guild';
+      notAvailable[ '{{server.link}}' ] = 'guild';
       notAvailable[ '{{server.owner.name}}' ] = 'guild';
       notAvailable[ '{{server.owner.ping}}' ] = 'guild';
       notAvailable[ '{{server.members}}' ] = 'guild';
@@ -169,12 +182,16 @@ module.exports = ( rawString, obj = { author: null, guild: null, interaction: nu
       transclusions[ '{{taggee.age}}' ] = duration( Date.now() - taggee.createdTimestamp, ageUnits );
       transclusions[ '{{taggee.name}}' ] = taggee.displayName;
       transclusions[ '{{taggee.ping}}' ] = '<@' + taggee.id + '>';
+      transclusions[ '{{taggee.language.code}}' ] = useLang;
+      transclusions[ '{{taggee.language.name}}' ] = useLangName;
       transclusions[ '{{taggee.since}}' ] = taggee.createdAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) );
     }
     else {
       notAvailable[ '{{taggee.age}}' ] = 'taggee';
       notAvailable[ '{{taggee.name}}' ] = 'taggee';
       notAvailable[ '{{taggee.ping}}' ] = 'taggee';
+      notAvailable[ '{{taggee.language.code}}' ] = 'taggee';
+      notAvailable[ '{{taggee.language.name}}' ] = 'taggee';
       notAvailable[ '{{taggee.since}}' ] = 'taggee';
     }
     if ( user ) {
