@@ -8,7 +8,7 @@ const modData = { name: 'parser', type: 'functions' };
 const strScript = chalk.hex( '#FFA500' ).bold( './' + modData.type + '/' + modData.name + '.js' );
 const dispNames = ( dLang ) => { return new Intl.DisplayNames( [ dLang ], { type: 'language' } ); };
 
-module.exports = ( rawString, obj = { author: null, channel: null, command = null, guild: null, interaction: null, member: null, uptime: null, useLang: null, user: null } ) => {
+module.exports = async ( rawString, obj = { author: null, channel: null, command = null, guild: null, interaction: null, member: null, uptime: null, useLang: null, user: null } ) => {
   try {
     const interaction = ( obj.interaction ?? { channel: null, command: null, guild: null, guildLocale: null, locale: null, member: null, options: null, user: null } );
     const { channel: iChannel, command: iCommand, commandId, commandName, guild: iGuild, guildLocale, locale, member: iMember, options, user: iUser } = interaction;
@@ -26,7 +26,9 @@ module.exports = ( rawString, obj = { author: null, channel: null, command = nul
     const useLang = ( obj.useLang ?? options?.getString( 'language' ) ?? locale ?? guildLang );
     const useLangName = dispNames( useLang ).of( useLang );
     const geocacher = ( options?.getUser( 'discord-user' ) ?? null );
-    const taggee =  ( options?.getUser( 'taggee' ) ?? null );
+    const msgID = ( options?.getString( 'message-id' ) ?? null );
+    const respMsg = ( msgID && ( /[\d]{18,19}/.test( msgID ) ) ? await channel.messages.fetch( msgID ) : null );
+    const taggee =  ( options?.getUser( 'taggee' ) ?? respMsg?.author.user ?? null );
     const { user: bot, guilds, ownerId, users, ws } = ( client ?? { bot: null, guilds: null, ownerId: config.botOwnerId, users: null, ws: null } );
     const ageUnits = { getDecades: true, getYears: true, getMonths: true, getWeeks: true, getDays: true, getHours: false, getMinutes: false };
 
@@ -37,7 +39,7 @@ module.exports = ( rawString, obj = { author: null, channel: null, command = nul
     };
     const notAvailable = {};
     if ( author ) {
-      transclusions[ '{{author.age}}' ] = duration( Date.now() - author.createdTimestamp, ageUnits );
+      transclusions[ '{{author.age}}' ] = duration( Date.now() - author.user.createdTimestamp, ageUnits );
       transclusions[ '{{author.guild.age}}' ] = duration( Date.now() - author.joinedTimestamp, ageUnits );
       transclusions[ '{{author.language.code}}' ] = authorLang;
       transclusions[ '{{author.language.name}}' ] = authorLangName;
@@ -45,8 +47,8 @@ module.exports = ( rawString, obj = { author: null, channel: null, command = nul
       transclusions[ '{{author.name}}' ] = author.displayName;
       transclusions[ '{{author.ping}}' ] = '<@' + author.id + '>';
       transclusions[ '{{author.server.age}}' ] = duration( Date.now() - author.joinedTimestamp, ageUnits );
-      transclusions[ '{{author.since}}' ] = author.createdAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) );
-      transclusions[ '{{author.user.since}}' ] = author.createdAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) );
+      transclusions[ '{{author.user.age}}' ] = duration( Date.now() - author.user.createdTimestamp, ageUnits );
+      transclusions[ '{{author.user.since}}' ] = author.user.createdAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) );
     }
     else {
       notAvailable[ '{{author.age}}' ] = 'author';
@@ -57,7 +59,7 @@ module.exports = ( rawString, obj = { author: null, channel: null, command = nul
       notAvailable[ '{{author.name}}' ] = 'author';
       notAvailable[ '{{author.ping}}' ] = 'author';
       notAvailable[ '{{author.server.age}}' ] = 'author';
-      notAvailable[ '{{author.since}}' ] = 'author';
+      notAvailable[ '{{author.user.age}}' ] = 'author';
       notAvailable[ '{{author.user.since}}' ] = 'author';
     }
     if ( bot ) {
