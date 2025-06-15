@@ -55,9 +55,10 @@ module.exports = ( command, params = objDefaults, debug = false ) => {
     const author = ( params.author ?? ( user ?? null ) );
     const member = ( params.member ?? null );
     const guild = ( params.guild ?? ( iGuild ?? ( author ? author.guild : ( member ? member.guild : null ) ) ) );
+    const respMsg = ( params.respMsg ?? null );
     const useLang = ( params.useLang ?? options?.getString( 'language' ) ?? iLocale ?? guild?.preferedLocale ?? 'en-US' );
     const langCodes = Object.values( Locale );
-    const resParams = { author: author, channel: channel, guild: guild, member: member };
+    const resParams = { author: author, channel: channel, guild: guild, interaction: interaction, member: member, respMsg: respMsg, useLang: useLang };
     if ( params.getLocales ) {
       const langNames = Object.keys( Locale );
       locales = {};
