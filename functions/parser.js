@@ -28,7 +28,7 @@ module.exports = ( rawString, obj = { author: null, channel: null, command: null
     const useLangName = dispNames( useLang ).of( useLang );
     const geocacher = ( options?.getUser( 'discord-user' ) ?? null );
     const msgID = ( options?.getString( 'message-id' ) ?? null );
-    const taggee =  ( options?.getUser( 'taggee' ) ?? respMsg?.author.user ?? null );
+    const taggee =  ( options?.getUser( 'taggee' ) ?? respMsg?.author ?? null );
     const { user: bot, guilds, ownerId, users, ws } = ( client ?? { bot: null, guilds: null, ownerId: config.botOwnerId, users: null, ws: null } );
     const ageUnits = { getDecades: true, getYears: true, getMonths: true, getWeeks: true, getDays: true, getHours: false, getMinutes: false };
 
