@@ -93,7 +93,7 @@ module.exports = ( rawString, obj = { author: null, channel: null, command: null
     if ( channel ) {
       transclusions[ '{{channel.age}}' ] = duration( Date.now() - channel.createdTimestamp, ageUnits );
       transclusions[ '{{channel.link}}' ] = '<https://discord.com/channels/' + guild.id + '/' + channel.id + '>';
-      transclusions[ '{{channel.members}}' ] = channel.members.cache.size.toLocaleString( useLang );
+      transclusions[ '{{channel.members}}' ] = channel.members.size.toLocaleString( useLang );
       transclusions[ '{{channel.name}}' ] = channel.name;
       transclusions[ '{{channel.ping}}' ] = '<#' + channel.id + '>';
       transclusions[ '{{channel.since}}' ] = channel.createdAt.toLocaleTimeString( useLang, ( useLang === 'en-US' ? objTimeString : null ) );
