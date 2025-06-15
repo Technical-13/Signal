@@ -21,7 +21,6 @@
       "logLangChanAtRequest": " (*{{command.language.name}}*) in {{channel.ping}} at {{author.ping}}'s `/{{command.name}}` request",
       "logToldAuthorAbout": "I told {{author.ping}} about ",
       "logToldTaggeeAbout": "I told {{taggee.ping}} about ",
-      "official": "Official Geocaching.com",
       "requestedBy": " as requested by {{author.ping}}",
       "soon": "Comming **SOON**:tm:"
     }
