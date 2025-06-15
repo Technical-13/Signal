@@ -14,11 +14,10 @@ const getDebugString = ( thing ) => {
   else if ( Object.prototype.toString.call( thing ) === '[object Date]' ) { return '{ object-Date: { ISOstring: ' + thing.toISOString() + ', value: ' + thing.valueOf() + ' } }'; }
   else if ( typeof( thing ) != 'object' ) { return thing; }
   else {
-    let objType = 'object-' + ( thing.constructor.name ?? 'Keys' );
-    let objId = ( thing ? 'id: ' + thing.id + ', ' : '' );
-    let objName = ( thing ? 'name: ' + ( thing.displayName || thing.globalName || thing.name ) + ', ' : '' );
-    let objSize = ( thing ? 'size: ' + thing.size + ', ' : '' );
-    return '{ ' + objType + ': ' + ( objType === 'object-Keys' ? Object.keys( thing ) : '{ ' + objId + objName + objSize + ' }' ) + ' }';
+    let objType = 'object-' + thing.constructor.name;
+    let objId = ( thing?.id ?? 'undefined' );
+    let objName = ( thing?.displayName ?? thing?.globalName ?? thing?.name ?? 'undefined' );
+    return '{ ' + objType + ': ' + ( objType === 'object-Object' ? Object.keys( thing ) : '{ id: ' + objId + ', name: ' + objName + objSize + ' }' ) + ' }';
   }
 };
 
@@ -62,11 +61,13 @@ module.exports = ( rawString, obj = objDefaults, debug = false ) => {
       const prcAuthor = getDebugString( author );
       const prcChannel = getDebugString( channel );
       const prcCommand = getDebugString( command );
+      const prcGeocacher = getDebugString( geocacher );
       const prcGuild = getDebugString( guild );
       const prcMember = getDebugString( member );
+      const prcTaggee = getDebugString( taggee );
       const prcUser = getDebugString( user );
-      const processed = { author: prcAuthor, channel: prcChannel, command: prcCommand, geocacher: geocacher, guild: prcGuild, member: prcMember, authorLang: authorLang, useLang: useLang, guildLang: guildLang, taggee: taggee, user: prcUser };
-      console.warn( modData.type + '/' + modData.name + '.js processed options:%o', processed );
+      const processed = { author: prcAuthor, channel: prcChannel, command: prcCommand, geocacher: prcGeocacher, guild: prcGuild, member: prcMember, authorLang: authorLang, useLang: useLang, guildLang: guildLang, taggee: prcTaggee, user: prcUser };
+      console.warn( modData.type + '/' + modData.name + '.js processed options: %o', processed );
     }
 
     const transclusions = {
