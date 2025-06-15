@@ -65,7 +65,7 @@ module.exports = {
       const beNice = ( options.getBoolean( 'nice' ) || ( cmdInputUser === author ? niceDefault : !niceDefault ) );
       const service = ( beNice ? 'www.google.com/search' : 'letmegooglethat.com/' );
       const strInputQuery = options.getString( 'query' );
-      const q = encodeURI( strInputQuery.replace( / /g, '+' ) );
+      const q = encodeURIComponent( strInputQuery.replace( / /g, '+' ) );
 
       channel.send( { content: mentionUser + ': <https://' + service + '?q=' + q + '>' } )
       .then( sentMsg => {
