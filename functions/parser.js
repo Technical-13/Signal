@@ -33,7 +33,7 @@ module.exports = ( rawString, obj = objDefaults, debug = false ) => {
       const preUptime = getDebugString( obj.uptime );
       const preUseLang = getDebugString( obj.useLang );
       const preUser = getDebugString( obj.user );
-      const preProcessed = { rawString: rawString, obj = { author: preAuthor, channel: preChannel, command: preCommand, guild: preGuild, interaction: preInteraction, member: preMember, respMsg: preRespMsg, uptime: preUptime, useLang: preUseLang, user: preUser } };
+      const preProcessed = { rawString: rawString, obj: { author: preAuthor, channel: preChannel, command: preCommand, guild: preGuild, interaction: preInteraction, member: preMember, respMsg: preRespMsg, uptime: preUptime, useLang: preUseLang, user: preUser } };
       console.warn( modData.type + '/' + modData.name + '.js recieved: %o', preProcessed );
     }
     const interaction = ( obj.interaction ?? { channel: null, command: null, commandId: null, commandName: null, guild: null, guildLocale: null, locale: null, options: null, user: null } );
