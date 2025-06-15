@@ -16,7 +16,7 @@ const getDebugString = ( thing ) => {
     let objType = 'object-' + ( thing.constructor.name ?? 'Keys' );
     let objId = ( thing ? 'id: ' + thing.id + ', ' : '' );
     let objName = ( thing ? 'name: ' + ( thing.displayName || thing.globalName || thing.name ) + ', ' : '' );
-    let objSize = ( thing ? 'size: ' + thing.size ', ' : '' );
+    let objSize = ( thing ? 'size: ' + thing.size + ', ' : '' );
     return '{ ' + objType + ': ' + ( objType === 'object-Keys' ? Object.keys( thing ) : '{ ' + objId + objName + objSize + ' }' ) + ' }';
   }
 };
@@ -293,7 +293,7 @@ module.exports = ( rawString, obj = objDefaults, debug = false ) => {
         }
       } );
     }
-
+     if ( debug ) { console.warn( 'parsed: %o', parsed ); }
     return parsed;
   }
   catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
