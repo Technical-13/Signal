@@ -30,7 +30,7 @@ module.exports = {
       description_localizations: l10n.options[ 'use-type' ].description,
       choices: [
         { value: 'alphabetic', name: 'Letters A-Z', name_localizations: l10n.options[ 'use-type' ].choices[ 0 ] },
-        { value: 'alphanumberic', name: 'Letters A-Z & Numbers 0-9', name_localizations: l10n.options[ 'use-type' ].choices[ 1 ] },
+        { value: 'alphanumeric', name: 'Letters A-Z & Numbers 0-9', name_localizations: l10n.options[ 'use-type' ].choices[ 1 ] },
         { value: 'numeric', name: 'Numbers 0-9', name_localizations: l10n.options[ 'use-type' ].choices[ 2 ] }
       ]
     },
@@ -45,9 +45,9 @@ module.exports = {
       description_localizations: l10n.options.alphabetic.description
     },
     { type: 10, minValue: 1, maxValue: 36,
-      name: 'alphanumberic', name_localizations: l10n.options.alphanumberic.name,
+      name: 'alphanumeric', name_localizations: l10n.options.alphanumeric.name,
       description: 'Characters in the Latin alphabet. (default 18)',
-      description_localizations: l10n.options.alphanumberic.description
+      description_localizations: l10n.options.alphanumeric.description
     }
   ],
   type: ApplicationCommandType.ChatInput,
