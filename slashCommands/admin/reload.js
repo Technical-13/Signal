@@ -59,6 +59,7 @@ module.exports = {
         const newCommand = require( '../' + command.group + '/' + command.name + '.js' );
         client.slashCommands.set( newCommand.name, newCommand );
       }
+      console.log( r6e.command[ 'en-US' ] + ' `' + ( cmdType == 'slash' ? '/' : '§' ) + commandName + '` ' + r6e.wasReloaded[ 'en-US' ] );
       interaction.editReply( r6e.command[ useLang ] + ' `' + ( cmdType == 'slash' ? '/' : '§' ) + commandName + '` ' + r6e.wasReloaded[ useLang ] );
 		}
     catch ( errObject ) {
