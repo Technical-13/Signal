@@ -73,7 +73,7 @@ module.exports = {
         .catch( errSend => { interaction.editReply( errHandler( errSend, { command: modData.name, doLog: doLogs, guild: guild, msgID: msgID, type: 'errSend' } ) ); } );
       }
       else if ( cmdTaggee ) {
-        interaction.editReply( { content: r6e.ftfTaggeeInfo[ useLang ] + r6e.ftfInfo[ useLang ] } ).then( replied => {
+        channel.send( { content: r6e.ftfTaggeeInfo[ useLang ] + r6e.ftfInfo[ useLang ] } ).then( replied => {
           if ( doLogs && cmdTaggee.id != author.id ) {
             chanDefault.send( { content: r6e.logToldTaggeeAbout[ guildLang ] + 'FTFs' + r6e.logLangChanAtRequest[ guildLang ] + '.' + strClosing } )
             .catch( errLog => { interaction.editReply( errHandler( errLog, { chanType: 'default', command: modData.name, channel: channel, type: 'logLogs' } ) ); } );
