@@ -47,7 +47,7 @@ module.exports = {
       const { channel, guild, guildLocale, locale, options, user: author } = interaction;
       const msgID = options.getString( 'message-id' );
       const respMsg = ( !msgID ? null : ( !( /[\d]{18,19}/.test( msgID ) ) ? null : await channel.messages.fetch( msgID ) ) );
-      const r6e = getI18n( modData, { interaction: interaction, respMsg: respMsg }, true ).responses;
+      const r6e = getI18n( modData, { interaction: interaction, respMsg: respMsg } ).responses;
       await interaction.deferReply( { ephemeral: true } );
       const localeInput = options?.getString( 'language' );
       const useLang = ( localeInput ?? ( locale ?? 'en-US' ) );
@@ -60,7 +60,7 @@ module.exports = {
       if ( msgID && !( /[\d]{18,19}/.test( msgID ) ) ) { return interaction.editReply( { content: '`' + msgID + '` ' + r6e.invalidMsgId[ useLang ] } ); }
       else if ( respMsg ) {
         const { author: msgAuthor, content } = respMsg;
-        respMsg.reply( { content: 'T' + r6e.ftfInfo[ useLang ] + r6e.ftfInfo[ useLang ] } )
+        respMsg.reply( { content: 'T' + r6e.ftfInfo[ useLang ] } )
         .then( replied => {
           if ( doLogs && author.id != msgAuthor.id ) {
             chanDefault.send( { content:
