@@ -61,7 +61,7 @@ module.exports = ( command, params = objDefaults, debug = false ) => {
     }
     if ( !command ) { throw new Error( 'No command to get localizations for.' ); }
 
-    const cmd = ( client ? client[ command.type ].get( command.name );
+    const cmd = ( client ? client[ command.type ].get( command.name ) : command );
     const author = ( params.author ?? ( user ?? null ) );
     const member = ( params.member ?? null );
     const guild = ( params.guild ?? ( iGuild ?? ( author ? author.guild : ( member ? member.guild : null ) ) ) );
