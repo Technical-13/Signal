@@ -7,6 +7,7 @@ const l10n = getI18n( modData );
 const strScript = chalk.hex( '#FFA500' ).bold( './' + modData.type + '/' + modData.group + '/' + modData.name + '.js' );
 
 module.exports = {
+  category: modData.type,
   group: modData.group,
   name: modData.name,
   name_localizations: l10n.name,
@@ -34,16 +35,17 @@ module.exports = {
     const r6e = getI18n( modData, { interaction: interaction } ).responses;
     await interaction.deferReply( { ephemeral: true } );
     const { guild, locale, options, user: author } = interaction;
-      const useLang = ( locale ?? 'en-US' );
+    const useLang = ( locale ?? 'en-US' );
     const { botOwner, isBotOwner, isBotMod } = await userPerms( author, guild );
     const cmdType = ( !options.getString( 'type' ) ? 'slash' : options.getString( 'type' ).toLowerCase() );
+    const cmdStr = ( cmdType == 'slash' ? '/' : '§' ) + commandName;
     const commandName = options.getString( 'command', true ).toLowerCase();
 		try {
       if ( isBotMod && !isBotOwner ) { return interaction.editReply( r6e.ownerOnly[ useLang ] ); }
       else if ( !isBotOwner ) { return interaction.editReply( r6e.modOnly[ useLang ] ); }
       else if ( cmdType === 'prefix' ) {
         const command = client.commands.get( commandName );
-        if ( !command ) { return interaction.editReply( r6e.noCommand[ useLang ] + ' `' + commandName + '`!' ); }
+        if ( !command ) { return interaction.editReply( r6e.noCommand[ useLang ] ); }
 
         delete require.cache[ require.resolve( '../../commands/' + command.group + '/' + command.name + '.js' ) ];
 
@@ -52,18 +54,18 @@ module.exports = {
       }
       else {
         const command = client.slashCommands.get( commandName );
-        if ( !command ) { return interaction.editReply( r6e.noSlashCommand[ useLang ] + ' `' + commandName + '`!' ); }
+        if ( !command ) { return interaction.editReply( r6e.noSlashCommand[ useLang ] ); }
 
         delete require.cache[ require.resolve( '../' + command.group + '/' + command.name + '.js' ) ];
 
         const newCommand = require( '../' + command.group + '/' + command.name + '.js' );
         client.slashCommands.set( newCommand.name, newCommand );
       }
-      console.log( r6e.command[ 'en-US' ] + ' `' + ( cmdType == 'slash' ? '/' : '§' ) + commandName + '` ' + r6e.wasReloaded[ 'en-US' ] );
-      interaction.editReply( r6e.command[ useLang ] + ' `' + ( cmdType == 'slash' ? '/' : '§' ) + commandName + '` ' + r6e.wasReloaded[ useLang ] );
+      console.log( r6e.command[ 'en-US' ] + '`' + cmdStr + '`' + r6e.wasReloaded[ 'en-US' ] + r6e.reloadedFor[ 'en-US' ] + '.' );
+      interaction.editReply( r6e.command[ useLang ] + '`' + cmdStr + '`' + r6e.wasReloaded[ useLang ] + '!' );
 		}
     catch ( errObject ) {
-      interaction.editReply( r6e.errReload[ useLang ] + ' `' + ( cmdType == 'slash' ? '/' : '§' ) + commandName + '`:\n`' + errObject.message + '`' );
+      interaction.editReply( r6e.errReload[ useLang ] + ' `' + cmdStr + '`:\n`' + errObject.message + '`' );
       console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack );
 		}
 	},
