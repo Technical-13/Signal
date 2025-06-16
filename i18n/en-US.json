@@ -125,11 +125,12 @@
           "type": {  "name": "type", "description": "The type of the command to reload.", "choices": [ "/slash commands (default)", "§prefix commands" ] }
         },
         "responses": {
-          "command": "Command",
-          "errReload": "There was an error while reloading command",
-          "noCommand": "I have no command named ",
-          "noSlashCommand": "I have no slashCommand named",
-          "wasReloaded": "was reloaded!"
+          "command": "Command ",
+          "errReload": "There was an error while reloading command ",
+          "noCommand": "I have no command named `{{command.name}}`!",
+          "noSlashCommand": "I have no slashCommand named `{{command.name}}`!",
+          "reloadedFor": " for {{author.name}}",
+          "wasReloaded": "was reloaded"
         }
       },
       "system": {
