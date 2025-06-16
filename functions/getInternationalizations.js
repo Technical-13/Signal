@@ -50,15 +50,9 @@ const getResponses = ( responses, langCode = 'en-US', objRes = {}, params, debug
 
 module.exports = ( command, params = objDefaults, debug = false ) => {
   try {
-    const interaction = ( params.interaction ?? null );
-    const { channel, guild: iGuild, locale: iLocale, options, user } = ( interaction ?? { channel: null, guild: null, locale: null, options: null, user: null } );
-    const author = ( params.author ?? ( user ?? null ) );
-    const member = ( params.member ?? null );
-    const guild = ( params.guild ?? ( iGuild ?? ( author ? author.guild : ( member ? member.guild : null ) ) ) );
-    const respMsg = ( params.respMsg ?? null );
-    const useLang = ( params.useLang ?? options?.getString( 'language' ) ?? iLocale ?? guild?.preferedLocale ?? 'en-US' );
+    const interaction = ( params.interaction ?? { channel: null, guild: null, locale: null, options: null, user: null } );
+    const { channel, guild: iGuild, locale: iLocale, options, user } = interaction;
     const langCodes = Object.values( Locale );
-    const resParams = { author: author, channel: channel, guild: guild, interaction: interaction, member: member, respMsg: respMsg, useLang: useLang };
     if ( params.getLocales ) {
       const langNames = Object.keys( Locale );
       locales = {};
@@ -66,6 +60,14 @@ module.exports = ( command, params = objDefaults, debug = false ) => {
       if ( !command ) { return locales; }
     }
     if ( !command ) { throw new Error( 'No command to get localizations for.' ); }
+
+    const cmd = ( client ? client[ command.type ].get( command.name );
+    const author = ( params.author ?? ( user ?? null ) );
+    const member = ( params.member ?? null );
+    const guild = ( params.guild ?? ( iGuild ?? ( author ? author.guild : ( member ? member.guild : null ) ) ) );
+    const respMsg = ( params.respMsg ?? null );
+    const useLang = ( params.useLang ?? options?.getString( 'language' ) ?? iLocale ?? guild?.preferedLocale ?? 'en-US' );
+    const resParams = { author: author, channel: channel, command: cmd, guild: guild, interaction: interaction, member: member, respMsg: respMsg, useLang: useLang };
 
     const i18n = { langs: [], name: {}, description: {} };
     if ( params.getLocales ) { i18n.locales = locales }
