@@ -76,8 +76,10 @@ module.exports = {
         channel.send( { content: r6e.ftfTaggeeInfo[ useLang ] + r6e.ftfInfo[ useLang ] } ).then( replied => {
           if ( doLogs && cmdTaggee.id != author.id ) {
             chanDefault.send( { content: r6e.logToldTaggeeAbout[ guildLang ] + 'FTFs' + r6e.logLangChanAtRequest[ guildLang ] + '.' + strClosing } )
+            .then( sentLog => { interaction.deleteReply(); } )
             .catch( errLog => { interaction.editReply( errHandler( errLog, { chanType: 'default', command: modData.name, channel: channel, type: 'logLogs' } ) ); } );
           }
+          else { interaction.deleteReply(); }
         } );
       }
       else {
