@@ -37,7 +37,17 @@ module.exports = {
   contexts: [ InteractionContextType.Guild ],
   group: 'info',
   options: [
-    { type: 3, name: 'datetime', description: 'When do you want a timestamp for?' }
+    { type: 3, name: 'datetime', description: 'When do you want a timestamp for? (default `now`)' },
+    { type: 3, name: 'format', description: 'Full output or a single format (for easier copy/paste)', choices: [
+      { name: 'Full output with all options', value: 'a' },
+      { name: 'Relative value such as `in 3 days`', value: 'R' },
+      { name: 'Long date/time such as `Monday, July 21, 2025 7:55 AM`', value: 'F' },
+      { name: 'Short date/time such as `July 21, 2025 7:55 AM`', value: 'f' },
+      { name: 'Long date such as `July 21, 2025`', value: 'D' },
+      { name: 'Short date such as `7/21/2025`', value: 'd' },
+      { name: 'Long time such as `7:55:31 AM`', value: 'T' },
+      { name: 'Short time such as `7:55 AM`', value: 't' }
+    ] }
   ],
   cooldown: 1000,
   run: async ( client, interaction ) => {
@@ -47,19 +57,31 @@ module.exports = {
 
     try {
       const input = ( options.getString( 'datetime' ) ?? 'now' );
+      const format = ( options.getString( 'format' ) ?? 'a' );
       const timestamp = await validateInput( input );
       if ( timestamp === 'INVALID' ) { return interaction.editReply( { content: 'I am unable to parse a date or time from `' + input + '`.  Please try again.' } ); }
       if ( timestamp === 'ERROR' ) { return interaction.editReply( { content: 'I encountered an error attempting to parse a date or time from `' + input + '`.  Please try again later.' } ); }
-      return interaction.editReply( { content:
-        'Your timestamps for `' + input + '` are as follows:\n\n' +
-        '`<t:' + timestamp + ':t>` :arrow_right: <t:' + timestamp + ':t>\n' +
-        '`<t:' + timestamp + ':T>` :arrow_right: <t:' + timestamp + ':T>\n' +
-        '`<t:' + timestamp + ':d>` :arrow_right: <t:' + timestamp + ':d>\n' +
-        '`<t:' + timestamp + ':D>` :arrow_right: <t:' + timestamp + ':D>\n' +
-        '`<t:' + timestamp + ':f>` :arrow_right: <t:' + timestamp + ':f>\n' +
-        '`<t:' + timestamp + ':F>` :arrow_right: <t:' + timestamp + ':F>\n' +
-        '`<t:' + timestamp + ':R>` :arrow_right: <t:' + timestamp + ':R>'
-      } );
+      const t = '<t:' + timestamp + ':t>', T = '<t:' + timestamp + ':T>';
+      const d = '<t:' + timestamp + ':d>', D = '<t:' + timestamp + ':D>';
+      const f = '<t:' + timestamp + ':f>', F = '<t:' + timestamp + ':F>';
+      const R = '<t:' + timestamp + ':R>';
+      switch ( format ) {
+        case 'R': return interaction.editReply( { content: '`' + R + '`' } ); break;
+        case 't': return interaction.editReply( { content: '`' + t + '`' } ); break;
+        case 'd': return interaction.editReply( { content: '`' + d + '`' } ); break;
+        case 'f': return interaction.editReply( { content: '`' + f + '`' } ); break;
+        case 'T': return interaction.editReply( { content: '`' + T + '`' } ); break;
+        case 'D': return interaction.editReply( { content: '`' + D + '`' } ); break;
+        case 'F': return interaction.editReply( { content: '`' + F + '`' } ); break;
+        case 'a': default:
+          return interaction.editReply( { content:
+            'Your timestamps for `' + input + '` are as follows:\n\n' +
+            '`' + t + '` :arrow_right: ' + t + '\n' + '`' + T + '` :arrow_right: ' + T + '\n' +
+            '`' + d + '` :arrow_right: ' + d + '\n' + '`' + D + '` :arrow_right: ' + D + '\n' +
+            '`' + f + '` :arrow_right: ' + f + '\n' + '`' + F + '` :arrow_right: ' + F + '\n' +
+            '`' + R + '` :arrow_right: ' + R
+          } );
+      }
     }
     catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
   }
