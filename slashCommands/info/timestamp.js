@@ -37,7 +37,7 @@ module.exports = {
   contexts: [ InteractionContextType.Guild ],
   group: 'info',
   options: [
-    { type: 3, name: 'datetime', description: 'When do you want a timestamp for?', required: true }
+    { type: 3, name: 'datetime', description: 'When do you want a timestamp for?' }
   ],
   cooldown: 1000,
   run: async ( client, interaction ) => {
@@ -46,7 +46,7 @@ module.exports = {
     const { isGlobalBlacklisted, content } = await userPerms( member, guild );
 
     try {
-      const input = options.getString( 'datetime', true );
+      const input = ( options.getString( 'datetime' ) ?? 'now' );
       const timestamp = await validateInput( input );
       if ( timestamp === 'INVALID' ) { return interaction.editReply( { content: 'I am unable to parse a date or time from `' + input + '`.  Please try again.' } ); }
       if ( timestamp === 'ERROR' ) { return interaction.editReply( { content: 'I encountered an error attempting to parse a date or time from `' + input + '`.  Please try again later.' } ); }
