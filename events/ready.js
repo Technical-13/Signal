@@ -469,6 +469,10 @@ client.on( 'ready', async rdy => {
         console.log( 'All done catching up! Results:\n\t%s\n\t%s\n\t%s\n\t%s\n\t%s\n\t%s', strUserUpdate, strUserAdd, strUserRemove, strGuildUpdate, strGuildAdd, strGuildRemove );
       }
     } )
+    .then( () => {
+      const devBotChan = client.guilds.cache.get( config.devGuildId ).channels.cache.get( config.botChan );
+      devBotChan.send( content: client.name + ' has been restarted.' ).catch( ( sendErr ) => { console.error( 'Failed to post restart message in bot guild: %o', sendErr ); } );
+    } )
     .catch( ( rejected ) => { console.error( rejected.message ); } );
   }
   catch ( errObject ) { console.error( 'Uncaught error in %s:\n\t%s', strScript, errObject.stack ); }
