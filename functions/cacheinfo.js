@@ -85,7 +85,7 @@ module.exports = async ( gcCode ) => {
           size: $( '#ctl00_ContentBody_size > p > span > small' ).text().trim().replace( /[\(\)]/g, '' ),
           state: state,
           terrain: $( '#ctl00_ContentBody_Localize12 > img' ).attr( 'alt' ).split( ' ' )[ 0 ],
-          type: $( 'a.cacheImage' ).attr( 'title' ).trim()
+          type: $( 'svg.icon.cache-icon' ).parents( 'a' ).attr( 'title' ).trim()
         };
       }
       return result;
