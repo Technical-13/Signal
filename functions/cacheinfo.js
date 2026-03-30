@@ -23,6 +23,7 @@ module.exports = async ( gcCode ) => {
       }
       else if ( isTB ) {
         result = {
+          code: gcCode,
           collectable: !( / not /.test( $( '#ctl00_ContentBody_BugDetails_BugTBNum' ).parent()[ 0 ].previousElementSibling?.innerText ) ),
           distance: ( $( 'h4.BottomSpacing' ).text().match( /\((\d+\.?\d?mi)\)/ ) ? $( 'h4.BottomSpacing' ).text().match( /\((\d+\.?\d?mi)\)/ )[ 1 ] : null ),
           icon: $( '#ctl00_ContentBody_BugTypeImage' ).attr( 'src' ).match( /[\d]+\.gif/ )[ 0 ],
