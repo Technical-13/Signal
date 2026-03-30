@@ -472,7 +472,7 @@ client.on( 'ready', async rdy => {
     .then( () => {
       const devBotChan = client.guilds.cache.get( config.devGuildId ).channels.cache.get( config.botChan );
       devBotChan
-        .send( { content: `Successfully restarted ${client.user.tag} at ${botTime} bot owner local time.` } )
+        .send( { content: `${client.user.tag} successfully restarted at ${botTime}.` } )
         .catch( ( sendErr ) => { console.error( 'Failed to post restart message in bot guild: %o', sendErr ); } );
     } )
     .catch( ( rejected ) => { console.error( rejected.message ); } );

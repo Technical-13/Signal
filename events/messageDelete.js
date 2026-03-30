@@ -67,10 +67,14 @@ client.on( 'messageDelete', async message => {
         const strEmbeds = ( intEmbeds == 0 ? 'no embeds' : intEmbeds == 1 ? 'an embed'  : intEmbeds + ' embeds' ) + strEmbedList + ', and ';
         const content = ( message.content ? 'the following content:\n```\n' + message.content + '\n```' : 'no content.' );
         const msgContained = ( ( attachments.length == 0 && intEmbeds === 0 && !message.content ) ? 'and was completely empty.' : 'with ' + strAttachments + strEmbeds + content );
-        logChan.send( {
-          content: ( author ? '<@' + author.id + '>\'s' : 'A' ) + ' message' + strMentions + ' in <#' + channel.id + '> was deleted ' + msgContained + setupPlease,
-          files: ( attachments.length === 0 ? null : attachments )
-        } ).catch( noLogChan => { console.error( 'logChan.send error:\n%o', noLogChan ) } );
+        if ( msgContained === 'and was completely empty.' ) {
+          console.log( 'Empty message deleted:\n\tcontent: %o\n\tattachments: %o\n\tembeds: %o', message.content, message.attachments, message.embeds );
+        } else {
+          logChan.send( {
+            content: ( author ? '<@' + author.id + '>\'s' : 'A' ) + ' message' + strMentions + ' in <#' + channel.id + '> was deleted ' + msgContained + setupPlease,
+            files: ( attachments.length === 0 ? null : attachments )
+          } ).catch( noLogChan => { console.error( 'logChan.send error:\n%o', noLogChan ) } );
+        }
       }
     } ).catch( err => { console.error( 'Error running messageDelete.js from %s:\n\t%o', guild.name, err ); } );
   }
