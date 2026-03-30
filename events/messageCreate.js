@@ -8,6 +8,7 @@ const cacheinfo = require( '../functions/cacheinfo.js' );
 const userPerms = require( '../functions/getPerms.js' );
 const botVerbosity = client.verbosity;
 const strScript = chalk.hex( '#FFA500' ).bold( './events/messageCreate.js' );
+const objTimeString = {"hour":"2-digit","hourCycle":"h24","minute":"2-digit","second":"2-digit","timeZone":"America/New_York","timeZoneName":"short"};
 const getDebugString = ( thing ) => {
   if ( Array.isArray( thing ) ) { return '{ object-Array: { length: ' + thing.length + ' } }'; }
   else if ( Object.prototype.toString.call( thing ) === '[object Date]' ) { return '{ object-Date: { ISOstring: ' + thing.toISOString() + ', value: ' + thing.valueOf() + ' } }'; }
@@ -177,7 +178,7 @@ client.on( 'messageCreate', async ( message ) => {
       // Process PR User Profiles
       for ( let prCode of arrPrCodes ) {
         await codesResponse.edit( strCodes + '\n<:Signal:398980726000975914> ...attempting to gather information about [' + prCode + '](<https://coord.info/' + prCode + '>)...' );
-        let objUser = await cacheinfo( prCode );console.info('%s: %o',prCode,objUser);
+        let objUser = await cacheinfo( prCode );console.info('%o: %s: %o',( new Date() ).toLocaleTimeString( 'en-US', objTimeString ),prCode,objUser);
         if ( objUser.failed ) {
           strCodes += '\n<:RIP:1015415145180176535> **Failed to get info for __[' + prCode + '](<https://coord.info/' + prCode + '>)__: ' + objUser.error + '...**';
           await codesResponse.edit( strCodes );
@@ -195,7 +196,7 @@ client.on( 'messageCreate', async ( message ) => {
       // Process GC Cache Pages
       for ( let gcCode of arrGcCodes ) {
         await codesResponse.edit( strCodes + '\n<:Signal:398980726000975914> ...attempting to gather information about [' + gcCode + '](<https://coord.info/' + gcCode + '>)...' );
-        let objCache = await cacheinfo( gcCode );console.info('%s: %o',gcCode,objCache);
+        let objCache = await cacheinfo( gcCode );console.info('%o: %s: %o',( new Date() ).toLocaleTimeString( 'en-US', objTimeString ),gcCode,objCache);
         if ( objCache.failed ) {
           strCodes += '\n<:RIP:1015415145180176535> **Failed to get info for __[' + gcCode + '](<https://coord.info/' + gcCode + '>)__: ' + objCache.error + '...**';
           await codesResponse.edit( strCodes );
@@ -218,7 +219,7 @@ client.on( 'messageCreate', async ( message ) => {
       // Process TB Trackable Codes
       for ( let tbCode of arrTbCodes ) {
         await codesResponse.edit( strCodes + '\n<:Signal:398980726000975914> ...attempting to gather information about [' + tbCode + '](<https://coord.info/' + tbCode + '>)...' );
-        let objTrack = await cacheinfo( tbCode );console.info('%s: %o',tbCode,objTrack);
+        let objTrack = await cacheinfo( tbCode );console.info('%o: %s: %o',( new Date() ).toLocaleTimeString( 'en-US', objTimeString ),tbCode,objTrack);
         if ( objTrack.failed ) {
           strCodes += '\n<:RIP:1015415145180176535> **Failed to get info for __[' + tbCode + '](<https://coord.info/' + tbCode + '>)__: ' + objTrack.error + '...**';
           await codesResponse.edit( strCodes );
