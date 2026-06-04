@@ -46,13 +46,13 @@ module.exports = {
       if ( !strClosing ) { doLogs = false; console.error( 'Error in %s:\n\tVariable `strClosing` is %s', strScript, strClosing ); }
       if ( mySaying && !abortReply ) {
         const parsedSaying = await parse( mySaying, { member: guildMember } );
-        channel.messages.fetch( msgID ).then( async msg => {
-          let oldContent = msg?.content || 'empty';
+        channel.messages.fetch( msgID ).then( async oldMsg => {
+          let oldContent = oldMsg?.content || 'empty';
           if ( canSpeak && ( !mentionsEveryone || checkPermission( 'MentionEveryone' ) ) ) {
-            await msg.edit( { content: parsedSaying } ).then( async edited => {
-              if ( doLogs ) {
+            await oldMsg.edit( { content: parsedSaying } ).then( async edited => {
+              else if ( doLogs ) {
                 chanChat.send( { content:
-                  'I edited what I said in https://discord.com/channels/' + edited.guild.id + '/' + edited.channel.id + '/' + edited.id + ' at <@' + author.id + '>\'s request from:\n```\n' + oldContent + '\n```\nTo:\n```\n' + ( edited?.content || 'empty' ) + '\n```' + strClosing
+                  'I edited what I said in https://discord.com/channels/' + edited.guild.id + '/' + edited.channel.id + '/' + edited.id + ' at <@' + author.id + '>\'s request from:\n```\n' + oldContent + '\n```\nTo:\n```\n' + edited.content + '\n```' + strClosing
                 } )
                 .catch( async noLogChan => { delResponse = await msg.reply( await errHandler( noLogChan, { chanType: 'chat', command: 'edit', channel: channel, type: 'logLogs' } ) ); } );
               }
