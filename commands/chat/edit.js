@@ -30,6 +30,7 @@ module.exports = {
       const strAuthorTag = author.tag;
 
       const { doLogs, chanChat, strClosing } = await getGuildConfig( guild );
+      if ( !chanChat ) { doLogs = false; console.error( 'Error in %s:\n\tVariable `chanChat` is %s', strScript, chanChat ); }
       if ( mySaying ) {
         const parsedSaying = await parse( mySaying, { member: guildMember } );
         if ( canSpeak && ( !mentionsEveryone || checkPermission( 'MentionEveryone' ) ) ) {
