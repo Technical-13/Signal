@@ -23,7 +23,7 @@ module.exports = async ( message ) => {
     const allShorts = [ ...cleanContent.matchAll( ytShortRegex ) ];
     const allVideos = [ ...cleanContent.matchAll( ytVideoRegex ) ];
     if ( allClips.length + allPlaylists.length + allShorts.length + allVideos.length === 0 ) { return; }
-    const strMetadataResponse = 'Please stand by, YouTube link' + ( allVideos.length + allPlaylists.length ? 's' : '' ) + ' detected.';
+    let strMetadataResponse = 'Please stand by, YouTube link' + ( allVideos.length + allPlaylists.length ? 's' : '' ) + ' detected.';
     const metadataResponse = await message.reply( strMetadataResponse );
     strMetadataResponse += '\nProcessing event.';
 
