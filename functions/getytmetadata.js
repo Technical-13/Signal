@@ -176,11 +176,10 @@ module.exports = async ( message ) => {
       resolvedItems.forEach( item => {
         assetTypes[ item.type ] += 1;
         const itemAuthor = item.author.url ? '[' + item.author.name + '](' + item.author.url + ')' : '*__' + item.author.name + '__*';
-        const itemTitle = item.url ? '[Watch Content](' + item.url + ')' : '';
+        const itemTitle = item.url ? '[Watch ' + item.type + '](' + item.url + ')' : '';
         embed.addFields( {
           name: item.title,
-          value: 'By ' + itemAuthor + '\n' + itemTitle,
-          inline: true
+          value: 'By ' + itemAuthor + '\n' + itemTitle
         } );
       } );
       embed.setDescription( 'Multiple YouTube links detected. Details listed below:' )
