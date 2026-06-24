@@ -5,6 +5,7 @@ const chalk = require( 'chalk' );
 const cooldown = new Collection();
 const gcCacheTypeIcons = require( '../jsonObjects/eventTypes.json' );
 const cacheinfo = require( '../functions/cacheinfo.js' );
+const getytmetadata = require( '../functions/getytmetadata.js' );
 const userPerms = require( '../functions/getPerms.js' );
 const botVerbosity = client.verbosity;
 const strScript = chalk.hex( '#FFA500' ).bold( './events/messageCreate.js' );
@@ -36,6 +37,8 @@ client.on( 'messageCreate', async ( message ) => {
     }
     const bot = client.user;
     const members = guild.members.cache;
+
+    getytmetadata( message );
 
     const gcWhitelist = [ 'GCD' ];
     var hasCodes = {
