@@ -50,7 +50,7 @@ module.exports = {
           let oldContent = oldMsg?.content || 'empty';
           if ( canSpeak && ( !mentionsEveryone || checkPermission( 'MentionEveryone' ) ) ) {
             await oldMsg.edit( { content: parsedSaying } ).then( async edited => {
-              else if ( doLogs ) {
+              if ( doLogs ) {
                 chanChat.send( { content:
                   'I edited what I said in https://discord.com/channels/' + edited.guild.id + '/' + edited.channel.id + '/' + edited.id + ' at <@' + author.id + '>\'s request from:\n```\n' + oldContent + '\n```\nTo:\n```\n' + edited.content + '\n```' + strClosing
                 } )
